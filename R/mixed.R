@@ -1,6 +1,6 @@
-#' Obtain p-values for a mixed-model from lmer().
+#' p-values for fixed effects of mixed-model via lme4::lmer()
 #'
-#' Fits and calculates p-values for all effects in a mixed model fitted with \code{\link[lme4]{lmer}}. The default behavior calculates type 3 like p-values using the Kenward-Roger approximation for degrees-of-freedom implemented in \code{\link[pbkrtest]{KRmodcomp}} (for LMMs only), but also allows for parametric bootstrap (\code{method = "PB"}), or likelihood ratio tests (the latter two for LMMs and GLMMs). \code{print}, \code{summary}, and \code{anova} methods for the returned object of class \code{"mixed"} are available (the last two return the same data.frame).
+#' Calculates p-values for all fixed effects in a mixed model. This is done by first fitting (with \code{\link[lme4]{lmer}}) the full model and then versions thereof in which a single effect is removed and comparing the reduced model to the full model. The default behavior is to calculate type 3 like p-values using the Kenward-Roger approximation for degrees-of-freedom implemented using \code{\link[pbkrtest]{KRmodcomp}} (available for LMMs only). Other methods for obtaining p-values are parametric bootstrap (\code{method = "PB"}) or likelihood ratio tests (\code{method = "LRT"}), both of which are available for both LMMs and GLMMs. \code{print}, \code{summary}, and \code{anova} methods for the returned object of class \code{"mixed"} are available (the last two return the same data.frame).
 #'
 #'
 #' @param formula a formula describing the full mixed-model to be fitted. As this formula is passed to \code{lmer}, it needs at least one random term.

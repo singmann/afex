@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 \name{mixed}
 \alias{mixed}
-\title{Obtain p-values for a mixed-model from lmer().}
+\title{p-values for fixed effects of mixed-model via lme4::lmer()}
 \usage{
 mixed(formula, data, type = afex_options("type"),
   method = afex_options("method_mixed"), per.parameter = NULL,
@@ -78,7 +78,7 @@ For models with \code{method="PB"} the following further column is returned:
 The \code{summary} method for objects of class \code{mixed} simply calls \code{\link{summary.merMod}} on the full model.
 }
 \description{
-Fits and calculates p-values for all effects in a mixed model fitted with \code{\link[lme4]{lmer}}. The default behavior calculates type 3 like p-values using the Kenward-Roger approximation for degrees-of-freedom implemented in \code{\link[pbkrtest]{KRmodcomp}} (for LMMs only), but also allows for parametric bootstrap (\code{method = "PB"}), or likelihood ratio tests (the latter two for LMMs and GLMMs). \code{print}, \code{summary}, and \code{anova} methods for the returned object of class \code{"mixed"} are available (the last two return the same data.frame).
+Calculates p-values for all fixed effects in a mixed model. This is done by first fitting (with \code{\link[lme4]{lmer}}) the full model and then versions thereof in which a single effect is removed and comparing the reduced model to the full model. The default behavior is to calculate type 3 like p-values using the Kenward-Roger approximation for degrees-of-freedom implemented using \code{\link[pbkrtest]{KRmodcomp}} (available for LMMs only). Other methods for obtaining p-values are parametric bootstrap (\code{method = "PB"}) or likelihood ratio tests (\code{method = "LRT"}), both of which are available for both LMMs and GLMMs. \code{print}, \code{summary}, and \code{anova} methods for the returned object of class \code{"mixed"} are available (the last two return the same data.frame).
 }
 \details{
 For an introduction to mixed-modeling for experimental designs see Barr, Levy, Scheepers, & Tily (2013; I highly recommend reading this paper if you use this function), arguments for using the Kenward-Roger approximation for obtaining p-values are given by Judd, Westfall, and Kenny (2012). Further introductions to mixed-modeling for experimental designs are given by Baayen and colleagues (Baayen, 2008; Baayen, Davidson & Bates, 2008; Baayen & Milin, 2010). Specific recommendations on which random effects structure to specify for confirmatory tests can be found in Barr and colleagues (2013) and Barr (2013).

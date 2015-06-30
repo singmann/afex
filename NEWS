@@ -7,9 +7,9 @@
 
     Significant User Visible Changes and New Features
 
-    o   new default return argument for aov.car() et al., afex_aov, 
+    o   new default return argument for ANOVA functions, afex_aov, 
         an S3 object containing the following:
-        (1) ANOVA table of class "anova", is printed via nice.anova
+        (1) ANOVA table of class "anova", is printed via nice_anova
         (2) ANOVA fitted with base R's aov (can be passed to lsmeans 
             for post-hoc tests)
         (3) output from car::Anova (for tests of effects),
@@ -20,7 +20,7 @@
     o   added support for lsmeans: objects of class afex_aov can be 
         passed to lsmeans directly. afex now depends on lsmeans.
     
-    o   added afex.options() functionality for setting options globally.
+    o   added afex_options() functionality for setting options globally.
     
     o   added vignette showing how to calculate contrasts after ANOVA.
     

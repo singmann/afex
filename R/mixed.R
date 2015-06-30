@@ -516,11 +516,16 @@ anova.mixed <- function(object, ...) {
 
 
 ## support for lsmeans for mixed objects:
-
+#' @importFrom lsmeans recover.data lsm.basis
+#' @method recover.data mixed
+#' @export
 recover.data.mixed <- function(object, ...) {
   recover.data.merMod(object$full.model, ...)
 }
 
+
+#' @method lsm.basis mixed 
+#' @export
 lsm.basis.mixed <- function(object, trms, xlev, grid, ...) {
   lsm.basis.merMod(object$full.model, trms, xlev, grid, ...)
 }

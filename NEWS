@@ -3,7 +3,7 @@
                     *************************
                     
                     Changes in afex Version 0.14-x
-                    Released XXXX 2015
+                    Released Summer 2015
 
     Significant User Visible Changes and New Features
 
@@ -34,7 +34,8 @@
     
     o   summary method for mixed objects now calls summary.merMod on 
         full model.
-
+        
+    o   afex is now hosted on github: https://github.com/singmann/afex
         
     Bugfixes
     

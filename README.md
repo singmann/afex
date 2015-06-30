@@ -32,8 +32,8 @@ As of version `0.14` several changes to the interface were introduced:
     
 - added vignette showing how to calculate contrasts after ANOVA.
     
-- afex does not depend on car package anymore, it is only imported.
+- `afex` does not depend on `car` package anymore, it is only imported.
     
-- first element in mixed object renamed to anova_table.
+- first element in mixed object renamed to `anova_table`.
     
-- summary method for mixed objects now calls summary.merMod on full model.
+- `summary` method for `mixed` objects now calls `summary.merMod` on full model.

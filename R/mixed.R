@@ -513,6 +513,24 @@ anova.mixed <- function(object, ...) {
 }
 
 
+
+
+## support for lsmeans for mixed objects:
+
+recover.data.mixed <- function(object, ...) {
+  recover.data.merMod(object$full.model, ...)
+}
+
+lsm.basis.mixed <- function(object, trms, xlev, grid, ...) {
+  lsm.basis.merMod(object$full.model, trms, xlev, grid, ...)
+}
+
+
+
+
+
+
+### old stuff (actually not usable right now)
 # is.mixed <- function(x) inherits(x, "mixed")
 
 ## some code copied from pbkrtest.

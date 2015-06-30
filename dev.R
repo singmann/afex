@@ -10,8 +10,11 @@ devtools::test()
 test_package("afex", filter = "aov")
 test_package("afex", filter = "mixed")
 
+
 options(error = recover)
 options(error = NULL)
+options(warn = 2)
+options(warn = 0)
 
 #install.packages("afex", dependencies = TRUE)
 #devtools::build()

@@ -520,14 +520,14 @@ anova.mixed <- function(object, ...) {
 #' @method recover.data mixed
 #' @export
 recover.data.mixed <- function(object, ...) {
-  recover.data.merMod(object$full.model, ...)
+  recover.data(object$full.model, ...)
 }
 
 
 #' @method lsm.basis mixed 
 #' @export
 lsm.basis.mixed <- function(object, trms, xlev, grid, ...) {
-  lsm.basis.merMod(object$full.model, trms, xlev, grid, ...)
+  lsm.basis(object$full.model, trms, xlev, grid, ...)
 }
 
 

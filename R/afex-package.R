@@ -6,7 +6,7 @@
 #' Version: \tab 0.14-1\cr
 #' Date: \tab 2015-06-30\cr
 #' Depends: \tab R (>= 3.0.0), lme4 (>= 1.0.5), reshape2, lsmeans (>= 2.17)\cr
-#' Encoding: \tab latin1\cr
+#' Encoding: \tab UTF-8\cr
 #' License: \tab GPL (>=3)\cr
 #' URL: \tab https://github.com/singmann/afex\cr
 #' }
@@ -17,6 +17,6 @@
 #' @name afex-package
 #' @docType package
 #' @title The afex Package
-#' @author Henrik Singmann, Ben Bolker, Jake Westfall, with contributions from Søren Højsgaard, John Fox, Michael A. Lawrence, Ulf Mertens
+#' @author Henrik Singmann, Ben Bolker, Jake Westfall, with contributions from SÃ¸ren HÃ¸jsgaard, John Fox, Michael A. Lawrence, Ulf Mertens
 #' @keywords package
 NULL

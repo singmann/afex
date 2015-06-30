@@ -32,6 +32,7 @@ R.libs <- "C:/R/R-devel/library"
 # Linux:
 R.libs <- "./packages/library"
 
+closeAllConnections()
 roxy.package(
 	pck.source.dir = pkg.src.dir,
 	pck.version = "0.14-1",
@@ -53,10 +54,14 @@ roxy.package(
 		Description = "Provides convenience functions for analyzing factorial experiments using ANOVA or mixed models. aov_ez(), aov_car(), and aov_4() allow specification of between, within (i.e., repeated-measures), or mixed between-within (i.e., split-plot) ANOVAs for data in long format (i.e., one observation per row), potentially aggregating multiple observations per individual and cell of the design. mixed() fits mixed models using lme4::lmer() and computes p-values for all fixed effects using either Kenward-Roger approximation for degrees of freedom (LMM only), parametric bootstrap (LMMs and GLMMs), or likelihood ratio tests (LMMs and GLMMs). afex uses type 3 sums of squares as default (imitating commercial statistical software).",
 		URL = "https://github.com/singmann/afex",
 		License = "GPL (>=3)",
-		Encoding = "latin1",
+		Encoding = "UTF-8",
     VignetteBuilder="knitr",
 		stringsAsFactors = FALSE),
 		actions = c("roxy"),
 		R.libs = R.libs, 
 		repo.root = tempdir())
 #system("rmdir pkg/afex/inst")
+writeLines(iconv(readLines("DESCRIPTION"), from = "latin1", to = "UTF-8"), file("DESCRIPTION", encoding="UTF-8"))
+writeLines(iconv(readLines("man/afex-package.Rd"), from = "latin1", to = "UTF-8"), file("man/afex-package.Rd", encoding="UTF-8"))
+writeLines(iconv(readLines("R/afex-package.R"), from = "latin1", to = "UTF-8"), file("R/afex-package.R", encoding="UTF-8"))
+closeAllConnections()

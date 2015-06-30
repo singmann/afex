@@ -1,0 +1,439 @@
+                    *************************
+                    ** afex VERSION 0.14-x **
+                    *************************
+                    
+                    Changes in afex Version 0.14-x
+                    Released XXXX 2015
+
+    Significant User Visible Changes and New Features
+
+    o   new default return argument for aov.car() et al., afex_aov, 
+        an S3 object containing the following:
+        (1) ANOVA table of class "anova", is printed via nice.anova
+        (2) ANOVA fitted with base R's aov (can be passed to lsmeans 
+            for post-hoc tests)
+        (3) output from car::Anova (for tests of effects),
+            ANOVA table (1) is based on this model
+        (4) lm object passed to car::Anova
+        (5) data used for estimating (2) and (4)
+        
+    o   added support for lsmeans: objects of class afex_aov can be 
+        passed to lsmeans directly. afex now depends on lsmeans.
+    
+    o   added afex.options() functionality for setting options globally.
+    
+    o   added vignette showing how to calculate contrasts after ANOVA.
+    
+    o   afex does not depend on car package anymore, it is only imported.
+    
+    o   ANOVA functions renamed to aov_car, aov_ez, and aov_4. Likewise,
+        nice.anova renamed to nice_anova. Old  functions are now 
+        deprecated.
+    
+    o   first element in mixed object renamed to anova_table.
+    
+    o   summary method for mixed objects now calls summary.merMod on 
+        full model.
+
+        
+    Bugfixes
+    
+    o   ANOVA: for "aov"-objects, contrasts are only set for factors.
+    
+
+    
+
+                    *************************
+                    ** afex VERSION 0.13-x **
+                    *************************
+                    
+                    Changes in afex Version 0.13-x
+                    Released January 2015
+
+    Significant User Visible Changes and New Features
+
+    o   added ems() function for deriving the expected values of the 
+        mean squares for factorial designs (contributed by Jake 
+        Westfall).
+
+        
+    Bugfixes
+    
+    o   aov.car et al. stop with error message if a factor has only one
+        level.
+        
+    o   aov.car transforms id variable to factor which ensures that 
+        return = "aov" provides equivalent results.
+        
+    o   changed regex for detecting "observed" variables to work with 
+        the new version of stringr which uses stringi.
+    
+
+
+
+                    *************************
+                    ** afex VERSION 0.12-x **
+                    *************************
+                    
+                    Changes in afex Version 0.12-x
+                    Released November 2014
+
+    Significant User Visible Changes and New Features
+
+    o   ANOVA functions give informative error if some parameters are
+        not estimable (most likely due to structural missings, i.e. 
+        empty cells).
+
+        
+    Bugfixes
+    
+    o   mixed(..., method = "PB") does not fail anymore when only 
+        having a single fixed effect (thanks to Kiyoshi Sasaki for
+        reporting it). 
+        
+    o   aov.car() failed when a within-subject factor had empty levels.
+        Unused factor levels are now dropped. This bug was probably 
+        introduced in Rev 126 as part of an attempt to solve a bug. 
+        (thanks to Will Bowditch for reporting it).
+    
+
+    
+                    *************************
+                    ** afex VERSION 0.11-x **
+                    *************************
+                    
+                    Changes in afex Version 0.11-x
+                    Released October 2014
+
+    Significant User Visible Changes and New Features
+
+    o   added allFit() function (written by Ben Bolker).
+    
+    o   mixed() gives warning if nested model provides worse fit 
+        (logLik) than full model (when fitted with ML).
+    
+    o   print, summary, and anova method for mixed objects are now 
+        identical.
+        
+    o   description of returned object from mixed() extended (Thanks
+        to Ben Bolker, see http://stackoverflow.com/a/25612960/289572)
+        
+    o   added return = "aov" to aov.car which returns the ANOVA 
+        fitted with aov (with correct Error strata) so that it can be
+        passed to lsmeans for post-hoc tests or plotting (lsmip).
+        
+        
+    Bugfixes
+    
+    o   all required functions are now correctly imported avoiding 
+        CRAN warnings and better functioning.
+        
+    o   data argument to lmer calls in mixed set correctly. Note that
+        still contrasts added to the data in mixed may prohibit use of 
+        predict.merMod() or similar functions. It is recommended to 
+        set the contrasts globally to "contr.sum", e.g., 
+        via set_sum_contrasts(), for correct functioning
+        (disable via set.data.arg argument for mixed).
+        
+    
+        
+                    ************************
+                    ** afex VERSION 0.10-x **
+                    ************************
+                    
+                    Changes in afex Version 0.10-x
+                    Released August 2014
+
+    Significant User Visible Changes and New Features
+
+    o   afex does not change the global contrasts anymore when loading 
+        the package (due to popular demand).
+    
+    o   new functions to globally set contrasts: set_sum_contrasts & 
+        set_treatment_contrasts (and some more wrappers).
+        
+    o   Added more mixed model examples from Maxwell & Delaney, Chapter 
+        15 ("Multilevel Models for within subjects designs"), see ?mixed 
+        and ?md_15.1. Thanks to Ulf Mertens. 
+        
+    Bugfixes
+    
+    o   removed bug when factor levels of within-subject factors
+        contained "+" or "-" and were not converted correctly. Added 
+        tests for known bugs in aov.car.
+        
+
+                    ************************
+                    ** afex VERSION 0.9-x **
+                    ************************
+                    
+                    Changes in afex Version 0.9-x
+                    Released April 2014
+
+    Significant User Visible Changes and New Features
+
+    o   added function aov4: another wrapper of car::Anova for ANOVA
+        models specified via lme4::lmer syntax.
+    
+    o   added return="marginal" to aov.car which returns the marginal 
+        means of all effects (i.e., grand mean and mean of main 
+        effects and interactions). Is also returned if return="full".
+        
+    o   testing the intercept in mixed models in now only optional.
+        The default is that the new argument test.intercept = FALSE.
+    
+    o   removed return="lme4" from aov.car.
+    
+    o   added argument intercept to nice.anova (default FALSE) which
+        allows to selective display the intercept in an ANOVA table.
+        
+    o   added method = "F" to mixed() which only returns the F-value 
+        but no ddf (and hence no p-value). Experimental, not documented.
+     
+    o   renamed colname "stat" to "F" when method = "KR" (mixed).
+    
+    o   added tests (currently mainly for mixed()) via pkg testthat, 
+        see tests/testthat.
+        
+    Bugfixes
+    
+    o   increased requirement of R version and lme4 version.    
+    
+    o   print.mixed should now propagate all warnings from lme4 (i.e., 
+        also the new convergence warnings).
+        
+    o   lme4 is now loaded at worker nodes for mixed (default, 
+        turn of via check.contrasts)
+
+        
+
+                    ************************
+                    ** afex VERSION 0.8-x **
+                    ************************
+                    
+                    Changes in afex Version 0.8-x
+                    Released February 2014
+
+    Significant User Visible Changes and New Features
+
+    o   removed renaming of within subject factor levels to names
+        with length 1 (which was introduced in 0.6).
+        
+    o   helper function round_ps which nicely rounds p-values
+        is now exported.
+        
+    o   warning about numerical non-centered variables in mixed
+        is now a message only.
+        
+    o   added examples data sets from Maxwell & Delaney (2004) for 
+        within-subjects ANOVA and mixed models.
+        
+    o   reshape2 is now again in depends but coin only imported.
+    
+    Bugfixes
+        
+    o   the default effect size (ges: generalized eta-squared) was 
+        calculated wrong (the error term for the intercept was not 
+        included). Sorry. This is now corrected (with new examples).
+    
+    o   removed bug that aov.car didn't work when running some ANCOVAs
+        (thanks to Gang Chen for reporting this).
+
+        
+
+                    ************************
+                    ** afex VERSION 0.7-x **
+                    ************************
+                    
+                    Changes in afex Version 0.7-x
+                    Released December 2013
+
+    Significant User Visible Changes and New Features
+
+    o   nicer output of print.mixed
+    
+    Bugfixes
+    
+    o   mixed() correctly converts all non-formula arguments to 
+        formula correctly to a formula (gave error if formula
+        was a different object and not-available on cluster nodes).
+        Prints message if formula is converted to a formula.
+        
+    o   Using multicore for fitting the models prodcued erroneous 
+        results (did not use correct contrasts at nodes). Now the
+        current contrasts are also set at the nodes.
+        
+    o   mixed() sets REML = FALSE if method = "LRT" and no 
+        family argument is present (i.e., for LMMs) as LRTs
+        for models fitted with REML are not recommended.
+        
+    o   on the cluster nodes now only the lme4 namespace is 
+        loaded (instead of using library) to avoid a CRAN note.
+
+
+                    ************************
+                    ** afex VERSION 0.6-x **
+                    ************************
+                    
+                    Changes in afex Version 0.6-x
+                    Released September 2013
+
+    Significant User Visible Changes and New Features
+
+    o   added LRT tests to mixed() which should replicate
+        the recommended test by Barr et al. (2013, JML).
+        
+    o   multicore estimation of (g)lmer models now available
+        through package parallel (argument cl) for mixed().
+        
+    o   added experimental "lme4" return method for 
+        aov.car and ez.glm (which fits the data using lmer).
+        
+    o   reshape2 and stringr are not any more loaded when
+        loading afex (are now only imported via Imports)
+    
+    Bugfixes
+    
+    o   Type 2 tests of mixed() were implemented incorrectly (i.e.,
+        they did not give what they should have given according
+        to the description in the help file).
+        
+    o   aov.car() and ez.glm() now convert factor levels of within 
+        subjects factors to be of length one so that long levels 
+        do not lead to problems when constructing the call to lm. 
+        Thanks to Isaac Schwabacher for noticing this, see also:
+        https://bugs.r-project.org/bugzilla3/show_bug.cgi?id=15377
+    
+    o   mixed should now work with missing values as it construes
+        a new data object if the model.matrix from which the
+        different versions are fitted has nrow different to 
+        nrow(data) (with warning). Thanks to Daniel Bunker
+        for reporting this.
+        
+    o   mixed should work with the newest version of lme4 (>= 1.0.4)
+        and the newst version of pbkrtest (>= 0.3-5.1), but not 
+        with older versions (due to CRAN policy to disallow :::).
+
+                    
+                    ************************
+                    ** afex VERSION 0.5-x **
+                    ************************
+                    
+                    Changes in afex Version 0.5-x
+                    Released May 2013
+
+    Significant User Visible Changes and New Features
+
+    o   added argument factorize (default: TRUE) to aov.car and ez.glm:
+        all variables are now factorized per default. (now it is 
+        necessary to set factorize=FALSE for ANCOVAs!)
+    
+    o   added argument per.parameter to mixed() which allows to specify
+        variables for which each parameter is tested (not only the 
+        overall effect). Can be useful to test for ordered factors. 
+        (only implemented for "Type 3" tests)
+    
+    o   added more informative startup message (thanks to Robert Volcic 
+        and Lars Konieczny)
+        
+    o   mixed, ez.glm and aov.car now check for correct contrasts and set 
+        factors to contr.sum if other contrasts are found (can be tunred 
+        off via check.contrasts argument). Resetting the default contrast
+        to contr.treatment should therefore not interfere with afex.
+        (this is not intensly tested, so please report anything)
+    
+    o   mixed checks numeric variables if they are centered on 0 (and
+        gives warning if not).
+    
+    Bugfixes
+    
+    o   checks if observed variable is in the data and throws
+        an error if not (nice.anova)
+
+
+                    ************************
+                    ** afex VERSION 0.4-x **
+                    ************************
+                    
+                    Changes in afex Version 0.4-x
+                    Released February 2013
+
+    Significant User Visible Changes and New Features
+
+    o   added generalized and partial eta-squared effect
+        sizes to nice.anova (this also included adding
+        observed arguments to aov.car, ez.glm, nice.anova)        
+    
+    o   added new return arguments to aov.car and ez.glm
+        (nice, lm, data).
+    
+    o   changed default return value of aov.car and ez.glm
+        to "nice" which now returns a nice ANOVA table
+        (nice.anova)
+    
+    o   mixed has method = "PB" for obtaining parametric
+        bootstrapped p-values (e.g., for GLMMs)
+        
+    o   added alternative argument to compare.2.vectors.
+    
+    o   aov.car (and ez.glm) now give a warning if 
+        observations are missing on within-subject factors.
+        (As before, cases with missing values are simply
+        excluded from the analysis)
+    
+    o   had to disable saving of the previous contrasts and
+        resetting those after detaching afex due to 
+        CRAN policies (no assignment in global environment).
+    
+    Bugfixes
+    
+    o   Bug when running mixed() inside a function and
+        handing the data.frame over as an argument fixed
+        (thanks, again, to Florent Duyme). See
+        bugs/eval.scoping.bug.R
+    
+    o   nice.anova did not work with a model with only one 
+        within-subjects factor.
+    
+
+
+                    ************************
+                    ** afex VERSION 0.3-x **
+                    ************************
+                    
+                    Changes in afex Version 0.3-x
+                    Released August/September 2012
+
+    Significant User Visible Changes and New Features
+    
+    o   added function compare.2.vectors().
+    
+    o   Name of function univariate() changed to univ(), as
+        a function with this name is part of package multcomp.
+        This may leed to problems. Thanks to Florent Duyme for
+        spotting this.
+    
+    o   added return argument to aov.car() and ez.glm().
+    
+    o   added rather dubious Type 2 tests to mixed().
+    
+    o   aov.car checks if each id is only present in one
+        cell of the between subjects design.
+    
+    Bugfixes
+    
+    o   aov.car now uses do.call when calling lm() to avoid local
+        variables in the call to lm() which could led to problems when
+        working with the lm model.
+    
+    o   mixed() now passes ... (further arguments to lmer) correctly.
+        (Now mixed uses match.call and eval on the call instead of 
+        invoking lmer directly.)
+    
+    o   corrected bug that was introduced by pbkrtest v3.2 when 
+        invoking the print method to an object of class mixed 
+        (again thanks to Florent Duyme for spotting this).
+    
+    o   removed bug when factor levels of within-subject factors
+        were non-legal names (solution uses make.names).
+    

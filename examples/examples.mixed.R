@@ -26,9 +26,26 @@ summary(sk_m1) # lmer summary of full model
 
 ## mixed objects can be passed to lsmeans directly:
 
-# recreates basically Figure 4 (S&K, 2011, upper part)
+# recreates basically Figure 4 (S&K, 2011, upper panel)
 # only the 4th and 6th x-axis position are flipped
 lsmip(sk_m1, instruction~type+inference)
+
+# set up reference grid for custom contrasts:
+# this can be made faster via:
+# lsm.options(disable.pbkrtest = TRUE)
+(rg1 <- lsmeans(sk_m1, c("instruction", "type", "inference")))
+
+# set up contrasts on reference grid:
+contr_sk2 <- list(
+  ded_validity_effect = c(rep(0, 4), 1, rep(0, 5), -1, 0),
+  ind_validity_effect = c(rep(0, 5), 1, rep(0, 5), -1),
+  counter_MP = c(rep(0, 4), 1, -1, rep(0, 6)),
+  counter_AC = c(rep(0, 10), 1, -1)
+)
+
+# test the main double dissociation (see S&K, p. 268)
+contrast(rg1, contr_sk2, adjust = "holm")
+# only plausibility effect is not significant here.
 }
 
 ###################################################

@@ -22,18 +22,28 @@
     
     o   added afex_options() functionality for setting options globally.
     
-    o   added vignette showing how to calculate contrasts after ANOVA.
-    
-    o   afex does not depend on car package anymore, it is only imported.
+    o   added two new data sets (from Singmann & Klauer, 2011) and a 
+        vignette showing how to calculate contrasts after ANOVA.
     
     o   ANOVA functions renamed to aov_car, aov_ez, and aov_4. Likewise,
-        nice.anova renamed to nice_anova. Old  functions are now 
+        nice.anova renamed to nice_anova. Old functions are now 
         deprecated.
     
     o   first element in mixed object renamed to anova_table.
     
+    o   nice.anova renamed to nice. nice() can be called for afex_aov
+        and mixed objects and returns a nicely formatted (numbers 
+        converted to characters) results table (which is also the 
+        default print method for both objects).
+        
+    o   anova() can be called for afex_aov and mixed objects and returns
+        the numeric anova table (i.e., the first element of each object)
+        and also has a print method for those.
+    
     o   summary method for mixed objects now calls summary.merMod on 
         full model.
+        
+    o   afex does not depend on car package anymore, it is only imported.
         
     o   afex is now hosted on github: https://github.com/singmann/afex
         

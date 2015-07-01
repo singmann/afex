@@ -124,9 +124,8 @@ nice.mixed <- function(object, sig.symbols = c(" +", " *", " **", " ***"), ...) 
   symbols.use <-  c(" +", " *", " **", " ***")
   symbols.use[seq_along(sig.symbols)] <- sig.symbols
   if (object$method == "KR") {
-    anova_table[,"df"] <- paste(ifelse(is.wholenumber(anova_table[,"num Df"]), anova_table[,"num Df"], formatC(anova_table[,"num Df"], digits = 2, format = "f")),  ifelse(is.wholenumber(anova_table[,"den Df"]),anova_table[,"den Df"], formatC(anova_table[,"den Df"], digits = 2, format = "f")), sep = ", ")
-
-    df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"df"], "F.scaling" = anova_table[,"F.scaling"], stringsAsFactors = FALSE, check.names = FALSE)
+    anova_table[,"df"] <- paste(ifelse(is.wholenumber(anova_table[,"num Df"]), round(anova_table[,"num Df"]), formatC(anova_table[,"num Df"], digits = 2, format = "f")),  ifelse(is.wholenumber(anova_table[,"den Df"]), round(anova_table[,"den Df"]), formatC(anova_table[,"den Df"], digits = 2, format = "f")), sep = ", ")
+    df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"df"], "F.scaling" = formatC(anova_table[,"F.scaling"], digits = 2, format = "f"), stringsAsFactors = FALSE, check.names = FALSE)
     df.out <- cbind(df.out, data.frame(F = make.stat(anova_table, stat = "F", symbols.use), stringsAsFactors = FALSE))
     df.out$p.value  <-  round_ps(anova_table[,"Pr(>F)"])
   } else if (object$method == "PB") {

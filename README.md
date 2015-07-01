@@ -17,7 +17,7 @@ The two main functionalities of `afex` are (1) to provide a coherent and intuiti
 
 As of version `0.14` several changes to the interface were introduced:
 
-- ANOVA functions renamed to `aov_car`, `aov_ez`, and `aov_4`. Likewise, `nice.anova` renamed to `nice_anova`. Old functions are now deprecated.
+- ANOVA functions renamed to `aov_car`, `aov_ez`, and `aov_4`. Old ANOVA functions are now deprecated.
 
 - new default return argument for ANOVA functions `afex_aov`, an S3 object containing the following:
   1. ANOVA table of class `"anova"`, is printed via `nice_anova`
@@ -27,13 +27,20 @@ As of version `0.14` several changes to the interface were introduced:
   5. data used for estimating 2. and 4.
         
 -  added support for `lsmeans`: objects of class `afex_aov` can be passed to `lsmeans` directly. `afex` now depends on `lsmeans`.
+
+- `nice.anova` was renamed to `nice` (and now also works with `mixed` objects).
+
+- Returned objects of `mixed` and the ANOVA functions (i.e., of class `afex_aov`) are similar:
+  - Both have a numeric Anove table as first element called `anova_table` (which is of class `c("anova", "data.frame")`).
+  - calling `nice` on either returns a nicely rounded Anova table (i.e., number converted to characters). This table is also per default printed.
+  - calling `anova` on either will return the numeric Anova table for which specific print methods exist.
     
 - added `afex_options()` functionality for setting options globally.
     
 - added vignette showing how to calculate contrasts after ANOVA.
     
 - `afex` does not depend on `car` package anymore, it is only imported.
-    
+
 - first element in mixed object renamed to `anova_table`.
     
 - `summary` method for `mixed` objects now calls `summary.merMod` on full model.

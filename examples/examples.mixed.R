@@ -1,3 +1,40 @@
+
+###########################
+## Full Analysis Example ##
+###########################
+
+\dontrun{
+### split-plot experiment (Singmann & Klauer, 2011, Exp. 2)
+## between-factor: instruction
+## within-factor: inference & type
+## hypothesis: three-way interaction
+data("sk2011.2")
+
+# use only affirmation problems (S&K also splitted the data like this)
+sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+
+# set up model with maximal random slopes for participant random effect
+sk_m1 <- mixed(response ~ instruction*inference*type+(inference*type|id), sk2_aff)
+
+sk_m1 # prints ANOVA table with nicely rounded numbers (i.e., as characters)
+nice(sk_m1)  # returns the same but without printing potential warnings
+
+anova(sk_m1) # returns and prints numeric ANOVA table (i.e., not-rounded)
+
+summary(sk_m1) # lmer summary of full model
+
+
+## mixed objects can be passed to lsmeans directly:
+
+# recreates basically Figure 4 (S&K, 2011, upper part)
+# only the 4th and 6th x-axis position are flipped
+lsmip(sk_m1, instruction~type+inference)
+}
+
+###################################################
+## Replicating Maxwell & Delaney (2004) Examples ##
+###################################################
+
 ### replicate results from Table 15.4 (Maxwell & Delaney, 2004, p. 789)
 data(md_15.1)
 # random intercept plus slope
@@ -56,7 +93,6 @@ mixed3_orig <- mixed(induct ~ cond + skill + (1|room:cond), md_16.4b, check.cont
 summary(mixed3_orig)
 
 
-
 ### replicate results from Table 16.10 (Maxwell & Delaney, 2004, p. 862)
 # for this we need to center cog:
 md_16.4b$cog <- scale(md_16.4b$cog, scale=FALSE)
@@ -69,7 +105,9 @@ md_16.4b$cog <- scale(md_16.4b$cog, scale=FALSE)
 # parameters are again almost perfectly recovered:
 summary(mixed4_orig)
 
-
+####################
+## Other Examples ##
+####################
 
 \dontrun{
 
@@ -118,7 +156,7 @@ gm1 <- mixed(use ~ age + I(age^2) + urban + livch + (1 | district), method = "PB
  family = binomial, data = Contraception, args.test = list(nsim = 10))
 
 #######################
-### using multicore ###
+### Using Multicore ###
 #######################
 
 require(parallel)

@@ -9,7 +9,7 @@
 
     o   new default return argument for ANOVA functions, afex_aov, 
         an S3 object containing the following:
-        (1) ANOVA table of class "anova", is printed via nice_anova
+        (1) ANOVA table of class "anova"
         (2) ANOVA fitted with base R's aov (can be passed to lsmeans 
             for post-hoc tests)
         (3) output from car::Anova (for tests of effects),
@@ -37,8 +37,8 @@
         default print method for both objects).
         
     o   anova() can be called for afex_aov and mixed objects and returns
-        the numeric anova table (i.e., the first element of each object)
-        and also has a print method for those.
+        the numeric anova table (i.e., the first element of each object).
+        There also exists print methods for those data.frames.
     
     o   summary method for mixed objects now calls summary.merMod on 
         full model.

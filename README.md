@@ -20,7 +20,7 @@ As of version `0.14` several changes to the interface were introduced:
 - ANOVA functions renamed to `aov_car`, `aov_ez`, and `aov_4`. Old ANOVA functions are now deprecated.
 
 - new default return argument for ANOVA functions `afex_aov`, an S3 object containing the following:
-  1. ANOVA table of class `"anova"`, is printed via `nice_anova`
+  1. ANOVA table of class `"anova"`
   2. ANOVA fitted with base R's `aov` (can be passed to `lsmeans` for post-hoc tests)
   3. output from `car::Anova` (for tests of effects), ANOVA table 1. is based on this model
   4. `lm` object passed to `car::Anova`
@@ -31,9 +31,9 @@ As of version `0.14` several changes to the interface were introduced:
 - `nice.anova` was renamed to `nice` (and now also works with `mixed` objects).
 
 - Returned objects of `mixed` and the ANOVA functions (i.e., of class `afex_aov`) are similar:
-  - Both have a numeric Anove table as first element called `anova_table` (which is of class `c("anova", "data.frame")`).
-  - calling `nice` on either returns a nicely rounded Anova table (i.e., number converted to characters). This table is also per default printed.
-  - calling `anova` on either will return the numeric Anova table for which specific print methods exist.
+  - Both have a numeric Anova table as first element called `anova_table` (which is of class `c("anova", "data.frame")`).
+  - calling `nice` on either returns a nicely rounded Anova table (i.e., numbers converted to characters). This table is also per default printed.
+  - calling `anova` on either will return the numeric Anova table (for which print methods exist as well).
     
 - added `afex_options()` functionality for setting options globally.
     

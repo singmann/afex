@@ -26,6 +26,7 @@
 #' @author Ben Bolker
 #' @export 
 #' @importFrom lme4 isGLMM lmerControl glmerControl
+#' @importFrom stats setNames update
 #' @examples
 #' \dontrun{
 #' require(optimx)

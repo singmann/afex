@@ -34,6 +34,7 @@
 #'
 #' @export compare.2.vectors
 #' @importFrom coin oneway_test wilcox_test median_test approximate statistic pvalue
+#' @importFrom stats t.test wilcox.test
 #' @example examples/examples.compare.R
 #' 
 #' @encoding UTF-8

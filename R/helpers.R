@@ -28,6 +28,8 @@
 #' afex_options(return_aov = "nice")
 #' }
 #' 
+#' @importFrom utils ls.str
+#' 
 #' @export 
 #' 
 

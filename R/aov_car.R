@@ -132,6 +132,8 @@
 #' @importFrom stringr str_c str_detect str_replace_all str_extract
 #' @importFrom reshape2 dcast
 #' @importFrom lme4 findbars nobars 
+#' @importFrom stats terms as.formula xtabs contrasts<- coef
+#' 
 #' @example examples/examples.aov_car.R
 #' 
 #' 

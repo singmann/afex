@@ -32,6 +32,7 @@
 #' Olejnik, S., & Algina, J. (2003). Generalized Eta and Omega Squared Statistics: Measures of Effect Size for Some Common Research Designs. \emph{Psychological Methods}, 8(4), 434-447. doi:10.1037/1082-989X.8.4.434
 #' 
 #' @name nice
+#' @importFrom stats anova
 #' @export nice
 #' 
 #' @encoding UTF-8

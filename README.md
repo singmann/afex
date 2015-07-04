@@ -28,7 +28,7 @@ As of version `0.14` several changes to the interface were introduced:
         
 -  added support for `lsmeans`: objects of class `afex_aov` can be passed to `lsmeans` directly. `afex` now depends on `lsmeans`.
 
-- added two new real example data sets and a [vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/singmann/afex/master/inst/doc/anova_posthoc_singmann_klauer_2011.html) showing how to calculate contrasts after ANOVA.
+- added three new real example data sets and a [vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/singmann/afex/master/inst/doc/anova_posthoc_singmann_klauer_2011.html) showing how to calculate contrasts after ANOVA.
 
 - `nice.anova` was renamed to `nice` (and now also works with `mixed` objects).
 

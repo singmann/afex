@@ -1,0 +1,28 @@
+#' Data from Klauer & Singmann (2013, Experiment 3)
+#'
+#' Klauer and Singmann (2013) attempted to replicate an hypothesis of Morsanyi and Handley (2012) according to which individuals have an intuitive sense of logicality. Specifically, Morsanyi and Handley apparently provided evidence that the logical status of syllogisms (i.e., valid or invalid) affects participants liking ratings of the conclusion of syllogisms. Conclusions from valid syllogisms (e.g., Some snakes are poisonous. No poisonous animals are obbs. Some snakes are not obbs.) received higher liking ratings than conclusions from invalid syllogisms (e.g.,  No ice creams are vons. Some vons are hot. Some ice creams are not hot.). It is important to noted that in the experiments participants were simply shown the premises and conclusion in succession, they were not asked whether or not the conclusion follows or to generate their own conclusion. Their task was simply to judge how much they liked the "final" statement (i.e., the conclusion). 
+#' 
+#' In their Experiment 3 Klauer and Singmann (2013) tested the idea that this finding was a consequence of the materials used and not an effect intuitive logic. More specifically, they observed that in the original study by Morsanyi and Handley (2012) a specific content always appeared with the same logical status. For example, the "ice-cream" content only ever appeared as an invalid syllogism as in the example above but never in a valid syllogism. In other words, content was perfectly confounded with logical status in the original study. To test this they compared a condition in which the logical status was confounded with the content (the "fixed" condition) with a condition in which the contents were randomly assigned to a logical status across participants (the "random" condition). For example, the ice-cream content was, across participants, equally like to appear in the invalid form as given above or in the following valid form: No hot things are vons. Some vons are ice creams. Conclusion Some ice creams are not hot.
+#' 
+#' The data.frame contains the raw responses of all 60 participants (30 per condition) reported in Klauer & Singmann (2013). Each participants provided 24 responses, 12 to valid and 12 to invalid syllogisms. Furthermore, 8 syllogisms had a believable conclusion (e.g., Some ice creams are not hot.), 8 had an abstract conclusion (e.g., Some snakes are not obbs.), and 8 had an unbelievable conclusion (e.g., Some animals are not monkeys.). The number of the contents corresponds to the numbering given in Morsanyi and Handley (2012, p. 616).
+#'
+#'
+#' @docType data
+#' @keywords dataset
+#' @name ks2013.3
+#' @usage ks2013.3
+#' @format A data.frame with 1440 rows and 6 variables.
+#' @source Klauer, K. C., & Singmann, H. (2013). Does logic feel good? Testing for intuitive detection of logicality in syllogistic reasoning. Journal of Experimental Psychology: Learning, Memory, and Cognition, 39(4), 1265-1273. http://doi.org/10.1037/a0030530
+#' 
+#' Morsanyi, K., & Handley, S. J. (2012). Logic feels so good-I like it! Evidence for intuitive detection of logicality in syllogistic reasoning. Journal of Experimental Psychology: Learning, Memory, and Cognition, 38(3), 596-616. http://doi.org/10.1037/a0026099
+#' 
+#' 
+#' 
+#'
+#' @encoding UTF-8
+#'
+#' @example examples/examples.ks2013.3.R
+NULL
+
+
+

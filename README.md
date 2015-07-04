@@ -9,7 +9,7 @@ The two main functionalities of `afex` are (1) to provide a coherent and intuiti
 - `afex` is available from CRAN so the current stable version can be installed directly via: 
   `install.packages("afex")`
 
-- To install the latest development version you will need the `devtools` package: 
+- To install the latest development version you will need the [`devtools`](https://github.com/hadley/devtools) package: 
   `devtools::install_github("singmann/afex@master")`
 
 

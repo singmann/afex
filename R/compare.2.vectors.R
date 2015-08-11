@@ -15,7 +15,7 @@
 #' @param tests Which tests to report, parametric or nonparamteric? The default \code{c("parametric", "nonparametric")} reports both. See details. (Arguments may be abbreviated).
 #' @param alternative a character, the alternative hypothesis must be one of \code{"two.sided"} (default), \code{"greater"} or \code{"less"}. You can specify just the initial letter, will be passed to all functions.
 #' @param coin logical or character. Should (permutation) tests from the \pkg{coin} package be reported? Default is \code{TRUE} corresponding to all implemented tests. \code{FALSE} calculates no tests from \pkg{coin}. A character vector may include any of the following (potentially abbreviated) implemented tests (see also Details): \code{c("permutation", "Wilcoxon", "median")}
-#' @param perm.distribution \code{distribution} argument to \pkg{coin}, see \code{\link[coin]{Distribution}} or , \code{\link[coin]{IndependenceTest}}. Defaults to \code{approximate(100000)} indicating an approximation of the excat conditional distribution with 100.000 Monte Carlo samples. One can use \code{"exact"} for small samples and if \code{paired = FALSE}.
+#' @param perm.distribution \code{distribution} argument to \pkg{coin}, see \code{\link[coin]{NullDistribution}} or , \code{\link[coin]{IndependenceTest}}. Defaults to \code{approximate(100000)} indicating an approximation of the excat conditional distribution with 100.000 Monte Carlo samples. One can use \code{"exact"} for small samples and if \code{paired = FALSE}.
 #' @param wilcox.exact \code{exact} argument to \code{\link{wilcox.test}}.
 #' @param wilcox.correct \code{correct} argument to \code{\link{wilcox.test}}.
 #'

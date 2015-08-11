@@ -26,7 +26,7 @@ compare.2.vectors(x, y, paired = FALSE, na.rm = FALSE,
 
 \item{alternative}{a character, the alternative hypothesis must be one of \code{"two.sided"} (default), \code{"greater"} or \code{"less"}. You can specify just the initial letter, will be passed to all functions.}
 
-\item{perm.distribution}{\code{distribution} argument to \pkg{coin}, see \code{\link[coin]{Distribution}} or , \code{\link[coin]{IndependenceTest}}. Defaults to \code{approximate(100000)} indicating an approximation of the excat conditional distribution with 100.000 Monte Carlo samples. One can use \code{"exact"} for small samples and if \code{paired = FALSE}.}
+\item{perm.distribution}{\code{distribution} argument to \pkg{coin}, see \code{\link[coin]{NullDistribution}} or , \code{\link[coin]{IndependenceTest}}. Defaults to \code{approximate(100000)} indicating an approximation of the excat conditional distribution with 100.000 Monte Carlo samples. One can use \code{"exact"} for small samples and if \code{paired = FALSE}.}
 
 \item{wilcox.exact}{\code{exact} argument to \code{\link{wilcox.test}}.}
 
@@ -65,7 +65,7 @@ with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2]))
 ## 1 stats::Wilcoxon              W     25.500      NA 0.06933
 ## 2     permutation              Z     -1.751      NA 0.08154
 ## 3  coin::Wilcoxon              Z     -1.854      NA 0.06487
-## 4          median              Z      1.744      NA 0.17867
+## 4          median              Z     -1.744      NA 0.17867
 
 # compare with:
 with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], alternative = "less"))

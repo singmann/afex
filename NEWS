@@ -3,7 +3,7 @@
                     *************************
                     
                     Changes in afex Version 0.14-x
-                    Released Summer 2015
+                    Released August 2015
 
     Significant User Visible Changes and New Features
 
@@ -22,12 +22,12 @@
     
     o   added afex_options() functionality for setting options globally.
     
-    o   added two new data sets (from Singmann & Klauer, 2011) and a 
-        vignette showing how to calculate contrasts after ANOVA.
+    o   added three new data sets (Singmann & Klauer, 2011; Klauer & 
+        Singmann, 2013) and a vignette showing how to calculate 
+        contrasts after ANOVA.
     
-    o   ANOVA functions renamed to aov_car, aov_ez, and aov_4. Likewise,
-        nice.anova renamed to nice_anova. Old functions are now 
-        deprecated.
+    o   ANOVA functions renamed to aov_car, aov_ez, and aov_4. Old 
+        functions are now deprecated.
     
     o   first element in mixed object renamed to anova_table.
     
@@ -44,12 +44,19 @@
         full model.
         
     o   afex does not depend on car package anymore, it is only imported.
+    
         
     o   afex is now hosted on github: https://github.com/singmann/afex
         
     Bugfixes
     
     o   ANOVA: for "aov"-objects, contrasts are only set for factors.
+    
+    o   compare.2.vector failed when the two means were exactly equal 
+        (due to an issue with median_test). This only throws a warning 
+        now.
+        
+    o   compare.2.vector documentation updated for coin 1-1.0.
     
 
     

@@ -72,18 +72,18 @@ compare.2.vectors <- function(x, y, paired = FALSE, na.rm = FALSE, tests = c("pa
 			} else formula.coin <- as.formula(dv ~ iv)
 			if (isTRUE(coin)) coin <- implemented.tests
 			else coin <- match.arg(coin, implemented.tests, several.ok = TRUE)
-			if ("permutation" %in% coin) {
+			tryCatch(if ("permutation" %in% coin) {
 				res.perm <- oneway_test(formula.coin, distribution=perm.distribution, alternative = alternative)
 				nonparametric <- rbind(nonparametric, data.frame(test = "permutation", test.statistic = "Z", test.value = statistic(res.perm), test.df = NA, p = pvalue(res.perm)[1], stringsAsFactors = FALSE))
-			}
-			if ("Wilcoxon" %in% coin) {
+			}, error = function(e) warning(paste("coin::permutation test failed:", e)))
+			tryCatch(if ("Wilcoxon" %in% coin) {
 				res.coin.wilcox <- wilcox_test(formula.coin, distribution=perm.distribution, alternative = alternative)
 				nonparametric <- rbind(nonparametric, data.frame(test = "coin::Wilcoxon", test.statistic = "Z", test.value = statistic(res.coin.wilcox), test.df = NA, p = pvalue(res.coin.wilcox)[1], stringsAsFactors = FALSE))
-			}
-			if ("median" %in% coin) {
+			}, error = function(e) warning(paste("coin::Wilcoxon test failed:", e)))
+			tryCatch(if ("median" %in% coin) {
 				res.median <- median_test(formula.coin, distribution=perm.distribution, alternative = alternative)
 				nonparametric <- rbind(nonparametric, data.frame(test = "median", test.statistic = "Z", test.value = statistic(res.median), test.df = NA, p = pvalue(res.median)[1], stringsAsFactors = FALSE))
-			}
+			}, error = function(e) warning(paste("coin::median test failed:", e)))
 			
 		}
 		rownames(nonparametric) <- NULL

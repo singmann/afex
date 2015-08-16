@@ -107,3 +107,12 @@ test_that("mixed: set.data.arg", {
   expect_that(m1$full.model@call[["data"]], is_identical_to(as.name("obk.long")))
   expect_that(m2$full.model@call[["data"]], is_identical_to(as.name("data")))
 })
+
+test_that("mixed: expand_re argument", {
+  data("ks2013.3")
+  m2 <- mixed(response ~ validity + (believability||id), ks2013.3, expand_re = TRUE, method = "LRT")
+  m3 <- mixed(response ~ validity + (believability|id), ks2013.3, method = "LRT")
+  expect_identical(length(unlist(summary(m2)$varcor)), 3L)
+  expect_identical(length(unlist(summary(m3)$varcor)), 9L)
+  expect_true(all.equal(unlist(summary(m2)$varcor), diag(summary(m3)$varcor$id), tolerance = 0.05, check.attributes = FALSE))
+})

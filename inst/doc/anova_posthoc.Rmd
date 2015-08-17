@@ -216,7 +216,7 @@ The pattern for the affirmation problems is in line with the expectations: We fi
 # References 
 
 * Bretz, F., Hothorn, T., & Westfall, P. H. (2011). _Multiple comparisons using R_. Boca Raton, FL: CRC Press. http://cran.r-project.org/package=multcomp
-* Singmann, H., & Klauer, K. C. (2011). Deductive and inductive conditional inferences: Two modes of reasoning. _Thinking & Reasoning_, 17(3), 247-281. doi:10.1080/13546783.2011.572718
+* Singmann, H., & Klauer, K. C. (2011). Deductive and inductive conditional inferences: Two modes of reasoning. _Thinking & Reasoning_, 17(3), 247-281. doi: 10.1080/13546783.2011.572718
 * Lenth, R. V. (2015). _lsmeans: Least-Squares Means_. R package version 2.16-4. http://cran.r-project.org/package=lsmeans
 
 

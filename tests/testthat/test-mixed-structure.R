@@ -131,6 +131,7 @@ test_that("mixed: expand_re argument, return = 'merMod'", {
   l7 <- lmer_alt(response ~ validity + (1|id) + (0+validity*condition||content), ks2013.3, control = lmerControl(optCtrl = list(maxfun=1e6)))
   expect_is(l7, "merMod")
   expect_error(lmer_alt(response ~ validity + (0|id) + (0+validity*condition||content), ks2013.3), "Invalid random effects term")
+  expect_is(lmer_alt(response ~ validity + (validity||id) + (validity|content), ks2013.3), "merMod")
 })
 
 test_that("mixed: expand_re argument (longer)", {

@@ -203,7 +203,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       tmp_model.matrix[[i]] <- model.matrix(tmp_random[[i]], data = data)
       if (ncol(tmp_model.matrix[[i]]) == 0) stop("Invalid random effects term, e.g., (0|id)")
       if (colnames(tmp_model.matrix[[i]])[1] == "(Intercept)") {
-        tmp_model.matrix[[i]] <- tmp_model.matrix[[i]][,-1]
+        tmp_model.matrix[[i]] <- tmp_model.matrix[[i]][,-1, drop = FALSE]
         re_contains_intercept[i] <- TRUE
       }
       if (ncol(tmp_model.matrix[[i]]) > 0) {

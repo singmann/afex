@@ -49,5 +49,5 @@ test_that("afex_aov object contains the right things", {
   expect_that(out1[["Anova"]], is_a(c("Anova.mlm")))
   expect_that(out1[["lm"]], is_a(c("mlm", "lm")))  
   expect_that(out1[["data"]], is_a(c("list")))  
-  expect_that(out1[["information"]], is_a(c("list")))  
+  expect_that(attr(out1, "dv"), is_a(c("character")))  
 })

@@ -44,9 +44,9 @@ An object of class \code{"mixed"} (i.e., a list) with the following elements:
 \item \code{full.model} the \code{"lmerMod"} object returned from fitting the full mixed model.
 \item \code{restricted.models} a list of \code{"lmerMod"} objects from fitting the restricted models (i.e., each model lacks the corresponding effect)
 \item \code{tests} a list of objects returned by the function for obtaining the p-values.
-\item \code{type} The \code{type} argument used when calling this function.
-\item \code{method} The \code{method} argument used when calling this function.
 }
+
+It also has the following attributes, \code{"type"} and \code{"method"}.
 
 Two similar methods exist for objects of class \code{"mixed"}: \code{print} and \code{anova}. They print a nice version of the \code{anova_table} element of the returned object (which is also invisibly returned). This methods omit some columns and nicely round the other columns. The following columns are always printed:
 \enumerate{

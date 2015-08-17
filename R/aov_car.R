@@ -49,8 +49,8 @@
 #'   \item{\code{"Anova"}}{object returned from \code{\link[car]{Anova}}, an object of class \code{"Anova.mlm"} (if within-subjects factors are present) or of class \code{c("anova", "data.frame")}.}
 #'   \item{\code{"lm"}}{the object fitted with \code{lm} and passed to \code{Anova} (i.e., an object of class \code{"lm"} or \code{"mlm"}). Also returned if \code{return = "lm"}.}
 #'   \item{\code{"data"}}{a list containing: (1) \code{long} (the possibly aggregated data in long format used for \code{aov}), \code{wide} (the data used to fit the \code{lm} object), and \code{idata} (if within-subject factors are present, the \code{idata} argument passed to \code{car::Anova}). Also returned if \code{return = "data"}.}
-#'   \item{\code{"information"}}{A list containing information such as name of dependent variable and id variable.}
 #' }
+#' In addition, the object has the following attributes: \code{"dv"}, \code{"id"}, \code{"within"}, \code{"between"}, and \code{"type"}.
 #' 
 #' The \link[=afex_aov-methods]{print} method for \code{afex_aov} objects (invisibly) returns (and prints) the same as if \code{return} is \code{"nice"}: a nice ANOVA table (produced by \code{\link{nice}}) with the following columns: \code{Effect}, \code{df}, \code{MSE} (mean-squared errors), \code{F} (potentially with significant symbols), \code{ges} (generalized eta-squared), \code{p}.
 #' 
@@ -320,16 +320,14 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
       aov = aov,
       Anova = Anova.out,
       lm = tmp.lm,
-      data = data.l,
-      information = list(
-        dv = dv,
-        id = id,
-        within = within,
-        between = between,
-        type = type
-        )
+      data = data.l
     )
     class(afex_aov) <- "afex_aov"
+    attr(afex_aov, "dv") <- dv
+    attr(afex_aov, "id") <- id
+    attr(afex_aov, "within") <- within
+    attr(afex_aov, "between") <- between
+    attr(afex_aov, "type") <- type
     afex_aov$anova_table <- do.call("anova", args = c(object = list(afex_aov), observed = list(observed), anova_table))
     return(afex_aov)
   }
@@ -341,16 +339,14 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
   else if (return == "nice") {
      afex_aov <- list(
       anova_table = NULL,
-      Anova = Anova.out,
-      information = list(
-        dv = dv,
-        id = id,
-        within = within,
-        between = between,
-        type = type
-        )
+      Anova = Anova.out
     )
     class(afex_aov) <- "afex_aov"
+    attr(afex_aov, "dv") <- dv
+    attr(afex_aov, "id") <- id
+    attr(afex_aov, "within") <- within
+    attr(afex_aov, "between") <- between
+    attr(afex_aov, "type") <- type
     #afex_aov$anova_table <- do.call("anova", args = c(object = list(afex_aov), observed = list(observed), args.return))
     return(do.call("nice", args = c(object = list(afex_aov), observed = list(observed), anova_table)))
   }

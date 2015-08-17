@@ -24,9 +24,9 @@
 #' \item \code{full.model} the \code{"lmerMod"} object returned from fitting the full mixed model.
 #' \item \code{restricted.models} a list of \code{"lmerMod"} objects from fitting the restricted models (i.e., each model lacks the corresponding effect)
 #' \item \code{tests} a list of objects returned by the function for obtaining the p-values.
-#' \item \code{type} The \code{type} argument used when calling this function.
-#' \item \code{method} The \code{method} argument used when calling this function.
 #' }
+#' 
+#' It also has the following attributes, \code{"type"} and \code{"method"}.
 #'
 #' Two similar methods exist for objects of class \code{"mixed"}: \code{print} and \code{anova}. They print a nice version of the \code{anova_table} element of the returned object (which is also invisibly returned). This methods omit some columns and nicely round the other columns. The following columns are always printed:
 #' \enumerate{
@@ -402,7 +402,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     p.value  <- vapply(tests, function(x) x[["Pr(>Chisq)"]][2], 0)
     anova_table <- data.frame(Df = df.small, Chisq = chisq, "Chi Df" = df, "Pr(>Chisq)"=p.value, stringsAsFactors = FALSE, check.names = FALSE)
     rownames(anova_table) <- fixed.effects
-    if (type == 3) anova_tab_addition <- paste0("Df full model: ", df.large[1])
+    if (type == 3 | type == "III") anova_tab_addition <- paste0("Df full model: ", df.large[1])
     else anova_tab_addition <- paste0("Df full model(s): ", df.large)
     
     # 
@@ -448,8 +448,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     paste0("Data: " ,mc[["data"]]),
     anova_tab_addition
     )
-  list.out <- list(anova_table = anova_table, full.model = full.model, restricted.models = fits, tests = tests, type = type, method = method[[1]])
+  list.out <- list(anova_table = anova_table, full.model = full.model, restricted.models = fits, tests = tests) #, type = type, method = method[[1]]
   class(list.out) <- "mixed"
+  attr(list.out, "type") <- type
+  attr(list.out, "method") <- method
   list.out
 }
 
@@ -468,11 +470,11 @@ get_mixed_warnings <- function(x) {
 }
 
 check_likelihood <- function(object) {
-  if (object$type == 3) {
+  if (attr(object, "type") == 3 | attr(object, "type") == "III") {
     logLik_full <- as.numeric(logLik(object[["full.model"]]))
     logLik_restricted <- as.numeric(vapply(object[["restricted.models"]], logLik, 0))
     if(any(logLik_restricted > logLik_full)) return(rownames(object$anova_table)[logLik_restricted > logLik_full])
-  } else if (object$type == 2) {
+  } else if (attr(object, "type") == 2 | attr(object, "type") == "II") {
     NULL
 #     logLik_full <- as.numeric(vapply(fits[1:max.effect.order],logLik, 0))
 #     logLik_restricted <- as.numeric(vapply(fits[(max.effect.order+1):length(fits)], logLik, 0))

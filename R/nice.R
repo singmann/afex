@@ -124,15 +124,15 @@ nice.mixed <- function(object, sig.symbols = c(" +", " *", " **", " ***"), ...) 
   anova_table <- object$anova_table
   symbols.use <-  c(" +", " *", " **", " ***")
   symbols.use[seq_along(sig.symbols)] <- sig.symbols
-  if (object$method == "KR") {
+  if (attr(object, "method") == "KR") {
     anova_table[,"df"] <- paste(ifelse(is.wholenumber(anova_table[,"num Df"]), round(anova_table[,"num Df"]), formatC(anova_table[,"num Df"], digits = 2, format = "f")),  ifelse(is.wholenumber(anova_table[,"den Df"]), round(anova_table[,"den Df"]), formatC(anova_table[,"den Df"], digits = 2, format = "f")), sep = ", ")
     df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"df"], "F.scaling" = formatC(anova_table[,"F.scaling"], digits = 2, format = "f"), stringsAsFactors = FALSE, check.names = FALSE)
     df.out <- cbind(df.out, data.frame(F = make.stat(anova_table, stat = "F", symbols.use), stringsAsFactors = FALSE))
     df.out$p.value  <-  round_ps(anova_table[,"Pr(>F)"])
-  } else if (object$method == "PB") {
+  } else if (attr(object, "method") == "PB") {
     anova_table[,"Pr(>Chisq)"] <- anova_table[,"Pr(>PB)"]
     df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"Chi Df"], Chisq = make.stat(anova_table, stat = "Chisq", symbols.use), p.value = round_ps(anova_table[,"Pr(>Chisq)"]), stringsAsFactors = FALSE, check.names = FALSE)
-  } else if (object$method == "LRT") {
+  } else if (attr(object, "method") == "LRT") {
     df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"Chi Df"], Chisq = make.stat(anova_table, stat = "Chisq", symbols.use), p.value = round_ps(anova_table[,"Pr(>Chisq)"]), stringsAsFactors = FALSE, check.names = FALSE)
   } else stop("method of mixed object not supported.")
   rownames(df.out) <- NULL

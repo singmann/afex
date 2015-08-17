@@ -108,11 +108,23 @@ test_that("mixed: set.data.arg", {
   expect_that(m2$full.model@call[["data"]], is_identical_to(as.name("data")))
 })
 
-test_that("mixed: expand_re argument", {
+test_that("mixed: expand_re argument, return = 'merMod'", {
   data("ks2013.3")
   m2 <- mixed(response ~ validity + (believability||id), ks2013.3, expand_re = TRUE, method = "LRT")
   m3 <- mixed(response ~ validity + (believability|id), ks2013.3, method = "LRT")
-  expect_identical(length(unlist(summary(m2)$varcor)), 3L)
-  expect_identical(length(unlist(summary(m3)$varcor)), 9L)
-  expect_true(all.equal(unlist(summary(m2)$varcor), diag(summary(m3)$varcor$id), tolerance = 0.05, check.attributes = FALSE))
+  expect_identical(length(unlist(summary(m2)$varcor)), nrow(summary(m3)$varcor$id))
+  expect_true(all.equal(unlist(summary(m2)$varcor), diag(summary(m3)$varcor$id), tolerance = 0.03, check.attributes = FALSE))
+  l2 <- mixed(response ~ validity + (believability||id), ks2013.3, expand_re = TRUE, return = "merMod")
+  expect_is(l2, "merMod")
+  expect_equivalent(m2$full.model, l2)
+})
+
+test_that("mixed: expand_re argument (long)", {
+  testthat::skip_on_cran()
+  data("ks2013.3")
+  m4 <- mixed(response ~ validity + (believability*validity||id) + (validity*condition|content), ks2013.3, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)))
+  m5 <- mixed(response ~ validity + (believability*validity|id) + (validity*condition||content), ks2013.3, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), expand_re = TRUE)
+  expect_identical(length(unlist(summary(m4)$varcor[-7])), nrow(summary(m5)$varcor$id))
+  expect_identical(length(unlist(summary(m5)$varcor[-1])), nrow(summary(m4)$varcor$content))
+  expect_equal(attr(summary(m5)$varcor, "sc"), attr(summary(m4)$varcor, "sc"), tolerance = 0.02)
 })

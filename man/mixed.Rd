@@ -8,8 +8,9 @@
 mixed(formula, data, type = afex_options("type"),
   method = afex_options("method_mixed"), per.parameter = NULL,
   args.test = list(), test.intercept = FALSE,
-  check.contrasts = afex_options("check.contrasts"), set.data.arg = TRUE,
-  progress = TRUE, cl = NULL, expand_re = FALSE, ...)
+  check.contrasts = afex_options("check.contrasts"), expand_re = FALSE,
+  set.data.arg = TRUE, progress = TRUE, cl = NULL, return = "mixed",
+  ...)
 }
 \arguments{
 \item{formula}{a formula describing the full mixed-model to be fitted. As this formula is passed to \code{lmer}, it needs at least one random term.}
@@ -28,13 +29,15 @@ mixed(formula, data, type = afex_options("type"),
 
 \item{check.contrasts}{\code{logical}. Should contrasts be checked and (if necessary) changed to \code{"contr.sum"}? See Details. The default (\code{"TRUE"}) is taken from \code{\link{afex_options}}.}
 
+\item{expand_re}{logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.}
+
 \item{set.data.arg}{\code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}.}
 
 \item{progress}{if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.}
 
 \item{cl}{A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args.test} for this.}
 
-\item{expand_re}{logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.}
+\item{return}{the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors.}
 
 \item{...}{further arguments (such as \code{weights}) passed to \code{\link{lmer}}.}
 }
@@ -97,6 +100,12 @@ Type 2 tests are truly sequential. They are obtained by comparing a model in whi
 
 
 If \code{check.contrasts = TRUE}, contrasts will be set to \code{"contr.sum"} for all factors in the formula if default contrasts are not equal to \code{"contr.sum"} or \code{attrib(factor, "contrasts") != "contr.sum"}. Furthermore, the current contrasts (obtained via \code{getOption("contrasts")}) will be set at the cluster nodes if \code{cl} is not \code{NULL}.
+
+\subsection{Expand Random Effects}{
+The latest addition, motivated by Bates et al. (2015), is the possibility to expand the random effects structure before passing it to \code{lmer} by setting \code{expand_re = TRUE}. This allows to disable estimation of correlation among random effects for random effects term containing factors using the \code{||} notation. This is achieved by first creating a model matrix for each random effects term individually, rename and append the so created columns to the data that is fitted, and replace the actual random effects term with the sum of all so created variables. The variables are renamed by prepending all variables with rei (where i is the number of the random effects term) and replacing ":" with "_by_".
+
+One negative consequence of this is that the data that is fitted will not be the same as the initial data.frame which can lead to problems with e.g., the \code{predict} method. This functionality is quite new so please proceed with care.
+ }
 }
 \note{
 When \code{method = "KR"}, obtaining p-values is known to crash due too insufficient memory or other computational limitations (especially with complex random effects structures). In these cases, the other methods should be used. The RAM demand is a problem especially on 32 bit Windows which only supports up to 2 or 3GB RAM (see \href{http://cran.r-project.org/bin/windows/base/rw-FAQ.html}{R Windows FAQ}). Then it is probably a good idea to use methods "LRT" or "PB".
@@ -320,6 +329,8 @@ Baayen, R. H., & Milin, P. (2010). Analyzing Reaction Times. \emph{International
 Barr, D. J. (2013). Random effects structure for testing interactions in linear mixed-effects models. \emph{Frontiers in Quantitative Psychology and Measurement}, 328. doi:10.3389/fpsyg.2013.00328
 
 Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. \emph{Journal of Memory and Language}, 68(3), 255-278. doi:10.1016/j.jml.2012.11.001
+
+Bates, D., Kliegl, R., Vasishth, S., & Baayen, H. (2015). \emph{Parsimonious Mixed Models}. arXiv:1506.04967 [stat]. Retrieved from \url{http://arxiv.org/abs/1506.04967}
 
 Dalal, D. K., & Zickar, M. J. (2012). Some Common Myths About Centering Predictor Variables in Moderated Multiple Regression and Polynomial Regression. \emph{Organizational Research Methods}, 15(3), 339-362. doi:10.1177/1094428111430540
 

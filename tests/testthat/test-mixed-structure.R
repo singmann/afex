@@ -128,9 +128,12 @@ test_that("mixed: expand_re argument, return = 'merMod'", {
   expect_equal(l2, l5, check.attributes = FALSE )
   expect_identical(names(coef(l2)$id), names(coef(l5)$id))  # parameter names need to be identical (same contrasts)
   expect_false(all(names(coef(l2)$id) == names(coef(l3)$id)))  # parameter names need to be different (different contrasts)
+  l7 <- lmer_alt(response ~ validity + (1|id) + (0+validity*condition||content), ks2013.3, control = lmerControl(optCtrl = list(maxfun=1e6)))
+  expect_is(l7, "merMod")
+  expect_error(lmer_alt(response ~ validity + (0|id) + (0+validity*condition||content), ks2013.3), "Invalid random effects term")
 })
 
-test_that("mixed: expand_re argument (long)", {
+test_that("mixed: expand_re argument (longer)", {
   testthat::skip_on_cran()
   data("ks2013.3")
   m4 <- mixed(response ~ validity + (believability*validity||id) + (validity*condition|content), ks2013.3, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE)

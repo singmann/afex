@@ -109,18 +109,19 @@ test_that("mixed: set.data.arg", {
 })
 
 test_that("mixed: anova with multiple mixed objexts", {
+  data("sk2011.2")
   data("ks2013.3")
-  sk_m1 <- mixed(response ~ instruction+(1|id), sk2_aff, method = "LRT")
-  sk_m2 <- mixed(response ~ instruction+(1|id)+(1|content), sk2_aff, method = "LRT")
+  sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+  sk_m1 <- mixed(response ~ instruction+(1|id), sk2_aff, method = "LRT", progress = FALSE)
+  sk_m2 <- mixed(response ~ instruction+(1|id)+(1|content), sk2_aff, method = "LRT", progress = FALSE)
   sk_m3 <- lmer(response ~ instruction+(1|id)+(validity|content), sk2_aff, REML = FALSE)
   sk_m4 <- lmer(response ~ instruction+(1|id)+(validity|content), sk2_aff, REML = TRUE)
-
-  expect_is(anova(sk_m1, sk_m2, sk_m3), c("anova", "data.frame"))
+  t <- anova(sk_m1, sk_m2, sk_m3)
+  expect_is(t, c("anova", "data.frame"))
   expect_is(anova(sk_m1, object = sk_m2, sk_m3), c("anova", "data.frame"))
   expect_is(anova(sk_m1, object = sk_m2, sk_m3, ks2013.3), c("anova", "data.frame"))
   expect_warning(anova(sk_m1, object = sk_m2, sk_m3, sk_m4), "some models fit with REML = TRUE, some not")
 })
-
 
 context("Mixed: Expand random effects")
 

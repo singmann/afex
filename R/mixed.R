@@ -130,6 +130,7 @@
 #' @importFrom Matrix Matrix sparseMatrix rankMatrix
 #' @importFrom parallel clusterCall clusterExport clusterEvalQ clusterApplyLB
 #' @importFrom stats logLik terms as.formula contrasts<- model.matrix model.frame anova vcov
+#' @importFrom methods is
 #' @encoding UTF-8
 #' 
 #' @example examples/examples.mixed.R

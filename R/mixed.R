@@ -57,6 +57,8 @@
 #' \item \code{stat} 2 times the difference in likelihood (obtained with \code{logLik}) between full and restricted model (i.e., a chi-square value).
 #' }
 #'
+#' Note that  \code{anova} can also be called with additional mixed and/or \code{merMod} objects. In this casethe full models are passed on to \code{anova.merMod} (with \code{refit=FALSE}, which differs from the default of \code{anova.merMod}) which produces the known LRT tables.
+#'
 #' The \code{summary} method for objects of class \code{mixed} simply calls \code{\link{summary.merMod}} on the full model.
 #' 
 #' If \code{return = "merMod"}, an object of class \code{"merMod"}, as returned from \code{g/lmer}, is returned.
@@ -573,11 +575,25 @@ summary.mixed <- function(object, ...) summary(object = if (length(object[["full
 
 #' @method anova mixed
 #' @export
-anova.mixed <- function(object, ...) {
-  if(!isREML(object[["full.model"]]) && !isTRUE(check_likelihood(object))) 
-    warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(object), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"))
-  get_mixed_warnings(object)
-  object$anova_table
+anova.mixed <- function(object, ..., refit = FALSE) {
+  mCall <- match.call(expand.dots = TRUE)
+  dots <- list(...)
+  modp <- (as.logical(vapply(dots, is, NA, "merMod")) |
+             as.logical(vapply(dots, is, NA, "lm")) |
+             as.logical(vapply(dots, is, NA, "mixed"))
+           )
+  if (any(modp)) {
+    mCall[[2]] <- substitute(x$full.model, list(x = mCall[[2]]))
+    for (i in which(as.logical(vapply(dots, is, NA, "mixed")))+2) mCall[[i]] <- substitute(x$full.model, list(x = mCall[[i]]))
+    mCall[["refit"]] <- refit
+    mCall[[1]] <- as.name("anova")
+    eval(mCall)
+  } else {
+    if(!isREML(object[["full.model"]]) && !isTRUE(check_likelihood(object))) 
+      warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(object), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"))
+    get_mixed_warnings(object)
+    object$anova_table
+  }
 }
 
 

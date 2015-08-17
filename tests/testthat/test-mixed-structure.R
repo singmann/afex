@@ -108,6 +108,20 @@ test_that("mixed: set.data.arg", {
   expect_that(m2$full.model@call[["data"]], is_identical_to(as.name("data")))
 })
 
+test_that("mixed: anova with multiple mixed objexts", {
+  data("ks2013.3")
+  sk_m1 <- mixed(response ~ instruction+(1|id), sk2_aff, method = "LRT")
+  sk_m2 <- mixed(response ~ instruction+(1|id)+(1|content), sk2_aff, method = "LRT")
+  sk_m3 <- lmer(response ~ instruction+(1|id)+(validity|content), sk2_aff, REML = FALSE)
+  sk_m4 <- lmer(response ~ instruction+(1|id)+(validity|content), sk2_aff, REML = TRUE)
+
+  expect_is(anova(sk_m1, sk_m2, sk_m3), c("anova", "data.frame"))
+  expect_is(anova(sk_m1, object = sk_m2, sk_m3), c("anova", "data.frame"))
+  expect_is(anova(sk_m1, object = sk_m2, sk_m3, ks2013.3), c("anova", "data.frame"))
+  expect_warning(anova(sk_m1, object = sk_m2, sk_m3, sk_m4), "some models fit with REML = TRUE, some not")
+})
+
+
 context("Mixed: Expand random effects")
 
 
@@ -143,3 +157,5 @@ test_that("mixed: expand_re argument (longer)", {
   expect_identical(length(unlist(summary(m5)$varcor[-1])), nrow(summary(m4)$varcor$content))
   expect_equal(attr(summary(m5)$varcor, "sc"), attr(summary(m4)$varcor, "sc"), tolerance = 0.02)
 })
+
+

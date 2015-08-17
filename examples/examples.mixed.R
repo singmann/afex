@@ -13,7 +13,7 @@ data("sk2011.2")
 # use only affirmation problems (S&K also splitted the data like this)
 sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
 
-# set up model with maximal random slopes for participant random effect
+# set up model with maximal by-participant random slopes 
 sk_m1 <- mixed(response ~ instruction*inference*type+(inference*type|id), sk2_aff)
 
 sk_m1 # prints ANOVA table with nicely rounded numbers (i.e., as characters)

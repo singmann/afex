@@ -83,6 +83,8 @@ For models with \code{method="PB"} the following further column is returned:
 \item \code{stat} 2 times the difference in likelihood (obtained with \code{logLik}) between full and restricted model (i.e., a chi-square value).
 }
 
+Note that  \code{anova} can also be called with additional mixed and/or \code{merMod} objects. In this casethe full models are passed on to \code{anova.merMod} (with \code{refit=FALSE}, which differs from the default of \code{anova.merMod}) which produces the known LRT tables.
+
 The \code{summary} method for objects of class \code{mixed} simply calls \code{\link{summary.merMod}} on the full model.
 
 If \code{return = "merMod"}, an object of class \code{"merMod"}, as returned from \code{g/lmer}, is returned.
@@ -142,7 +144,7 @@ data("sk2011.2")
 # use only affirmation problems (S&K also splitted the data like this)
 sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
 
-# set up model with maximal random slopes for participant random effect
+# set up model with maximal by-participant random slopes 
 sk_m1 <- mixed(response ~ instruction*inference*type+(inference*type|id), sk2_aff)
 
 sk_m1 # prints ANOVA table with nicely rounded numbers (i.e., as characters)

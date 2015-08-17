@@ -30,6 +30,8 @@ As of version `0.14` several changes to the interface were introduced:
 
 - added three new real example data sets and a [vignette](http://htmlpreview.github.io/?https://raw.githubusercontent.com/singmann/afex/master/inst/doc/anova_posthoc_singmann_klauer_2011.html) showing how to calculate contrasts after ANOVA.
 
+-  added `expand_re` argument to `mixed` which, if `TRUE`, correctly interprets the `||` notation in random effects with factors (i.e., suppresses estimation of correlation among random effects). `lmer_alt` is a wrapper for `mixed` which uses `expand_re = TRUE`, returns an object of class `merMod` (i.e., does not calculate p-values), and otherwise behaves like `g/lmer` (i.e., does not enforce certain contrasts)
+
 - `nice.anova` was renamed to `nice` (and now also works with `mixed` objects).
 
 - Returned objects of `mixed` and the ANOVA functions (i.e., of class `afex_aov`) are similar:

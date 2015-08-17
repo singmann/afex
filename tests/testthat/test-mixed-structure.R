@@ -108,22 +108,33 @@ test_that("mixed: set.data.arg", {
   expect_that(m2$full.model@call[["data"]], is_identical_to(as.name("data")))
 })
 
+context("Mixed: Expand random effects")
+
+
 test_that("mixed: expand_re argument, return = 'merMod'", {
   data("ks2013.3")
-  m2 <- mixed(response ~ validity + (believability||id), ks2013.3, expand_re = TRUE, method = "LRT")
-  m3 <- mixed(response ~ validity + (believability|id), ks2013.3, method = "LRT")
+  m2 <- mixed(response ~ validity + (believability||id), ks2013.3, expand_re = TRUE, method = "LRT", progress=FALSE)
+  m3 <- mixed(response ~ validity + (believability|id), ks2013.3, method = "LRT", progress=FALSE)
   expect_identical(length(unlist(summary(m2)$varcor)), nrow(summary(m3)$varcor$id))
   expect_true(all.equal(unlist(summary(m2)$varcor), diag(summary(m3)$varcor$id), tolerance = 0.03, check.attributes = FALSE))
   l2 <- mixed(response ~ validity + (believability||id), ks2013.3, expand_re = TRUE, return = "merMod")
   expect_is(l2, "merMod")
   expect_equivalent(m2$full.model, l2)
+  l3 <- lmer_alt(response ~ validity + (believability||id), ks2013.3)
+  l4 <- lmer_alt(response ~ validity + (believability||id), ks2013.3, control = lmerControl(optimizer = "Nelder_Mead"))
+  expect_equivalent(l2, l3) 
+  expect_equal(l3, l4, check.attributes = FALSE)
+  l5 <- lmer_alt(response ~ validity + (believability||id), ks2013.3, control = lmerControl(optimizer = "Nelder_Mead"), check.contrasts = TRUE)
+  expect_equal(l2, l5, check.attributes = FALSE )
+  expect_identical(names(coef(l2)$id), names(coef(l5)$id))  # parameter names need to be identical (same contrasts)
+  expect_false(all(names(coef(l2)$id) == names(coef(l3)$id)))  # parameter names need to be different (different contrasts)
 })
 
 test_that("mixed: expand_re argument (long)", {
   testthat::skip_on_cran()
   data("ks2013.3")
-  m4 <- mixed(response ~ validity + (believability*validity||id) + (validity*condition|content), ks2013.3, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)))
-  m5 <- mixed(response ~ validity + (believability*validity|id) + (validity*condition||content), ks2013.3, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), expand_re = TRUE)
+  m4 <- mixed(response ~ validity + (believability*validity||id) + (validity*condition|content), ks2013.3, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE)
+  m5 <- mixed(response ~ validity + (believability*validity|id) + (validity*condition||content), ks2013.3, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), expand_re = TRUE, progress=FALSE)
   expect_identical(length(unlist(summary(m4)$varcor[-7])), nrow(summary(m5)$varcor$id))
   expect_identical(length(unlist(summary(m5)$varcor[-1])), nrow(summary(m4)$varcor$content))
   expect_equal(attr(summary(m5)$varcor, "sc"), attr(summary(m4)$varcor, "sc"), tolerance = 0.02)

@@ -22,6 +22,13 @@
     
     o   added afex_options() functionality for setting options globally.
     
+    o   added expand_re argument to mixed which, if TRUE, correctly interprets 
+        the || notation in random effects with factors (i.e., suppresses 
+        estimation of correlation among random effects). lmer_alt is a wrapper
+        for mixed which uses expand_re = TRUE, returns an object of class
+        merMod (i.e., does not calculate p-values), and otherwise behaves 
+        like g/lmer (i.e., does not enforce certain contrasts)
+    
     o   added three new data sets (Singmann & Klauer, 2011; Klauer & 
         Singmann, 2013) and a vignette showing how to calculate 
         contrasts after ANOVA.
@@ -44,7 +51,6 @@
         full model.
         
     o   afex does not depend on car package anymore, it is only imported.
-    
         
     o   afex is now hosted on github: https://github.com/singmann/afex
         

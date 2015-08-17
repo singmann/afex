@@ -14,6 +14,7 @@
 #' @param set.data.arg \code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}. 
 #' @param progress  if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.
 #' @param cl  A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args.test} for this.
+#' @param expand_re logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.
 #' @param ... further arguments (such as \code{weights}) passed to \code{\link{lmer}}.
 #'
 #'
@@ -103,6 +104,7 @@
 #' @export mixed
 #' @import pbkrtest
 #' @importFrom lme4 lmer glmer nobars getME fixef isREML
+#' @importFrom stringr str_replace
 #' @importMethodsFrom Matrix t isSymmetric "%*%" solve diag
 #' @importClassesFrom Matrix Matrix
 #' @importFrom Matrix Matrix sparseMatrix rankMatrix
@@ -113,7 +115,7 @@
 #' @example examples/examples.mixed.R
 #' 
 
-mixed <- function(formula, data, type = afex_options("type"), method = afex_options("method_mixed"), per.parameter = NULL, args.test = list(), test.intercept = FALSE, check.contrasts = afex_options("check.contrasts"), set.data.arg = TRUE, progress = TRUE, cl = NULL, ...) {
+mixed <- function(formula, data, type = afex_options("type"), method = afex_options("method_mixed"), per.parameter = NULL, args.test = list(), test.intercept = FALSE, check.contrasts = afex_options("check.contrasts"), set.data.arg = TRUE, progress = TRUE, cl = NULL, expand_re = FALSE, ...) {
   if (check.contrasts) {
     #browser()
     vars.to.check <- all.vars(formula)
@@ -171,12 +173,33 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     non.null <- c.ns[!abs(vapply(data[, c.ns, drop = FALSE], mean, 0)) < .Machine$double.eps ^ 0.5]
     if (length(non.null) > 0) message(str_c("Numerical variables NOT centered on 0 (i.e., interpretation of all main effects might be difficult if in interactions): ", str_c(non.null, collapse = ", ")))
   }
+  if (expand_re) {
+    random_parts <- str_c(all.terms[grepl("\\|", all.terms)])
+    which_random_double_bars <- str_detect(random_parts, "\\|\\|")
+    random_units <- str_replace(random_parts, "^.+\\|\\s+", "")
+    tmp_random <- lapply(str_replace(random_parts, "\\|.+$", ""), function(x) as.formula(str_c("~", x)))
+    tmp_model.matrix <- vector("list", length(random_parts))
+    re_contains_intercept <- rep(FALSE, length(random_parts))
+    new_random <- vector("character", length(random_parts))
+    for (i in seq_along(random_parts)) {
+      tmp_model.matrix[[i]] <- model.matrix(tmp_random[[i]], data = data)
+      if (colnames(tmp_model.matrix[[i]])[1] == "(Intercept)") {
+        tmp_model.matrix[[i]] <- tmp_model.matrix[[i]][,-1]
+        re_contains_intercept[i] <- TRUE
+      }
+      colnames(tmp_model.matrix[[i]]) <- str_c("re", i, ".", colnames(tmp_model.matrix[[i]]))
+      new_random[i] <- str_c("(", as.numeric(re_contains_intercept[i]), "+", str_c(colnames(tmp_model.matrix[[i]]), collapse = "+"), if (which_random_double_bars[i]) "||" else "|", random_units, ")")
+    }
+    data <- cbind(data, as.data.frame(do.call(cbind, tmp_model.matrix)))
+    random <- str_c(new_random, collapse = "+")
+    #m.matrix <- cbind(m.matrix, do.call(cbind, tmp_model.matrix))
+  }
   ####################
   ### Part II: obtain the lmer fits
   ####################
   ## Part IIa: prepare formulas
-  mf <- mc[!names(mc) %in% c("type", "method", "args.test", "progress", "check.contrasts", "per.parameter", "cl", "test.intercept")]
-  mf[["formula"]] <- formula.f
+  mf <- mc[!names(mc) %in% c("type", "method", "args.test", "progress", "check.contrasts", "per.parameter", "cl", "test.intercept", "expand_re")]
+  mf[["formula"]] <-as.formula(str_c(dv,deparse(rh2),"+",random))   #formula.f
   if ("family" %in% names(mf)) mf[[1]] <- as.name("glmer")
   else mf[[1]] <- as.name("lmer")
   mf[["data"]] <- as.name("data")

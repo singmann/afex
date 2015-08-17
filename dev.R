@@ -3,7 +3,7 @@ load_all()
 
 devtools::test()
 
-#require(testthat)
+require(testthat)
 #test_dir("tests/testthat")
 #test_package("afex")
 

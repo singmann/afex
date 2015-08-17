@@ -9,7 +9,7 @@ mixed(formula, data, type = afex_options("type"),
   method = afex_options("method_mixed"), per.parameter = NULL,
   args.test = list(), test.intercept = FALSE,
   check.contrasts = afex_options("check.contrasts"), set.data.arg = TRUE,
-  progress = TRUE, cl = NULL, ...)
+  progress = TRUE, cl = NULL, expand_re = FALSE, ...)
 }
 \arguments{
 \item{formula}{a formula describing the full mixed-model to be fitted. As this formula is passed to \code{lmer}, it needs at least one random term.}
@@ -33,6 +33,8 @@ mixed(formula, data, type = afex_options("type"),
 \item{progress}{if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.}
 
 \item{cl}{A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args.test} for this.}
+
+\item{expand_re}{logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.}
 
 \item{...}{further arguments (such as \code{weights}) passed to \code{\link{lmer}}.}
 }

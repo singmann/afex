@@ -118,7 +118,7 @@ print.afex_aov <- function(x, ...) {
 #' @export
 summary.afex_aov <- function(object, ...) {
   if (class(object$Anova)[1] == "Anova.mlm") {
-    if(attr(object$anova_table, "p.adjust.method") != "none") message("Note, results are NOT adjusted for multiple comparisons as requested (p.adjust.method = '", attr(object$anova_table, "p.adjust.method"), "') because the desired method of sphericity correction is unkown. For adjusted p-values print the object (to see object$anova_table), or call one of anova.afex_aov() or nice().")
+    if(attr(object$anova_table, "p.adjust.method") != "none") message("Note, results are NOT adjusted for multiple comparisons as requested (p.adjust.method = '", attr(object$anova_table, "p.adjust.method"), "') because the desired method of sphericity correction is unknown. For adjusted p-values print the object (to see object$anova_table), or call one of anova.afex_aov() or nice().")
     return(summary(object$Anova, multivariate = FALSE))
   } else if (class(object$Anova)[1] == "anova") {
     return(object$anova_table)

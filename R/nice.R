@@ -7,6 +7,7 @@
 #' @param es Effect Size to be reported. The default is given by \code{afex_options("es_aov")}, which is initially set to \code{"ges"} (i.e., reporting generalized eta-squared, see details). Also supported is partial eta-squared (\code{"pes"}) or \code{"none"}.
 #' @param observed character vector referring to the observed (i.e., non manipulated) variables/effects in the design. Important for calculation of generalized eta-squared (ignored if \code{es} is not \code{"ges"}), see details.
 #' @param correction Character. Which sphericity correction of the degrees of freedom should be reported for the within-subject factors.  The default is given by \code{afex_options("correction_aov")}, which is initially set to \code{"GG"} corresponding to the Greenhouse-Geisser correction. Possible values are \code{"GG"}, \code{"HF"} (i.e., Hyunh-Feldt correction), and \code{"none"} (i.e., no correction).
+#' @param p.adjust.method \code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details).
 #' @param sig.symbols Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig.symbols = ""} will display the stars but not the \code{+}, \code{sig.symbols = rep("", 4)} will display no symbols.
 #' @param MSE logical. Should the column containing the Mean Sqaured Error (MSE) be displayed? Default is \code{TRUE}.
 #' @param intercept logical. Should intercept (if present) be included in the ANOVA table? Default is \code{FALSE} which hides the intercept.
@@ -21,13 +22,17 @@
 #' Conversion functions to other formats (such as HTML, ODF, or Word) can be found at the \href{http://cran.r-project.org/web/views/ReproducibleResearch.html}{Reproducible Research Task View}.
 #'
 #' The default reports generalized eta squared (Olejnik & Algina, 2003), the "recommended effect size for repeated measured designs" (Bakeman, 2005). Note that it is important that all measured variables (as opposed to experimentally manipulated variables), such as e.g., age, gender, weight, ..., must be declared via \code{observed} to obtain the correct effect size estimate. Partial eta squared (\code{"pes"}) does not require this.
-#'
+#' 
+#' Exploratory ANOVA, for which no detailed hypotheses have been specified a priori, harbor a multiple comparison problem (Cramer et al., 2015). To avoid an inflation of familywise Type I error rate, results need to be corrected for multiple comparisons using \code{p.adjust.method}.
+#' \code{p.adjust.method} defaults to the method specified in the call to \code{\link{aov_car}} in \code{anova_table}. If no method was specified and \code{p.adjust.method = NULL} p-values are not adjusted.
+#' 
 #' @seealso \code{\link{aov_ez}} and \code{\link{aov_car}} are the convenience functions to create the object appropriate for \code{nice_anova}.
 #'
 #' @author The code for calculating generalized eta-squared was written by Mike Lawrence.\cr Everything else was written by Henrik Singmann.
 #'
 #' @references Bakeman, R. (2005). Recommended effect size statistics for repeated measures designs. \emph{Behavior Research Methods}, 37(3), 379-384. doi:10.3758/BF03192707
-
+#'
+#' Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1–8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
 #'
 #' Olejnik, S., & Algina, J. (2003). Generalized Eta and Omega Squared Statistics: Measures of Effect Size for Some Common Research Designs. \emph{Psychological Methods}, 8(4), 434-447. doi:10.1037/1082-989X.8.4.434
 #' 
@@ -76,8 +81,9 @@ nice <- function(object, ...) UseMethod("nice", object)
 #' @rdname nice
 #' @method nice afex_aov
 #' @export
-nice.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, sig.symbols = c(" +", " *", " **", " ***"), ...) { 
-  anova_table <- as.data.frame(anova(object, es = es, observed = observed, correction = correction, MSE = MSE, intercept = intercept))
+nice.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, sig.symbols = c(" +", " *", " **", " ***"), p.adjust.method = NULL, ...) { 
+  if(is.null(p.adjust.method)) p.adjust.method <- ifelse(is.null(attr(object$anova_table, "p.adjust.method")), "none", attr(object$anova_table, "p.adjust.method"))
+  anova_table <- as.data.frame(anova(object, es = es, observed = observed, correction = correction, MSE = MSE, intercept = intercept, p.adjust.method = p.adjust.method))
   nice.anova(anova_table, MSE = MSE, intercept = intercept, sig.symbols = sig.symbols)
 }
 

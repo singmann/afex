@@ -37,7 +37,7 @@ nice(object, ...)
 
 \item{sig.symbols}{Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig.symbols = ""} will display the stars but not the \code{+}, \code{sig.symbols = rep("", 4)} will display no symbols.}
 
-\item{p.adjust.method}{\code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details).}
+\item{p.adjust.method}{\code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details). The default \code{NULL} corresponds to no adjustment.}
 }
 \value{
 A \code{data.frame} with the ANOVA table consisting of characters. The columns that are always present are: \code{Effect}, \code{df} (degrees of freedom), \code{F}, and \code{p}.
@@ -48,7 +48,7 @@ A \code{data.frame} with the ANOVA table consisting of characters. The columns t
 This generic function produces a nice ANOVA table for printin for objects of class. \code{nice_anova} takes an object from \code{\link[car]{Anova}} possible created by the convenience functions \code{\link{aov_ez}} or \code{\link{aov_car}}. When within-subject factors are present, either sphericity corrected or uncorrected degrees of freedom can be reported.
 }
 \details{
-The returned \code{data.frame} is print-ready when adding to a document with proper methods. I recommend \pkg{ascii} and \pkg{xtable}. \pkg{ascii} provides conversion to \href{http://www.methods.co.nz/asciidoc/}{AsciiDoc} but most notably to \href{http://orgmode.org/}{org-mode} (see \code{\link[ascii]{ascii}} and \code{\link[ascii]{print-ascii}}). \pkg{xtable} converts a \code{data.frame} into LaTeX code with many possible options (e.g., allowing for \code{"longtable"} or \code{"sidewaystable"}), see \code{\link[xtable]{xtable}} and \code{\link[xtable]{print.xtable}}. See Examples.
+The returned \code{data.frame} is print-ready when adding to a document with proper methods. Either directly via \pkg{knitr} or similar approaches such as via packages \pkg{ascii} or \pkg{xtable} (nowadays \pkg{knitr} is probably the best approach, see \href{http://yihui.name/knitr/}{here}). \pkg{ascii} provides conversion to \href{http://www.methods.co.nz/asciidoc/}{AsciiDoc} and \href{http://orgmode.org/}{org-mode} (see \code{\link[ascii]{ascii}} and \code{\link[ascii]{print-ascii}}). \pkg{xtable} converts a \code{data.frame} into LaTeX code with many possible options (e.g., allowing for \code{"longtable"} or \code{"sidewaystable"}), see \code{\link[xtable]{xtable}} and \code{\link[xtable]{print.xtable}}. See Examples.
 
 Conversion functions to other formats (such as HTML, ODF, or Word) can be found at the \href{http://cran.r-project.org/web/views/ReproducibleResearch.html}{Reproducible Research Task View}.
 

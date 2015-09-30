@@ -2,6 +2,11 @@
 #' 
 #' Methods defined for objects returned from the ANOVA functions \code{\link{aov_car}} et al. of class \code{afex_aov} containing both the ANOVA fitted via \code{car::Anova} and base R's \code{aov}.
 #' 
+#' @param object,x object of class \code{afex_aov} as returned from \code{\link{aov_car}} and related functions.
+#' @param p.adjust.method \code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details).
+#' @param ... further arguments passed through, see description of return value for details.
+#' @param trms,xlev,grid same as for \code{\link{lsm.basis}}.
+#' 
 #' @return
 #' \describe{
 #'   \item{\code{anova}}{Returns an ANOVA table of class \code{c("anova", "data.frame")}. Information such as effect size (\code{es}) or df-correction are calculated each time this method is called.}
@@ -11,9 +16,12 @@
 #'   
 #' }
 #'
-#' @param object,x object of class \code{afex_aov} as returned from \code{\link{aov_car}} and related functions.
-#' @param ... further arguments passed through, see description of return value for details.
-#' @param trms,xlev,grid same as for \code{\link{lsm.basis}}.
+#' @details 
+#' Exploratory ANOVA, for which no detailed hypotheses have been specified a priori, harbor a multiple comparison problem (Cramer et al., 2015). To avoid an inflation of familywise Type I error rate, results need to be corrected for multiple comparisons using \code{p.adjust.method}.
+#' \code{p.adjust.method} defaults to the method specified in the call to \code{\link{aov_car}} in \code{anova_table}. If no method was specified and \code{p.adjust.method = NULL} p-values are not adjusted.
+#' 
+#' @references 
+#' Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1–8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
 #' 
 #' @name afex_aov-methods
 NULL
@@ -23,7 +31,7 @@ NULL
 #' @rdname afex_aov-methods
 #' @inheritParams nice
 #' @export
-anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, ...) {
+anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, p.adjust.method = NULL, ...) {
   # internal functions:
   # check arguments
   es <- match.arg(es, c("none", "ges", "pes"), several.ok = TRUE)
@@ -76,7 +84,7 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
       }
       obs_SSn1 <- sum(tmp2$SS*obs)
       obs_SSn2 <- tmp2$SS*obs
-    }else{
+    } else {
       obs_SSn1 <- 0
       obs_SSn2 <- 0
     }
@@ -88,6 +96,10 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
   #browser()
   if (!MSE) anova_table$MSE <- NULL 
   if (!intercept) if (row.names(anova_table)[1] == "(Intercept)")  anova_table <- anova_table[-1,, drop = FALSE]
+  # Correct for multiple comparisons
+  if(is.null(p.adjust.method)) p.adjust.method <- ifelse(is.null(attr(object$anova_table, "p.adjust.method")), "none", attr(object$anova_table, "p.adjust.method"))
+  anova_table[,"Pr(>F)"] <- p.adjust(anova_table[,"Pr(>F)"], method = p.adjust.method)
+  attr(anova_table, "p.adjust.method") <- p.adjust.method
   anova_table
 }
 
@@ -106,6 +118,7 @@ print.afex_aov <- function(x, ...) {
 #' @export
 summary.afex_aov <- function(object, ...) {
   if (class(object$Anova)[1] == "Anova.mlm") {
+    if(attr(object$anova_table, "p.adjust.method") != "none") message("Note, results are NOT adjusted for multiple comparisons as requested (p.adjust.method = '", attr(object$anova_table, "p.adjust.method"), "') because the desired method of sphericity correction is unknown. For adjusted p-values print the object (to see object$anova_table), or call one of anova.afex_aov() or nice().")
     return(summary(object$Anova, multivariate = FALSE))
   } else if (class(object$Anova)[1] == "anova") {
     return(object$anova_table)

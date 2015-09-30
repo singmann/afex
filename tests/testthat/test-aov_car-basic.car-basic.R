@@ -84,3 +84,41 @@ test_that("Data from O'Brien & Kaiser replicates their paper (p. 328, Table 8, c
   
 })
 
+test_that("Data from O'Brien & Kaiser adjusted for familywise error rate (p. 328, Table 8, column 'average'", {
+  data(obk.long, package = "afex")
+  out1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk.long, observed = "gender", return = "afex_aov", anova_table = list(correction = "none", p.adjust.method = "bonferroni"))
+  
+  expect_that(unname(unlist(out1[["anova_table"]]["treatment", c("num Df", "den Df", "F")])), equals(c(2, 10, 3.94), tolerance = 0.001))
+  expect_that(unname(unlist(out1[["anova_table"]]["gender", c("num Df", "den Df", "F")])), equals(c(1, 10, 3.66), tolerance = 0.001))
+  expect_that(round(unname(unlist(out1[["anova_table"]]["treatment:gender", c("num Df", "den Df", "F")])), 2), equals(c(2, 10, 2.86), tolerance = 0.001))
+  
+  ## check against own results:
+  anova_tab <- structure(list(`num Df` = c(2, 1, 2, 2, 4, 2, 4, 4, 8, 4, 8, 
+  8, 16, 8, 16), `den Df` = c(10, 10, 10, 20, 20, 20, 20, 40, 40, 
+  40, 40, 80, 80, 80, 80), MSE = c(22.8055555555555, 22.8055555555555, 
+  22.8055555555555, 4.01388888888889, 4.01388888888889, 4.01388888888889, 
+  4.01388888888889, 1.5625, 1.5625, 1.5625, 1.5625, 1.20208333333333, 
+  1.20208333333333, 1.20208333333333, 1.20208333333333), F = c(3.940494501098, 
+  3.65912050065102, 2.85547267441343, 16.1329196993199, 4.85098375975551, 
+  0.282782484190432, 0.636602429722426, 16.6856704980843, 0.0933333333333336, 
+  0.450268199233716, 0.620437956204379, 1.17990398215104, 0.345292160558641, 
+  0.931293452060798, 0.735935938468544), ges = c(0.198248507309966, 
+  0.114806410630587, 0.179183259116394, 0.151232705544895, 0.0967823866181358, 
+  0.00312317714869712, 0.0140618480455475, 0.12547183572154, 0.00160250371109459, 
+  0.0038716854273722, 0.010669821220833, 0.0153706689696344, 0.00905399063368842, 
+  0.012321395080303, 0.0194734697889242), `Pr(>F)` = c(0.0547069269265198, 
+  0.0848002538616402, 0.104469234023772, 6.73163655770545e-05, 
+  0.00672273209545241, 0.756647338927411, 0.642369488905348, 4.02664339633774e-08, 
+  0.999244623719389, 0.771559070589063, 0.755484449904079, 0.32158661418337, 
+  0.990124565656718, 0.495611922963992, 0.749561639456282)), .Names = c("num Df", 
+  "den Df", "MSE", "F", "ges", "Pr(>F)"), heading = c("Anova Table (Type 3 tests)\n", 
+  "Response: value"), row.names = c("treatment", "gender", "treatment:gender", 
+  "phase", "treatment:phase", "gender:phase", "treatment:gender:phase", 
+  "hour", "treatment:hour", "gender:hour", "treatment:gender:hour", 
+  "phase:hour", "treatment:phase:hour", "gender:phase:hour", "treatment:gender:phase:hour"
+  ), class = c("data.frame"))
+  anova_tab$`Pr(>F)` <- p.adjust(anova_tab$`Pr(>F)`, method = "bonferroni")
+  
+  expect_equal(out1[["anova_table"]], anova_tab, check.attributes = FALSE)
+  
+})

@@ -1,4 +1,28 @@
                     *************************
+                    ** afex VERSION 0.15-x **
+                    *************************
+                    
+                    Changes in afex Version 0.15-x
+                    Released xxx 2015
+
+    Significant User Visible Changes and New Features
+
+    o   added p.adjust.method argument for ANOVA functions (anova and nice 
+        methods). Can be used to control for multiple comparisons in 
+        exploratory ANOVAs (see Cramer, et al., 2015; PB&R). Functionality 
+        contributed by Frederik Aust (https://github.com/singmann/afex/pull/3).
+        
+    Bugfixes
+    
+    o   ANOVA functions work with dplyr data.frames now (data is transformed
+        via as.data.frame). See: https://github.com/singmann/afex/issues/6
+    
+    o   
+    
+
+    
+ 
+                    *************************
                     ** afex VERSION 0.14-x **
                     *************************
                     

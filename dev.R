@@ -1,9 +1,10 @@
 require(devtools)
+require(testthat)
 load_all()
 
 devtools::test()
 
-require(testthat)
+
 #test_dir("tests/testthat")
 #test_package("afex")
 
@@ -35,7 +36,7 @@ R.libs <- "./packages/library"
 closeAllConnections()
 roxy.package(
 	pck.source.dir = pkg.src.dir,
-	pck.version = "0.14-2",
+	pck.version = "0.15-2",
 	pck.description = data.frame(
 		Package = "afex",
 		Type = "Package",
@@ -50,7 +51,7 @@ roxy.package(
         person(given=\"Frederik\", family=\"Aust\", role=c(\"ctb\"))
     )",
 		Depends = "R (>= 3.0.0), lme4 (>= 1.0.5), reshape2, lsmeans (>= 2.17)",
-		Suggests = "ascii, xtable, parallel, plyr, optimx, nloptr, knitr, lattice, multcomp, testthat, mlmRev",
+		Suggests = "ascii, xtable, parallel, plyr, optimx, nloptr, knitr, lattice, multcomp, testthat, mlmRev, dplyr",
 		Imports = "stringr, coin, Matrix, pbkrtest (>= 0.3-6), car, stats, utils, methods",
 		Description = "Provides convenience functions for analyzing factorial experiments using ANOVA or mixed models. aov_ez(), aov_car(), and aov_4() allow specification of between, within (i.e., repeated-measures), or mixed between-within (i.e., split-plot) ANOVAs for data in long format (i.e., one observation per row), potentially aggregating multiple observations per individual and cell of the design. mixed() fits mixed models using lme4::lmer() and computes p-values for all fixed effects using either Kenward-Roger approximation for degrees of freedom (LMM only), parametric bootstrap (LMMs and GLMMs), or likelihood ratio tests (LMMs and GLMMs). afex uses type 3 sums of squares as default (imitating commercial statistical software).",
 		URL = "https://github.com/singmann/afex",

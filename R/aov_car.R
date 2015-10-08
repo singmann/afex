@@ -155,7 +155,9 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
   # from here, code by Henrik Singmann:
   vars <- all.vars(formula)
   dv <- vars[1]
-  #chec if dv is numeric:
+  # transform to data.frame if necessary (e.g., when using dplyr)
+  data <- as.data.frame(data)
+  #check if dv is numeric:
   if (!is.numeric(data[,dv])) stop("dv needs to be numeric.")
   vars <- vars[-1]
   parts <- attr(terms(formula, "Error", data = data), "term.labels")

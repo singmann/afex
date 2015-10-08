@@ -126,7 +126,9 @@ When \code{method = "KR"}, obtaining p-values is known to crash due too insuffic
 
 \code{"mixed"} will throw a message if numerical variables are not centered on 0, as main effects (of other variables then the numeric one) can be hard to interpret if numerical variables appear in interactions. See Dalal & Zickar (2012).
 
-Please report bugs or unexpected behavior to maintainer via email!
+Formulas longer than 500 characters will most likely fail due to the use of \code{\link{deparse}}.
+
+Please report bugs or unexpected behavior by opening a guthub issue: \url{https://github.com/singmann/afex/issues}
 }
 \examples{
 

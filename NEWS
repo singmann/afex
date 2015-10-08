@@ -17,7 +17,8 @@
     o   ANOVA functions work with dplyr data.frames now (data is transformed
         via as.data.frame). See: https://github.com/singmann/afex/issues/6
     
-    o   
+    o   formulas for mixed can now be of a maximum length of 500 characters 
+        (was 60 chars previously): https://github.com/singmann/afex/issues/5
     
 
     

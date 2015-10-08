@@ -95,7 +95,9 @@
 #'
 #' \code{"mixed"} will throw a message if numerical variables are not centered on 0, as main effects (of other variables then the numeric one) can be hard to interpret if numerical variables appear in interactions. See Dalal & Zickar (2012).
 #'
-#' Please report bugs or unexpected behavior to maintainer via email!
+#' Formulas longer than 500 characters will most likely fail due to the use of \code{\link{deparse}}.
+#' 
+#' Please report bugs or unexpected behavior by opening a guthub issue: \url{https://github.com/singmann/afex/issues}
 #'
 #' @author Henrik Singmann with contributions from \href{http://stackoverflow.com/q/11335923/289572}{Ben Bolker and Joshua Wiley}.
 #'
@@ -224,7 +226,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   ####################
   ## Part IIa: prepare formulas
   mf <- mc[!names(mc) %in% c("type", "method", "args.test", "progress", "check.contrasts", "per.parameter", "cl", "test.intercept", "expand_re", "return")]
-  mf[["formula"]] <-as.formula(str_c(dv,deparse(rh2),"+",random))   #formula.f
+  mf[["formula"]] <-as.formula(str_c(dv,deparse(rh2, width.cutoff = 500L),"+",random))   #formula.f
   if ("family" %in% names(mf)) mf[[1]] <- as.name("glmer")
   else mf[[1]] <- as.name("lmer")
   mf[["data"]] <- as.name("data")

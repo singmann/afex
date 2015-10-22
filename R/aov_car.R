@@ -166,7 +166,7 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
   within <- all.vars(parse(text = error.term))[-1]
   between <- vars[!(vars %in% c(id, within))]
   effect.parts <- parts[!str_detect(parts, "^Error\\(")]
-  effect.parts.no.within <- effect.parts[!str_detect(effect.parts, str_c("\\<",within,"\\>", collapse = "|"))]
+  effect.parts.no.within <- if (length(within) == 0) effect.parts else effect.parts[!str_detect(effect.parts, str_c("\\b",within,"\\b", collapse = "|"))]
   data <- droplevels(data) #remove empty levels.
   # make id and within variables to factors:
   if (!(is.factor(data[,id]))) data[,id] <- factor(data[,id])

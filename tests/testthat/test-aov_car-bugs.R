@@ -1,6 +1,11 @@
 
 context("ANOVAs: known bugs")
 
+test_that("regex works correctly in aov_car when also having within factors outside the Error term", {
+  data(obk.long)
+  expect_is(aov_car(value ~ treatment * gender*phase*hour + Error(id/phase*hour), data = obk.long), "afex_aov")
+})
+
 test_that("another label bug (May 2014)", {
   data("sk2011.1")
   levels(sk2011.1$inference) <- c("A+:D-", "A+:D+", "A-:D+", "A- : D-")

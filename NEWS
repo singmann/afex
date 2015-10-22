@@ -3,7 +3,7 @@
                     *************************
                     
                     Changes in afex Version 0.15-x
-                    Released xxx 2015
+                    Released October 2015
 
     Significant User Visible Changes and New Features
 
@@ -19,6 +19,11 @@
     
     o   formulas for mixed can now be of a maximum length of 500 characters 
         (was 60 chars previously): https://github.com/singmann/afex/issues/5
+        
+    o   aov_car et al. did not work with within-subject factors that were also
+        included outside the Error term. This was caused by the use of regular
+        expressions not appropriate for the new stringi backend of stringr.
+        Thanks to Tom Wenseleers for reporting this bug.
     
 
     

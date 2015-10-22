@@ -2,11 +2,8 @@ require(devtools)
 require(testthat)
 load_all()
 
+options(error = NULL)
 devtools::test()
-
-
-#test_dir("tests/testthat")
-#test_package("afex")
 
 test_package("afex", filter = "aov")
 test_package("afex", filter = "mixed")

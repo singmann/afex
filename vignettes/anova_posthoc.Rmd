@@ -77,7 +77,7 @@ knitr::kable(nice(a1))
 Alternatively, the `anova` method for `afex_aov` objects returns a `data.frame` of class `anova` that can be passed to, for example, `xtable` for nice formatting:
 
 ```{r, results='asis'}
-print(xtable::xtable(a1$anova_table, digits = c(rep(2, 5), 3, 4)), type = "html")
+print(xtable::xtable(anova(a1), digits = c(rep(2, 5), 3, 4)), type = "html")
 ```
 
 # Post-Hoc Contrasts and Plotting

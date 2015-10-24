@@ -23,7 +23,7 @@ a1 # the default print method prints a data.frame produced by nice
 knitr::kable(nice(a1))
 
 ## ---- results='asis'--------------------------------------------------------------------
-print(xtable::xtable(a1$anova_table, digits = c(rep(2, 5), 3, 4)), type = "html")
+print(xtable::xtable(anova(a1), digits = c(rep(2, 5), 3, 4)), type = "html")
 
 ## ---------------------------------------------------------------------------------------
 m1 <- lsmeans(a1, ~ inference)

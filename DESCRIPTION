@@ -21,4 +21,4 @@ Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"), ema
               person(given="Michael A.", family="Lawrence", role=c("ctb")), person(given="Ulf", family="Mertens",
               role=c("ctb")), person(given="Frederik", family="Aust", role=c("ctb")) )
 Version: 0.15-2
-Date: 2015-10-22
+Date: 2015-10-24

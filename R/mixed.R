@@ -525,6 +525,11 @@ get_mixed_warnings <- function(x) {
 }
 
 check_likelihood <- function(object) {
+  
+   if (is.null(attr(object, "type"))) {
+    attr(object, "type") <- object$type
+  }
+  
   if (attr(object, "type") == 3 | attr(object, "type") == "III") {
     logLik_full <- as.numeric(logLik(object[["full.model"]]))
     logLik_restricted <- as.numeric(vapply(object[["restricted.models"]], logLik, 0))

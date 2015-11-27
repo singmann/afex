@@ -7,6 +7,7 @@ devtools::test()
 
 test_package("afex", filter = "aov")
 test_package("afex", filter = "mixed")
+test_package("afex", filter = "mixed-bugs")
 
 
 options(error = recover)
@@ -33,7 +34,7 @@ R.libs <- "./packages/library"
 closeAllConnections()
 roxy.package(
 	pck.source.dir = pkg.src.dir,
-	pck.version = "0.15-2",
+	pck.version = "0.16-0",
 	pck.description = data.frame(
 		Package = "afex",
 		Type = "Package",

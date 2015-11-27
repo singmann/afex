@@ -11,8 +11,8 @@ Analysis of Factorial Experiments.
 \tabular{ll}{
 Package: \tab afex\cr
 Type: \tab Package\cr
-Version: \tab 0.15-2\cr
-Date: \tab 2015-10-24\cr
+Version: \tab 0.16-0\cr
+Date: \tab 2015-11-27\cr
 Depends: \tab R (>= 3.0.0), lme4 (>= 1.0.5), reshape2, lsmeans (>= 2.17)\cr
 Encoding: \tab UTF-8\cr
 License: \tab GPL (>=3)\cr

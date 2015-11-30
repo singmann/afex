@@ -81,8 +81,17 @@ nice <- function(object, ...) UseMethod("nice", object)
 #' @rdname nice
 #' @method nice afex_aov
 #' @export
-nice.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, sig.symbols = c(" +", " *", " **", " ***"), p.adjust.method = NULL, ...) { 
-  if(is.null(p.adjust.method)) p.adjust.method <- ifelse(is.null(attr(object$anova_table, "p.adjust.method")), "none", attr(object$anova_table, "p.adjust.method"))
+nice.afex_aov <- function(object, es = NULL, observed = attr(object$anova_table, "observed"), correction = attr(object$anova_table, "correction"), MSE = NULL, intercept = NULL, p.adjust.method = attr(object$anova_table, "p.adjust.method"), sig.symbols = c(" +", " *", " **", " ***"), ...) { 
+  if(is.null(es)) { # Defaults to afex_options("es") because of default set in anova.afex_aov
+    es <- c("pes", "ges")[c("pes", "ges") %in% colnames(object$anova_table)]
+  }
+  if(is.null(MSE)) { # Defaults to TRUE because of default set in anova.afex_aov
+    MSE <- "MSE" %in% colnames(object$anova_table)
+  }
+  if(is.null(intercept)) { # Defaults to FALSE because of default set in anova.afex_aov
+    intercept <- "(Intercept)" %in% rownames(object$anova_table)
+  }
+  
   anova_table <- as.data.frame(anova(object, es = es, observed = observed, correction = correction, MSE = MSE, intercept = intercept, p.adjust.method = p.adjust.method))
   nice.anova(anova_table, MSE = MSE, intercept = intercept, sig.symbols = sig.symbols)
 }

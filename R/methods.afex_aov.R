@@ -101,6 +101,8 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
   if(is.null(p.adjust.method)) p.adjust.method <- ifelse(is.null(attr(object$anova_table, "p.adjust.method")), "none", attr(object$anova_table, "p.adjust.method"))
   anova_table[,"Pr(>F)"] <- p.adjust(anova_table[,"Pr(>F)"], method = p.adjust.method)
   attr(anova_table, "p.adjust.method") <- p.adjust.method
+  attr(anova_table, "correction") <- correction
+  attr(anova_table, "observed") <- if(!is.null(observed)) observed else "none"
   anova_table
 }
 

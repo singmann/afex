@@ -77,7 +77,7 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
   }
   if ("ges" %in% es) {
     # This code is basically a copy from ezANOVA by Mike Lawrence!
-    if(!is.null(observed)){
+    if(!is.null(observed) & length(observed) > 0){
       obs <- rep(FALSE,nrow(tmp2))
       for(i in observed){
         if (!any(str_detect(rownames(tmp2),str_c("\\b",i,"\\b")))) stop(str_c("Observed variable not in data: ", i))
@@ -92,17 +92,18 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
     es_df$ges <- tmp2$SS/(tmp2$SS+sum(unique(tmp2[,"Error SS"]))+obs_SSn1-obs_SSn2)
   }
   anova_table <- cbind(tmp2[,c("num Df", "den Df", "MSE", "F")], es_df, "Pr(>F)" = tmp2[,c("Pr(>F)")])
-  class(anova_table) <- c("anova", "data.frame")
-  attr(anova_table, "heading") <- c(paste0("Anova Table (Type ", object$information$type , " tests)\n"), paste("Response:", object$information$dv))
   #browser()
   if (!MSE) anova_table$MSE <- NULL 
   if (!intercept) if (row.names(anova_table)[1] == "(Intercept)")  anova_table <- anova_table[-1,, drop = FALSE]
   # Correct for multiple comparisons
   if(is.null(p.adjust.method)) p.adjust.method <- ifelse(is.null(attr(object$anova_table, "p.adjust.method")), "none", attr(object$anova_table, "p.adjust.method"))
   anova_table[,"Pr(>F)"] <- p.adjust(anova_table[,"Pr(>F)"], method = p.adjust.method)
+  class(anova_table) <- c("anova", "data.frame")
+  p_adj_heading <- if(p.adjust.method != "none") paste0(", ", p.adjust.method, "-adjusted") else NULL
+  attr(anova_table, "heading") <- c(paste0("Anova Table (Type ", attr(object, "type"), " tests", p_adj_heading, ")\n"), paste("Response:", attr(object, "dv")))
   attr(anova_table, "p.adjust.method") <- p.adjust.method
   attr(anova_table, "correction") <- correction
-  attr(anova_table, "observed") <- if(!is.null(observed)) observed else "none"
+  attr(anova_table, "observed") <- if(!is.null(observed) & length(observed) > 0) observed else character(0)
   anova_table
 }
 
@@ -111,7 +112,14 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
 #' @export
 print.afex_aov <- function(x, ...) {
   out <- nice(x$anova_table, ...)
+  
+  if(!is.null(heading <- attr(x$anova_table, "heading"))) {
+    cat(heading, sep = "\n")
+  }
   print(out)
+  if(!is.null(correction_method <- attr(x$anova_table, "correction")) && correction_method != "none") {
+    cat("\nSphericity correction method:", correction_method, "\n")
+  }
   invisible(out)
 }
 

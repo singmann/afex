@@ -43,21 +43,30 @@ test_that("return='aov' works", {
 
 test_that("anova_table attributes", {
   data(md_12.1)
-  no_attr <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table=list(correction = "none"))
+  no_attr <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(correction = "none"))
   
   expect_that(attr(no_attr$anova_table, "correction"), equals("none"))
   expect_that(attr(no_attr$anova_table, "p.adjust.method"), equals("none"))
-  expect_that(attr(no_attr$anova_table, "observed"), equals("none"))
+  expect_output(attr(no_attr$anova_table, "observed"), "character\\(0\\)")
   
   all_attr <- suppressWarnings(aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), observed = "angle", anova_table=list(correction = "HF", p.adjust.method = "bonferroni")))
   
   expect_that(attr(all_attr$anova_table, "correction"), equals("HF"))
   expect_that(attr(all_attr$anova_table, "p.adjust.method"), equals("bonferroni"))
   expect_that(attr(all_attr$anova_table, "observed"), equals("angle"))
+  expect_output(all_attr, "bonferroni")
+  expect_output(all_attr, "HF")
   
   added_attr <- suppressWarnings(nice(no_attr, correction = "HF", p.adjust = "bonferroni", observed = "angle"))
   expect_that(nice(all_attr$anova_table), is_identical_to(added_attr))
   
   reset_attr <- nice(no_attr, correction = "none", p.adjust = "none", observed = NULL)
   expect_that(nice(no_attr$anova_table), is_identical_to(reset_attr))
+  
+  # Test support for old afex objects
+  old_afex_object <- default_options <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
+  attr(old_afex_object$anova_table, "observed") <- NULL
+  attr(old_afex_object$anova_table, "correction") <- NULL
+  attr(old_afex_object$anova_table, "p.adjust.method") <- NULL
+  expect_that(nice(old_afex_object), is_identical_to(nice(default_options)))
 })

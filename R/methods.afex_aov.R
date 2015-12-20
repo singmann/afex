@@ -112,14 +112,7 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
 #' @export
 print.afex_aov <- function(x, ...) {
   out <- nice(x$anova_table, ...)
-  
-  if(!is.null(heading <- attr(x$anova_table, "heading"))) {
-    cat(heading, sep = "\n")
-  }
   print(out)
-  if(!is.null(correction_method <- attr(x$anova_table, "correction")) && correction_method != "none") {
-    cat("\nSphericity correction method:", correction_method, "\n")
-  }
   invisible(out)
 }
 

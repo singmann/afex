@@ -13,7 +13,7 @@
 #' @param intercept logical. Should intercept (if present) be included in the ANOVA table? Default is \code{FALSE} which hides the intercept.
 #' @param ... currently ignored.
 #'
-#' @return A \code{data.frame} with the ANOVA table consisting of characters. The columns that are always present are: \code{Effect}, \code{df} (degrees of freedom), \code{F}, and \code{p}.
+#' @return A \code{data.frame} of class \code{nice_table} with the ANOVA table consisting of characters. The columns that are always present are: \code{Effect}, \code{df} (degrees of freedom), \code{F}, and \code{p}.
 #'
 #' \code{ges} contains the generalized eta-squared effect size measure (Bakeman, 2005), \code{pes} contains partial eta-squared (if requested).
 #'
@@ -38,8 +38,6 @@
 #' 
 #' @name nice
 #' @importFrom stats anova
-#' @export nice
-#' 
 #' @encoding UTF-8
 #'
 #' @examples
@@ -74,7 +72,7 @@
 #' print.xtable(xtable(full, caption = "ANOVA 2"), include.rownames = FALSE)
 #' }
 #' 
-#' 
+#' @export nice
 nice <- function(object, ...) UseMethod("nice", object)
 
 
@@ -120,6 +118,11 @@ nice.anova <- function(object, MSE = TRUE, intercept = FALSE, sig.symbols = c(" 
   df.out$p.value  <-  round_ps(anova_table[,"Pr(>F)"])
   if (!intercept) if (df.out[1,1] == "(Intercept)")  df.out <- df.out[-1,, drop = FALSE]
   rownames(df.out) <- NULL
+  attr(df.out, "heading") <- attr(object, "heading")
+  attr(df.out, "p.adjust.method") <- attr(object, "p.adjust.method")
+  attr(df.out, "correction") <- attr(object, "correction")
+  attr(df.out, "observed") <- attr(object, "observed")
+  class(df.out) <- c("nice_table", class(df.out))
   df.out
 }
 
@@ -155,5 +158,21 @@ nice.mixed <- function(object, sig.symbols = c(" +", " *", " **", " ***"), ...) 
     df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"Chi Df"], Chisq = make.stat(anova_table, stat = "Chisq", symbols.use), p.value = round_ps(anova_table[,"Pr(>Chisq)"]), stringsAsFactors = FALSE, check.names = FALSE)
   } else stop("method of mixed object not supported.")
   rownames(df.out) <- NULL
-  return(df.out)
+  class(df.out) <- c("nice_table", class(df.out))
+  df.out
+}
+
+
+#' @rdname nice
+#' @method print nice_table
+#' @export
+print.nice_table <- function(x, ...) {
+  if(!is.null(heading <- attr(x, "heading"))) {
+    cat(heading, sep = "\n")
+  }
+  print.data.frame(x)
+  if(!is.null(correction_method <- attr(x, "correction")) && correction_method != "none") {
+    cat("\nSphericity correction method:", correction_method, "\n")
+  }
+  invisible(x)
 }

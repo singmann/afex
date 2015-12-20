@@ -20,7 +20,6 @@
 #' @name set_sum_contrasts
 #' @aliases set_sum_contrasts set_deviation_contrasts set_effects_contrasts set_treatment_contrasts set_default_contrasts
 #' @export set_sum_contrasts set_deviation_contrasts set_effects_contrasts set_treatment_contrasts set_default_contrasts
-#' 
 
 set_sum_contrasts <- function() {
   message("setting contr.sum globally: options(contrasts=c('contr.sum', 'contr.poly'))")

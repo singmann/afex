@@ -57,15 +57,16 @@ sapply(gm_all,getME,"theta") ## theta parameters
 
 ## use allFit in combination with expand.re = TRUE
 data("sk2011.2") # see example("mixed")
+sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
 sk_m2 <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_aff,
                expand_re = TRUE)
 sk_m2
 sk_m2_allFit <- allFit(sk_m2$full.model)
 sk_m2_allFit # all fits fail
 
-sk2_aff <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_aff,
+sk2_aff_b <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_aff,
                expand_re = TRUE, return = "data") # returns data only
-sk_m2_allFit <- allFit(sk_m2$full.model) # works now
+sk_m2_allFit <- allFit(sk_m2$full.model, data = sk2_aff_b) # works now
 t(sapply(sk_m2_allFit,fixef))
 sapply(sk_m2_allFit,logLik)
 

@@ -57,9 +57,12 @@ test_that("anova_table attributes", {
   expect_output(all_attr, "bonferroni")
   expect_output(all_attr, "HF")
   
+  expect_false(isTRUE(all.equal(nice(no_attr), suppressWarnings(nice(all_attr)), check.attributes = FALSE)))
+  
   added_attr <- suppressWarnings(nice(no_attr, correction = "HF", p.adjust = "bonferroni", observed = "angle"))
   expect_that(suppressWarnings(nice(all_attr)), is_identical_to(added_attr))
   expect_that(nice(all_attr$anova_table), is_identical_to(added_attr))
+  
   
   reset_attr <- nice(no_attr, correction = "none", p.adjust = "none", observed = NULL)
   expect_that(nice(no_attr), is_identical_to(reset_attr))

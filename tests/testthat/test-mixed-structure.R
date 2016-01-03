@@ -153,7 +153,7 @@ test_that("mixed: expand_re argument (longer)", {
   testthat::skip_on_cran()
   data("ks2013.3")
   m4 <- mixed(response ~ validity + (believability*validity||id) + (validity*condition|content), ks2013.3, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE)
-  m5 <- mixed(response ~ validity + (believability*validity|id) + (validity*condition||content), ks2013.3, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), expand_re = TRUE, progress=FALSE)
+  m5 <- suppressWarnings(mixed(response ~ validity + (believability*validity|id) + (validity*condition||content), ks2013.3, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), expand_re = TRUE, progress=FALSE))
   expect_identical(length(unlist(summary(m4)$varcor[-7])), nrow(summary(m5)$varcor$id))
   expect_identical(length(unlist(summary(m5)$varcor[-1])), nrow(summary(m4)$varcor$content))
   expect_equal(attr(summary(m5)$varcor, "sc"), attr(summary(m4)$varcor, "sc"), tolerance = 0.02)

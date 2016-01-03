@@ -229,6 +229,11 @@ aov_car(value ~ treatment * gender + Error(id/(phase*hour)),
         data = obk.long,observed = "gender", 
         anova_table = list(correction = "none", MSE = FALSE))
 
+# add p-value adjustment for all effects (see Cramer et al., 2015, PB&R)
+aov_ez("id", "value", obk.long, between = "treatment", 
+       within = c("phase", "hour"), 
+       anova_table = list(p.adjust.method = "holm"))
+
 
 ###########################
 ## 2: Follow-up Analysis ##
@@ -314,6 +319,8 @@ Henrik Singmann
 The design of these functions was influenced by \code{\link[ez]{ezANOVA}} from package \pkg{ez}.
 }
 \references{
+Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1–8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5} 
+
 Maxwell, S. E., & Delaney, H. D. (2004). \emph{Designing Experiments and Analyzing Data: A Model-Comparisons Perspective}. Mahwah, N.J.: Lawrence Erlbaum Associates.
 
 Venables, W.N. (2000). \emph{Exegeses on linear models}. Paper presented to the S-Plus User's Conference, Washington DC, 8-9 October 1998, Washington, DC. Available from: \url{http://www.stats.ox.ac.uk/pub/MASS3/Exegeses.pdf}

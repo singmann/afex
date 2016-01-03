@@ -25,7 +25,7 @@ nice(object, ...)
 \method{print}{nice_table}(x, ...)
 }
 \arguments{
-\item{object}{An object of class \code{"Anova.mlm"} or \code{"anova"} as returned from \code{\link[car]{Anova}} or the \pkg{afex} ANOVA functions (see \code{\link{aov_car}}).}
+\item{object, x}{An object of class \code{"afex_aov"} (see \code{\link{aov_car}}) or of class \code{"mixed"} (see \code{\link{mixed}}) as returned from the \pkg{afex} functions. Alternatively, an object of class \code{"Anova.mlm"} or \code{"anova"} as returned from \code{\link[car]{Anova}}.}
 
 \item{...}{currently ignored.}
 

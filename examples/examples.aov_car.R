@@ -93,6 +93,11 @@ aov_car(value ~ treatment * gender + Error(id/(phase*hour)),
         data = obk.long,observed = "gender", 
         anova_table = list(correction = "none", MSE = FALSE))
 
+# add p-value adjustment for all effects (see Cramer et al., 2015, PB&R)
+aov_ez("id", "value", obk.long, between = "treatment", 
+       within = c("phase", "hour"), 
+       anova_table = list(p.adjust.method = "holm"))
+
 
 ###########################
 ## 2: Follow-up Analysis ##

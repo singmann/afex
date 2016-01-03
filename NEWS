@@ -14,6 +14,11 @@
         print the value of the slopts for information.
         Both contributed by Frederik Aust (who was also promoted to author).
         
+    o   added return="data" for mixed. This allows to obtain the data set used
+        for fitting a model. Can be useful in combination with expand.re=TRUE 
+        and allFit() or for obtaining predictions. See ?allFit for a simple 
+        example.
+        
     Bugfixes
     
     o   

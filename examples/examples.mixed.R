@@ -18,11 +18,14 @@ sk_m1 <- mixed(response ~ instruction*inference*type+(inference*type|id), sk2_af
 
 sk_m1 # prints ANOVA table with nicely rounded numbers (i.e., as characters)
 nice(sk_m1)  # returns the same but without printing potential warnings
-
 anova(sk_m1) # returns and prints numeric ANOVA table (i.e., not-rounded)
-
 summary(sk_m1) # lmer summary of full model
 
+# suppressing correlation among random slopes:
+# very similar results, but significantly faster and often better convergence. 
+sk_m2 <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_aff,
+               expand_re = TRUE)
+sk_m2
 
 ## mixed objects can be passed to lsmeans directly:
 

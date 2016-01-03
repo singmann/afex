@@ -40,7 +40,7 @@ lmer_alt(formula, data, check.contrasts = FALSE, ...)
 
 \item{cl}{A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args.test} for this.}
 
-\item{return}{the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors.}
+\item{return}{the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model. Can be used in combination with \code{expand_re = TRUE} and \code{\link{allFit}} (see examples there).}
 
 \item{...}{further arguments (such as \code{weights}/\code{family}) passed to \code{\link{lmer}}/\code{\link{glmer}}.}
 }
@@ -151,11 +151,14 @@ sk_m1 <- mixed(response ~ instruction*inference*type+(inference*type|id), sk2_af
 
 sk_m1 # prints ANOVA table with nicely rounded numbers (i.e., as characters)
 nice(sk_m1)  # returns the same but without printing potential warnings
-
 anova(sk_m1) # returns and prints numeric ANOVA table (i.e., not-rounded)
-
 summary(sk_m1) # lmer summary of full model
 
+# suppressing correlation among random slopes:
+# very similar results, but significantly faster and often better convergence. 
+sk_m2 <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_aff,
+               expand_re = TRUE)
+sk_m2
 
 ## mixed objects can be passed to lsmeans directly:
 

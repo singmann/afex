@@ -15,7 +15,7 @@
 #' @param set.data.arg \code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}. 
 #' @param progress  if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.
 #' @param cl  A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args.test} for this.
-#' @param return the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors.
+#' @param return the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model. Can be used in combination with \code{expand_re = TRUE} and \code{\link{allFit}} (see examples there).
 #' @param ... further arguments (such as \code{weights}/\code{family}) passed to \code{\link{lmer}}/\code{\link{glmer}}.
 #'
 #'
@@ -221,6 +221,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     data <- cbind(data, as.data.frame(do.call(cbind, tmp_model.matrix)))
     random <- str_c(new_random, collapse = "+")
   }
+  if (return == "data") return(data)
   ####################
   ### Part II: obtain the lmer fits
   ####################
@@ -327,7 +328,6 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     fits <- clusterApplyLB(cl = cl, x = formulas, eval.cl, m.call = mf, progress = progress)
     if (progress) junk <- clusterEvalQ(cl = cl, cat("]"))
   }
-  ## add correct data argument to lmer calls:
 
   ####################
   ### Part IIb: likelihood checks and refitting
@@ -359,7 +359,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       browser()
       str(fits[[1]], 2)
       fits[[1]]@call
-      sapply(allFit(fits[[1]], data=md_16.4b), function(y) try(logLik(y)))
+      #sapply(allFit(fits[[1]], data=md_16.4b), function(y) try(logLik(y)))
       sapply(refits, function(x) sapply(x, function(y) tryCatch(as.numeric(logLik(y)), error = function(e) as.numeric(NA))))
       
       fits <- lapply(refits, function(x) {

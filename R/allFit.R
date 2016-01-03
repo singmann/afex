@@ -27,17 +27,8 @@
 #' @export 
 #' @importFrom lme4 isGLMM lmerControl glmerControl
 #' @importFrom stats setNames update
-#' @examples
-#' \dontrun{
-#' require(optimx)
-#' gm1 <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
-#' data = cbpp, family = binomial)
-#' gm_all <- allFit(gm1)
-#' t(sapply(gm_all,fixef)) ## extract fixed effects
-#' sapply(gm_all,logLik) ## log-likelihoods
-#' sapply(gm_all,getME,"theta") ## theta parameters
-#' !sapply(gm_all,inherits,"try-error") ## was fit OK?
-#' }
+#' 
+#' @example examples/examples.allFit.R
 #' 
 allFit <- function(m, meth.tab = cbind(optimizer=rep(c("bobyqa","Nelder_Mead", "optimx", "nloptwrap"),                                             c( 1, 1, 2, 2)),method= c("", "", "nlminb","L-BFGS-B","NLOPT_LN_NELDERMEAD", "NLOPT_LN_BOBYQA")),verbose=TRUE,maxfun=1e5, ...)
 {

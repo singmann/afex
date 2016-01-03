@@ -1,4 +1,25 @@
                     *************************
+                    ** afex VERSION 0.16-x **
+                    *************************
+                    
+                    Changes in afex Version 0.16-x
+                    Released January 2016
+
+    Significant User Visible Changes and New Features
+
+    o   added "correction" and "observed" attributes to the anova_table slot of
+        afex_aov objects, which is used per default by nice(). This ensures 
+        that nice(object) and object always return the same data.frame.
+        Also added "nice_table" class to data.frame returned by nice which 
+        print the value of the slopts for information.
+        Both contributed by Frederik Aust (who was also promoted to author).
+        
+    Bugfixes
+    
+    o   
+
+        
+                    *************************
                     ** afex VERSION 0.15-x **
                     *************************
                     

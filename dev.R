@@ -42,11 +42,11 @@ roxy.package(
 		AuthorsR = "c(person(given=\"Henrik\", family=\"Singmann\", role=c(\"aut\", \"cre\"), email=\"singmann+afex@gmail.com\"),
         person(given=\"Ben\", family=\"Bolker\", role=c(\"aut\")),
         person(given=\"Jake\", family=\"Westfall\", role=c(\"aut\")),
+        person(given=\"Frederik\", family=\"Aust\", role=c(\"aut\")),
         person(given=\"Søren\", family=\"Højsgaard\", role=c(\"ctb\")),
         person(given=\"John\", family=\"Fox\", role=c(\"ctb\")),
         person(given=\"Michael A.\", family=\"Lawrence\", role=c(\"ctb\")),
-        person(given=\"Ulf\", family=\"Mertens\", role=c(\"ctb\")),
-        person(given=\"Frederik\", family=\"Aust\", role=c(\"ctb\"))
+        person(given=\"Ulf\", family=\"Mertens\", role=c(\"ctb\"))
     )",
 		Depends = "R (>= 3.0.0), lme4 (>= 1.0.5), reshape2, lsmeans (>= 2.17)",
 		Suggests = "ascii, xtable, parallel, plyr, optimx, nloptr, knitr, lattice, multcomp, testthat, mlmRev, dplyr",

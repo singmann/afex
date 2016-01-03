@@ -182,8 +182,10 @@ test_that("variable names longer", {
   orig <- aov_car(value ~ treatment * gender + age + Error(id/phase*hour), data = obk.long, factorize=FALSE, observed = "gender")
   v1 <- aov_car(value ~ gender2 * gender + age + Error(id/phase*hour), data = obk.long, factorize=FALSE, observed = "gender")
   v2 <- aov_car(value ~ gender2 * gender + age + Error(id/phase*hour), data = obk.long, factorize=FALSE, observed = "gender2")
+  expect_equivalent(orig$anova_table, v1$anova_table)
   expect_identical(nice(orig)[,-1], nice(v1)[,-1])
-  expect_identical(nice(orig)[,-c(1)], nice(v2)[,-c(1)])
+  expect_identical(nice(orig)[,c("df", "MSE", "F", "p.value")], nice(v2)[,c("df", "MSE", "F", "p.value")])
+  expect_equivalent(orig$anova_table[,c("num Df", "den Df", "MSE", "F", "Pr(>F)")], v2$anova_table[c("num Df", "den Df", "MSE", "F", "Pr(>F)")])
 })
 
 test_that("works with dplyr data.frames (see https://github.com/singmann/afex/issues/6):", {

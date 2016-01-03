@@ -521,7 +521,7 @@ get_mixed_warnings <- function(x) {
   }
   warnings <- mapply(function(x, y) c(unlist(x), y), warnings1, warnings2, SIMPLIFY=FALSE)  
   warn <- vapply(warnings, function(y) !length(y)==0, NA)
-  for (i in names(warn)[warn]) warning("lme4 reported (at least) the following warnings for '", i, "':\n  * ", paste(warnings[[i]], collapse = "\n  * "))
+  for (i in names(warn)[warn]) warning("lme4 reported (at least) the following warnings for '", i, "':\n  * ", paste(warnings[[i]], collapse = "\n  * "), call. = FALSE)
 }
 
 check_likelihood <- function(object) {
@@ -567,7 +567,7 @@ lmer_alt <- function(formula, data, check.contrasts = FALSE, ...) {
 #' @export
 print.mixed <- function(x, ...) {
   if(!isREML(x[["full.model"]]) && !isTRUE(check_likelihood(x))) 
-    warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(x), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"))
+    warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(x), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"), call. = FALSE)
   get_mixed_warnings(x)
   tmp <- nice.mixed(x, ...)
   print(tmp)
@@ -596,7 +596,7 @@ anova.mixed <- function(object, ..., refit = FALSE) {
     return(do.call(anova, args = c(object = object, dots, model.names = list(model.names), refit = refit)))
   } else {
     if(!isREML(object[["full.model"]]) && !isTRUE(check_likelihood(object))) 
-      warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(object), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"))
+      warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(object), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"), call. = FALSE)
     get_mixed_warnings(object)
     object$anova_table
   }

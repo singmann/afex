@@ -186,7 +186,7 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
     c.ns <- between[vapply(data[, between, drop = FALSE], is.numeric, TRUE)]
     if (length(c.ns) > 0) {
       non.null <- c.ns[!abs(vapply(data[, c.ns, drop = FALSE], mean, 0)) < .Machine$double.eps ^ 0.5]
-      if (length(non.null) > 0) warning(str_c("Numerical variables NOT centered on 0 (i.e., likely bogus results): ", str_c(non.null, collapse = ", ")))
+      if (length(non.null) > 0) warning(str_c("Numerical variables NOT centered on 0 (i.e., likely bogus results): ", str_c(non.null, collapse = ", ")), call. = FALSE)
     }
   }
   for (i in c(between, within)) {
@@ -213,7 +213,7 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
   # Is fun.aggregate NULL and aggregation necessary?
   if (is.null(fun.aggregate)) {
     if (any(xtabs(as.formula(str_c("~", id, if (length(within) > 0) "+", rh1)), data = data) > 1)) {
-      warning("More than one observation per cell, aggregating the data using mean (i.e, fun.aggregate = mean)!")
+      warning("More than one observation per cell, aggregating the data using mean (i.e, fun.aggregate = mean)!", call. = FALSE)
       fun.aggregate <- mean
     }
   } 
@@ -230,7 +230,7 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
   # check for missing values:
   if (any(is.na(tmp.dat))) {
     missing.values <- apply(tmp.dat, 1, function(x) any(is.na(x)))
-    warning(str_c("Missing values for following ID(s):\n", str_c(tmp.dat[missing.values,1], collapse = ", "), "\nRemoving those cases from the analysis."))        
+    warning(str_c("Missing values for following ID(s):\n", str_c(tmp.dat[missing.values,1], collapse = ", "), "\nRemoving those cases from the analysis."), call. = FALSE)        
   }
   #   if (length(between) > 0) {
   #     n_data_points <- xtabs(as.formula(paste("~", paste(between, collapse = "+"))), data = tmp.dat)
@@ -277,7 +277,7 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
           }
         }
       }
-      if((type == 3 | type == "III") && (length(non_sum_contrast)>0)) warning(str_c("Calculating Type 3 sums with contrasts != 'contr.sum' for: ", paste0(non_sum_contrast, collapse=", "), "\n  Results likely bogus or not interpretable!\n  You probably want check.contrasts = TRUE or options(contrasts=c('contr.sum','contr.poly'))"))
+      if((type == 3 | type == "III") && (length(non_sum_contrast)>0)) warning(str_c("Calculating Type 3 sums with contrasts != 'contr.sum' for: ", paste0(non_sum_contrast, collapse=", "), "\n  Results likely bogus or not interpretable!\n  You probably want check.contrasts = TRUE or options(contrasts=c('contr.sum','contr.poly'))"), call. = FALSE)
     }
   }
   if (return %in% c("aov", "afex_aov")) include.aov <- TRUE

@@ -30,8 +30,7 @@
 #' 
 #' @importFrom utils ls.str
 #' 
-#' @export 
-#' 
+#' @export
 
 afex_options <- function(...)
 {

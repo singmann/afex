@@ -4,7 +4,7 @@
 #' Package: \tab afex\cr
 #' Type: \tab Package\cr
 #' Version: \tab 0.16-0\cr
-#' Date: \tab 2016-01-03\cr
+#' Date: \tab 2016-02-28\cr
 #' Depends: \tab R (>= 3.0.0), lme4 (>= 1.0.5), reshape2, lsmeans (>= 2.17)\cr
 #' Encoding: \tab UTF-8\cr
 #' License: \tab GPL (>=3)\cr

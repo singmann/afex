@@ -74,4 +74,9 @@ test_that("anova_table attributes", {
   attr(old_afex_object$anova_table, "correction") <- NULL
   attr(old_afex_object$anova_table, "p.adjust.method") <- NULL
   expect_that(nice(old_afex_object), is_identical_to(nice(default_options)))
+  
+  # Test if sphericity correction is set to "none" in the absence of within-subject factors
+  data(obk.long)
+  between_anova <- suppressWarnings(aov_car(value ~ treatment * gender + Error(id), data = obk.long))
+  expect_that(attr(between_anova$anova_table, "correction"), equals("none"))
 })

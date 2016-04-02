@@ -160,15 +160,25 @@ test_that("mixed: expand_re argument (longer)", {
 })
 
 
-test_that("mixed: return=data and expand_re argument", {
+test_that("mixed: return=data, expand_re argument, and allFit", {
+  testthat::skip_on_cran()
   data("ks2013.3")
   ks2013.3_tmp <- ks2013.3
   m6 <- mixed(response ~ validity + (believability*validity||id), ks2013.3_tmp, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE, return = "merMod")
   m6_all_1 <- allFit(m6, verbose = FALSE, data = ks2013.3_tmp)
-  expect_output(m6_all_1$`bobyqa.`, "object 're1.believability1' not found")
-  
+  expect_output(print(m6_all_1$`bobyqa.`), "object 're1.believability1' not found")
   ks2013.3_tmp <- mixed(response ~ validity + (believability*validity||id), ks2013.3_tmp, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE, return = "data")
   m6_all_2 <- suppressWarnings(allFit(m6, verbose = FALSE, data = ks2013.3_tmp))
   expect_is(m6_all_2$`bobyqa.`, "merMod")
   expect_is(m6_all_2$`Nelder_Mead.`, "merMod")
+})
+
+
+test_that("mixed: return=data works", {
+  data("ks2013.3")
+  ks2013.3_tmp <- ks2013.3
+  ks2013.3_tmp <- mixed(response ~ validity + (believability*validity||id), ks2013.3_tmp, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE, return = "data")
+  expect_is(ks2013.3_tmp, "data.frame")
+  expect_gt(ncol(ks2013.3_tmp), ncol(ks2013.3))
+  expect_output(print(colnames(ks2013.3_tmp)), "re1.believability1_by_validity1")
 })

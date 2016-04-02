@@ -47,15 +47,15 @@ test_that("anova_table attributes", {
   
   expect_that(attr(no_attr$anova_table, "correction"), equals("none"))
   expect_that(attr(no_attr$anova_table, "p.adjust.method"), equals("none"))
-  expect_output(attr(no_attr$anova_table, "observed"), "character\\(0\\)")
+  expect_output(print(attr(no_attr$anova_table, "observed")), "character\\(0\\)")
   
   all_attr <- suppressWarnings(aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), observed = "angle", anova_table=list(correction = "HF", p.adjust.method = "bonferroni")))
   
   expect_that(attr(all_attr$anova_table, "correction"), equals("HF"))
   expect_that(attr(all_attr$anova_table, "p.adjust.method"), equals("bonferroni"))
   expect_that(attr(all_attr$anova_table, "observed"), equals("angle"))
-  expect_output(all_attr, "bonferroni")
-  expect_output(all_attr, "HF")
+  expect_output(print(all_attr), "bonferroni")
+  expect_output(print(all_attr), "HF")
   
   expect_false(isTRUE(all.equal(nice(no_attr), suppressWarnings(nice(all_attr)), check.attributes = FALSE)))
   

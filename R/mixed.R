@@ -166,7 +166,8 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   mc <- match.call()
   #browser()
   formula.f <- as.formula(formula)
-  if (class(formula) != "formula") message("Formula (the first argument) converted to formula.")
+  #if (class(formula) != "formula") message("Formula (the first argument) converted to formula.")
+  if (!inherits(formula, "formula")) message("Formula (the first argument) converted to formula.")
   dv <- as.character(formula.f)[[2]]
   all.terms <- attr(terms(formula.f), "term.labels")
   effect.order <- attr(terms(formula.f), "order")

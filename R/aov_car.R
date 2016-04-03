@@ -337,7 +337,8 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
   }
   if (return == "Anova") return(Anova.out)
   else if (return == "univariate") {
-    if (class(Anova.out) == "Anova.mlm") return(summary(Anova.out, multivariate = FALSE))
+    #if (class(Anova.out) == "Anova.mlm") return(summary(Anova.out, multivariate = FALSE))
+    if (inherits(Anova.out, "Anova.mlm")) return(summary(Anova.out, multivariate = FALSE))
     else return(Anova.out)
   }
   else if (return == "nice") {

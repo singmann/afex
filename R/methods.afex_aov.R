@@ -37,7 +37,8 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
   # check arguments
   es <- match.arg(es, c("none", "ges", "pes"), several.ok = TRUE)
   correction <- match.arg(correction, c("GG", "HF", "none"))
-  if (class(object$Anova)[1] == "Anova.mlm") {
+  #if (class(object$Anova)[1] == "Anova.mlm") {
+  if (inherits(object$Anova, "Anova.mlm")) {
     tmp <- suppressWarnings(summary(object$Anova, multivariate = FALSE))
     t.out <- tmp[["univariate.tests"]]
     #browser()
@@ -62,7 +63,8 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
     }
     tmp.df <- t.out    
     tmp2 <- as.data.frame(unclass(tmp.df))
-  } else if (class(object$Anova)[1] == "anova") {
+  #} else if (class(object$Anova)[1] == "anova") {
+  } else if (inherits(object$Anova, "anova")) {
     #browser()
     tmp.df <- cbind(object$Anova[-nrow(object$Anova),], data.frame("Error SS" = object$Anova[nrow(object$Anova), "Sum Sq"], "den Df" = object$Anova[nrow(object$Anova), "Df"], check.names = FALSE))
     colnames(tmp.df)[1:3] <- c("SS", "num Df", "F")
@@ -121,10 +123,12 @@ print.afex_aov <- function(x, ...) {
 #' @method summary afex_aov 
 #' @export
 summary.afex_aov <- function(object, ...) {
-  if (class(object$Anova)[1] == "Anova.mlm") {
+  if (inherits(object$Anova, "Anova.mlm")) {
+  #if (class(object$Anova)[1] == "Anova.mlm") {
     if(attr(object$anova_table, "p.adjust.method") != "none") message("Note, results are NOT adjusted for multiple comparisons as requested\n(p.adjust.method = '", attr(object$anova_table, "p.adjust.method"), "')\nbecause the desired method of sphericity correction is unknown.\nFor adjusted p-values print the object (to see object$anova_table), or call\none of anova.afex_aov() or nice().")
     return(summary(object$Anova, multivariate = FALSE))
-  } else if (class(object$Anova)[1] == "anova") {
+  #} else if (class(object$Anova)[1] == "anova") {
+  } else if (inherits(object$Anova, "anova")) {
     return(object$anova_table)
   } else stop("Non-supported object passed. Slot 'Anova' needs to be of class 'Anova.mlm' or 'anova'.")
 }

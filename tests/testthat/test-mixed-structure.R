@@ -69,17 +69,19 @@ test_that("mixed, obk.long: LMM with method = PB", {
 })
 
 test_that("mixed, obk.long: multicore loads lme4 and produces the same results", {
-  skip_on_cran()
-  data(obk.long, package = "afex")
-  require(parallel)
-  cl <- makeCluster(rep("localhost", 2)) # make cluster
-  # 1. Obtain fits with multicore:
-  m_mc1 <- mixed(value ~ treatment +(phase|id), data = obk.long, method = "LRT", cl = cl, control = lmerControl(optCtrl=list(maxfun = 100000)), progress=FALSE)
-  cl_search <- clusterEvalQ(cl, search())
-  stopCluster(cl)  
-  m_mc2 <- mixed(value ~ treatment +(phase|id), data = obk.long, method = "LRT", control = lmerControl(optCtrl=list(maxfun = 100000)), progress=FALSE)
-  expect_that(all(vapply(cl_search, function(x) any(grepl("^package:lme4$", x)), NA)), is_true())
-  expect_that(m_mc1, equals(m_mc2, check.attributes = FALSE))
+  if (packageVersion("testthat") >= "0.9") {
+    skip_on_cran()
+    data(obk.long, package = "afex")
+    require(parallel)
+    cl <- makeCluster(rep("localhost", 2)) # make cluster
+    # 1. Obtain fits with multicore:
+    m_mc1 <- mixed(value ~ treatment +(phase|id), data = obk.long, method = "LRT", cl = cl, control = lmerControl(optCtrl=list(maxfun = 100000)), progress=FALSE)
+    cl_search <- clusterEvalQ(cl, search())
+    stopCluster(cl)  
+    m_mc2 <- mixed(value ~ treatment +(phase|id), data = obk.long, method = "LRT", control = lmerControl(optCtrl=list(maxfun = 100000)), progress=FALSE)
+    expect_that(all(vapply(cl_search, function(x) any(grepl("^package:lme4$", x)), NA)), is_true())
+    expect_that(m_mc1, equals(m_mc2, check.attributes = FALSE))
+  }
 })
 
 test_that("print(mixed) works: only 1 or 2 fixed effects with all methods", {
@@ -150,27 +152,31 @@ test_that("mixed: expand_re argument, return = 'merMod'", {
 })
 
 test_that("mixed: expand_re argument (longer)", {
-  testthat::skip_on_cran()
-  data("ks2013.3")
-  m4 <- mixed(response ~ validity + (believability*validity||id) + (validity*condition|content), ks2013.3, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE)
-  m5 <- suppressWarnings(mixed(response ~ validity + (believability*validity|id) + (validity*condition||content), ks2013.3, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), expand_re = TRUE, progress=FALSE))
-  expect_identical(length(unlist(summary(m4)$varcor[-7])), nrow(summary(m5)$varcor$id))
-  expect_identical(length(unlist(summary(m5)$varcor[-1])), nrow(summary(m4)$varcor$content))
-  expect_equal(attr(summary(m5)$varcor, "sc"), attr(summary(m4)$varcor, "sc"), tolerance = 0.02)
+  if (packageVersion("testthat") >= "0.9") {
+    testthat::skip_on_cran()
+    data("ks2013.3")
+    m4 <- mixed(response ~ validity + (believability*validity||id) + (validity*condition|content), ks2013.3, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE)
+    m5 <- suppressWarnings(mixed(response ~ validity + (believability*validity|id) + (validity*condition||content), ks2013.3, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), expand_re = TRUE, progress=FALSE))
+    expect_identical(length(unlist(summary(m4)$varcor[-7])), nrow(summary(m5)$varcor$id))
+    expect_identical(length(unlist(summary(m5)$varcor[-1])), nrow(summary(m4)$varcor$content))
+    expect_equal(attr(summary(m5)$varcor, "sc"), attr(summary(m4)$varcor, "sc"), tolerance = 0.02)
+  }
 })
 
 
 test_that("mixed: return=data, expand_re argument, and allFit", {
-  testthat::skip_on_cran()
-  data("ks2013.3")
-  ks2013.3_tmp <- ks2013.3
-  m6 <- mixed(response ~ validity + (believability*validity||id), ks2013.3_tmp, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE, return = "merMod")
-  m6_all_1 <- allFit(m6, verbose = FALSE, data = ks2013.3_tmp)
-  expect_output(print(m6_all_1$`bobyqa.`), "object 're1.believability1' not found")
-  ks2013.3_tmp <- mixed(response ~ validity + (believability*validity||id), ks2013.3_tmp, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE, return = "data")
-  m6_all_2 <- suppressWarnings(allFit(m6, verbose = FALSE, data = ks2013.3_tmp))
-  expect_is(m6_all_2$`bobyqa.`, "merMod")
-  expect_is(m6_all_2$`Nelder_Mead.`, "merMod")
+  if (packageVersion("testthat") >= "0.9") {
+    testthat::skip_on_cran()
+    data("ks2013.3")
+    ks2013.3_tmp <- ks2013.3
+    m6 <- mixed(response ~ validity + (believability*validity||id), ks2013.3_tmp, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE, return = "merMod")
+    m6_all_1 <- allFit(m6, verbose = FALSE, data = ks2013.3_tmp)
+    expect_output(print(m6_all_1$`bobyqa.`), "object 're1.believability1' not found")
+    ks2013.3_tmp <- mixed(response ~ validity + (believability*validity||id), ks2013.3_tmp, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE, return = "data")
+    m6_all_2 <- suppressWarnings(allFit(m6, verbose = FALSE, data = ks2013.3_tmp))
+    expect_is(m6_all_2$`bobyqa.`, "merMod")
+    expect_is(m6_all_2$`Nelder_Mead.`, "merMod") 
+  }
 })
 
 
@@ -179,6 +185,6 @@ test_that("mixed: return=data works", {
   ks2013.3_tmp <- ks2013.3
   ks2013.3_tmp <- mixed(response ~ validity + (believability*validity||id), ks2013.3_tmp, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE, return = "data")
   expect_is(ks2013.3_tmp, "data.frame")
-  expect_gt(ncol(ks2013.3_tmp), ncol(ks2013.3))
+  if (packageVersion("testthat") >= "0.11.0.9000") expect_gt(ncol(ks2013.3_tmp), ncol(ks2013.3))
   expect_output(print(colnames(ks2013.3_tmp)), "re1.believability1_by_validity1")
 })

@@ -28,6 +28,9 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
         within = c("phase", "hour"), observed = "gender")
 
 # the three calls return the same ANOVA table:
+## Anova Table (Type 3 tests)
+##
+## Response: value
 ##                         Effect          df   MSE         F  ges p.value
 ## 1                    treatment       2, 10 22.81    3.94 +  .20     .05
 ## 2                       gender       1, 10 22.81    3.66 +  .11     .08
@@ -44,7 +47,8 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
 ## 13        treatment:phase:hour 7.19, 35.96  2.67      0.35 .009     .93
 ## 14           gender:phase:hour 3.60, 35.96  2.67      0.93  .01     .45
 ## 15 treatment:gender:phase:hour 7.19, 35.96  2.67      0.74  .02     .65
-
+##
+## Sphericity correction method: GG 
 
 # "numeric" variables are per default converted to factors (as long as factorize = TRUE):
 obk.long$hour2 <- as.numeric(as.character(obk.long$hour))

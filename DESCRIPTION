@@ -2,8 +2,8 @@ Package: afex
 Type: Package
 Title: Analysis of Factorial Experiments
 Depends:
-    R (>= 3.0.0),
-    lme4 (>= 1.0.5),
+    R (>= 3.1.0),
+    lme4 (>= 1.1-8),
     reshape2,
     lsmeans (>= 2.17)
 Suggests:
@@ -22,8 +22,8 @@ Suggests:
 Imports:
     stringr,
     coin,
-    Matrix,
-    pbkrtest (>= 0.3-6),
+    Matrix (>= 1.1.1),
+    pbkrtest (>= 0.4-1),
     car,
     stats,
     utils,
@@ -47,5 +47,5 @@ Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"), ema
                   person(given="Søren", family="Højsgaard", role=c("ctb")), person(given="John", family="Fox", role=c("ctb")), person(given="Michael A.",
                   family="Lawrence", role=c("ctb")), person(given="Ulf", family="Mertens", role=c("ctb")) )
 Version: 0.16-1
-Date: 2016-04-02
+Date: 2016-04-03
 RoxygenNote: 5.0.1

@@ -21,7 +21,9 @@
         
     Bugfixes
     
-    o   
+    o   increased required version of R (>= 3.1.0) and the following packages
+        to ensure afex runs with older versions of R: lme4 (>= 1.1-8), 
+        pbkrtest (>= 0.4-1), and Matrix (>= 1.1.1).
 
         
                     *************************

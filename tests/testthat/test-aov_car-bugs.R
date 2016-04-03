@@ -189,8 +189,10 @@ test_that("variable names longer", {
 })
 
 test_that("works with dplyr data.frames (see https://github.com/singmann/afex/issues/6):", {
-  require(dplyr)
-  data(md_12.1)
-  md2 <- tbl_df(md_12.1)
-  expect_is(aov_ez("id", "rt", md2, within = c("angle", "noise"), anova_table=list(correction = "none", es = "none")), "afex_aov")
+  if (getRversion() >= "3.1.2") {
+    require(dplyr)
+    data(md_12.1)
+    md2 <- tbl_df(md_12.1)
+    expect_is(aov_ez("id", "rt", md2, within = c("angle", "noise"), anova_table=list(correction = "none", es = "none")), "afex_aov") 
+  }
 })

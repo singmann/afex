@@ -1,3 +1,8 @@
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/afex)](http://cran.r-project.org/package=afex)
+![](http://cranlogs.r-pkg.org/badges/acss)
+[![Travis-CI Build Status](https://travis-ci.org/singmann/afex.svg?branch=master)](https://travis-ci.org/singmann/afex)
+
+
 afex: Analysis of Factorial EXperiments
 ====
 
@@ -46,3 +51,6 @@ As of version `0.14` several changes to the interface were introduced:
 - first element in mixed object renamed to `anova_table`.
     
 - `summary` method for `mixed` objects now calls `summary.merMod` on full model.
+
+----
+Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.

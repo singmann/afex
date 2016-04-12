@@ -165,7 +165,8 @@ test_that("mixed: expand_re argument (longer)", {
 
 
 test_that("mixed: return=data, expand_re argument, and allFit", {
-  if (packageVersion("testthat") >= "0.9") {
+  #if (packageVersion("testthat") >= "0.9") {
+  if (FALSE) {
     testthat::skip_on_cran()
     data("ks2013.3")
     ks2013.3_tmp <- ks2013.3

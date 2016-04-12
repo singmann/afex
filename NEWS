@@ -2,6 +2,29 @@
                     ** afex VERSION 0.16-x **
                     *************************
                     
+                    Changes in afex Version 0.17-x
+                    Released XXX 2016
+
+    Significant User Visible Changes and New Features
+
+    o   
+        
+    o   
+        
+    Bugfixes
+
+    o   Sphericity correction now correctly displayed as none if all within-
+        factors have only two levels (bug removed by Frederik Aust).
+        
+    o   aov_...(): anova_table = list(intercept = TRUE) now correctly suppresses
+        the intercept.
+        
+    o   aov_...(): return = "nice" did not work.
+    
+                    *************************
+                    ** afex VERSION 0.16-x **
+                    *************************
+                    
                     Changes in afex Version 0.16-x
                     Released April 2016
 

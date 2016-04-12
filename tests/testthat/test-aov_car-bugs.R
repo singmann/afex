@@ -196,3 +196,8 @@ test_that("works with dplyr data.frames (see https://github.com/singmann/afex/is
     expect_is(aov_ez("id", "rt", md2, within = c("angle", "noise"), anova_table=list(correction = "none", es = "none")), "afex_aov") 
   }
 })
+
+test_that("return='nice' works", {
+  data(md_12.1)
+  expect_is(aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), return = "nice"), "data.frame")
+})

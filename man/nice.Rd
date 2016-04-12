@@ -17,7 +17,7 @@ nice(object, ...)
   intercept = NULL, p.adjust.method = attr(object$anova_table,
   "p.adjust.method"), sig.symbols = c(" +", " *", " **", " ***"), ...)
 
-\method{nice}{anova}(object, MSE = TRUE, intercept = FALSE,
+\method{nice}{anova}(object, MSE = NULL, intercept = NULL,
   sig.symbols = c(" +", " *", " **", " ***"), ...)
 
 \method{nice}{mixed}(object, sig.symbols = c(" +", " *", " **", " ***"), ...)

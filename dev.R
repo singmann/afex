@@ -34,7 +34,7 @@ R.libs <- "./packages/library"
 closeAllConnections()
 roxy.package(
 	pck.source.dir = pkg.src.dir,
-	pck.version = "0.16-1",
+	pck.version = "0.17-0",
 	pck.description = data.frame(
 		Package = "afex",
 		Type = "Package",
@@ -49,13 +49,13 @@ roxy.package(
         person(given=\"Ulf\", family=\"Mertens\", role=c(\"ctb\"))
     )",
 		Depends = "R (>= 3.1.0), lme4 (>= 1.1-8), reshape2, lsmeans (>= 2.17)",
-		Suggests = "ascii, xtable, parallel, plyr, optimx, nloptr, knitr, lattice, multcomp, testthat, mlmRev, dplyr",
+		Suggests = "ascii, xtable, parallel, plyr, optimx, nloptr, rmarkdown, lattice, multcomp, testthat, mlmRev, dplyr",
 		Imports = "stringr, coin, Matrix (>= 1.1.1), pbkrtest (>= 0.4-1), car, stats, utils, methods",
 		Description = "Provides convenience functions for analyzing factorial experiments using ANOVA or mixed models. aov_ez(), aov_car(), and aov_4() allow specification of between, within (i.e., repeated-measures), or mixed between-within (i.e., split-plot) ANOVAs for data in long format (i.e., one observation per row), potentially aggregating multiple observations per individual and cell of the design. mixed() fits mixed models using lme4::lmer() and computes p-values for all fixed effects using either Kenward-Roger approximation for degrees of freedom (LMM only), parametric bootstrap (LMMs and GLMMs), or likelihood ratio tests (LMMs and GLMMs). afex uses type 3 sums of squares as default (imitating commercial statistical software).",
 		URL = "https://github.com/singmann/afex",
 		License = "GPL (>=3)",
 		Encoding = "UTF-8",
-    VignetteBuilder="knitr",
+    VignetteBuilder="rmarkdown",
 		stringsAsFactors = FALSE),
 		actions = c("roxy"),
 		R.libs = R.libs, 

@@ -1,5 +1,5 @@
                     *************************
-                    ** afex VERSION 0.16-x **
+                    ** afex VERSION 0.17-x **
                     *************************
                     
                     Changes in afex Version 0.17-x
@@ -17,9 +17,9 @@
         factors have only two levels (bug removed by Frederik Aust).
         
     o   aov_...(): anova_table = list(intercept = TRUE) now correctly suppresses
-        the intercept.
+        the intercept (bug removed by Frederik Aust).
         
-    o   aov_...(): return = "nice" did not work.
+    o   aov_...(): return = "nice" did not work (bug removed by Frederik Aust).
     
                     *************************
                     ** afex VERSION 0.16-x **

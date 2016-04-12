@@ -13,7 +13,7 @@ Suggests:
     plyr,
     optimx,
     nloptr,
-    rmarkdown,
+    knitr,
     lattice,
     multcomp,
     testthat,
@@ -41,7 +41,7 @@ Description: Provides convenience functions for analyzing factorial
 URL: https://github.com/singmann/afex
 License: GPL (>=3)
 Encoding: UTF-8
-VignetteBuilder: rmarkdown
+VignetteBuilder: knitr
 Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"), email="singmann+afex@gmail.com"),
             person(given="Ben", family="Bolker", role=c("aut")), person(given="Jake", family="Westfall",
             role=c("aut")), person(given="Frederik", family="Aust", role=c("aut")), person(given="Søren",

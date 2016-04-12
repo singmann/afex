@@ -63,10 +63,21 @@ test_that("anova_table attributes", {
   expect_that(suppressWarnings(nice(all_attr)), is_identical_to(added_attr))
   expect_that(nice(all_attr$anova_table), is_identical_to(added_attr))
   
-  
   reset_attr <- nice(no_attr, correction = "none", p.adjust = "none", observed = NULL)
   expect_that(nice(no_attr), is_identical_to(reset_attr))
   expect_that(nice(no_attr$anova_table), is_identical_to(reset_attr))
+  
+  intercept_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(intercept = TRUE))
+  expect_output(intercept_test, "(Intercept)")
+  
+  mse_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(MSE = FALSE))
+  expect_null(mse_test$anova_table$MSE)
+  expect_output(nice(mse_test, MSE = TRUE), "MSE")
+  
+  symbol_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(sig.symbols = c(" ", " a", " aa", " aaa")), return = "nice")
+  expect_output(symbol_test, "aaa")
+  symbol_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(sig.symbols = c(" ", " a", " aa", " aaa")))
+  expect_output(symbol_test, "aaa")
   
   # Test support for old afex objects
   old_afex_object <- default_options <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
@@ -75,8 +86,19 @@ test_that("anova_table attributes", {
   attr(old_afex_object$anova_table, "p.adjust.method") <- NULL
   expect_that(nice(old_afex_object), is_identical_to(nice(default_options)))
   
-  # Test if sphericity correction is set to "none" in the absence of within-subject factors
+  # Test if sphericity correction is set to "none" in the absence of within-subject factors or if within-subject factors have only two levels
   data(obk.long)
   between_anova <- suppressWarnings(aov_car(value ~ treatment * gender + Error(id), data = obk.long))
   expect_that(attr(between_anova$anova_table, "correction"), equals("none"))
+  
+  obk.long <- droplevels(obk.long[obk.long$phase %in% c("post","pre"),])
+  two_level_anova <- suppressWarnings(aov_ez("id", "value", obk.long, between = c("treatment"), within = c("phase")))
+  expect_that(attr(two_level_anova$anova_table, "correction"), equals("none"))
+  
+  more_levels_anova <- aov_ez("id", "value", obk.long, between = c("treatment"), within = c("phase", "hour"))
+  expect_that(attr(more_levels_anova$anova_table, "correction"), equals("GG"))
+  
+  obk.long <- droplevels(obk.long[obk.long$hour %in% c("1","2"),])
+  two_levels_anova <- aov_ez("id", "value", obk.long, between = c("treatment"), within = c("phase", "hour"))
+  expect_that(attr(two_levels_anova$anova_table, "correction"), equals("none"))
 })

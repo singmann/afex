@@ -2,14 +2,3 @@
 
 language: r
 warnings_are_errors: true
-r_binary_packages:
- - testthat
- - lme4
- - lsmeans
- - pbkrtest
- - car
- - knitr
- - multcomp
- - reshape2
- - nloptr
- - optimx

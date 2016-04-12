@@ -70,7 +70,8 @@ test_that("mixed, obk.long: LMM with method = PB", {
 
 test_that("mixed, obk.long: multicore loads lme4 and produces the same results", {
   if (packageVersion("testthat") >= "0.9") {
-    skip_on_cran()
+    testthat::skip_on_cran()
+    testthat::skip_on_travis()
     data(obk.long, package = "afex")
     require(parallel)
     cl <- makeCluster(rep("localhost", 2)) # make cluster
@@ -154,6 +155,7 @@ test_that("mixed: expand_re argument, return = 'merMod'", {
 test_that("mixed: expand_re argument (longer)", {
   if (packageVersion("testthat") >= "0.9") {
     testthat::skip_on_cran()
+    testthat::skip_on_travis()
     data("ks2013.3")
     m4 <- mixed(response ~ validity + (believability*validity||id) + (validity*condition|content), ks2013.3, expand_re = TRUE, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE)
     m5 <- suppressWarnings(mixed(response ~ validity + (believability*validity|id) + (validity*condition||content), ks2013.3, method = "LRT", control = lmerControl(optCtrl = list(maxfun=1e6)), expand_re = TRUE, progress=FALSE))

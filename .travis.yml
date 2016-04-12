@@ -18,6 +18,4 @@ r_binary_packages:
  - coin
  - ascii
  - dplyr
- - mlmRev
- - ez
 

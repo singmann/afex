@@ -10,8 +10,14 @@ r_binary_packages:
  - pbkrtest
  - car
  - knitr
+ - rmarkdown
  - multcomp
  - reshape2
  - nloptr
  - optimx
- 
+ - coin
+ - ascii
+ - dplyr
+ - mlmRev
+ - ez
+

@@ -15,12 +15,14 @@ nice(object, ...)
   observed = attr(object$anova_table, "observed"),
   correction = attr(object$anova_table, "correction"), MSE = NULL,
   intercept = NULL, p.adjust.method = attr(object$anova_table,
-  "p.adjust.method"), sig.symbols = c(" +", " *", " **", " ***"), ...)
+  "p.adjust.method"), sig_symbols = c(" +", " *", " **", " ***"), sig.symbols,
+  ...)
 
 \method{nice}{anova}(object, MSE = NULL, intercept = NULL,
-  sig.symbols = c(" +", " *", " **", " ***"), ...)
+  sig_symbols = c(" +", " *", " **", " ***"), sig.symbols, ...)
 
-\method{nice}{mixed}(object, sig.symbols = c(" +", " *", " **", " ***"), ...)
+\method{nice}{mixed}(object, sig_symbols = c(" +", " *", " **", " ***"),
+  sig.symbols, ...)
 
 \method{print}{nice_table}(x, ...)
 }
@@ -41,7 +43,9 @@ nice(object, ...)
 
 \item{p.adjust.method}{\code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details). The default \code{NULL} corresponds to no adjustment.}
 
-\item{sig.symbols}{Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig.symbols = ""} will display the stars but not the \code{+}, \code{sig.symbols = rep("", 4)} will display no symbols.}
+\item{sig_symbols}{Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig_symbols = ""} will display the stars but not the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols.}
+
+\item{sig.symbols}{deprecated argument, only for backwards compatibility, use \code{"sig_symbols"} instead.}
 }
 \value{
 A \code{data.frame} of class \code{nice_table} with the ANOVA table consisting of characters. The columns that are always present are: \code{Effect}, \code{df} (degrees of freedom), \code{F}, and \code{p}.

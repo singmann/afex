@@ -74,9 +74,9 @@ test_that("anova_table attributes", {
   expect_null(mse_test$anova_table$MSE)
   expect_output(print(nice(mse_test, MSE = TRUE)), "MSE")
   
-  symbol_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(sig.symbols = c(" ", " a", " aa", " aaa")), return = "nice")
+  symbol_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(sig_symbols = c(" ", " a", " aa", " aaa")), return = "nice")
   expect_output(print(symbol_test), "aaa")
-  symbol_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(sig.symbols = c(" ", " a", " aa", " aaa")))
+  symbol_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(sig_symbols = c(" ", " a", " aa", " aaa")))
   #expect_output(print(symbol_test), "aaa")
   
   # Test support for old afex objects

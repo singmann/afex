@@ -27,3 +27,9 @@ aov4 <- function(...) {
   aov_4(...)
 }
 
+
+warn_deprecated_arg <- function(name, instead) {
+  warning(gettextf("'%s' is deprecated; use '%s' instead", name, instead),
+          call.=FALSE, domain=NA)
+}
+        

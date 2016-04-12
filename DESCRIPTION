@@ -14,7 +14,6 @@ Suggests:
     optimx,
     nloptr,
     knitr,
-    rmarkdown,
     lattice,
     multcomp,
     testthat,

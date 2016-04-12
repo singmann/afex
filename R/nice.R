@@ -97,7 +97,14 @@ nice.afex_aov <- function(object, es = NULL, observed = attr(object$anova_table,
 #' @rdname nice
 #' @method nice anova
 #' @export
-nice.anova <- function(object, MSE = TRUE, intercept = FALSE, sig.symbols = c(" +", " *", " **", " ***"), ...) {
+nice.anova <- function(object, MSE = NULL, intercept = NULL, sig.symbols = c(" +", " *", " **", " ***"), ...) {
+  if(is.null(MSE)) { # Defaults to TRUE because of default set in anova.afex_aov
+    MSE <- "MSE" %in% colnames(object)
+  }
+  if(is.null(intercept)) { # Defaults to FALSE because of default set in anova.afex_aov
+    intercept <- "(Intercept)" %in% rownames(object)
+  }
+  
   # internal functions:
   is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
   make.fs <- function(anova, symbols) {
@@ -111,7 +118,7 @@ nice.anova <- function(object, MSE = TRUE, intercept = FALSE, sig.symbols = c(" 
   symbols.use <-  c(" +", " *", " **", " ***")
   symbols.use[seq_along(sig.symbols)] <- sig.symbols
   df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"df"], stringsAsFactors = FALSE)
-  if (!is.null(anova_table$MSE)) df.out <- cbind(df.out, data.frame(MSE = formatC(anova_table[,"MSE"], digits = 2, format = "f"), stringsAsFactors = FALSE))  
+  if (MSE) df.out <- cbind(df.out, data.frame(MSE = formatC(anova_table[,"MSE"], digits = 2, format = "f"), stringsAsFactors = FALSE))  
   df.out <- cbind(df.out, data.frame(F = make.fs(anova_table, symbols.use), stringsAsFactors = FALSE))
   if (!is.null(anova_table$ges)) df.out$ges <- round_ps(anova_table$ges)
   if (!is.null(anova_table$pes)) df.out$pes <- round_ps(anova_table$pes)

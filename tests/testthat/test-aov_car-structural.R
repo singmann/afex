@@ -67,6 +67,18 @@ test_that("anova_table attributes", {
   expect_that(nice(no_attr), is_identical_to(reset_attr))
   expect_that(nice(no_attr$anova_table), is_identical_to(reset_attr))
   
+  intercept_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(intercept = TRUE))
+  expect_output(intercept_test, "(Intercept)")
+  
+  mse_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(MSE = FALSE))
+  expect_null(mse_test$anova_table$MSE)
+  expect_output(nice(mse_test, MSE = TRUE), "MSE")
+  
+  symbol_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(sig.symbols = c(" ", " a", " aa", " aaa")), return = "nice")
+  expect_output(symbol_test, "aaa")
+  symbol_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(sig.symbols = c(" ", " a", " aa", " aaa")))
+  expect_output(symbol_test, "aaa")
+  
   # Test support for old afex objects
   old_afex_object <- default_options <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
   attr(old_afex_object$anova_table, "observed") <- NULL

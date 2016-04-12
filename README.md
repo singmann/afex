@@ -1,5 +1,7 @@
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/afex)](http://cran.r-project.org/package=afex)
-![](http://cranlogs.r-pkg.org/badges/afex)
+[![monthly downloads](http://cranlogs.r-pkg.org/badges/afex)](http://cranlogs.r-pkg.org/badges/afex)
+[![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/afex)](http://cranlogs.r-pkg.org/badges/grand-total/afex)
+[![Research software impact](http://depsy.org/api/package/cran/afex/badge.svg)](http://depsy.org/package/r/afex)
 [![Travis-CI Build Status](https://travis-ci.org/singmann/afex.svg?branch=master)](https://travis-ci.org/singmann/afex)
 
 

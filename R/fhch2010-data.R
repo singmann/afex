@@ -1,0 +1,35 @@
+#' Data from Freeman, Heathcote, Chalmers, & Hockley (2010)
+#'
+#' Lexical decision and word naming latencies for 300 words and 300 nonwords presented in Freeman, Heathcote, Chalmers, and Hockley (2010). The study had one between-subjects factors, \code{"task"} with two levels (\code{"naming"} or \code{"lexdec"}), and four within-subjects factors: \code{"stimulus"} type with two levels (\code{"word"} or \code{"nonword"}), word \code{"density"} and word \code{"frequency"} each with two levels (\code{"low"} and \code{"high"}) and stimulus \code{"length"} with three levels (4, 5, and 6).
+#' 
+#'  In the lexical-decision condition (N = 25), subjects indicated whether each item was a word or a nonword, by pressing either the left (labeled word) or right (labeled nonword) outermost button on a 6-button response pad. The next study item appeared immediately after the lexical decision response was given. In the naming condition (N = 20), subjects were asked to name each item aloud, and items remained on screen for 3 s. Naming time was recorded by a voice key.
+#' 
+#' Items consisted of 300 words, 75 in each set making up a factorial combination of high and low density and frequency, and 300 nonwords, with equal numbers of 4, 5, and 6 letter items in each set.
+#' 
+#'
+#' @docType data
+#' @keywords dataset
+#' @name fhch2010
+#' @usage fhch2010
+#' @format A \code{data.frame} with 13,222 obs. of 9 variables:
+#' \describe{
+#'  \item{id}{participant id, \code{factor}}
+#'  \item{task}{\code{factor} with two levels indicating which task was performed: \code{"naming"} or \code{"lexdec"}}
+#'  \item{stimulus}{\code{factor} indicating whether the shown stimulus was a \code{"word"} or \code{"nonword"}}
+#'  \item{density}{\code{factor} indicating the neighborhood density of presented items with two levels: \code{"low"} and \code{"high"}. Density is defined as the number of words that differ from a base word by one letter or phoneme.}
+#'  \item{frequency}{\code{factor} indicating the word frequency of presented items with two levels: \code{"low"} (i.e., words that occur less often in natural language) and \code{"high"} (i.e., words that occur more often in natural language).}
+#'  \item{length}{\code{factor} with 3 levels (4, 5, or 6) indicating the number of characters of presented stimuli.}
+#'  \item{item}{\code{factor} with 600 levels: 300 words and 300 nonwords}
+#'  \item{rt}{response time in seconds}
+#'  \item{log_rt}{natural logarithm of response time in seconds}
+#'  \item{correct}{boolean indicating whether or not the response in the lexical decision task was correct or incorrect (incorrect responses of the naming task are not part of the data).}
+#' }
+#' @source Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in recognition memory for words. Journal of Memory and Language, 62(1), 1-18. http://doi.org/10.1016/j.jml.2009.09.004
+#'
+#' @encoding UTF-8
+#'
+#' @example examples/examples.fhch2010.R
+NULL
+
+
+

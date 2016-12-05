@@ -21,7 +21,7 @@
 #' @export
 
 
-ems <- function(design, nested=NULL, random=NULL){
+ems <- function(design, nested=NULL, random=""){
   # modify design formula based on nested factors specified
   if(!is.null(nested)){
     terms <- attr(terms(design), "term.labels")

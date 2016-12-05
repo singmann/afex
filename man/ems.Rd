@@ -6,7 +6,7 @@
  
  Implements the Cornfield-Tukey algorithm for deriving the expected values of the mean squares for factorial designs.}
 \usage{
-ems(design, nested = NULL, random = NULL)
+ems(design, nested = NULL, random = "")
 }
 \arguments{
 \item{design}{A \code{formula} object specifying the factors in the design (except residual error, which is always implicitly included). The left hand side of the \code{~} is the symbol that will be used to denote the number of replications per lowest-level factor combination (I usually use "r" or "n"). The right hand side should include all fixed and random factors separated by \code{*}. Factor names should be single letters.}

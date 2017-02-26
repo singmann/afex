@@ -2,29 +2,29 @@
 escape_vars <- function(names) {
   if (length(names) == 0)
     return(names)
-  names <- sapply(names, function(name) {
+  names <- vapply(names, function(name) {
     if (make.names(name) != name) {
       name <- gsub('\\', '\\\\', name, fixed=TRUE)
       name <- gsub('`',  '\\`',  name, fixed=TRUE)
       name <- paste0('`', name, '`')
     }
     name
-  }, USE.NAMES=FALSE)
+  }, FUN.VALUE='', USE.NAMES=FALSE)
   names
 }
 
 # decompose functions from jmvcore
 
 decomposeTerm <- function(term) {
-    
+
     chars <- strsplit(term, '')[[1]]
     components <- character()
     componentChars <- character()
     inQuote <- FALSE
-    
+
     i <- 1
     n <- length(chars)
-    
+
     while (i <= n) {
         char <- chars[i]
         if (char == '`') {
@@ -48,7 +48,6 @@ decomposeTerm <- function(term) {
 
     component <- paste0(componentChars, collapse='')
     components <- c(components, component)
-    
+
     components
 }
-

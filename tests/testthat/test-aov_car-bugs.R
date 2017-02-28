@@ -201,3 +201,13 @@ test_that("return='nice' works", {
   data(md_12.1)
   expect_is(aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), return = "nice"), "data.frame")
 })
+
+
+test_that("aov_car works with column names containing spaces: https://github.com/singmann/afex/issues/22", {
+  data <- list("dependent" = rnorm(100), "RM Factor 1" = factor(rep(c("Level 1", "Level 2"), 50)), "subject" = factor(rep(1:50, each = 2)))
+  attr(data, 'row.names') <- seq_len(length(data[[1]]))
+  attr(data, 'class') <- 'data.frame'
+  formula <- as.formula("dependent ~ `RM Factor 1` + Error(subject/(`RM Factor 1`))")
+  
+  expect_is(aov_car(formula, data),  "afex_aov")
+})

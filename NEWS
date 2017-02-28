@@ -3,7 +3,7 @@
                     *************************
                     
                     Changes in afex Version 0.17-x
-                    Released XXX 2016
+                    Released XXX 2017
 
     Significant User Visible Changes and New Features
 
@@ -20,6 +20,9 @@
         the intercept (bug removed by Frederik Aust).
         
     o   aov_...(): return = "nice" did not work (bug removed by Frederik Aust).
+    
+    o   aov_car() now supports column names with spaces using backticks, see: 
+        https://github.com/singmann/afex/issues/22 Thx to Jonathan Love for fix.
     
                     *************************
                     ** afex VERSION 0.16-x **

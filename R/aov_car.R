@@ -167,8 +167,25 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
   id <- all.vars(parse(text = error.term))[1]
   within <- all.vars(parse(text = error.term))[-1]
   between <- vars[!(vars %in% c(id, within))]
+  
+  dv.escaped <- escape_vars(dv)
+  id.escaped <- escape_vars(id)
+  within.escaped  <- escape_vars(within)
+  between.escaped <- escape_vars(between)
+  
   effect.parts <- parts[!str_detect(parts, "^Error\\(")]
-  effect.parts.no.within <- if (length(within) == 0) effect.parts else effect.parts[!str_detect(effect.parts, str_c("\\b",within,"\\b", collapse = "|"))]
+
+  if (length(within) > 0) {
+    effect.parts.no.within <- character()
+    for (term in effect.parts) {
+      components <- decomposeTerm(term)
+      if ( ! any(within %in% components))
+        effect.parts.no.within <- c(effect.parts.no.within, term)
+    }
+  } else {
+    effect.parts.no.within <- effect.parts
+  }
+
   data <- droplevels(data) #remove empty levels.
   # make id and within variables to factors:
   if (!(is.factor(data[,id]))) data[,id] <- factor(data[,id])
@@ -193,10 +210,10 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
     if (is.factor(data[,i]) && length(unique(data[,i])) == 1) stop(paste0("Factor \"", i, "\" consists of one level only. Remove factor from model?"))
   }
   # make formulas
-  rh2 <- if (length(between) > 0) str_c(effect.parts.no.within, collapse = "+") else "1"
-  lh1 <- str_c(id, if (length(between) > 0) str_c(between, collapse = "+") else NULL, sep = "+")
-  rh1 <- str_c(within, collapse = "+")
-  rh3 <- str_c(within, collapse = "*")
+  rh2 <- if (length(between.escaped) > 0) str_c(effect.parts.no.within, collapse = "+") else "1"
+  lh1 <- str_c(id, if (length(between.escaped) > 0) str_c(between.escaped, collapse = "+") else NULL, sep = "+")
+  rh1 <- str_c(within.escaped, collapse = "+")
+  rh3 <- str_c(within.escaped, collapse = "*")
   # converting all within subject factors to factors and adding a leading charcter (x) if starting with a digit.
   for (within.factor in within) {
     if (is.factor(data[,within.factor])) levels(data[,within.factor]) <- make.names(levels(data[,within.factor]), unique = TRUE)
@@ -212,7 +229,7 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
   }
   # Is fun.aggregate NULL and aggregation necessary?
   if (is.null(fun.aggregate)) {
-    if (any(xtabs(as.formula(str_c("~", id, if (length(within) > 0) "+", rh1)), data = data) > 1)) {
+    if (any(xtabs(as.formula(str_c("~", id.escaped, if (length(within) > 0) "+", rh1)), data = data) > 1)) {
       warning("More than one observation per cell, aggregating the data using mean (i.e, fun.aggregate = mean)!", call. = FALSE)
       fun.aggregate <- mean
     }
@@ -289,7 +306,7 @@ aov_car <- function(formula, data, fun.aggregate = NULL, type = afex_options("ty
       names(contrasts) <- c(within, between)[factor_vars]
     }
     #return(aov(formula(paste(dv, "~", paste(c(between, within), collapse = "*"),  if (length(within) > 0) paste0("+Error(", id, "/(",paste(within, collapse="*"), "))") else NULL)), data=dat.ret, contrasts = contrasts))
-    aov <- aov(formula(paste(dv, "~", paste(c(between, within), collapse = "*"),  if (length(within) > 0) paste0("+Error(", id, "/(",paste(within, collapse="*"), "))") else NULL)), data=dat.ret, contrasts = contrasts)
+    aov <- aov(formula(paste(dv.escaped, "~", paste(c(between.escaped, within.escaped), collapse = "*"),  if (length(within) > 0) paste0("+Error(", id.escaped, "/(",paste(within.escaped, collapse="*"), "))") else NULL)), data=dat.ret, contrasts = contrasts)
   }
   if(return == "aov") return(aov)
   data.l <- list(long = dat.ret, wide = tmp.dat)
@@ -364,6 +381,10 @@ aov_4 <- function(formula, data, observed = NULL, fun.aggregate = NULL, type = a
   if (length(barterms) > 1) stop("aov_4 only allows one random effect term")
   within <- all.vars(barterms[[1]][[2]])
   id <- all.vars(barterms[[1]][[3]])
+  
+  id <- escape_vars(id)
+  within <- escape_vars(within)
+  
   error <- str_c(" + Error(", id, if (length(within) > 0) "/(" else "", str_c(within, collapse = " * "), if (length(within) > 0) ")" else "", ")")
   lh <- as.character(nobars(formula))
   if (length(lh) == 1) {
@@ -384,6 +405,13 @@ aov_ez <- function(id, dv, data, between = NULL, within = NULL, covariate = NULL
   if (is.null(between) & is.null(within)) stop("Either between or within need to be non-NULL!")
   if (!is.null(covariate)) covariate <- str_c(covariate, collapse = "+")
   #browser()
+  
+  id        <- escape_vars(id)
+  dv        <- escape_vars(dv)
+  between   <- escape_vars(between)
+  within    <- escape_vars(within)
+  covariate <- escape_vars(covariate)
+  
   rh <- if (!is.null(between) || !is.null(covariate)) str_c(if (!is.null(between)) str_c(between, collapse = " * ") else NULL, covariate, sep = " + ") else "1"
   error <- str_c(" + Error(", id, if (!is.null(within)) "/(" else "", str_c(within, collapse = " * "), if (length(within) > 0) ")" else "", ")")
   formula <- str_c(dv, " ~ ", rh, error)

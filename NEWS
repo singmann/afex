@@ -21,8 +21,11 @@
         
     o   aov_...(): return = "nice" did not work (bug removed by Frederik Aust).
     
-    o   aov_car() now supports column names with spaces using backticks, see: 
+    o   aov_...() now supports column names with spaces (using backticks), see: 
         https://github.com/singmann/afex/issues/22 Thx to Jonathan Love for fix.
+        
+    o   changed license to GPL >=2 (as it calles some function from GPL >=2 
+        packages).
     
                     *************************
                     ** afex VERSION 0.16-x **

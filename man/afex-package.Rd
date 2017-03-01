@@ -11,11 +11,11 @@ Analysis of Factorial Experiments.
 \tabular{ll}{
 Package: \tab afex\cr
 Type: \tab Package\cr
-Version: \tab 0.17-1\cr
+Version: \tab 0.17-2\cr
 Date: \tab 2017-03-01\cr
 Depends: \tab R (>= 3.1.0), lme4 (>= 1.1-8), reshape2, lsmeans (>= 2.17)\cr
 Encoding: \tab UTF-8\cr
-License: \tab GPL (>=3)\cr
+License: \tab GPL (>=2)\cr
 URL: \tab https://github.com/singmann/afex\cr
 }
 

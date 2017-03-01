@@ -19,9 +19,9 @@ test_that("split-plot produces an afex_aov object without error", {
 
 test_that("purely-between produces afex_aov objects without error", {
   data(obk.long, package = "afex")
-  out1 <- aov_car(value ~ treatment * gender + Error(id), data = obk.long, observed = "gender", return = "afex_aov", fun.aggregate = mean)
-  out2 <- aov_4(value ~ treatment * gender + (1|id), data = obk.long, observed = "gender", return = "afex_aov", fun.aggregate = mean)
-  out3 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), observed = "gender", return = "afex_aov", fun.aggregate = mean)
+  out1 <- aov_car(value ~ treatment * gender + Error(id), data = obk.long, observed = "gender", return = "afex_aov", fun_aggregate = mean)
+  out2 <- aov_4(value ~ treatment * gender + (1|id), data = obk.long, observed = "gender", return = "afex_aov", fun_aggregate = mean)
+  out3 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), observed = "gender", return = "afex_aov", fun_aggregate = mean)
   
   expect_that(out1, is_equivalent_to(out2))
   expect_that(out1, is_equivalent_to(out3))

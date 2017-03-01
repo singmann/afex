@@ -255,12 +255,7 @@ aov_car <- function(formula, data, fun_aggregate = NULL, type = afex_options("ty
   #     return(lmer(as.formula(str_c("value~", rh2, if (length(within) > 0) paste0("*", f.within.new) else "", "+ (1", if (length(within) > 0) paste0("+", f.within.new) else "", "|", id, ")" , sep = "")), data = n.dat))
   #   }
   # prepare the data:
-  if (length(dots) > 0) {
-    tmp.dat <- do.call(dcast, args = list(data = data, formula = as.formula(str_c(lh1, if (length(within) > 0) rh1 else ".", sep = "~")), fun.aggregate = fun_aggregate, dots, value.var = dv))
-  } else {
-    tmp.dat <- do.call(dcast, args = list(data = data, formula = as.formula(str_c(lh1, if (length(within) > 0) rh1 else ".", sep = "~")), fun.aggregate = fun_aggregate, value.var = dv))
-  }
-  
+  tmp.dat <- do.call(dcast, args = c(data = list(data), formula = as.formula(str_c(lh1, if (length(within) > 0) rh1 else ".", sep = "~")), fun.aggregate = fun_aggregate, dots, value.var = dv))
   # check for missing values:
   if (any(is.na(tmp.dat))) {
     missing.values <- apply(tmp.dat, 1, function(x) any(is.na(x)))
@@ -271,11 +266,7 @@ aov_car <- function(formula, data, fun_aggregate = NULL, type = afex_options("ty
   #     if (any(n_data_points == 0)) warning("Some cells of the fully crossed between-subjects design are empty. A full model might not be estimable.")
   #   }
   # marginals: (disabled in April 2015)
-  if (length(dots) > 0) {
-    dat.ret <- do.call(dcast, args = list(data = data, formula = as.formula(str_c(str_c(lh1, if (length(within) > 0) rh1 else NULL, sep = "+"), "~.")), fun.aggregate = fun_aggregate, dots, value.var = dv))
-  } else {
-    dat.ret <- do.call(dcast, args = list(data = data, formula = as.formula(str_c(str_c(lh1, if (length(within) > 0) rh1 else NULL, sep = "+"), "~.")), fun.aggregate = fun_aggregate, value.var = dv))
-  }
+  dat.ret <- do.call(dcast, args = c(data = list(data), formula = as.formula(str_c(str_c(lh1, if (length(within) > 0) rh1 else NULL, sep = "+"), "~.")), fun.aggregate = fun_aggregate, dots, value.var = dv))
   colnames(dat.ret)[length(colnames(dat.ret))] <- dv
   #   full.formula <- as.formula(str_c(dv, " ~ ", str_c(c(between.factors, within), collapse = "*")))
   #   all.terms <- attr(terms(full.formula), "term.labels")

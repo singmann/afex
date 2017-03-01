@@ -27,7 +27,6 @@ Imports:
     pbkrtest (>= 0.4-1),
     car,
     stats,
-    utils,
     methods
 Description: Provides convenience functions for analyzing factorial
     experiments using ANOVA or mixed models. aov_ez(), aov_car(), and
@@ -55,6 +54,6 @@ Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"),
         family="Lawrence", role=c("ctb")), person(given="Ulf",
         family="Mertens", role=c("ctb")), person(given="Jonathan",
         family="Love", role=c("ctb")) )
-Version: 0.17-2
+Version: 0.17-3
 Date: 2017-03-01
 RoxygenNote: 5.0.1

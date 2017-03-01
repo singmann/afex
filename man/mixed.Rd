@@ -7,13 +7,13 @@
 \title{p-values for fixed effects of mixed-model via lme4::lmer()}
 \usage{
 mixed(formula, data, type = afex_options("type"),
-  method = afex_options("method_mixed"), per.parameter = NULL,
-  args.test = list(), test.intercept = FALSE,
-  check.contrasts = afex_options("check.contrasts"), expand_re = FALSE,
-  set.data.arg = TRUE, progress = TRUE, cl = NULL, return = "mixed",
+  method = afex_options("method_mixed"), per_parameter = NULL,
+  args_test = list(), test_intercept = FALSE,
+  check_contrasts = afex_options("check_contrasts"), expand_re = FALSE,
+  set_data_arg = TRUE, progress = TRUE, cl = NULL, return = "mixed",
   ...)
 
-lmer_alt(formula, data, check.contrasts = FALSE, ...)
+lmer_alt(formula, data, check_contrasts = FALSE, ...)
 }
 \arguments{
 \item{formula}{a formula describing the full mixed-model to be fitted. As this formula is passed to \code{lmer}, it needs at least one random term.}
@@ -24,21 +24,21 @@ lmer_alt(formula, data, check.contrasts = FALSE, ...)
 
 \item{method}{character vector indicating which methods for obtaining p-values should be used: \code{"KR"} corresponds to the Kenward-Roger approximation for degrees of freedom (only working with linear mixed models), \code{"PB"} calculates p-values based on parametric bootstrap, \code{"LRT"} calculates p-values via the likelihood ratio tests implemented in the \code{anova} method for \code{merMod} objects (only recommended for models with many [i.e., > 50] levels for the random factors). The default (currently \code{"KR"}) is taken from \code{\link{afex_options}}.}
 
-\item{per.parameter}{\code{character} vector specifying for which variable tests should be run for each parameter (instead for the overall effect). Can be useful e.g., for testing ordered factors. Relatively untested so results should be compared with a second run without setting this argument. Uses \code{\link{grep}} for selecting parameters among the fixed effects so regular expressions (\code{\link{regex}}) are possible. See Examples.}
+\item{per_parameter}{\code{character} vector specifying for which variable tests should be run for each parameter (instead for the overall effect). Can be useful e.g., for testing ordered factors. Relatively untested so results should be compared with a second run without setting this argument. Uses \code{\link{grep}} for selecting parameters among the fixed effects so regular expressions (\code{\link{regex}}) are possible. See Examples.}
 
-\item{args.test}{\code{list} of arguments passed to the function calculating the p-values. See Details.}
+\item{args_test}{\code{list} of arguments passed to the function calculating the p-values. See Details.}
 
-\item{test.intercept}{logical. Whether or not the intercept should also be fitted and tested for significance. Default is \code{FALSE}. Only relevant if \code{type = 3}.}
+\item{test_intercept}{logical. Whether or not the intercept should also be fitted and tested for significance. Default is \code{FALSE}. Only relevant if \code{type = 3}.}
 
-\item{check.contrasts}{\code{logical}. Should contrasts be checked and (if necessary) changed to \code{"contr.sum"}? See Details. The default (\code{"TRUE"}) is taken from \code{\link{afex_options}}.}
+\item{check_contrasts}{\code{logical}. Should contrasts be checked and (if necessary) changed to \code{"contr.sum"}? See Details. The default (\code{"TRUE"}) is taken from \code{\link{afex_options}}.}
 
 \item{expand_re}{logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.}
 
-\item{set.data.arg}{\code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}.}
+\item{set_data_arg}{\code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}.}
 
 \item{progress}{if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.}
 
-\item{cl}{A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args.test} for this.}
+\item{cl}{A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args_test} for this.}
 
 \item{return}{the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model. Can be used in combination with \code{expand_re = TRUE} and \code{\link{allFit}} (see examples there).}
 
@@ -99,7 +99,7 @@ For an introduction to mixed-modeling for experimental designs see Barr, Levy, S
 
 p-values are per default calculated via methods from \pkg{pbkrtest}. When \code{method = "KR"} (the default), the Kenward-Roger approximation for degrees-of-freedom is calculated using \code{\link[pbkrtest]{KRmodcomp}}, which is only applicable to linear-mixed models. The test statistic in the output is a F-value (\code{F}).
 
-\code{method = "PB"} calculates p-values using parametric bootstrap using \code{\link[pbkrtest]{PBmodcomp}}. This can be used for linear and also generalized linear mixed models (GLMM) by specifying a \code{\link[stats]{family}} argument to \code{mixed}. Note that you should specify further arguments to \code{PBmodcomp} via \code{args.test}, especially \code{nsim} (the number of simulations to form the reference distribution) or \code{cl} (for using multiple cores). For other arguments see \code{\link[pbkrtest]{PBmodcomp}}. Note that \code{REML} (argument to \code{[g]lmer}) will be set to \code{FALSE} if method is \code{PB}.
+\code{method = "PB"} calculates p-values using parametric bootstrap using \code{\link[pbkrtest]{PBmodcomp}}. This can be used for linear and also generalized linear mixed models (GLMM) by specifying a \code{\link[stats]{family}} argument to \code{mixed}. Note that you should specify further arguments to \code{PBmodcomp} via \code{args_test}, especially \code{nsim} (the number of simulations to form the reference distribution) or \code{cl} (for using multiple cores). For other arguments see \code{\link[pbkrtest]{PBmodcomp}}. Note that \code{REML} (argument to \code{[g]lmer}) will be set to \code{FALSE} if method is \code{PB}.
 
 \code{method = "LRT"} calculates p-values via likelihood ratio tests implemented in the \code{anova} method for \code{"merMod"} objects. This is recommended by Barr et al. (2013; which did not test the other methods implemented here). Using likelihood ratio tests is only recommended for models with many levels for the random effects (> 50), but can be pretty helpful in case the other methods fail (due to memory and/or time limitations). The \href{http://glmm.wikidot.com/faq}{lme4 faq} also recommends the other methods over likelihood ratio tests.
 }
@@ -110,7 +110,7 @@ Type 3 tests are obtained by comparing a model in which only the tested effect i
 
 Type 2 tests are truly sequential. They are obtained by comparing a model in which the tested effect and all higher oder effect (e.g., all three-way interactions for testing a two-way interaction) are excluded with a model in which only effects up to the order of the tested effect are present and all higher order effects absent. In other words, there are multiple full models, one for each order of effects. Consequently, the results for lower order effects are identical of whether or not higher order effects are part of the model or not. This latter feature is not consistent with classical ANOVA type 2 tests but a consequence of the sequential tests (and \href{https://stat.ethz.ch/pipermail/r-sig-mixed-models/2012q3/018992.html}{I didn't find a better way} of implementing the Type 2 tests). This \strong{does not} correspond to the (type 2) Wald test reported by \code{car::Anova}. If you want type 2 Wald tests instead of truly sequential typde 2 tests, use \code{car::Anova} with \code{test = "F"}. Note that the order in which the effects are entered into the formula does not matter (in contrast to type 1 tests).
 
-If \code{check.contrasts = TRUE}, contrasts will be set to \code{"contr.sum"} for all factors in the formula if default contrasts are not equal to \code{"contr.sum"} or \code{attrib(factor, "contrasts") != "contr.sum"}. Furthermore, the current contrasts (obtained via \code{getOption("contrasts")}) will be set at the cluster nodes if \code{cl} is not \code{NULL}.
+If \code{check_contrasts = TRUE}, contrasts will be set to \code{"contr.sum"} for all factors in the formula if default contrasts are not equal to \code{"contr.sum"} or \code{attrib(factor, "contrasts") != "contr.sum"}. Furthermore, the current contrasts (obtained via \code{getOption("contrasts")}) will be set at the cluster nodes if \code{cl} is not \code{NULL}.
 }
 
 \subsection{Expand Random Effects}{
@@ -195,7 +195,7 @@ data(md_15.1)
 
 # to also replicate exact parameters use treatment.contrasts and the last level as base level:
 contrasts(md_15.1$timecat) <- contr.treatment(4, base = 4)
-(t15.4b <- mixed(iq ~ timecat + (1+time|id),data=md_15.1, check.contrasts=FALSE))
+(t15.4b <- mixed(iq ~ timecat + (1+time|id),data=md_15.1, check_contrasts=FALSE))
 summary(t15.4a)  # gives "wrong" parameters extimates
 summary(t15.4b)  # identical parameters estimates
 
@@ -205,7 +205,7 @@ summary(t15.4b)  # identical parameters estimates
 data(md_16.1)
 
 # original results need treatment contrasts:
-(mixed1_orig <- mixed(severity ~ sex + (1|id), md_16.1, check.contrasts=FALSE))
+(mixed1_orig <- mixed(severity ~ sex + (1|id), md_16.1, check_contrasts=FALSE))
 summary(mixed1_orig$full.model)
 
 # p-value stays the same with afex default contrasts (contr.sum),
@@ -233,7 +233,7 @@ md_16.4b <- within(md_16.4, cond <- C(cond, contr.treatment, base = 2))
 str(md_16.4b)
 
 # p-value stays identical:
-(mixed2_orig <- mixed(induct ~ cond + (1|room:cond), md_16.4b, check.contrasts=FALSE))
+(mixed2_orig <- mixed(induct ~ cond + (1|room:cond), md_16.4b, check_contrasts=FALSE))
 summary(mixed2_orig$full.model) # replicates parameters
 
 
@@ -242,7 +242,7 @@ summary(mixed2_orig$full.model) # replicates parameters
 (mixed3 <- mixed(induct ~ cond + skill + (1|room:cond), md_16.4))
 
 # however, parameters are perfectly recovered when using the original contrasts:
-mixed3_orig <- mixed(induct ~ cond + skill + (1|room:cond), md_16.4b, check.contrasts=FALSE)
+mixed3_orig <- mixed(induct ~ cond + skill + (1|room:cond), md_16.4b, check_contrasts=FALSE)
 summary(mixed3_orig)
 
 
@@ -253,7 +253,7 @@ md_16.4b$cog <- scale(md_16.4b$cog, scale=FALSE)
 # F-values and p-values are relatively off:
 (mixed4 <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b))
 # contrast has a relatively important influence on cog
-(mixed4_orig <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, check.contrasts=FALSE))
+(mixed4_orig <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, check_contrasts=FALSE))
 
 # parameters are again almost perfectly recovered:
 summary(mixed4_orig)
@@ -306,7 +306,7 @@ m1
 require("mlmRev") # for the data, see ?Contraception
 
 gm1 <- mixed(use ~ age + I(age^2) + urban + livch + (1 | district), method = "PB",
- family = binomial, data = Contraception, args.test = list(nsim = 10))
+ family = binomial, data = Contraception, args_test = list(nsim = 10))
 
 #######################
 ### Using Multicore ###
@@ -325,11 +325,11 @@ mixed(value ~ treatment*phase*hour +(1|id), data = obk.long, method = "LRT", cl 
 
 # 2. Obtain PB samples via multicore: 
 mixed(use ~ age + I(age^2) + urban + livch + (1 | district), family = binomial,
- method = "PB", data = Contraception, args.test = list(nsim = 10, cl = cl))
+ method = "PB", data = Contraception, args_test = list(nsim = 10, cl = cl))
 
 ## Both ways can be combined:
 mixed(use ~ age + I(age^2) + urban + livch + (1 | district), family = binomial, 
- method = "PB", data = Contraception, args.test = list(nsim = 10, cl = cl), cl = cl)
+ method = "PB", data = Contraception, args_test = list(nsim = 10, cl = cl), cl = cl)
 
 stopCluster(cl)
 

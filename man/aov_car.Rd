@@ -8,21 +8,21 @@
 \title{Convenient ANOVA estimation for factorial designs}
 \usage{
 aov_ez(id, dv, data, between = NULL, within = NULL, covariate = NULL, 
-     observed = NULL, fun.aggregate = NULL, type = afex_options("type"), 
+     observed = NULL, fun_aggregate = NULL, type = afex_options("type"), 
      factorize = afex_options("factorize"), 
-     check.contrasts = afex_options("check.contrasts"), 
+     check_contrasts = afex_options("check_contrasts"), 
      return = afex_options("return_aov"), 
      anova_table = list(), ..., print.formula = FALSE)
      
-aov_car(formula, data, fun.aggregate = NULL, type = afex_options("type"), 
+aov_car(formula, data, fun_aggregate = NULL, type = afex_options("type"), 
      factorize = afex_options("factorize"), 
-     check.contrasts = afex_options("check.contrasts"), 
+     check_contrasts = afex_options("check_contrasts"), 
      return = afex_options("return_aov"), observed = NULL, 
      anova_table = list(), ...)
      
-aov_4(formula, data, observed = NULL, fun.aggregate = NULL, type = afex_options("type"),
+aov_4(formula, data, observed = NULL, fun_aggregate = NULL, type = afex_options("type"),
      factorize = afex_options("factorize"), 
-     check.contrasts = afex_options("check.contrasts"),
+     check_contrasts = afex_options("check_contrasts"),
      return = afex_options("return_aov"), 
      anova_table = list(), ..., print.formula = FALSE)
 }
@@ -31,13 +31,13 @@ aov_4(formula, data, observed = NULL, fun.aggregate = NULL, type = afex_options(
 
 \item{data}{A \code{data.frame} containing the data. Mandatory.}
 
-\item{fun.aggregate}{The function for aggregating the data before running the ANOVA if there is more than one observation per individual and cell of the design. The default \code{NULL} issues a warning if aggregation is necessary and uses \code{\link{mean}}. Pass \code{mean} directly to avoid the warning.}
+\item{fun_aggregate}{The function for aggregating the data before running the ANOVA if there is more than one observation per individual and cell of the design. The default \code{NULL} issues a warning if aggregation is necessary and uses \code{\link{mean}}. Pass \code{mean} directly to avoid the warning.}
 
 \item{type}{The type of sums of squares for the ANOVA. The default is given by \code{afex_options("type")}, which is \strong{initially set to 3}. Passed to \code{\link[car]{Anova}}. Possible values are \code{"II"}, \code{"III"}, \code{2}, or \code{3}.}
 
 \item{factorize}{logical. Should between subject factors be factorized (with note) before running the analysis. he default is given by \code{afex_options("factorize")}, which is initially \code{TRUE}. If one wants to run an ANCOVA, needs to be set to \code{FALSE} (in which case centering on 0 is checked on numeric variables).}
 
-\item{check.contrasts}{\code{logical}. Should contrasts for between-subject factors be checked and (if necessary) changed to be \code{"contr.sum"}. See details. The default is given by \code{afex_options("check.contrasts")}, which is initially \code{TRUE}.}
+\item{check_contrasts}{\code{logical}. Should contrasts for between-subject factors be checked and (if necessary) changed to be \code{"contr.sum"}. See details. The default is given by \code{afex_options("check_contrasts")}, which is initially \code{TRUE}.}
 
 \item{return}{What should be returned? The default is given by \code{afex_options("return_aov")}, which is initially \code{"afex_aov"}, returning an S3 object of class \code{afex_aov} for which various \link[=afex_aov-methods]{methods} exist (see there and below for more details). To avoid the (potentially costly) computation via \code{aov} set \code{return} to \code{"nice"} in which case only the nice ANOVA table is returned (produced by \code{\link{nice}}, this was the previous default return value). Other values are currently still supported for backward compatibility.}
 
@@ -45,7 +45,7 @@ aov_4(formula, data, observed = NULL, fun.aggregate = NULL, type = afex_options(
 
 \item{anova_table}{\code{list} of further arguments passed to function producing the ANOVA table.  Arguments such as \code{es} (effect size) or \code{correction}  are passed to either \code{anova.afex_aov} or \code{nice}. \code{sig_symbols} is currently ignored. Note that those settings can also be changed once an object of class \code{afex_aov} is created by invoking the \code{anova} method directly.}
 
-\item{...}{Further arguments passed to \code{fun.aggregate}.}
+\item{...}{Further arguments passed to \code{fun_aggregate}.}
 
 \item{id}{\code{character} vector (of length 1) indicating the subject identifier column in \code{data}.}
 
@@ -87,13 +87,13 @@ To run an ANCOVA you need to set \code{factorize = FALSE} and make sure that all
 
 Note that the default behavior is to include calculation of the effect size generalized eta-squared for which \strong{all non-manipluated (i.e., observed)} variables need to be specified via the \code{observed} argument to obtain correct results. When changing the effect size to \code{"pes"} (partial eta-squared) or \code{"none"} via \code{anova_table} this becomes unnecessary.
 
-If \code{check.contrasts = TRUE}, contrasts will be set to \code{"contr.sum"} for all between-subject factors if default contrasts are not equal to \code{"contr.sum"} or \code{attrib(factor, "contrasts") != "contr.sum"}. (within-subject factors are hard-coded \code{"contr.sum"}.)
+If \code{check_contrasts = TRUE}, contrasts will be set to \code{"contr.sum"} for all between-subject factors if default contrasts are not equal to \code{"contr.sum"} or \code{attrib(factor, "contrasts") != "contr.sum"}. (within-subject factors are hard-coded \code{"contr.sum"}.)
 }
 
 \subsection{Statistical Issues}{
 \strong{Type 3 sums of squares are default in \pkg{afex}.} While some authors argue that so-called type 3 sums of squares are dangerous and/or problematic (most notably Venables, 2000), they are the default in many commercial statistical application such as SPSS or SAS. Furthermore, statisticians with an applied perspective recommend type 3 tests (e.g., Maxwell and Delaney, 2004). Consequently, they are the default for the ANOVA functions described here. For some more discussion on this issue see \href{http://stats.stackexchange.com/q/6208/442}{here}. 
 
-Note that lower order effects (e.g., main effects) in type 3 ANOVAs are only meaningful with \href{http://www.ats.ucla.edu/stat/mult_pkg/faq/general/effect.htm}{effects coding}. That is, contrasts should be set to \code{\link{contr.sum}} to obtain meaningful results. This is imposed automatically for the functions discussed here as long as \code{check.contrasts} is \code{TRUE} (the default). I nevertheless recommend to set the contrasts globally to \code{contr.sum} via running \code{\link{set_sum_contrasts}}. For a discussion of the other (non-recommended) coding schemes see \href{http://www.ats.ucla.edu/stat/r/library/contrast_coding.htm}{here}. 
+Note that lower order effects (e.g., main effects) in type 3 ANOVAs are only meaningful with \href{http://www.ats.ucla.edu/stat/mult_pkg/faq/general/effect.htm}{effects coding}. That is, contrasts should be set to \code{\link{contr.sum}} to obtain meaningful results. This is imposed automatically for the functions discussed here as long as \code{check_contrasts} is \code{TRUE} (the default). I nevertheless recommend to set the contrasts globally to \code{contr.sum} via running \code{\link{set_sum_contrasts}}. For a discussion of the other (non-recommended) coding schemes see \href{http://www.ats.ucla.edu/stat/r/library/contrast_coding.htm}{here}. 
 }
 
 \subsection{Follow-Up Contrasts and Post-Hoc Tests}{ 

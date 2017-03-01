@@ -624,7 +624,7 @@ anova.mixed <- function(object, ..., refit = FALSE) {
   if (any(modp)) {
     model.names <- c(deparse(mCall[["object"]]), vapply(which(modp), function(x) deparse(mCall[[x+2]]), ""))
     for (i in which(as.logical(vapply(dots, is, NA, "mixed")))) dots[[i]] <- dots[[i]][[full_model_name]]
-    return(do.call(anova, args = c(object = object, dots, model.names = list(model.names), refit = refit)))
+    return(do.call(anova, args = c(object = object[[full_model_name]], dots, model.names = list(model.names), refit = refit)))
   } else {
     try(if(!isREML(object[[full_model_name]]) && !isTRUE(check_likelihood(object))) 
       warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(object), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"), call. = FALSE), silent=TRUE)

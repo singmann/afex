@@ -41,6 +41,9 @@
         
     o   removed bug that mixed() object with type=2 could not be printed.
     
+    o   removed bug that model names for anova.mixed with multiple models were 
+        incorrect.
+    
                     *************************
                     ** afex VERSION 0.16-x **
                     *************************

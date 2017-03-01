@@ -41,37 +41,7 @@
 #' @importFrom stats anova
 #' @encoding UTF-8
 #'
-#' @examples
-#'
-#' ## example from Olejnik & Algina (2003)
-#' # "Repeated Measures Design" (pp. 439):
-#' data(md_12.1)
-#' # create object of class afex_aov:
-#' rmd <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
-#' # use different es:
-#' nice(rmd, es = "pes") # noise: .82
-#' nice(rmd, es = "ges") # noise: .39
-#'
-#' # exampel using obk.long (see ?obk.long), a long version of the OBrienKaiser dataset from car.
-#' data(obk.long)
-#' # create object of class afex_aov:
-#' tmp.aov <- aov_car(value ~ treatment * gender + Error(id/phase*hour), data = obk.long)
-#' 
-#' nice(tmp.aov, observed = "gender")
-#' 
-#' nice(tmp.aov, observed = "gender", sig.symbol = rep("", 4))
-#' 
-#' \dontrun{
-#' # use package ascii or xtable for formatting of tables ready for printing.
-#' 
-#' full <- nice(tmp.aov, observed = "gender")
-#' 
-#' require(ascii)
-#' print(ascii(full, include.rownames = FALSE, caption = "ANOVA 1"), type = "org")
-#' 
-#' require(xtable)
-#' print.xtable(xtable(full, caption = "ANOVA 2"), include.rownames = FALSE)
-#' }
+#' @example examples/examples.nice.R
 #' 
 #' @export nice
 nice <- function(object, ...) UseMethod("nice", object)
@@ -80,10 +50,10 @@ nice <- function(object, ...) UseMethod("nice", object)
 #' @rdname nice
 #' @method nice afex_aov
 #' @export
-nice.afex_aov <- function(object, es = NULL, observed = attr(object$anova_table, "observed"), correction = attr(object$anova_table, "correction"), MSE = NULL, intercept = NULL, p.adjust.method = attr(object$anova_table, "p.adjust.method"), sig_symbols = c(" +", " *", " **", " ***"), sig.symbols, ...) { 
-  if(is.null(es)) { # Defaults to afex_options("es") because of default set in anova.afex_aov
-    es <- c("pes", "ges")[c("pes", "ges") %in% colnames(object$anova_table)]
-  }
+nice.afex_aov <- function(object, es = attr(object$anova_table, "es"), observed = attr(object$anova_table, "observed"), correction = attr(object$anova_table, "correction"), MSE = NULL, intercept = NULL, p.adjust.method = attr(object$anova_table, "p.adjust.method"), sig_symbols = c(" +", " *", " **", " ***"), sig.symbols, ...) { 
+  # if(is.null(es)) { # Defaults to afex_options("es") because of default set in anova.afex_aov
+  #   es <- c("pes", "ges")[c("pes", "ges") %in% colnames(object$anova_table)]
+  # }
   if(is.null(MSE)) { # Defaults to TRUE because of default set in anova.afex_aov
     MSE <- "MSE" %in% colnames(object$anova_table)
   }
@@ -139,6 +109,7 @@ nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = c(" +
   attr(df.out, "p.adjust.method") <- attr(object, "p.adjust.method")
   attr(df.out, "correction") <- attr(object, "correction")
   attr(df.out, "observed") <- attr(object, "observed")
+  attr(df.out, "es") <- attr(object, "es")
   class(df.out) <- c("nice_table", class(df.out))
   df.out
 }

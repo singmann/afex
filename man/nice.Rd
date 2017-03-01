@@ -11,7 +11,7 @@
 \usage{
 nice(object, ...)
 
-\method{nice}{afex_aov}(object, es = NULL,
+\method{nice}{afex_aov}(object, es = attr(object$anova_table, "es"),
   observed = attr(object$anova_table, "observed"),
   correction = attr(object$anova_table, "correction"), MSE = NULL,
   intercept = NULL, p.adjust.method = attr(object$anova_table,
@@ -72,9 +72,17 @@ Exploratory ANOVA, for which no detailed hypotheses have been specified a priori
 data(md_12.1)
 # create object of class afex_aov:
 rmd <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
+nice(rmd)
 # use different es:
 nice(rmd, es = "pes") # noise: .82
 nice(rmd, es = "ges") # noise: .39
+
+# same data other approach:
+rmd2 <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), 
+               anova_table=list(correction = "none", es = "none"))
+nice(rmd2)
+nice(rmd2, correction = "GG")
+nice(rmd2, correction = "GG", es = "ges")
 
 # exampel using obk.long (see ?obk.long), a long version of the OBrienKaiser dataset from car.
 data(obk.long)
@@ -96,7 +104,6 @@ print(ascii(full, include.rownames = FALSE, caption = "ANOVA 1"), type = "org")
 require(xtable)
 print.xtable(xtable(full, caption = "ANOVA 2"), include.rownames = FALSE)
 }
-
 }
 \author{
 The code for calculating generalized eta-squared was written by Mike Lawrence.\cr Everything else was written by Henrik Singmann.

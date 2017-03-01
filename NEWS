@@ -18,6 +18,9 @@
     o   Sphericity correction now correctly displayed as none if all within-
         factors have only two levels (bug removed by Frederik Aust).
         
+    o   removed bug when calling nice() on afex_aov objects created with 
+        explicit effect size.
+        
     o   aov_...(): anova_table = list(intercept = TRUE) now correctly suppresses
         the intercept (bug removed by Frederik Aust).
         

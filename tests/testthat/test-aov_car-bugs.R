@@ -210,5 +210,5 @@ test_that("aov_car works with column names containing spaces: https://github.com
   
   expect_is(aov_car(dependent ~ `RM Factor 1` + Error(subject/(`RM Factor 1`)), data),  "afex_aov")
   expect_is(aov_4(dependent ~ `RM Factor 1` + (`RM Factor 1`|subject), data), "afex_aov")
-  expect_is(aov_ez("id", "dependent", data, within = "`RM Factor 1`"), "afex_aov")
+  expect_is(aov_ez("subject", "dependent", data, within = "RM Factor 1"), "afex_aov")
 })

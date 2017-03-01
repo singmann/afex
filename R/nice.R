@@ -20,7 +20,7 @@
 #'
 #' @details The returned \code{data.frame} is print-ready when adding to a document with proper methods. Either directly via \pkg{knitr} or similar approaches such as via packages \pkg{ascii} or \pkg{xtable} (nowadays \pkg{knitr} is probably the best approach, see \href{http://yihui.name/knitr/}{here}). \pkg{ascii} provides conversion to \href{http://www.methods.co.nz/asciidoc/}{AsciiDoc} and \href{http://orgmode.org/}{org-mode} (see \code{\link[ascii]{ascii}} and \code{\link[ascii]{print-ascii}}). \pkg{xtable} converts a \code{data.frame} into LaTeX code with many possible options (e.g., allowing for \code{"longtable"} or \code{"sidewaystable"}), see \code{\link[xtable]{xtable}} and \code{\link[xtable]{print.xtable}}. See Examples.
 #'
-#' Conversion functions to other formats (such as HTML, ODF, or Word) can be found at the \href{http://cran.r-project.org/web/views/ReproducibleResearch.html}{Reproducible Research Task View}.
+#' Conversion functions to other formats (such as HTML, ODF, or Word) can be found at the \href{https://CRAN.R-project.org/view=ReproducibleResearch}{Reproducible Research Task View}.
 #'
 #' The default reports generalized eta squared (Olejnik & Algina, 2003), the "recommended effect size for repeated measured designs" (Bakeman, 2005). Note that it is important that all measured variables (as opposed to experimentally manipulated variables), such as e.g., age, gender, weight, ..., must be declared via \code{observed} to obtain the correct effect size estimate. Partial eta squared (\code{"pes"}) does not require this.
 #' 

@@ -21,11 +21,27 @@ test_that("nice.mixed and print.mixed can handle old objects", {
   #   m3 <- mixed(value ~ treatment * phase + (1|id), obk.long, method = "PB")
   #   save(m1, m2, m3, file = "lmm_old_object.rda")
   #   dev_mode()
-  load("lmm_old_object.rda")
+  load("lmm_old_object.rda") # 
+  # load("tests/testthat/lmm_old_object.rda")
   expect_is(suppressWarnings(nice(m1)), "data.frame")
   expect_is(suppressWarnings(nice(m2)), "data.frame")
   expect_is(suppressWarnings(nice(m3)), "data.frame")
   expect_output(suppressWarnings(print(m1)), "treatment")
   expect_output(suppressWarnings(print(m2)), "treatment")
   expect_output(suppressWarnings(print(m3)), "treatment")
+})
+
+
+test_that("nice.mixed, print.mixed, and anova.mixed can handle objects with full.models", {
+  load("mixed_with_dot.rda") # 
+  #load("tests/testthat/mixed_with_dot.rda")
+  expect_is(suppressWarnings(nice(sk_m1)), "data.frame")
+  expect_is(suppressWarnings(nice(sk_m2)), "data.frame")
+  expect_is(suppressWarnings(nice(t2)), "data.frame")
+  expect_output(suppressWarnings(print(sk_m1)), "instruction")
+  expect_output(suppressWarnings(print(sk_m2)), "instruction")
+  expect_output(suppressWarnings(print(t2)), "treatment")
+  expect_is(anova(sk_m1), "data.frame")
+  expect_is(anova(sk_m2), "data.frame")
+  expect_is(anova(t2), "data.frame")
 })

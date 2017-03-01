@@ -12,6 +12,10 @@
         check.contrasts = check_contrasts, test.intercept = test_intercept,
         args.test = args_test, ...
         
+    o   Names of slots of mixed model objects with "." have been renamed to have
+        a "_" instead: full.model = full_model and restricted.models = 
+        restricted_models
+        
     o   afex_options() now uses the global R options accessible via options() 
         (with prefix afex.) and allows to reset all options via list (i.e.,:
         aop <- afex_options(); ...; afex_options(aov); works).
@@ -34,6 +38,8 @@
         
     o   changed license to GPL >=2 (as it call some function from GPL >=2 
         packages).
+        
+    o   removed bug that mixed() object with type=2 could not be printed.
     
                     *************************
                     ** afex VERSION 0.16-x **

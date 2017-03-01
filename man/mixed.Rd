@@ -49,8 +49,8 @@ An object of class \code{"mixed"} (i.e., a list) with the following elements:
 
 \enumerate{
 \item \code{anova_table} a data.frame containing the statistics returned from \code{\link[pbkrtest]{KRmodcomp}}. The \code{stat} column in this data.frame gives the value of the test statistic, an F-value for \code{method = "KR"} and a chi-square value for the other two methods.
-\item \code{full.model} the \code{"lmerMod"} object returned from fitting the full mixed model.
-\item \code{restricted.models} a list of \code{"lmerMod"} objects from fitting the restricted models (i.e., each model lacks the corresponding effect)
+\item \code{full_model} the \code{"lmerMod"} object returned from fitting the full mixed model.
+\item \code{restricted_models} a list of \code{"lmerMod"} objects from fitting the restricted models (i.e., each model lacks the corresponding effect)
 \item \code{tests} a list of objects returned by the function for obtaining the p-values.
 }
 
@@ -206,12 +206,12 @@ data(md_16.1)
 
 # original results need treatment contrasts:
 (mixed1_orig <- mixed(severity ~ sex + (1|id), md_16.1, check_contrasts=FALSE))
-summary(mixed1_orig$full.model)
+summary(mixed1_orig$full_model)
 
 # p-value stays the same with afex default contrasts (contr.sum),
 # but estimates and t-values for the fixed effects parameters change.
 (mixed1 <- mixed(severity ~ sex + (1|id), md_16.1))
-summary(mixed1$full.model)
+summary(mixed1$full_model)
 
 
 # data for next examples (Maxwell & Delaney, Table 16.4)
@@ -234,7 +234,7 @@ str(md_16.4b)
 
 # p-value stays identical:
 (mixed2_orig <- mixed(induct ~ cond + (1|room:cond), md_16.4b, check_contrasts=FALSE))
-summary(mixed2_orig$full.model) # replicates parameters
+summary(mixed2_orig$full_model) # replicates parameters
 
 
 ### replicate results from Table 16.7 (Maxwell & Delaney, 2004, p. 851)

@@ -23,8 +23,8 @@
 #'
 #' \enumerate{
 #' \item \code{anova_table} a data.frame containing the statistics returned from \code{\link[pbkrtest]{KRmodcomp}}. The \code{stat} column in this data.frame gives the value of the test statistic, an F-value for \code{method = "KR"} and a chi-square value for the other two methods.
-#' \item \code{full.model} the \code{"lmerMod"} object returned from fitting the full mixed model.
-#' \item \code{restricted.models} a list of \code{"lmerMod"} objects from fitting the restricted models (i.e., each model lacks the corresponding effect)
+#' \item \code{full_model} the \code{"lmerMod"} object returned from fitting the full mixed model.
+#' \item \code{restricted_models} a list of \code{"lmerMod"} objects from fitting the restricted models (i.e., each model lacks the corresponding effect)
 #' \item \code{tests} a list of objects returned by the function for obtaining the p-values.
 #' }
 #' 
@@ -298,7 +298,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       tmp.columns <- str_c(deparse(-which(mapping == (i-1))), collapse = "")
       formulas[[i+1]] <- as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
     }
-    names(formulas) <- c("full.model", fixed.effects)
+    names(formulas) <- c("full_model", fixed.effects)
     if (!test_intercept && fixed.effects[1] == "(Intercept)") {
       fixed.effects <- fixed.effects[-1]
       formulas[["(Intercept)"]] <- NULL
@@ -306,20 +306,20 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   } else if (type == 2 | type == "II") {
     #warning("Implementation of Type 2 method not unproblematic.\n  Check documentation or use car::Anova (Wald tests).")
     if (!is.null(per_parameter)) stop("per_parameter argument only implemented for Type 3 tests.")
-    full.model.formulas <- vector("list", max.effect.order)
+    full_model.formulas <- vector("list", max.effect.order)
     submodel.formulas <- vector("list", length(fixed.effects))
-    full.model.formulas[[length(full.model.formulas)]] <- mf[["formula"]]
+    full_model.formulas[[length(full_model.formulas)]] <- mf[["formula"]]
     for (c in seq_len(max.effect.order)) {
       if (c == max.effect.order) next 
       tmp.columns <- str_c(deparse(-which(mapping %in% which(effect.order > c))), collapse = "")
-      full.model.formulas[[c]] <-  as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
+      full_model.formulas[[c]] <-  as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
     }
     for (c in seq_along(fixed.effects)) {
       order.c <- effect.order[c]
       tmp.columns <- str_c(deparse(-which(mapping == (c) | mapping %in% if (order.c == max.effect.order) -1 else which(effect.order > order.c))), collapse = "")
       submodel.formulas[[c]] <- as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
     }
-    formulas <- c(full.model.formulas, submodel.formulas)
+    formulas <- c(full_model.formulas, submodel.formulas)
   } else stop('Only type 3 and type 2 tests implemented.')
   ## Part IIb: fit models
   # single core
@@ -404,10 +404,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   }
   ## prepare for p-values:
   if (type == 3 | type == "III") {
-    full.model <- fits[[1]]
+    full_model <- fits[[1]]
     fits <- fits[-1]
   } else if (type == 2 | type == "II") {
-    full.model <- fits[1:max.effect.order]
+    full_model <- fits[1:max.effect.order]
     fits <- fits[(max.effect.order+1):length(fits)]
   }
   names(fits) <- fixed.effects  
@@ -421,10 +421,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
     tests <- vector("list", length(fixed.effects))
     for (c in seq_along(fixed.effects)) {
-      if (type == 3 | type == "III") tests[[c]] <- KRmodcomp(full.model, fits[[c]])
+      if (type == 3 | type == "III") tests[[c]] <- KRmodcomp(full_model, fits[[c]])
       else if (type == 2 | type == "II") {
         order.c <- effect.order[c]
-        tests[[c]] <- KRmodcomp(full.model[[order.c]], fits[[c]])
+        tests[[c]] <- KRmodcomp(full_model[[order.c]], fits[[c]])
       }
       if (progress) cat(".")
     }
@@ -443,10 +443,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
     tests <- vector("list", length(fixed.effects))
     for (c in seq_along(fixed.effects)) {
-      if (type == 3 | type == "III") tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full.model, smallModel = fits[[c]], args_test))
+      if (type == 3 | type == "III") tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full_model, smallModel = fits[[c]], args_test))
       else if (type == 2 | type == "II") {
         order.c <- effect.order[c]
-        tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full.model[[order.c]], smallModel = fits[[c]], args_test))
+        tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full_model[[order.c]], smallModel = fits[[c]], args_test))
       }
       if (progress) cat(".")
     }
@@ -466,10 +466,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   } else if (method[1] == "LRT") {
     tests <- vector("list", length(fixed.effects))
     for (c in seq_along(fixed.effects)) {
-      if (type == 3 | type == "III") tests[[c]] <- anova(full.model, fits[[c]])
+      if (type == 3 | type == "III") tests[[c]] <- anova(full_model, fits[[c]])
       else if (type == 2 | type == "II") {
         order.c <- effect.order[c]
-        tmpModel  <- full.model[[order.c]] 
+        tmpModel  <- full_model[[order.c]] 
         tests[[c]] <- anova(tmpModel, fits[[c]])
       }
     }
@@ -506,10 +506,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       list(df1 = q, F = FstatU)
     }
     for (c in seq_along(fixed.effects)) {
-      if (type == 3 | type == "III") tests[[c]] <- getFvalue(full.model, fits[[c]])
+      if (type == 3 | type == "III") tests[[c]] <- getFvalue(full_model, fits[[c]])
       else if (type == 2 | type == "II") {
         order.c <- effect.order[c]
-        tmpModel  <- full.model[[order.c]] 
+        tmpModel  <- full_model[[order.c]] 
         tests[[c]] <- getFvalue(tmpModel, fits[[c]])
       }
     }
@@ -527,7 +527,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     paste0("Data: " ,mc[["data"]]),
     anova_tab_addition
     )
-  list.out <- list(anova_table = anova_table, full.model = full.model, restricted.models = fits, tests = tests) #, type = type, method = method[[1]]
+  list.out <- list(anova_table = anova_table, full_model = full_model, restricted_models = fits, tests = tests) #, type = type, method = method[[1]]
   class(list.out) <- "mixed"
   attr(list.out, "type") <- type
   attr(list.out, "method") <- method
@@ -535,13 +535,14 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
 }
 
 get_mixed_warnings <- function(x) {
+  full_model_name <- names(x)[[2]]
   ntry <- function(x) tryCatch(x, error = function(e) NULL)
   if (is.list(x$full)) {
     warnings1 <- c(full = lapply(x[[2]], function(y) y@optinfo$warnings), lapply(x[[3]], function(y) y@optinfo$warnings))  
     warnings2 <- c(full = lapply(x[[2]], function(y) ntry(y@optinfo$conv$lme4$messages)), lapply(x[[3]], function(y) ntry(y@optinfo$conv$lme4$messages)))
   } else {
-    warnings1 <- c(full = list(x$full.model@optinfo$warnings), lapply(x[[3]], function(y) y@optinfo$warnings))  
-    warnings2 <- c(full = list(ntry(x$full.model@optinfo$conv$lme4$messages)), lapply(x[[3]], function(y) ntry(y@optinfo$conv$lme4$messages)))
+    warnings1 <- c(full = list(x[[full_model_name]]@optinfo$warnings), lapply(x[[3]], function(y) y@optinfo$warnings))  
+    warnings2 <- c(full = list(ntry(x[[full_model_name]]@optinfo$conv$lme4$messages)), lapply(x[[3]], function(y) ntry(y@optinfo$conv$lme4$messages)))
   }
   warnings <- mapply(function(x, y) c(unlist(x), y), warnings1, warnings2, SIMPLIFY=FALSE)  
   warn <- vapply(warnings, function(y) !length(y)==0, NA)
@@ -549,14 +550,15 @@ get_mixed_warnings <- function(x) {
 }
 
 check_likelihood <- function(object) {
-  
-   if (is.null(attr(object, "type"))) {
+  full_model_name <- names(object)[[2]]
+  restricted_models_name <- names(object)[[3]]
+  if (is.null(attr(object, "type"))) {
     attr(object, "type") <- object$type
   }
   
   if (attr(object, "type") == 3 | attr(object, "type") == "III") {
-    logLik_full <- as.numeric(logLik(object[["full.model"]]))
-    logLik_restricted <- as.numeric(vapply(object[["restricted.models"]], logLik, 0))
+    logLik_full <- as.numeric(logLik(object[[full_model_name]]))
+    logLik_restricted <- as.numeric(vapply(object[[restricted_models_name]], logLik, 0))
     if(any(logLik_restricted > logLik_full)) return(rownames(object$anova_table)[logLik_restricted > logLik_full])
   } else if (attr(object, "type") == 2 | attr(object, "type") == "II") {
     NULL
@@ -590,8 +592,9 @@ lmer_alt <- function(formula, data, check_contrasts = FALSE, ...) {
 #' @method print mixed
 #' @export
 print.mixed <- function(x, ...) {
-  if(!isREML(x[["full.model"]]) && !isTRUE(check_likelihood(x))) 
-    warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(x), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"), call. = FALSE)
+  full_model_name <- names(x)[[2]]
+  try(if(!isREML(x[[full_model_name]]) && !isTRUE(check_likelihood(x))) 
+    warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(x), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"), call. = FALSE), silent = TRUE)
   get_mixed_warnings(x)
   tmp <- nice.mixed(x, ...)
   print(tmp)
@@ -603,12 +606,16 @@ print.mixed <- function(x, ...) {
 
 #' @method summary mixed
 #' @export
-summary.mixed <- function(object, ...) summary(object = if (length(object[["full.model"]]) == 1) object[["full.model"]] else object[["full.model"]][[length(object[["full.model"]])]], ...)
+summary.mixed <- function(object, ...) {
+  if ("full_model" %in% names(object)) summary(object = if (length(object[["full_model"]]) == 1) object[["full_model"]] else object[["full_model"]][[length(object[["full_model"]])]], ...)
+  else if("full.model" %in% names(object)) summary(object = if (length(object[["full.model"]]) == 1) object[["full.model"]] else object[["full.model"]][[length(object[["full.model"]])]], ...)
+}
 
 #' @method anova mixed
 #' @export
 anova.mixed <- function(object, ..., refit = FALSE) {
   mCall <- match.call(expand.dots = TRUE)
+  full_model_name <- names(object)[[2]]
   dots <- list(...)
   modp <- (as.logical(vapply(dots, is, NA, "merMod")) |
              as.logical(vapply(dots, is, NA, "lm")) |
@@ -616,11 +623,11 @@ anova.mixed <- function(object, ..., refit = FALSE) {
            )
   if (any(modp)) {
     model.names <- c(deparse(mCall[["object"]]), vapply(which(modp), function(x) deparse(mCall[[x+2]]), ""))
-    for (i in which(as.logical(vapply(dots, is, NA, "mixed")))) dots[[i]] <- dots[[i]]$full.model
+    for (i in which(as.logical(vapply(dots, is, NA, "mixed")))) dots[[i]] <- dots[[i]][[full_model_name]]
     return(do.call(anova, args = c(object = object, dots, model.names = list(model.names), refit = refit)))
   } else {
-    if(!isREML(object[["full.model"]]) && !isTRUE(check_likelihood(object))) 
-      warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(object), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"), call. = FALSE)
+    try(if(!isREML(object[[full_model_name]]) && !isTRUE(check_likelihood(object))) 
+      warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(object), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"), call. = FALSE), silent=TRUE)
     get_mixed_warnings(object)
     object$anova_table
   }
@@ -634,14 +641,16 @@ anova.mixed <- function(object, ..., refit = FALSE) {
 #' @method recover.data mixed
 #' @export
 recover.data.mixed <- function(object, ...) {
-  recover.data(object$full.model, ...)
+  full_model_name <- names(object)[[2]]
+  recover.data(object[[full_model_name]], ...)
 }
 
 
 #' @method lsm.basis mixed 
 #' @export
 lsm.basis.mixed <- function(object, trms, xlev, grid, ...) {
-  lsm.basis(object$full.model, trms, xlev, grid, ...)
+  full_model_name <- names(object)[[2]]
+  lsm.basis(object[[full_model_name]], trms, xlev, grid, ...)
 }
 
 

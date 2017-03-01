@@ -11,8 +11,8 @@ test_that("mixed: Maxell & Delaney (2004), Table 16.4, p. 842: Type 2", {
   suppressWarnings(mixed4_2 <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, type = 2, progress=FALSE))
   lmer4_full <- lmer(induct ~ cond*cog + (cog|room:cond), md_16.4b)
   lmer4_small <- lmer(induct ~ cond+cog + (cog|room:cond), md_16.4b)
-  expect_that(fixef(mixed4_2$full.model[[2]]), equals(fixef(lmer4_full)))
-  expect_that(fixef(mixed4_2$full.model[[1]]), is_equivalent_to(fixef(lmer4_small)))  
+  expect_that(fixef(mixed4_2$full_model[[2]]), equals(fixef(lmer4_full)))
+  expect_that(fixef(mixed4_2$full_model[[1]]), is_equivalent_to(fixef(lmer4_small)))  
 })
 
 test_that("mixed: Maxell & Delaney (2004), Table 16.4, p. 842: Type 3", {
@@ -23,9 +23,9 @@ test_that("mixed: Maxell & Delaney (2004), Table 16.4, p. 842: Type 3", {
   suppressWarnings(mixed4_2 <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, type = 3, progress=FALSE))
   lmer4_full <- lmer(induct ~ cond*cog + (cog|room:cond), md_16.4b)
   lmer4_small <- lmer(induct ~ cond+cog + (cog|room:cond), md_16.4b)
-  expect_that(fixef(mixed4_2$full.model), equals(fixef(lmer4_full)))
-  expect_that(mixed4_2$full.model, is_equivalent_to(lmer4_full))
-  expect_that(fixef(mixed4_2$restricted.models$`cond:cog`), is_equivalent_to(fixef(lmer4_small)))  
+  expect_that(fixef(mixed4_2$full_model), equals(fixef(lmer4_full)))
+  expect_that(mixed4_2$full_model, is_equivalent_to(lmer4_full))
+  expect_that(fixef(mixed4_2$restricted_models$`cond:cog`), is_equivalent_to(fixef(lmer4_small)))  
 })
 
 test_that("mixed, obk.long: type 2 and LRTs", {
@@ -33,6 +33,7 @@ test_that("mixed, obk.long: type 2 and LRTs", {
   contrasts(obk.long$treatment) <- "contr.sum"
   contrasts(obk.long$phase) <- "contr.sum"
   suppressWarnings(t2 <- mixed(value ~ treatment*phase +(1|id), data = obk.long, method = "LRT", type = 2, progress=FALSE))
+  expect_output(print(t2), "treatment")
   a2.f <- lmer(value ~ treatment*phase +(1|id), data = obk.long, REML=FALSE)
   a2.h <- lmer(value ~ treatment+phase +(1|id), data = obk.long, REML=FALSE)
   a2.t <- lmer(value ~ treatment +(1|id), data = obk.long, REML=FALSE)
@@ -109,8 +110,8 @@ test_that("mixed: set.data.arg", {
   data(obk.long, package = "afex")
   suppressWarnings(m1 <- mixed(value ~ treatment*phase +(1|id), obk.long, method = "LRT", progress=FALSE))
   suppressWarnings(m2 <- mixed(value ~ treatment*phase +(1|id), obk.long, method = "LRT", progress=FALSE, set.data.arg = FALSE))
-  expect_that(m1$full.model@call[["data"]], is_identical_to(as.name("obk.long")))
-  expect_that(m2$full.model@call[["data"]], is_identical_to(as.name("data")))
+  expect_that(m1$full_model@call[["data"]], is_identical_to(as.name("obk.long")))
+  expect_that(m2$full_model@call[["data"]], is_identical_to(as.name("data")))
 })
 
 test_that("mixed: anova with multiple mixed objexts", {
@@ -139,7 +140,7 @@ test_that("mixed: expand_re argument, return = 'merMod'", {
   expect_true(all.equal(unlist(summary(m2)$varcor), diag(summary(m3)$varcor$id), tolerance = 0.03, check.attributes = FALSE))
   l2 <- mixed(response ~ validity + (believability||id), ks2013.3, expand_re = TRUE, return = "merMod")
   expect_is(l2, "merMod")
-  expect_equivalent(m2$full.model, l2)
+  expect_equivalent(m2$full_model, l2)
   l3 <- lmer_alt(response ~ validity + (believability||id), ks2013.3)
   l4 <- lmer_alt(response ~ validity + (believability||id), ks2013.3, control = lmerControl(optimizer = "Nelder_Mead"))
   expect_equivalent(l2, l3) 

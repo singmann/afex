@@ -7,7 +7,7 @@
 afex_options(...)
 }
 \arguments{
-\item{...}{One of three: (1) nothing, then returns all options; (2) a name of an option element, then returns its' value; (3) a name-value pair which sets the corresponding option to the new value (and returns nothing).}
+\item{...}{One of four: (1) nothing, then returns all options as a list; (2) a name of an option element, then returns its' value; (3) a name-value pair which sets the corresponding option to the new value (and returns nothing), (4) a list with option-value pairs which sets all the corresponding arguments. The example show all possible cases.}
 }
 \value{
 depends on input, see above.
@@ -27,16 +27,25 @@ The following arguments are currently set:
 \item \code{factorize}: Should between subject factors be factorized (with note) before running the analysis? Default is \code{TRUE}. (ANOVA functions only)
 }
 }
+\note{
+All options are saved in the global R \code{\link{options}} with prefix \code{afex.}.
+}
 \examples{
-afex_options()
+afex_options() # see all options
 
-afex_options("return_aov")
+afex_options("return_aov") #get single option
 
-afex_options("return_aov", "check.contrasts")  # returns only first value!
+aop <- afex_options() # save current options
 
 \dontrun{
+# change options
 afex_options(return_aov = "nice")
+afex_options("return_aov") #get single option
+afex_options(return_aov = "nice", method_mixed = "LRT")
+afex_options("method_mixed") #get single option
+# do something
 }
+afex_options(aop) # reset options
 
 }
 

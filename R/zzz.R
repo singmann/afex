@@ -1,14 +1,21 @@
 
 
-## set default options for afex.options:
-.afexEnv <- new.env()
-assign("type", 3, envir = .afexEnv)
-assign("check.contrasts", TRUE, envir = .afexEnv)
-assign("method_mixed",  "KR", envir = .afexEnv)
-assign("return_aov",  "afex_aov", envir = .afexEnv)
-assign("es_aov",  "ges", envir = .afexEnv)
-assign("correction_aov",  "GG", envir = .afexEnv)
-assign("factorize", TRUE, envir = .afexEnv)
+## set default options for afex_options:
+.onLoad <- function(libname, pkgname) {
+  op <- options()
+  op.afex <- list(
+    afex.type = 3,
+    afex.check.contrasts = TRUE,
+    afex.method_mixed = "KR",
+    afex.return_aov = "afex_aov",
+    afex.es_aov = "ges",
+    afex.correction_aov = "GG",
+    afex.factorize = TRUE
+  )
+  toset <- !(names(op.afex) %in% names(op))
+  if(any(toset)) options(op.afex[toset])
+  invisible()
+}
 
 .onAttach <- function(libname, pkgname) {
 	#assign(".oldContrasts", options("contrasts"), envir = .GlobalEnv)

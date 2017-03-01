@@ -7,7 +7,9 @@
 
     Significant User Visible Changes and New Features
 
-    o   
+    o   afex_options() now uses the global R options accessible via options() 
+        (with prefix afex.) and allows to reset all options via list (i.e.,:
+        aop <- afex_options(); ...; afex_options(aov); works).
         
     o   
         

@@ -7,14 +7,14 @@
 #' @param data data.frame containing the data. Should have all the variables present in \code{fixed}, \code{random}, and \code{dv} as columns.
 #' @param type type of test on which effects are based. Default is to use type 3 tests, taken from \code{\link{afex_options}}.
 #' @param method character vector indicating which methods for obtaining p-values should be used: \code{"KR"} corresponds to the Kenward-Roger approximation for degrees of freedom (only working with linear mixed models), \code{"PB"} calculates p-values based on parametric bootstrap, \code{"LRT"} calculates p-values via the likelihood ratio tests implemented in the \code{anova} method for \code{merMod} objects (only recommended for models with many [i.e., > 50] levels for the random factors). The default (currently \code{"KR"}) is taken from \code{\link{afex_options}}.
-#' @param per.parameter \code{character} vector specifying for which variable tests should be run for each parameter (instead for the overall effect). Can be useful e.g., for testing ordered factors. Relatively untested so results should be compared with a second run without setting this argument. Uses \code{\link{grep}} for selecting parameters among the fixed effects so regular expressions (\code{\link{regex}}) are possible. See Examples.
-#' @param args.test \code{list} of arguments passed to the function calculating the p-values. See Details.
-#' @param test.intercept logical. Whether or not the intercept should also be fitted and tested for significance. Default is \code{FALSE}. Only relevant if \code{type = 3}.
-#' @param check.contrasts \code{logical}. Should contrasts be checked and (if necessary) changed to \code{"contr.sum"}? See Details. The default (\code{"TRUE"}) is taken from \code{\link{afex_options}}.
+#' @param per_parameter \code{character} vector specifying for which variable tests should be run for each parameter (instead for the overall effect). Can be useful e.g., for testing ordered factors. Relatively untested so results should be compared with a second run without setting this argument. Uses \code{\link{grep}} for selecting parameters among the fixed effects so regular expressions (\code{\link{regex}}) are possible. See Examples.
+#' @param args_test \code{list} of arguments passed to the function calculating the p-values. See Details.
+#' @param test_intercept logical. Whether or not the intercept should also be fitted and tested for significance. Default is \code{FALSE}. Only relevant if \code{type = 3}.
+#' @param check_contrasts \code{logical}. Should contrasts be checked and (if necessary) changed to \code{"contr.sum"}? See Details. The default (\code{"TRUE"}) is taken from \code{\link{afex_options}}.
 #' @param expand_re logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.
-#' @param set.data.arg \code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}. 
+#' @param set_data_arg \code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}. 
 #' @param progress  if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.
-#' @param cl  A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args.test} for this.
+#' @param cl  A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args_test} for this.
 #' @param return the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model. Can be used in combination with \code{expand_re = TRUE} and \code{\link{allFit}} (see examples there).
 #' @param ... further arguments (such as \code{weights}/\code{family}) passed to \code{\link{lmer}}/\code{\link{glmer}}.
 #'
@@ -69,7 +69,7 @@
 #'
 #' p-values are per default calculated via methods from \pkg{pbkrtest}. When \code{method = "KR"} (the default), the Kenward-Roger approximation for degrees-of-freedom is calculated using \code{\link[pbkrtest]{KRmodcomp}}, which is only applicable to linear-mixed models. The test statistic in the output is a F-value (\code{F}).
 #'
-#' \code{method = "PB"} calculates p-values using parametric bootstrap using \code{\link[pbkrtest]{PBmodcomp}}. This can be used for linear and also generalized linear mixed models (GLMM) by specifying a \code{\link[stats]{family}} argument to \code{mixed}. Note that you should specify further arguments to \code{PBmodcomp} via \code{args.test}, especially \code{nsim} (the number of simulations to form the reference distribution) or \code{cl} (for using multiple cores). For other arguments see \code{\link[pbkrtest]{PBmodcomp}}. Note that \code{REML} (argument to \code{[g]lmer}) will be set to \code{FALSE} if method is \code{PB}.
+#' \code{method = "PB"} calculates p-values using parametric bootstrap using \code{\link[pbkrtest]{PBmodcomp}}. This can be used for linear and also generalized linear mixed models (GLMM) by specifying a \code{\link[stats]{family}} argument to \code{mixed}. Note that you should specify further arguments to \code{PBmodcomp} via \code{args_test}, especially \code{nsim} (the number of simulations to form the reference distribution) or \code{cl} (for using multiple cores). For other arguments see \code{\link[pbkrtest]{PBmodcomp}}. Note that \code{REML} (argument to \code{[g]lmer}) will be set to \code{FALSE} if method is \code{PB}.
 #'
 #' \code{method = "LRT"} calculates p-values via likelihood ratio tests implemented in the \code{anova} method for \code{"merMod"} objects. This is recommended by Barr et al. (2013; which did not test the other methods implemented here). Using likelihood ratio tests is only recommended for models with many levels for the random effects (> 50), but can be pretty helpful in case the other methods fail (due to memory and/or time limitations). The \href{http://glmm.wikidot.com/faq}{lme4 faq} also recommends the other methods over likelihood ratio tests.
 #' }
@@ -80,7 +80,7 @@
 #'
 #' Type 2 tests are truly sequential. They are obtained by comparing a model in which the tested effect and all higher oder effect (e.g., all three-way interactions for testing a two-way interaction) are excluded with a model in which only effects up to the order of the tested effect are present and all higher order effects absent. In other words, there are multiple full models, one for each order of effects. Consequently, the results for lower order effects are identical of whether or not higher order effects are part of the model or not. This latter feature is not consistent with classical ANOVA type 2 tests but a consequence of the sequential tests (and \href{https://stat.ethz.ch/pipermail/r-sig-mixed-models/2012q3/018992.html}{I didn't find a better way} of implementing the Type 2 tests). This \strong{does not} correspond to the (type 2) Wald test reported by \code{car::Anova}. If you want type 2 Wald tests instead of truly sequential typde 2 tests, use \code{car::Anova} with \code{test = "F"}. Note that the order in which the effects are entered into the formula does not matter (in contrast to type 1 tests).
 #' 
-#' If \code{check.contrasts = TRUE}, contrasts will be set to \code{"contr.sum"} for all factors in the formula if default contrasts are not equal to \code{"contr.sum"} or \code{attrib(factor, "contrasts") != "contr.sum"}. Furthermore, the current contrasts (obtained via \code{getOption("contrasts")}) will be set at the cluster nodes if \code{cl} is not \code{NULL}.
+#' If \code{check_contrasts = TRUE}, contrasts will be set to \code{"contr.sum"} for all factors in the formula if default contrasts are not equal to \code{"contr.sum"} or \code{attrib(factor, "contrasts") != "contr.sum"}. Furthermore, the current contrasts (obtained via \code{getOption("contrasts")}) will be set at the cluster nodes if \code{cl} is not \code{NULL}.
 #' }
 #' 
 #' \subsection{Expand Random Effects}{
@@ -138,8 +138,32 @@
 #' @example examples/examples.mixed.R
 #' 
 #' @export
-mixed <- function(formula, data, type = afex_options("type"), method = afex_options("method_mixed"), per.parameter = NULL, args.test = list(), test.intercept = FALSE, check.contrasts = afex_options("check.contrasts"), expand_re = FALSE, set.data.arg = TRUE, progress = TRUE, cl = NULL, return = "mixed", ...) {
-  if (check.contrasts) {
+mixed <- function(formula, data, type = afex_options("type"), method = afex_options("method_mixed"), per_parameter = NULL, args_test = list(), test_intercept = FALSE, check_contrasts = afex_options("check_contrasts"), expand_re = FALSE, set_data_arg = TRUE, progress = TRUE, cl = NULL, return = "mixed", ...) {
+  dots <- list(...)
+  ### deprercate old argument names:
+  if("per.parameter" %in% names(dots)) {
+    warn_deprecated_arg("per.parameter", "per_parameter")
+    per_parameter <- dots$per.parameter
+  }
+  if("args.test" %in% names(dots)) {  
+    warn_deprecated_arg("args.test", "args_test")
+    args_test <- dots$args.test
+  }
+  if("test.intercept" %in% names(dots)) { 
+    warn_deprecated_arg("test.intercept", "test_intercept")
+    test_intercept <- dots$test.intercept
+  }
+  if("check.contrasts" %in% names(dots)) {
+    warn_deprecated_arg("check.contrasts", "check_contrasts")
+    check_contrasts <- dots$check.contrasts
+  }
+  if("set.data.arg" %in% names(dots)) {  
+    warn_deprecated_arg("set.data.arg", "set_data_arg")
+    set_data_arg <- dots$set.data.arg
+  }
+  
+  ## real function begins:
+  if (check_contrasts) {
     #browser()
     vars.to.check <- all.vars(formula)
     resetted <- NULL
@@ -185,9 +209,9 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     data <- model.frame(as.formula(str_c(vars.to.check[1], "~", str_c(vars.to.check[-1], collapse = "+"))), data = data)
     m.matrix <- model.matrix(rh2, data = data)
     warning(str_c("Due to missing values, reduced number of observations to ", nrow(data)))
-    if(set.data.arg) {
-      warning("Due to missing values, set.data.arg set to FALSE.")
-      set.data.arg <- FALSE
+    if(set_data_arg) {
+      warning("Due to missing values, set_data_arg set to FALSE.")
+      set_data_arg <- FALSE
     }
   }
   
@@ -227,7 +251,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   ### Part II: obtain the lmer fits
   ####################
   ## Part IIa: prepare formulas
-  mf <- mc[!names(mc) %in% c("type", "method", "args.test", "progress", "check.contrasts", "per.parameter", "cl", "test.intercept", "expand_re", "return")]
+  mf <- mc[!names(mc) %in% c("type", "method", "args.test", "args_test", "progress", "check.contrasts", "check_contrasts", "per.parameter", "per_parameter", "cl", "test.intercept", "test_intercept","expand_re", "return")]
   mf[["formula"]] <-as.formula(str_c(dv,deparse(rh2, width.cutoff = 500L),"+",random))   #formula.f
   if ("family" %in% names(mf)) mf[[1]] <- as.name("glmer")
   else mf[[1]] <- as.name("lmer")
@@ -239,18 +263,17 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   #browser()
   if (return == "merMod") {
     out <- eval(mf)
-    if(set.data.arg) out@call[["data"]] <- mc[["data"]]
+    if(set_data_arg) out@call[["data"]] <- mc[["data"]]
     return(out)
   }
   ## prepare (g)lmer formulas:
   if (type == 3 | type == "III") {
     if (attr(terms(rh2, data = data), "intercept") == 1) fixed.effects <- c("(Intercept)", fixed.effects)
-    #per.parameter <- c("hour", "treatment")
     # The next part alters the mapping of parameters to effects/variables if
-    # per.parameter is not NULL (this does the complete magic).
-    if (!is.null(per.parameter)) {
+    # per_parameter is not NULL (this does the complete magic).
+    if (!is.null(per_parameter)) {
       fixed.to.change <- c()
-      for (parameter in per.parameter) {
+      for (parameter in per_parameter) {
         fixed.to.change <- c(fixed.to.change, grep(parameter, fixed.effects))
       }
       fixed.to.change <- fixed.effects[sort(unique(fixed.to.change))]
@@ -276,13 +299,13 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       formulas[[i+1]] <- as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
     }
     names(formulas) <- c("full.model", fixed.effects)
-    if (!test.intercept && fixed.effects[1] == "(Intercept)") {
+    if (!test_intercept && fixed.effects[1] == "(Intercept)") {
       fixed.effects <- fixed.effects[-1]
       formulas[["(Intercept)"]] <- NULL
     }
   } else if (type == 2 | type == "II") {
     #warning("Implementation of Type 2 method not unproblematic.\n  Check documentation or use car::Anova (Wald tests).")
-    if (!is.null(per.parameter)) stop("per.parameter argument only implemented for Type 3 tests.")
+    if (!is.null(per_parameter)) stop("per_parameter argument only implemented for Type 3 tests.")
     full.model.formulas <- vector("list", max.effect.order)
     submodel.formulas <- vector("list", length(fixed.effects))
     full.model.formulas[[length(full.model.formulas)]] <- mf[["formula"]]
@@ -320,7 +343,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     #junk <- clusterEvalQ(cl = cl, library("lme4", character.only = TRUE))
     junk <- clusterCall(cl = cl, "require", package = "lme4", character.only = TRUE)
     #junk <- clusterEvalQ(cl = cl, loadNamespace("lme4"))
-    if (check.contrasts)  {
+    if (check_contrasts)  {
       curr.contrasts <- getOption("contrasts")
       clusterExport(cl = cl, "curr.contrasts", envir = sys.nframe())
       junk <- clusterEvalQ(cl = cl, options(contrasts=curr.contrasts))
@@ -374,7 +397,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(fits), collapse = ", "), "\n  It is highly recommended to try different optimizer via lmerControl or allFit!"))
   }
   
-  if(set.data.arg){
+  if(set_data_arg){
     for (i in seq_along(fits)) {
       fits[[i]]@call[["data"]] <- mc[["data"]]
     }
@@ -420,10 +443,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
     tests <- vector("list", length(fixed.effects))
     for (c in seq_along(fixed.effects)) {
-      if (type == 3 | type == "III") tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full.model, smallModel = fits[[c]], args.test))
+      if (type == 3 | type == "III") tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full.model, smallModel = fits[[c]], args_test))
       else if (type == 2 | type == "II") {
         order.c <- effect.order[c]
-        tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full.model[[order.c]], smallModel = fits[[c]], args.test))
+        tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full.model[[order.c]], smallModel = fits[[c]], args_test))
       }
       if (progress) cat(".")
     }
@@ -552,14 +575,14 @@ check_likelihood <- function(object) {
 
 #' @rdname mixed
 #' @export
-lmer_alt <- function(formula, data, check.contrasts = FALSE, ...) {
+lmer_alt <- function(formula, data, check_contrasts = FALSE, ...) {
   mc <- match.call()
   #assign(all.vars(mc[["data"]]), data)
   mc[[1]] <- as.name("mixed")
   mc[["return"]] <- "merMod"
   mc[["expand_re"]] <- TRUE
   mc[["progress"]] <- FALSE
-  mc[["check.contrasts"]] <- check.contrasts
+  mc[["check_contrasts"]] <- check_contrasts
   #browser()
   eval(mc)
 }

@@ -7,11 +7,14 @@
 
     Significant User Visible Changes and New Features
 
+    o   All arguments with "." in the name have been renamed to use "_". The old
+        names have been deprecated (i.e., still work, but should not be used).
+        check.contrasts = check_contrasts, test.intercept = test_intercept,
+        args.test = args_test, ...
+        
     o   afex_options() now uses the global R options accessible via options() 
         (with prefix afex.) and allows to reset all options via list (i.e.,:
         aop <- afex_options(); ...; afex_options(aov); works).
-        
-    o   
         
     Bugfixes
 
@@ -29,7 +32,7 @@
     o   aov_...() now supports column names with spaces (using backticks), see: 
         https://github.com/singmann/afex/issues/22 Thx to Jonathan Love for fix.
         
-    o   changed license to GPL >=2 (as it calles some function from GPL >=2 
+    o   changed license to GPL >=2 (as it call some function from GPL >=2 
         packages).
     
                     *************************
@@ -45,7 +48,7 @@
         afex_aov objects, which is used per default by nice(). This ensures 
         that nice(object) and object always return the same data.frame.
         Also added "nice_table" class to data.frame returned by nice which 
-        print the value of the slopts for information.
+        print the value of the slots for information.
         Both contributed by Frederik Aust (who was also promoted to author).
         
     o   added return="data" for mixed. This allows to obtain the data set used

@@ -9,14 +9,14 @@ test_that("regex works correctly in aov_car when also having within factors outs
 test_that("another label bug (May 2014)", {
   data("sk2011.1")
   levels(sk2011.1$inference) <- c("A+:D-", "A+:D+", "A-:D+", "A- : D-")
-  expect_is(suppressWarnings(aov_ez("id", "response", sk2011.1, between = "instruction", within = c("type", "inference"), return = "Anova")), "Anova.mlm")  
+  expect_is(aov_ez("id", "response", sk2011.1, between = "instruction", within = c("type", "inference"), return = "Anova", fun_aggregate = mean), "Anova.mlm")  
 })
 
 test_that("orig label bug", {
   data(obk.long)
   obk2 <- obk.long
   levels(obk2$phase) <- c("fup test", "post-hans", "pre tenetious")
-  expect_is(suppressWarnings(aov_car(value ~ treatment * gender + age + Error(id/phase*hour), data = obk2, factorize=FALSE, return = "Anova")), "Anova.mlm")
+  expect_is(aov_car(value ~ treatment * gender + age + Error(id/phase*hour), data = obk2, factorize=FALSE, return = "Anova"), "Anova.mlm")
 })
 
 test_that("ANCOVA check bug (reported by Gang Chen), January 2013", {
@@ -143,8 +143,8 @@ test_that("ANCOVA check bug (reported by Gang Chen), January 2013", {
 2117 HC F 01_02 1.663 -0.014 0.917999999999999 1.293 3.7965
 ")
   dat$ID <- as.factor(dat$ID)
-  fm <- suppressWarnings(aov_car(Value ~ Propdd00 + Group + Gender + GAS0 + MAD0 + CPD0 + Error(ID/ROI), data=dat, factorize=FALSE, return = "Anova"))
-  fm0 <- suppressWarnings(aov_car(Value ~ MAD0 + CPD0 + Error(ID/ROI), data=dat, factorize=FALSE, return='afex_aov'))
+  fm <- aov_car(Value ~ Propdd00 + Group + Gender + GAS0 + MAD0 + CPD0 + Error(ID/ROI), data=dat, factorize=FALSE, return = "Anova")
+  fm0 <- aov_car(Value ~ MAD0 + CPD0 + Error(ID/ROI), data=dat, factorize=FALSE, return='afex_aov')
   expect_is(fm, "Anova.mlm")
   expect_is(fm0, "afex_aov")
 })

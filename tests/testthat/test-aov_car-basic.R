@@ -27,7 +27,7 @@ test_that("purely within ANOVA, return='univ': Maxell & Delaney (2004), Table 12
 test_that("Analysis of Singmann & Klauer (2011, Exp. 1)", {
   data(sk2011.1, package = "afex")
 
-  out1 <-  aov_ez("id", "response", sk2011.1[ sk2011.1$what == "affirmation",], within = c("inference", "type"), between = "instruction", anova_table=(es = "pes"), fun.aggregate = mean, return = "afex_aov")
+  out1 <-  aov_ez("id", "response", sk2011.1[ sk2011.1$what == "affirmation",], within = c("inference", "type"), between = "instruction", anova_table=(es = "pes"), fun_aggregate = mean, return = "afex_aov")
   
   df_num <- rep(1, 7)
   df_den <- rep(38, 7)

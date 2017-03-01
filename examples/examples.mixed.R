@@ -62,7 +62,7 @@ data(md_15.1)
 
 # to also replicate exact parameters use treatment.contrasts and the last level as base level:
 contrasts(md_15.1$timecat) <- contr.treatment(4, base = 4)
-(t15.4b <- mixed(iq ~ timecat + (1+time|id),data=md_15.1, check.contrasts=FALSE))
+(t15.4b <- mixed(iq ~ timecat + (1+time|id),data=md_15.1, check_contrasts=FALSE))
 summary(t15.4a)  # gives "wrong" parameters extimates
 summary(t15.4b)  # identical parameters estimates
 
@@ -72,7 +72,7 @@ summary(t15.4b)  # identical parameters estimates
 data(md_16.1)
 
 # original results need treatment contrasts:
-(mixed1_orig <- mixed(severity ~ sex + (1|id), md_16.1, check.contrasts=FALSE))
+(mixed1_orig <- mixed(severity ~ sex + (1|id), md_16.1, check_contrasts=FALSE))
 summary(mixed1_orig$full.model)
 
 # p-value stays the same with afex default contrasts (contr.sum),
@@ -100,7 +100,7 @@ md_16.4b <- within(md_16.4, cond <- C(cond, contr.treatment, base = 2))
 str(md_16.4b)
 
 # p-value stays identical:
-(mixed2_orig <- mixed(induct ~ cond + (1|room:cond), md_16.4b, check.contrasts=FALSE))
+(mixed2_orig <- mixed(induct ~ cond + (1|room:cond), md_16.4b, check_contrasts=FALSE))
 summary(mixed2_orig$full.model) # replicates parameters
 
 
@@ -109,7 +109,7 @@ summary(mixed2_orig$full.model) # replicates parameters
 (mixed3 <- mixed(induct ~ cond + skill + (1|room:cond), md_16.4))
 
 # however, parameters are perfectly recovered when using the original contrasts:
-mixed3_orig <- mixed(induct ~ cond + skill + (1|room:cond), md_16.4b, check.contrasts=FALSE)
+mixed3_orig <- mixed(induct ~ cond + skill + (1|room:cond), md_16.4b, check_contrasts=FALSE)
 summary(mixed3_orig)
 
 
@@ -120,7 +120,7 @@ md_16.4b$cog <- scale(md_16.4b$cog, scale=FALSE)
 # F-values and p-values are relatively off:
 (mixed4 <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b))
 # contrast has a relatively important influence on cog
-(mixed4_orig <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, check.contrasts=FALSE))
+(mixed4_orig <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, check_contrasts=FALSE))
 
 # parameters are again almost perfectly recovered:
 summary(mixed4_orig)
@@ -173,7 +173,7 @@ m1
 require("mlmRev") # for the data, see ?Contraception
 
 gm1 <- mixed(use ~ age + I(age^2) + urban + livch + (1 | district), method = "PB",
- family = binomial, data = Contraception, args.test = list(nsim = 10))
+ family = binomial, data = Contraception, args_test = list(nsim = 10))
 
 #######################
 ### Using Multicore ###
@@ -192,11 +192,11 @@ mixed(value ~ treatment*phase*hour +(1|id), data = obk.long, method = "LRT", cl 
 
 # 2. Obtain PB samples via multicore: 
 mixed(use ~ age + I(age^2) + urban + livch + (1 | district), family = binomial,
- method = "PB", data = Contraception, args.test = list(nsim = 10, cl = cl))
+ method = "PB", data = Contraception, args_test = list(nsim = 10, cl = cl))
 
 ## Both ways can be combined:
 mixed(use ~ age + I(age^2) + urban + livch + (1 | district), family = binomial, 
- method = "PB", data = Contraception, args.test = list(nsim = 10, cl = cl), cl = cl)
+ method = "PB", data = Contraception, args_test = list(nsim = 10, cl = cl), cl = cl)
 
 stopCluster(cl)
 

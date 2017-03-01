@@ -6,7 +6,7 @@
 #' 
 #' @details The following arguments are currently set:
 #' \itemize{
-#' \item \code{check.contrasts} should contrasts be checked and changed to sum-to-zero contrasts? Default is \code{TRUE}.
+#' \item \code{check_contrasts} should contrasts be checked and changed to sum-to-zero contrasts? Default is \code{TRUE}.
 #' \item \code{type} type of sums-of-squares to be used for testing effects, default is 3 which reports Type 3 tests.
 #' \item \code{method_mixed}: Method used to obtain p-values in \code{\link{mixed}}, default is \code{"KR"} (which will change to \code{"LRT"} soon). (\code{mixed()} only)
 #' \item \code{return_aov}: Return value of the ANOVA functions (see \code{\link{aov_car}}), default is \code{"nice"}. 

@@ -5,7 +5,7 @@
   op <- options()
   op.afex <- list(
     afex.type = 3,
-    afex.check.contrasts = TRUE,
+    afex.check_contrasts = TRUE,
     afex.method_mixed = "KR",
     afex.return_aov = "afex_aov",
     afex.es_aov = "ges",

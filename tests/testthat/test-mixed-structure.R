@@ -66,7 +66,7 @@ test_that("mixed, mlmRev: type 3 and 2 LRTs for GLMMs", {
 })
 
 test_that("mixed, obk.long: LMM with method = PB", {
-  expect_that(mixed(value ~ treatment+phase*hour +(1|id), data = obk.long, method = "PB", args.test = list(nsim = 10), progress=FALSE), is_a("mixed"))
+  expect_that(mixed(value ~ treatment+phase*hour +(1|id), data = obk.long, method = "PB", args_test = list(nsim = 10), progress=FALSE), is_a("mixed"))
 })
 
 test_that("mixed, obk.long: multicore loads lme4 and produces the same results", {
@@ -94,8 +94,8 @@ test_that("print(mixed) works: only 1 or 2 fixed effects with all methods", {
   expect_that(print(mixed(value ~ treatment+(1|id), data = obk.long, method = "LRT")), is_a("data.frame"))
   expect_that(print(mixed(value ~ treatment+phase+(1|id), data = obk.long, method = "LRT")), is_a("data.frame"))
   require("mlmRev") # for the data, see ?Contraception
-  expect_that(print(mixed(use ~ urban + (1 | district), method = "PB", family = binomial, data = Contraception, args.test=list(nsim=2))), is_a("data.frame"))
-  expect_that(print(mixed(use ~ urban + livch + (1 | district), method = "PB", family = binomial, data = Contraception, args.test=list(nsim=2))), is_a("data.frame"))  
+  expect_that(print(mixed(use ~ urban + (1 | district), method = "PB", family = binomial, data = Contraception, args_test=list(nsim=2))), is_a("data.frame"))
+  expect_that(print(mixed(use ~ urban + livch + (1 | district), method = "PB", family = binomial, data = Contraception, args_test=list(nsim=2))), is_a("data.frame"))  
 })
 
 # test_that("mixed, Maxell & Delaney (2004), Table 16.4, p. 842: bobyqa not fitting well", {
@@ -144,7 +144,7 @@ test_that("mixed: expand_re argument, return = 'merMod'", {
   l4 <- lmer_alt(response ~ validity + (believability||id), ks2013.3, control = lmerControl(optimizer = "Nelder_Mead"))
   expect_equivalent(l2, l3) 
   expect_equal(l3, l4, check.attributes = FALSE)
-  l5 <- lmer_alt(response ~ validity + (believability||id), ks2013.3, control = lmerControl(optimizer = "Nelder_Mead"), check.contrasts = TRUE)
+  l5 <- lmer_alt(response ~ validity + (believability||id), ks2013.3, control = lmerControl(optimizer = "Nelder_Mead"), check_contrasts = TRUE)
   expect_equal(l2, l5, check.attributes = FALSE )
   expect_identical(names(coef(l2)$id), names(coef(l5)$id))  # parameter names need to be identical (same contrasts)
   expect_false(all(names(coef(l2)$id) == names(coef(l3)$id)))  # parameter names need to be different (different contrasts)

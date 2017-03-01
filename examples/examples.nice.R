@@ -23,7 +23,7 @@ tmp.aov <- aov_car(value ~ treatment * gender + Error(id/phase*hour), data = obk
 
 nice(tmp.aov, observed = "gender")
 
-nice(tmp.aov, observed = "gender", sig.symbol = rep("", 4))
+nice(tmp.aov, observed = "gender", sig.symbols = rep("", 4))
 
 \dontrun{
 # use package ascii or xtable for formatting of tables ready for printing.

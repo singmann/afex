@@ -7,7 +7,7 @@
 #' @param es Effect Size to be reported. The default is given by \code{afex_options("es_aov")}, which is initially set to \code{"ges"} (i.e., reporting generalized eta-squared, see details). Also supported is partial eta-squared (\code{"pes"}) or \code{"none"}.
 #' @param observed character vector referring to the observed (i.e., non manipulated) variables/effects in the design. Important for calculation of generalized eta-squared (ignored if \code{es} is not \code{"ges"}), see details.
 #' @param correction Character. Which sphericity correction of the degrees of freedom should be reported for the within-subject factors.  The default is given by \code{afex_options("correction_aov")}, which is initially set to \code{"GG"} corresponding to the Greenhouse-Geisser correction. Possible values are \code{"GG"}, \code{"HF"} (i.e., Hyunh-Feldt correction), and \code{"none"} (i.e., no correction).
-#' @param p.adjust.method \code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details). The default \code{NULL} corresponds to no adjustment.
+#' @param p_adjust_method \code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details). The default \code{NULL} corresponds to no adjustment.
 #' @param sig_symbols Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig_symbols = ""} will display the stars but not the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols.
 #' @param MSE logical. Should the column containing the Mean Sqaured Error (MSE) be displayed? Default is \code{TRUE}.
 #' @param intercept logical. Should intercept (if present) be included in the ANOVA table? Default is \code{FALSE} which hides the intercept.
@@ -24,8 +24,8 @@
 #'
 #' The default reports generalized eta squared (Olejnik & Algina, 2003), the "recommended effect size for repeated measured designs" (Bakeman, 2005). Note that it is important that all measured variables (as opposed to experimentally manipulated variables), such as e.g., age, gender, weight, ..., must be declared via \code{observed} to obtain the correct effect size estimate. Partial eta squared (\code{"pes"}) does not require this.
 #' 
-#' Exploratory ANOVA, for which no detailed hypotheses have been specified a priori, harbor a multiple comparison problem (Cramer et al., 2015). To avoid an inflation of familywise Type I error rate, results need to be corrected for multiple comparisons using \code{p.adjust.method}.
-#' \code{p.adjust.method} defaults to the method specified in the call to \code{\link{aov_car}} in \code{anova_table}. If no method was specified and \code{p.adjust.method = NULL} p-values are not adjusted.
+#' Exploratory ANOVA, for which no detailed hypotheses have been specified a priori, harbor a multiple comparison problem (Cramer et al., 2015). To avoid an inflation of familywise Type I error rate, results need to be corrected for multiple comparisons using \code{p_adjust_method}.
+#' \code{p_adjust_method} defaults to the method specified in the call to \code{\link{aov_car}} in \code{anova_table}. If no method was specified and \code{p_adjust_method = NULL} p-values are not adjusted.
 #' 
 #' @seealso \code{\link{aov_ez}} and \code{\link{aov_car}} are the convenience functions to create the object appropriate for \code{nice_anova}.
 #'
@@ -50,22 +50,26 @@ nice <- function(object, ...) UseMethod("nice", object)
 #' @rdname nice
 #' @method nice afex_aov
 #' @export
-nice.afex_aov <- function(object, es = attr(object$anova_table, "es"), observed = attr(object$anova_table, "observed"), correction = attr(object$anova_table, "correction"), MSE = NULL, intercept = NULL, p.adjust.method = attr(object$anova_table, "p.adjust.method"), sig_symbols = c(" +", " *", " **", " ***"), sig.symbols, ...) { 
+nice.afex_aov <- function(object, es = attr(object$anova_table, "es"), observed = attr(object$anova_table, "observed"), correction = attr(object$anova_table, "correction"), MSE = NULL, intercept = NULL, p_adjust_method = attr(object$anova_table, "p_adjust_method"), sig_symbols = c(" +", " *", " **", " ***"), ...) { 
   # if(is.null(es)) { # Defaults to afex_options("es") because of default set in anova.afex_aov
   #   es <- c("pes", "ges")[c("pes", "ges") %in% colnames(object$anova_table)]
   # }
+  dots <- list(...)
   if(is.null(MSE)) { # Defaults to TRUE because of default set in anova.afex_aov
     MSE <- "MSE" %in% colnames(object$anova_table)
   }
   if(is.null(intercept)) { # Defaults to FALSE because of default set in anova.afex_aov
     intercept <- "(Intercept)" %in% rownames(object$anova_table)
   }
-  if (!missing(sig.symbols)) {
+  if("sig.symbols" %in% names(dots)) {  #(!missing(sig.symbols)) {
     warn_deprecated_arg("sig.symbols", "sig_symbols")
-    sig_symbols <- sig.symbols
+    sig_symbols <- dots$sig.symbols
   }
-  
-  anova_table <- as.data.frame(anova(object, es = es, observed = observed, correction = correction, MSE = MSE, intercept = intercept, p.adjust.method = p.adjust.method))
+  if("p.adjust.method" %in% names(dots)) {  #(!missing(sig.symbols)) {
+    warn_deprecated_arg("p.adjust.method", "p_adjust_method")
+    p_adjust_method <- dots$p.adjust.method
+  }
+  anova_table <- as.data.frame(anova(object, es = es, observed = observed, correction = correction, MSE = MSE, intercept = intercept, p_adjust_method = p_adjust_method))
   nice.anova(anova_table, MSE = MSE, intercept = intercept, sig_symbols = sig_symbols)
 }
 
@@ -73,15 +77,16 @@ nice.afex_aov <- function(object, es = attr(object$anova_table, "es"), observed 
 #' @method nice anova
 #' @export
 nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = c(" +", " *", " **", " ***"), sig.symbols, ...) {
+  dots <- list(...)
   if(is.null(MSE)) { # Defaults to TRUE because of default set in anova.afex_aov
     MSE <- "MSE" %in% colnames(object)
   }
   if(is.null(intercept)) { # Defaults to FALSE because of default set in anova.afex_aov
     intercept <- "(Intercept)" %in% rownames(object)
   }
-  if (!missing(sig.symbols)) {
+  if("sig.symbols" %in% names(dots)) {  #(!missing(sig.symbols)) {
     warn_deprecated_arg("sig.symbols", "sig_symbols")
-    sig_symbols <- sig.symbols
+    sig_symbols <- dots$sig.symbols
   }
   
   
@@ -106,7 +111,7 @@ nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = c(" +
   if (!intercept) if (df.out[1,1] == "(Intercept)")  df.out <- df.out[-1,, drop = FALSE]
   rownames(df.out) <- NULL
   attr(df.out, "heading") <- attr(object, "heading")
-  attr(df.out, "p.adjust.method") <- attr(object, "p.adjust.method")
+  attr(df.out, "p_adjust_method") <- attr(object, "p_adjust_method")
   attr(df.out, "correction") <- attr(object, "correction")
   attr(df.out, "observed") <- attr(object, "observed")
   attr(df.out, "es") <- attr(object, "es")
@@ -126,11 +131,12 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) 
 #' @rdname nice
 #' @method nice mixed
 #' @export
-nice.mixed <- function(object, sig_symbols = c(" +", " *", " **", " ***"), sig.symbols, ...) {
+nice.mixed <- function(object, sig_symbols = c(" +", " *", " **", " ***"), ...) {
   anova_table <- object$anova_table
-  if (!missing(sig.symbols)) {
+  dots <- list(...)
+  if("sig.symbols" %in% names(dots)) {  #(!missing(sig.symbols)) {
     warn_deprecated_arg("sig.symbols", "sig_symbols")
-    sig_symbols <- sig.symbols
+    sig_symbols <- dots$sig.symbols
   }
   symbols.use <-  c(" +", " *", " **", " ***")
   symbols.use[seq_along(sig_symbols)] <- sig_symbols

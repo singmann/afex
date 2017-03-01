@@ -86,7 +86,7 @@ test_that("Data from O'Brien & Kaiser replicates their paper (p. 328, Table 8, c
 
 test_that("Data from O'Brien & Kaiser adjusted for familywise error rate (p. 328, Table 8, column 'average'", {
   data(obk.long, package = "afex")
-  out1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk.long, observed = "gender", return = "afex_aov", anova_table = list(correction = "none", p.adjust.method = "bonferroni"))
+  out1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk.long, observed = "gender", return = "afex_aov", anova_table = list(correction = "none", p_adjust_method = "bonferroni"))
   
   expect_that(unname(unlist(out1[["anova_table"]]["treatment", c("num Df", "den Df", "F")])), equals(c(2, 10, 3.94), tolerance = 0.001))
   expect_that(unname(unlist(out1[["anova_table"]]["gender", c("num Df", "den Df", "F")])), equals(c(1, 10, 3.66), tolerance = 0.001))

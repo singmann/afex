@@ -3,7 +3,7 @@
 #' Methods defined for objects returned from the ANOVA functions \code{\link{aov_car}} et al. of class \code{afex_aov} containing both the ANOVA fitted via \code{car::Anova} and base R's \code{aov}.
 #' 
 #' @param object,x object of class \code{afex_aov} as returned from \code{\link{aov_car}} and related functions.
-#' @param p.adjust.method \code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details).
+#' @param p_adjust_method \code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details).
 #' @param ... further arguments passed through, see description of return value for details.
 #' @param trms,xlev,grid same as for \code{\link{lsm.basis}}.
 #' 
@@ -17,8 +17,8 @@
 #' }
 #'
 #' @details 
-#' Exploratory ANOVA, for which no detailed hypotheses have been specified a priori, harbor a multiple comparison problem (Cramer et al., 2015). To avoid an inflation of familywise Type I error rate, results need to be corrected for multiple comparisons using \code{p.adjust.method}.
-#' \code{p.adjust.method} defaults to the method specified in the call to \code{\link{aov_car}} in \code{anova_table}. If no method was specified and \code{p.adjust.method = NULL} p-values are not adjusted.
+#' Exploratory ANOVA, for which no detailed hypotheses have been specified a priori, harbor a multiple comparison problem (Cramer et al., 2015). To avoid an inflation of familywise Type I error rate, results need to be corrected for multiple comparisons using \code{p_adjust_method}.
+#' \code{p_adjust_method} defaults to the method specified in the call to \code{\link{aov_car}} in \code{anova_table}. If no method was specified and \code{p_adjust_method = NULL} p-values are not adjusted.
 #' 
 #' @references 
 #' Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1–8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
@@ -32,9 +32,14 @@ NULL
 #' @rdname afex_aov-methods
 #' @inheritParams nice
 #' @export
-anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, p.adjust.method = NULL, ...) {
+anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, p_adjust_method = NULL, ...) {
   # internal functions:
   # check arguments
+  dots <- list(...)
+  if("p.adjust.method" %in% names(dots)) {  #(!missing(sig.symbols)) {
+    warn_deprecated_arg("p.adjust.method", "p_adjust_method")
+    p_adjust_method <- dots$p.adjust.method
+  }
   es <- match.arg(es, c("none", "ges", "pes"), several.ok = TRUE)
   correction <- match.arg(correction, c("GG", "HF", "none"))
   #if (class(object$Anova)[1] == "Anova.mlm") {
@@ -98,12 +103,12 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
   if (!MSE) anova_table$MSE <- NULL 
   if (!intercept) if (row.names(anova_table)[1] == "(Intercept)")  anova_table <- anova_table[-1,, drop = FALSE]
   # Correct for multiple comparisons
-  if(is.null(p.adjust.method)) p.adjust.method <- ifelse(is.null(attr(object$anova_table, "p.adjust.method")), "none", attr(object$anova_table, "p.adjust.method"))
-  anova_table[,"Pr(>F)"] <- p.adjust(anova_table[,"Pr(>F)"], method = p.adjust.method)
+  if(is.null(p_adjust_method)) p_adjust_method <- ifelse(is.null(attr(object$anova_table, "p_adjust_method")), "none", attr(object$anova_table, "p_adjust_method"))
+  anova_table[,"Pr(>F)"] <- p.adjust(anova_table[,"Pr(>F)"], method = p_adjust_method)
   class(anova_table) <- c("anova", "data.frame")
-  p_adj_heading <- if(p.adjust.method != "none") paste0(", ", p.adjust.method, "-adjusted") else NULL
+  p_adj_heading <- if(p_adjust_method != "none") paste0(", ", p_adjust_method, "-adjusted") else NULL
   attr(anova_table, "heading") <- c(paste0("Anova Table (Type ", attr(object, "type"), " tests", p_adj_heading, ")\n"), paste("Response:", attr(object, "dv")))
-  attr(anova_table, "p.adjust.method") <- p.adjust.method
+  attr(anova_table, "p_adjust_method") <- p_adjust_method
   attr(anova_table, "es") <- es
   attr(anova_table, "correction") <- if(length(attr(object, "within")) > 0 && any(vapply(object$data$long[, attr(object, "within"), drop = FALSE], nlevels, 0) > 2)) correction else "none"
   attr(anova_table, "observed") <- if(!is.null(observed) & length(observed) > 0) observed else character(0)
@@ -126,7 +131,7 @@ print.afex_aov <- function(x, ...) {
 summary.afex_aov <- function(object, ...) {
   if (inherits(object$Anova, "Anova.mlm")) {
   #if (class(object$Anova)[1] == "Anova.mlm") {
-    if(attr(object$anova_table, "p.adjust.method") != "none") message("Note, results are NOT adjusted for multiple comparisons as requested\n(p.adjust.method = '", attr(object$anova_table, "p.adjust.method"), "')\nbecause the desired method of sphericity correction is unknown.\nFor adjusted p-values print the object (to see object$anova_table), or call\none of anova.afex_aov() or nice().")
+    if(attr(object$anova_table, "p_adjust_method") != "none") message("Note, results are NOT adjusted for multiple comparisons as requested\n(p_adjust_method = '", attr(object$anova_table, "p_adjust_method"), "')\nbecause the desired method of sphericity correction is unknown.\nFor adjusted p-values print the object (to see object$anova_table), or call\none of anova.afex_aov() or nice().")
     return(summary(object$Anova, multivariate = FALSE))
   #} else if (class(object$Anova)[1] == "anova") {
   } else if (inherits(object$Anova, "anova")) {

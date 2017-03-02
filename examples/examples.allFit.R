@@ -12,6 +12,12 @@ sapply(gm_all,getME,"theta") ## theta parameters
 !sapply(gm_all,inherits,"try-error") ## was fit OK?
 
 
+## for GLMMs:
+require("mlmRev") # for data
+gm1 <- mixed(use ~ age*urban + (1 | district), family = binomial, 
+             data = Contraception, method = "LRT")
+gm_all <- all_fit(gm1$full_model)
+
 ## use allFit in combination with expand.re = TRUE
 data("sk2011.2") # see example("mixed")
 sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])

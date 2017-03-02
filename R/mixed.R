@@ -27,6 +27,7 @@
 #' \item \code{full_model} the \code{"lmerMod"} object returned from fitting the full mixed model.
 #' \item \code{restricted_models} a list of \code{"lmerMod"} objects from fitting the restricted models (i.e., each model lacks the corresponding effect)
 #' \item \code{tests} a list of objects returned by the function for obtaining the p-values.
+#' \item \code{data} The data used for fitting (i.e., after excluding missing rows and applying expand_re if requested).
 #' }
 #' 
 #' It also has the following attributes, \code{"type"} and \code{"method"}. And the attributes \code{"all_fit_selected"} and \code{"all_fit_logLik"} if \code{all_fit=TRUE}.
@@ -363,7 +364,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     }
     if (progress) cat(paste0("Fitting ", length(formulas), " (g)lmer() models.\n"))
     #junk <- clusterEvalQ(cl = cl, library("lme4", character.only = TRUE))
-    junk <- clusterCall(cl = cl, "require", package = "lme4", character.only = TRUE)
+    junk <- clusterCall(cl = cl, "require", package = "afex", character.only = TRUE)
     #junk <- clusterEvalQ(cl = cl, loadNamespace("lme4"))
     if (check_contrasts)  {
       curr.contrasts <- getOption("contrasts")
@@ -549,7 +550,12 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     paste0("Data: " ,mc[["data"]]),
     anova_tab_addition
     )
-  list.out <- list(anova_table = anova_table, full_model = full_model, restricted_models = fits, tests = tests) #, type = type, method = method[[1]]
+  list.out <- list(
+    anova_table = anova_table, 
+    full_model = full_model, 
+    restricted_models = fits, 
+    tests = tests,
+    data = data) #, type = type, method = method[[1]]
   class(list.out) <- "mixed"
   attr(list.out, "type") <- type
   attr(list.out, "method") <- method

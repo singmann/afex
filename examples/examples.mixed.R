@@ -206,10 +206,16 @@ sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
 require(optimx) # uses two more algorithms
 sk2_aff_b <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
                expand_re = TRUE, all_fit = TRUE)
+attr(sk2_aff_b, "all_fit_selected")
+attr(sk2_aff_b, "all_fit_logLik")
 
 # considerably faster with multicore:
+clusterEvalQ(cl, library(optimx)) # need to load optimx in cluster
 sk2_aff_b2 <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
                expand_re = TRUE, all_fit = TRUE, cl=cl)
+attr(sk2_aff_b2, "all_fit_selected")
+attr(sk2_aff_b2, "all_fit_logLik")
+
 
 stopCluster(cl)
 

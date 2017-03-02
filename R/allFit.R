@@ -3,12 +3,12 @@
 #' Attempt to re-fit a [g]lmer model with a range of optimizers.
 #' The default is to use all known optimizers for R that satisfy the
 #' requirements (do not require explicit gradients, allow
-#' box constraints), in three categories; (i) built-in
+#' box constraints), in four categories; (i) built-in
 #' (\code{minqa::bobyqa}, \code{lme4::Nelder_Mead}), (ii) wrapped via optimx
 #' (most of optimx's optimizers that allow box constraints require
 #' an explicit gradient function to be specified; the two provided
 #' here are really base R functions that can be accessed via optimx,
-#' (iii) wrapped via nloptr.
+#' (iii) wrapped via nloptr, (iv) \code{dfoptim::nmkb}.
 #'
 #' @param m a fitted model with \code{lmer}
 #' @param meth_tab a matrix (or data.frame) with columns
@@ -17,9 +17,16 @@
 #' - optimizer the \code{optimizer} function to use
 #' @param verbose print progress messages?
 #' @param maxfun number of iterations to allow for the optimization rountine.
-#' @param ... further arguments passed to \code{\link{update.merMod}} such as data.
+#' @param ... further arguments passed to \code{\link{update.merMod}} such as \code{data}.
+#' @param fn needed for \code{dfoptim::nmkb}
+#' @param par needed for \code{dfoptim::nmkb}
+#' @param lower needed for \code{dfoptim::nmkb}
+#' @param upper needed for \code{dfoptim::nmkb}
+#' @param control needed for \code{dfoptim::nmkb} 
 #' 
-#' @details Needs packages \pkg{nloptr} and \pkg{optimx} to try out all optimizers. \pkg{optimx} needs to be loaded explicitly using \code{library} or \code{require}.
+#' @details Needs packages \pkg{nloptr}, \pkg{optimx}, and \code{dfoptim} to try out all optimizers. \pkg{optimx} needs to be loaded explicitly using \code{library} or \code{require} (see examples).
+#' 
+#' \code{nmkbw} is a simple wrapper function for fitting models with the corresponding optimizer. It needs to be exported for \code{lme4}, but should not be called directly by the user.
 #' 
 #' @note code taken from \url{https://github.com/lme4/lme4/blob/master/inst/utils/allFit.R}
 #' 
@@ -71,6 +78,8 @@ all_fit <- function(m,
   res
 }
 
+#' @rdname all_fit
+#' @export
 nmkbw <- function(fn,par,lower,upper,control) {
   if (length(par)==1) {
     res <- optim(fn=fn,par=par,lower=lower,upper=100*par,

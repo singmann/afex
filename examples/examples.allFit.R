@@ -3,7 +3,6 @@
 
 # basic usage
 require(optimx)
-require(dfoptim)
 gm1 <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
              data = cbpp, family = binomial)
 gm_all <- all_fit(gm1)

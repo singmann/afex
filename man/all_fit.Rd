@@ -2,12 +2,15 @@
 % Please edit documentation in R/allFit.R
 \name{all_fit}
 \alias{all_fit}
+\alias{nmkbw}
 \title{Refit \code{lmer} model using multiple optimizers}
 \usage{
 all_fit(m, meth_tab = cbind(optimizer = rep(c("bobyqa", "Nelder_Mead",
   "optimx", "nloptwrap", "nmkbw"), c(1, 1, 2, 2, 1)), method = c("", "",
   "nlminb", "L-BFGS-B", "NLOPT_LN_NELDERMEAD", "NLOPT_LN_BOBYQA", "")),
   verbose = TRUE, maxfun = 1e+06, ...)
+
+nmkbw(fn, par, lower, upper, control)
 }
 \arguments{
 \item{m}{a fitted model with \code{lmer}}
@@ -21,7 +24,17 @@ all_fit(m, meth_tab = cbind(optimizer = rep(c("bobyqa", "Nelder_Mead",
 
 \item{maxfun}{number of iterations to allow for the optimization rountine.}
 
-\item{...}{further arguments passed to \code{\link{update.merMod}} such as data.}
+\item{...}{further arguments passed to \code{\link{update.merMod}} such as \code{data}.}
+
+\item{fn}{needed for \code{dfoptim::nmkb}}
+
+\item{par}{needed for \code{dfoptim::nmkb}}
+
+\item{lower}{needed for \code{dfoptim::nmkb}}
+
+\item{upper}{needed for \code{dfoptim::nmkb}}
+
+\item{control}{needed for \code{dfoptim::nmkb}}
 }
 \value{
 a list of fitted \code{merMod} objects
@@ -30,15 +43,17 @@ a list of fitted \code{merMod} objects
 Attempt to re-fit a [g]lmer model with a range of optimizers.
 The default is to use all known optimizers for R that satisfy the
 requirements (do not require explicit gradients, allow
-box constraints), in three categories; (i) built-in
+box constraints), in four categories; (i) built-in
 (\code{minqa::bobyqa}, \code{lme4::Nelder_Mead}), (ii) wrapped via optimx
 (most of optimx's optimizers that allow box constraints require
 an explicit gradient function to be specified; the two provided
 here are really base R functions that can be accessed via optimx,
-(iii) wrapped via nloptr.
+(iii) wrapped via nloptr, (iv) \code{dfoptim::nmkb}.
 }
 \details{
-Needs packages \pkg{nloptr} and \pkg{optimx} to try out all optimizers. \pkg{optimx} needs to be loaded explicitly using \code{library} or \code{require}.
+Needs packages \pkg{nloptr}, \pkg{optimx}, and \code{dfoptim} to try out all optimizers. \pkg{optimx} needs to be loaded explicitly using \code{library} or \code{require} (see examples).
+
+\code{nmkbw} is a simple wrapper function for fitting models with the corresponding optimizer. It needs to be exported for \code{lme4}, but should not be called directly by the user.
 }
 \note{
 code taken from \url{https://github.com/lme4/lme4/blob/master/inst/utils/allFit.R}
@@ -49,7 +64,6 @@ code taken from \url{https://github.com/lme4/lme4/blob/master/inst/utils/allFit.
 
 # basic usage
 require(optimx)
-require(dfoptim)
 gm1 <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
              data = cbpp, family = binomial)
 gm_all <- all_fit(gm1)

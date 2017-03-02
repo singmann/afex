@@ -7,6 +7,7 @@ devtools::test()
 
 test_package("afex", filter = "aov")
 test_package("afex", filter = "mixed")
+test_package("afex", filter = "mixed-structure")
 test_package("afex", filter = "mixed-bugs")
 
 

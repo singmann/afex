@@ -200,8 +200,10 @@ mixed(use ~ age + I(age^2) + urban + livch + (1 | district), family = binomial,
 
 
 #### use all_fit = TRUE and expand_re = TRUE:
-data("sk2011.2") # see example("mixed")
+data("sk2011.2") 
 sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+
+require(optimx) # uses two more algorithms
 sk2_aff_b <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
                expand_re = TRUE, all_fit = TRUE)
 

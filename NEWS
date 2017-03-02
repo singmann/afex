@@ -27,6 +27,9 @@
     o   added argument all_fit to mixed(). If TRUE, each model is fitted with 
         all available optimizers and the best fit in each case selected.
         
+    o   mixed objects have an additional slot, "data", that contains the data 
+        used for fitting.
+        
     Bugfixes
 
     o   Sphericity correction now correctly displayed as none if all within-

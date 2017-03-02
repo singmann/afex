@@ -3,4 +3,8 @@
 language: r
 sudo: false
 cache: packages
-
+r:
+  - devel
+r_binary_packages:
+ - ez
+ 

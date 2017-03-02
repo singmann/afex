@@ -1,21 +1,6 @@
 # Sample .travis.yml for R projects
 
 language: r
-warnings_are_errors: true
-sudo: required
-r_binary_packages:
- - testthat
- - lme4
- - lsmeans
- - pbkrtest
- - car
- - knitr
- - rmarkdown
- - multcomp
- - reshape2
- - nloptr
- - optimx
- - coin
- - ascii
- - dplyr
+sudo: false
+cache: packages
 

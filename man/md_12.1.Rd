@@ -48,4 +48,3 @@ aov_ez("id", "rt", md_12.1, within = c("angle", "noise"),
 
 }
 \keyword{dataset}
-

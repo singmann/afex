@@ -12,7 +12,7 @@ Analysis of Factorial Experiments.
 Package: \tab afex\cr
 Type: \tab Package\cr
 Version: \tab 0.17-3\cr
-Date: \tab 2017-03-01\cr
+Date: \tab 2017-03-02\cr
 Depends: \tab R (>= 3.1.0), lme4 (>= 1.1-8), reshape2, lsmeans (>= 2.17)\cr
 Encoding: \tab UTF-8\cr
 License: \tab GPL (>=2)\cr
@@ -25,4 +25,3 @@ Provides convenience functions for analyzing factorial experiments using ANOVA o
 Henrik Singmann, Ben Bolker, Jake Westfall, Frederik Aust, with contributions from Søren Højsgaard, John Fox, Michael A. Lawrence, Ulf Mertens, Jonathan Love
 }
 \keyword{package}
-

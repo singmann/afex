@@ -3,10 +3,10 @@
 \name{afex_aov-methods}
 \alias{afex_aov-methods}
 \alias{anova.afex_aov}
-\alias{lsm.basis.afex_aov}
 \alias{print.afex_aov}
-\alias{recover.data.afex_aov}
 \alias{summary.afex_aov}
+\alias{recover.data.afex_aov}
+\alias{lsm.basis.afex_aov}
 \title{Methods for afex_aov objects}
 \usage{
 \method{anova}{afex_aov}(object, es = afex_options("es_aov"),
@@ -59,4 +59,3 @@ Exploratory ANOVA, for which no detailed hypotheses have been specified a priori
 \references{
 Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1–8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
 }
-

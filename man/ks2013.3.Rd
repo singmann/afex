@@ -37,4 +37,3 @@ aov_ez("id", "response", subset(ks2013.3, condition == "random"),
        within = c("believability", "validity"))
 }
 \keyword{dataset}
-

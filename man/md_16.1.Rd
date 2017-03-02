@@ -37,4 +37,3 @@ summary(mixed1$full.model)
 
 }
 \keyword{dataset}
-

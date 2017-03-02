@@ -48,4 +48,3 @@ afex_options("method_mixed") #get single option
 afex_options(aop) # reset options
 
 }
-

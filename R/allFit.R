@@ -11,7 +11,7 @@
 #' (iii) wrapped via nloptr.
 #'
 #' @param m a fitted model with \code{lmer}
-#' @param meth.tab a matrix (or data.frame) with columns
+#' @param meth_tab a matrix (or data.frame) with columns
 #' - method the name of a specific optimization method to pass to the optimizer
 #' (leave blank for built-in optimizers)
 #' - optimizer the \code{optimizer} function to use
@@ -21,22 +21,31 @@
 #' 
 #' @details Needs packages \pkg{nloptr} and \pkg{optimx} to try out all optimizers. \pkg{optimx} needs to be loaded explicitly using \code{library} or \code{require}.
 #' 
+#' @note code taken from \url{https://github.com/lme4/lme4/blob/master/inst/utils/allFit.R}
+#' 
 #' @return a list of fitted \code{merMod} objects
 #' @seealso slice, slice2D in the bbmle package
-#' @author Ben Bolker
+#' @author Ben Bolker, minor changes by Henrik Singmann
 #' @export 
 #' @importFrom lme4 isGLMM lmerControl glmerControl
-#' @importFrom stats setNames update
+#' @importFrom stats setNames update optim
 #' 
 #' @example examples/examples.allFit.R
 #' 
-allFit <- function(m, meth.tab = cbind(optimizer=rep(c("bobyqa","Nelder_Mead", "optimx", "nloptwrap"),                                             c( 1, 1, 2, 2)),method= c("", "", "nlminb","L-BFGS-B","NLOPT_LN_NELDERMEAD", "NLOPT_LN_BOBYQA")),verbose=TRUE,maxfun=1e5, ...)
+all_fit <- function(m, 
+                    meth_tab = cbind(
+                      optimizer=rep(c("bobyqa","Nelder_Mead", "optimx", "nloptwrap", "nmkbw"), 
+                                    c( 1, 1, 2, 2, 1)),
+                      method= c("", "", "nlminb","L-BFGS-B","NLOPT_LN_NELDERMEAD", "NLOPT_LN_BOBYQA", "")
+                      ),
+                    verbose=TRUE,maxfun=1e6, ...)
 {
-  stopifnot(length(dm <- dim(meth.tab)) == 2, dm[1] >= 1, dm[2] >= 2,
-            is.character(optimizer <- meth.tab[,"optimizer"]),
-            is.character(method <- meth.tab[,"method"]))
+  stopifnot(length(dm <- dim(meth_tab)) == 2, dm[1] >= 1, dm[2] >= 2,
+            is.character(optimizer <- meth_tab[,"optimizer"]),
+            is.character(method <- meth_tab[,"method"]))
   fit.names <- paste(optimizer, method, sep=".")
   res <- setNames(as.list(fit.names), fit.names)
+  dots <- list(...)
   for (i in seq_along(fit.names)) {
     if (verbose) cat(fit.names[i],": ")
     ctrl <- list(optimizer=optimizer[i])
@@ -45,13 +54,35 @@ allFit <- function(m, meth.tab = cbind(optimizer=rep(c("bobyqa","Nelder_Mead", "
                            nloptWrap = list(algorithm= method[i]),
                            list(maxfun=maxfun))
     ctrl <- do.call(if(isGLMM(m)) glmerControl else lmerControl, ctrl)
-    tt <- system.time(rr <- tryCatch(update(m, control = ctrl, ...), error = function(e) e))
+    if ("data" %in% names(dots)) {
+      tt <- system.time(rr <- tryCatch(update(m, control = ctrl, data = dots$data, ...), error = function(e) e))  
+    } else {
+      tt <- system.time(rr <- tryCatch(update(m, control = ctrl, ...), error = function(e) e))  
+    }
     attr(rr, "optCtrl") <- ctrl$optCtrl # contains crucial info here
     attr(rr, "time") <- tt # store timing info
     res[[i]] <- rr
-    if (verbose) cat("[OK]\n")
+    if (verbose) {
+      if (inherits(rr, "merMod")) cat("[OK]\n")
+      else cat("[ERROR]\n")
+    }
   }
   ##
+  res
+}
+
+nmkbw <- function(fn,par,lower,upper,control) {
+  if (length(par)==1) {
+    res <- optim(fn=fn,par=par,lower=lower,upper=100*par,
+                 method="Brent")
+  } else {
+    if (!is.null(control$maxfun)) {
+      control$maxfeval <- control$maxfun
+      control$maxfun <- NULL
+    }
+    res <- dfoptim::nmkb(fn=fn,par=par,lower=lower,upper=upper,control=control)
+  }
+  res$fval <- res$value
   res
 }
 

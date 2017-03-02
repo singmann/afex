@@ -2,8 +2,8 @@
 % Please edit documentation in R/mixed.R
 \encoding{UTF-8}
 \name{mixed}
-\alias{lmer_alt}
 \alias{mixed}
+\alias{lmer_alt}
 \title{p-values for fixed effects of mixed-model via lme4::lmer()}
 \usage{
 mixed(formula, data, type = afex_options("type"),
@@ -40,7 +40,7 @@ lmer_alt(formula, data, check_contrasts = FALSE, ...)
 
 \item{cl}{A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args_test} for this.}
 
-\item{return}{the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model. Can be used in combination with \code{expand_re = TRUE} and \code{\link{allFit}} (see examples there).}
+\item{return}{the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model. Can be used in combination with \code{expand_re = TRUE} and \code{\link{all_fit}} (see examples there).}
 
 \item{...}{further arguments (such as \code{weights}/\code{family}) passed to \code{\link{lmer}}/\code{\link{glmer}}.}
 }
@@ -335,9 +335,6 @@ stopCluster(cl)
 
 }
 }
-\author{
-Henrik Singmann with contributions from \href{http://stackoverflow.com/q/11335923/289572}{Ben Bolker and Joshua Wiley}.
-}
 \references{
 Baayen, R. H. (2008). \emph{Analyzing linguistic data: a practical introduction to statistics using R}. Cambridge, UK; New York: Cambridge University Press.
 
@@ -362,4 +359,6 @@ Maxwell, S. E., & Delaney, H. D. (2004). \emph{Designing experiments and analyzi
 
 see the following for the data sets from Maxwell and Delaney (2004) used and more examples: \code{\link{md_15.1}}, \code{\link{md_16.1}}, and \code{\link{md_16.4}}.
 }
-
+\author{
+Henrik Singmann with contributions from \href{http://stackoverflow.com/q/11335923/289572}{Ben Bolker and Joshua Wiley}.
+}

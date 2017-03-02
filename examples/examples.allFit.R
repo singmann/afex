@@ -3,9 +3,10 @@
 
 # basic usage
 require(optimx)
+require(dfoptim)
 gm1 <- glmer(cbind(incidence, size - incidence) ~ period + (1 | herd),
              data = cbpp, family = binomial)
-gm_all <- allFit(gm1)
+gm_all <- all_fit(gm1)
 t(sapply(gm_all,fixef)) ## extract fixed effects
 sapply(gm_all,logLik) ## log-likelihoods
 sapply(gm_all,getME,"theta") ## theta parameters
@@ -18,12 +19,12 @@ sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
 sk_m2 <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_aff,
                expand_re = TRUE)
 sk_m2
-sk_m2_allFit <- allFit(sk_m2$full.model)
+sk_m2_allFit <- all_fit(sk_m2$full_model)
 sk_m2_allFit # all fits fail
 
 sk2_aff_b <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_aff,
                expand_re = TRUE, return = "data") # returns data only
-sk_m2_allFit <- allFit(sk_m2$full.model, data = sk2_aff_b) # works now
+sk_m2_allFit <- all_fit(sk_m2$full_model, data = sk2_aff_b) # works now
 t(sapply(sk_m2_allFit,fixef))
 sapply(sk_m2_allFit,logLik)
 

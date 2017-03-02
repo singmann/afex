@@ -56,4 +56,3 @@ lsmip(a2, frequency~density|task+stimulus)
 
 }
 \keyword{dataset}
-

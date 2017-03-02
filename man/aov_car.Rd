@@ -2,9 +2,9 @@
 % Please edit documentation in R/aov_car.R
 \encoding{UTF-8}
 \name{aov_car}
-\alias{aov_4}
 \alias{aov_car}
 \alias{aov_ez}
+\alias{aov_4}
 \title{Convenient ANOVA estimation for factorial designs}
 \usage{
 aov_ez(id, dv, data, between = NULL, within = NULL, covariate = NULL, 
@@ -317,11 +317,6 @@ obk_anova$Anova
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
 
 }
-\author{
-Henrik Singmann
-
-The design of these functions was influenced by \code{\link[ez]{ezANOVA}} from package \pkg{ez}.
-}
 \references{
 Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1–8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5} 
 
@@ -336,4 +331,8 @@ Various methods for objects of class \code{afex_aov} are available: \code{\link{
 
 \code{\link{mixed}} provides a (formula) interface for obtaining p-values for mixed-models via \pkg{lme4}.
 }
+\author{
+Henrik Singmann
 
+The design of these functions was influenced by \code{\link[ez]{ezANOVA}} from package \pkg{ez}.
+}

@@ -44,4 +44,3 @@ aov_ez("id", "response", sk2011.1[ sk2011.1$what == "denial",],
  
 }
 \keyword{dataset}
-

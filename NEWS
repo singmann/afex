@@ -20,6 +20,10 @@
         (with prefix afex.) and allows to reset all options via list (i.e.,:
         aop <- afex_options(); ...; afex_options(aov); works).
         
+    o   renamed allFit() to all_fit() and argument meth.tab to meth_tab. 
+        Added method dfoptim::nmkb() to all_fit(). To use nmkb, dfoptim needs to
+        be loaded explicitly via library (see examples). 
+        
     Bugfixes
 
     o   Sphericity correction now correctly displayed as none if all within-
@@ -43,6 +47,10 @@
     
     o   removed bug that model names for anova.mixed with multiple models were 
         incorrect.
+        
+    o   all_fit() now uses a data argument correctly and passes it update(). 
+        This again allows to use it for data with suppressed correlations. 
+        all_fit(... verbose = TRUE) now correctly signals if a fit failed.
     
                     *************************
                     ** afex VERSION 0.16-x **

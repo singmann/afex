@@ -67,4 +67,3 @@ lsmip(a2_b,instruction~type2, ylim = c(0, 100))
 
 }
 \keyword{dataset}
-

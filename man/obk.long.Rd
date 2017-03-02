@@ -49,4 +49,3 @@ head(obk.long)
 ## 6  1   control      M -4.75  post    1     3
 }
 \keyword{dataset}
-

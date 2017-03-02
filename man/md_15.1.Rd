@@ -67,4 +67,3 @@ summary(t15.6$full.model)
 R code for examples written by Ulf Mertens and Henrik Singmann
 }
 \keyword{dataset}
-

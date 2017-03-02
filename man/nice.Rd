@@ -103,9 +103,6 @@ require(xtable)
 print.xtable(xtable(full, caption = "ANOVA 2"), include.rownames = FALSE)
 }
 }
-\author{
-The code for calculating generalized eta-squared was written by Mike Lawrence.\cr Everything else was written by Henrik Singmann.
-}
 \references{
 Bakeman, R. (2005). Recommended effect size statistics for repeated measures designs. \emph{Behavior Research Methods}, 37(3), 379-384. doi:10.3758/BF03192707
 
@@ -116,4 +113,6 @@ Olejnik, S., & Algina, J. (2003). Generalized Eta and Omega Squared Statistics: 
 \seealso{
 \code{\link{aov_ez}} and \code{\link{aov_car}} are the convenience functions to create the object appropriate for \code{nice_anova}.
 }
-
+\author{
+The code for calculating generalized eta-squared was written by Mike Lawrence.\cr Everything else was written by Henrik Singmann.
+}

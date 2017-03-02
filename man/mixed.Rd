@@ -10,8 +10,8 @@ mixed(formula, data, type = afex_options("type"),
   method = afex_options("method_mixed"), per_parameter = NULL,
   args_test = list(), test_intercept = FALSE,
   check_contrasts = afex_options("check_contrasts"), expand_re = FALSE,
-  set_data_arg = TRUE, progress = TRUE, cl = NULL, return = "mixed",
-  ...)
+  all_fit = FALSE, set_data_arg = TRUE, progress = TRUE, cl = NULL,
+  return = "mixed", ...)
 
 lmer_alt(formula, data, check_contrasts = FALSE, ...)
 }
@@ -34,6 +34,8 @@ lmer_alt(formula, data, check_contrasts = FALSE, ...)
 
 \item{expand_re}{logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.}
 
+\item{all_fit}{logical. Should \code{\link{all_fit}} be used to fit each model with each available optimization algorithm and then use the results that provided the best fit in each case? Warning: This can dramatically increase the optimization time. Adds two new attributes to the returned object designating which algorithm was selected and the log-likelihoods for each algorithm.}
+
 \item{set_data_arg}{\code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}.}
 
 \item{progress}{if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.}
@@ -54,7 +56,7 @@ An object of class \code{"mixed"} (i.e., a list) with the following elements:
 \item \code{tests} a list of objects returned by the function for obtaining the p-values.
 }
 
-It also has the following attributes, \code{"type"} and \code{"method"}.
+It also has the following attributes, \code{"type"} and \code{"method"}. And the attributes \code{"all_fit_selected"} and \code{"all_fit_logLik"} if \code{all_fit=TRUE}.
 
 Two similar methods exist for objects of class \code{"mixed"}: \code{print} and \code{anova}. They print a nice version of the \code{anova_table} element of the returned object (which is also invisibly returned). This methods omit some columns and nicely round the other columns. The following columns are always printed:
 \enumerate{
@@ -330,6 +332,17 @@ mixed(use ~ age + I(age^2) + urban + livch + (1 | district), family = binomial,
 ## Both ways can be combined:
 mixed(use ~ age + I(age^2) + urban + livch + (1 | district), family = binomial, 
  method = "PB", data = Contraception, args_test = list(nsim = 10, cl = cl), cl = cl)
+
+
+#### use all_fit = TRUE and expand_re = TRUE:
+data("sk2011.2") # see example("mixed")
+sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+sk2_aff_b <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+               expand_re = TRUE, all_fit = TRUE)
+
+# considerably faster with multicore:
+sk2_aff_b2 <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+               expand_re = TRUE, all_fit = TRUE, cl=cl)
 
 stopCluster(cl)
 

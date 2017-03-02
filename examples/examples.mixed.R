@@ -198,6 +198,17 @@ mixed(use ~ age + I(age^2) + urban + livch + (1 | district), family = binomial,
 mixed(use ~ age + I(age^2) + urban + livch + (1 | district), family = binomial, 
  method = "PB", data = Contraception, args_test = list(nsim = 10, cl = cl), cl = cl)
 
+
+#### use all_fit = TRUE and expand_re = TRUE:
+data("sk2011.2") # see example("mixed")
+sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+sk2_aff_b <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+               expand_re = TRUE, all_fit = TRUE)
+
+# considerably faster with multicore:
+sk2_aff_b2 <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+               expand_re = TRUE, all_fit = TRUE, cl=cl)
+
 stopCluster(cl)
 
 }

@@ -202,3 +202,19 @@ test_that("mixed: return=data works", {
   if (packageVersion("testthat") >= "0.11.0.9000") expect_gt(ncol(ks2013.3_tmp), ncol(ks2013.3))
   expect_output(print(colnames(ks2013.3_tmp)), "re1.believability1_by_validity1")
 })
+
+
+test_that("mixed all_fit = TRUE works", {
+  data("sk2011.2") # see example("mixed")
+  sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+  sk2_aff_b <- mixed(response ~ instruction+(inference*type||id), sk2_aff,
+               expand_re = TRUE, all_fit = TRUE)
+  sk2_aff_b2 <- mixed(response ~ instruction*type+(inference||id), sk2_aff,
+               type = 2, expand_re = TRUE, all_fit = TRUE)
+  expect_is(sk2_aff_b, "mixed")
+  expect_length(attr(sk2_aff_b, "all_fit_selected"), 2)
+  expect_length(attr(sk2_aff_b, "all_fit_logLik"), 2)
+  expect_is(sk2_aff_b2, "mixed")
+  expect_length(attr(sk2_aff_b2, "all_fit_selected"), 5)
+  expect_length(attr(sk2_aff_b2, "all_fit_logLik"), 5)
+})

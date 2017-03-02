@@ -24,6 +24,9 @@
         Added method dfoptim::nmkb() to all_fit(). To use nmkb, dfoptim needs to
         be loaded explicitly via library (see examples). 
         
+    o   added argument all_fit to mixed(). If TRUE, each model is fitted with 
+        all available optimizers and the best fit in each case selected.
+        
     Bugfixes
 
     o   Sphericity correction now correctly displayed as none if all within-

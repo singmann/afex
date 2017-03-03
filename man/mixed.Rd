@@ -34,7 +34,7 @@ lmer_alt(formula, data, check_contrasts = FALSE, ...)
 
 \item{expand_re}{logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.}
 
-\item{all_fit}{logical. Should \code{\link{all_fit}} be used to fit each model with each available optimization algorithm and then use the results that provided the best fit in each case? Warning: This can dramatically increase the optimization time. Adds two new attributes to the returned object designating which algorithm was selected and the log-likelihoods for each algorithm.}
+\item{all_fit}{logical. Should \code{\link{all_fit}} be used to fit each model with each available optimization algorithm and the results that provided the best fit in each case be used? Warning: This can dramatically increase the optimization time. Adds two new attributes to the returned object designating which algorithm was selected and the log-likelihoods for each algorithm. Note that only warnings from the initial fit are emitted during fitting. The warnings of the finally chosen models are emitted when printing the returned object.}
 
 \item{set_data_arg}{\code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}.}
 
@@ -42,7 +42,7 @@ lmer_alt(formula, data, check_contrasts = FALSE, ...)
 
 \item{cl}{A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args_test} for this.}
 
-\item{return}{the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model. Can be used in combination with \code{expand_re = TRUE} and \code{\link{all_fit}} (see examples there).}
+\item{return}{the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model (note that the data is also part of the returned object).}
 
 \item{...}{further arguments (such as \code{weights}/\code{family}) passed to \code{\link{lmer}}/\code{\link{glmer}}.}
 }
@@ -54,6 +54,7 @@ An object of class \code{"mixed"} (i.e., a list) with the following elements:
 \item \code{full_model} the \code{"lmerMod"} object returned from fitting the full mixed model.
 \item \code{restricted_models} a list of \code{"lmerMod"} objects from fitting the restricted models (i.e., each model lacks the corresponding effect)
 \item \code{tests} a list of objects returned by the function for obtaining the p-values.
+\item \code{data} The data used for fitting (i.e., after excluding missing rows and applying expand_re if requested).
 }
 
 It also has the following attributes, \code{"type"} and \code{"method"}. And the attributes \code{"all_fit_selected"} and \code{"all_fit_logLik"} if \code{all_fit=TRUE}.
@@ -120,7 +121,7 @@ The latest addition, motivated by Bates et al. (2015), is the possibility to exp
 
 \code{lmer_alt} is simply a wrapper for \code{mixed} that is intended to behave like \code{lmer} (or \code{glmer} if a \code{family} argument is present), but also allows to use \code{||} with factors correctly (by always using \code{expand_re = TRUE}). This means that \code{lmer_alt} per default does not enforce a specific contrast on factors and only returns the \code{"merMod"} object without calculating any additional models or p-values (this is achieved by setting \code{return = "merMod"}). Note that it most likely differs from \code{g/lmer} in how it handles missing values so it is recommended to only pass data without missing values to it!
 
-One negative consequence of using \code{expand_re = TRUE} is that the data that is fitted will not be the same as the passed data.frame which can lead to problems with e.g., the \code{predict} method. Finally, note that this functionality is relatively new so please proceed with care.
+One consequence of using \code{expand_re = TRUE} is that the data that is fitted will not be the same as the passed data.frame which can lead to problems with e.g., the \code{predict} method. However, the actual data uzsed for fitting is also returned as part of the \code{mixed} object so can be used from there.
  }
 }
 \note{
@@ -335,14 +336,22 @@ mixed(use ~ age + I(age^2) + urban + livch + (1 | district), family = binomial,
 
 
 #### use all_fit = TRUE and expand_re = TRUE:
-data("sk2011.2") # see example("mixed")
+data("sk2011.2") 
 sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+
+require(optimx) # uses two more algorithms
 sk2_aff_b <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
                expand_re = TRUE, all_fit = TRUE)
+attr(sk2_aff_b, "all_fit_selected")
+attr(sk2_aff_b, "all_fit_logLik")
 
 # considerably faster with multicore:
+clusterEvalQ(cl, library(optimx)) # need to load optimx in cluster
 sk2_aff_b2 <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
                expand_re = TRUE, all_fit = TRUE, cl=cl)
+attr(sk2_aff_b2, "all_fit_selected")
+attr(sk2_aff_b2, "all_fit_logLik")
+
 
 stopCluster(cl)
 

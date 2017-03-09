@@ -19,8 +19,8 @@
 
 .onAttach <- function(libname, pkgname) {
 	#assign(".oldContrasts", options("contrasts"), envir = .GlobalEnv)
-  packageStartupMessage("************\nWelcome to afex. Important changes in the current version:")
-  packageStartupMessage("- Functions for ANOVAs have been renamed to: aov_car(), aov_ez(), and aov_4().\n- ANOVA functions return an object of class 'afex_aov' as default, see: ?aov_car\n- 'afex_aov' objects can be passed to lsmeans for contrasts and follow-up tests.\n- Reset previous (faster) behavior via: afex_options(return_aov='nice')\n- Many more arguments can now be set globally via options, see: afex_options()\n************")
+  packageStartupMessage("************\nWelcome to afex.")
+  packageStartupMessage("- Functions for ANOVAs: aov_car(), aov_ez(), and aov_4().\n- Methods for calculating p-values with mixed(): 'KR', 'LRT', and 'PB'\n- 'afex_aov' and 'mixed' objects can be passed to lsmeans() for follow-up tests.\n- Get and set global package options with: afex_options()\n- Set orthogonal sum-to-zero contrasts globally: set_sum_contrasts()\n************")
 	#if (options("contrasts")[[1]][1] != "contr.sum") {
 		#packageStartupMessage("Setting contrasts to effects coding: options(contrasts=c('contr.sum', 'contr.poly'))\nThis affects all functions using contrasts (e.g., lmer, lm, aov, ...).\nTo reset default settings run: options(contrasts=c('contr.treatment', 'contr.poly')) (all afex functions should be unaffected by this)\n")
     # \nPrevious contrasts saved in '.oldContrasts'.

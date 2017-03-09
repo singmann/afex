@@ -67,3 +67,15 @@ writeLines(iconv(readLines("DESCRIPTION"), from = "latin1", to = "UTF-8"), file(
 writeLines(iconv(readLines("man/afex-package.Rd"), from = "latin1", to = "UTF-8"), file("man/afex-package.Rd", encoding="UTF-8"))
 writeLines(iconv(readLines("R/afex-package.R"), from = "latin1", to = "UTF-8"), file("R/afex-package.R", encoding="UTF-8"))
 closeAllConnections()
+
+
+### check reverse dependencies:
+
+revdep()
+revdep_check(libpath = "../revdep", check_dir = "../revdep_checks")
+revdep_check(libpath = "../revdep")
+install.packages("apa", lib = "../revdep")
+revdep_check_resume()
+revdep_check_save_summary()
+revdep_check_print_problems()
+revdep_maintainers()

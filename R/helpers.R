@@ -13,6 +13,7 @@
 #' \item \code{es_aov}: Effect size reported for ANOVAs (see \code{\link{aov_car}}), default is \code{"ges"} (generalized eta-squared).
 #' \item \code{correction_aov}: Correction used for within-subjects factors with more than two levels for ANOVAs  (see \code{\link{aov_car}} or \code{\link{nice}}), default is \code{"GG"} (Greenhouse-Geisser correction). (ANOVA functions only)
 #' \item \code{factorize}: Should between subject factors be factorized (with note) before running the analysis? Default is \code{TRUE}. (ANOVA functions only)
+#' \item \code{lmer_function}: Which \code{lmer} function should \code{mixed} or \code{lmer_alt} use. The default is \code{"lmerTest"} which uses \code{\link[lmerTest]{lmer}}, \code{"lme4"} is also possible which uses \code{\link[lme4]{lmer}}. There should be no difference between the two. The latter could be minimally faster, but doe snot allow to use \code{lmerTest::anova()}.
 #' }
 #' 
 #' @note All options are saved in the global R \code{\link{options}} with prefix \code{afex.}.

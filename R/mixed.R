@@ -127,7 +127,8 @@
 #'
 #'
 #' @import pbkrtest
-#' @importFrom lme4 lmer glmer nobars getME fixef isREML
+#' @importFrom lme4 glmer nobars getME fixef isREML
+##### @importFrom lmerTest lmer
 #' @importFrom stringr str_replace
 #' @importMethodsFrom Matrix t isSymmetric "%*%" solve diag
 #' @importClassesFrom Matrix Matrix
@@ -259,7 +260,9 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     mf[[1]] <- as.name("glmer")
     use_reml <- FALSE
   } else {
-    mf[[1]] <- as.name("lmer")
+    if (afex_options("lmer_function") == "lmerTest") mf[[1]] <- quote(lmerTest::lmer)
+    else if (afex_options("lmer_function") == "lme4") mf[[1]] <- quote(lme4::lmer)
+    else stop("value of afex_options('lmer_function') not supported.")
     use_reml <- TRUE
   }
   mf[["data"]] <- as.name("data")

@@ -31,6 +31,7 @@ NULL
 
 #' @rdname afex_aov-methods
 #' @inheritParams nice
+#' @method anova afex_aov
 #' @export
 anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, p_adjust_method = NULL, ...) {
   # internal functions:

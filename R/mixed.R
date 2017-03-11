@@ -281,6 +281,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     return(out)
   }
   if (method[1] %in% c("KR", "S")) {  ## do not calculate nested models for these methods
+    if (progress) cat(str_c("Fitting one lmer() model. "))
     full_model <- eval(mf)
     if (all_fit) {
       all_fits <- suppressWarnings(all_fit(full_model, data = data, verbose = FALSE))
@@ -292,6 +293,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     fits <- NULL
     tests <- NULL
     anova_tab_addition <- NULL
+    if (progress) cat(str_c("[DONE]\nCalculating p-values. "))
     if (method[1] == "KR") {
       #lmerTest_method <- if(method[1] == "KR") "Kenward-Roger" else "Satterthwaite"
       if (test_intercept) {
@@ -305,13 +307,13 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
         anova_table <- anova_table[, c("NumDF", "DenDF", "F.value", "Pr(>F)")]
         colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
       }
-    }
-    if (method == "S") {
+    } else if (method[1] == "S") {
       anova_out <- lmerTest::anova(full_model, ddf = "Satterthwaite", type = type)
       anova_table <- as.data.frame(anova_out)
       anova_table <- anova_table[, c("NumDF", "DenDF", "F.value", "Pr(>F)")]
       colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
     }
+    if (progress) cat(str_c("[DONE]\n"))
   } else { ## do calculate nested models for the methods below
     ## prepare (g)lmer formulas:
     if (type == 3 | type == "III") {

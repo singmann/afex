@@ -277,7 +277,6 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   #browser()
   if (return == "merMod") {
     out <- eval(mf)
-    if(set_data_arg) out@call[["data"]] <- mc[["data"]]
     return(out)
   }
   if (method[1] %in% c("KR", "S")) {  ## do not calculate nested models for these methods
@@ -308,12 +307,19 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
         colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
       }
     } else if (method[1] == "S") {
+      if (test_intercept) warning("Cannot test intercept with Satterthwaite approximation.")
       anova_out <- lmerTest::anova(full_model, ddf = "Satterthwaite", type = type)
       anova_table <- as.data.frame(anova_out)
+      if (!("Pr(>F)" %in% colnames(anova_table))) {
+        colnames(anova_table)[c(1,4)] <- c("NumDF", "F.value")
+        anova_table$DenDF <- NA_real_
+        anova_table$`Pr(>F)` <- NA_real_
+      }
       anova_table <- anova_table[, c("NumDF", "DenDF", "F.value", "Pr(>F)")]
       colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
     }
     if (progress) cat(str_c("[DONE]\n"))
+     if(set_data_arg) full_model@call[["data"]] <- mc[["data"]]
   } else { ## do calculate nested models for the methods below
     ## prepare (g)lmer formulas:
     if (type == 3 | type == "III") {

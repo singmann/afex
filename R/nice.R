@@ -120,10 +120,17 @@ nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = c(" +
 }
 
 make.stat <- function(anova, stat, symbols) {
-  ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.001, str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[4]), 
-         ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.01, str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[3]), 
-                ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.05, str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[2]), 
-                       ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.1, str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[1]), formatC(anova[[stat]], digits = 2, format = "f")))))
+  out <- ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.001, 
+         str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[4]), 
+         ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.01, 
+                str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[3]), 
+                ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.05, 
+                       str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[2]), 
+                       ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.1, 
+                              str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[1]), 
+                              formatC(anova[[stat]], digits = 2, format = "f")))))
+  out[is.na(anova[[paste0("Pr(>", stat,")")]])] <- formatC(anova[[stat]][is.na(anova[[paste0("Pr(>", stat,")")]])], digits = 2, format = "f")
+  out
 }
 is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
 

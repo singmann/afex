@@ -20,6 +20,8 @@
         lme4::lmer(). This can be changed via calling 
         afex_options(lmer_function = "lme4")
         
+    o   afex does not depend on reshape2 any more. It is only imported.
+        
     o   All arguments with "." in the name have been renamed to use "_". The old
         names have been deprecated (i.e., still work, but should not be used).
         check.contrasts = check_contrasts, test.intercept = test_intercept,

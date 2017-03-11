@@ -132,7 +132,7 @@
 #' Maxwell, S. E., & Delaney, H. D. (2004). \emph{Designing experiments and analyzing data: a model-comparisons perspective.} Mahwah, N.J.: Lawrence Erlbaum Associates.
 #'
 #'
-#' @import pbkrtest
+## @import pbkrtest
 #' @importFrom lme4 glmer nobars getME isREML
 #' @importFrom stringr str_replace
 #' @importFrom parallel clusterCall clusterExport clusterEvalQ clusterApplyLB
@@ -188,7 +188,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   }
   #warning(str_c("Calculating Type 3 sums with contrasts = ", options("contrasts")[[1]][1], ".\n  Use options(contrasts=c('contr.sum','contr.poly')) instead"))
   # browser()
-  method <- match.arg(method, c("KR", "S", "PB", "LRT", "nested-KR", "F"), several.ok=TRUE)
+  method <- match.arg(method, c("KR", "S", "PB", "LRT", "nested-KR", "F"), several.ok=FALSE)
   ####################
   ### Part I: prepare fitting (i.e., obtain model info, check model, ...)
   ####################
@@ -483,10 +483,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
       tests <- vector("list", length(fixed.effects))
       for (c in seq_along(fixed.effects)) {
-        if (type == 3 | type == "III") tests[[c]] <- KRmodcomp(full_model, fits[[c]])
+        if (type == 3 | type == "III") tests[[c]] <- pbkrtest::KRmodcomp(full_model, fits[[c]])
         else if (type == 2 | type == "II") {
           order.c <- effect.order[c]
-          tests[[c]] <- KRmodcomp(full_model[[order.c]], fits[[c]])
+          tests[[c]] <- pbkrtest::KRmodcomp(full_model[[order.c]], fits[[c]])
         }
         if (progress) cat(".")
       }
@@ -505,10 +505,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
       tests <- vector("list", length(fixed.effects))
       for (c in seq_along(fixed.effects)) {
-        if (type == 3 | type == "III") tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full_model, smallModel = fits[[c]], args_test))
+        if (type == 3 | type == "III") tests[[c]] <- do.call(pbkrtest::PBmodcomp, args = c(largeModel = full_model, smallModel = fits[[c]], args_test))
         else if (type == 2 | type == "II") {
           order.c <- effect.order[c]
-          tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full_model[[order.c]], smallModel = fits[[c]], args_test))
+          tests[[c]] <- do.call(pbkrtest::PBmodcomp, args = c(largeModel = full_model[[order.c]], smallModel = fits[[c]], args_test))
         }
         if (progress) cat(".")
       }

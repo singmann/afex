@@ -8,7 +8,7 @@ test_that("mixed: Maxell & Delaney (2004), Table 16.4, p. 842: Type 2", {
   md_16.4b <- md_16.4
   md_16.4b$cog <- scale(md_16.4b$cog, scale=FALSE)
   contrasts(md_16.4b$cond) <- "contr.sum"
-  suppressWarnings(mixed4_2 <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, type = 2, progress=FALSE))
+  mixed4_2 <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, type = 2, progress=FALSE, method = "nested-KR")
   lmer4_full <- lmer(induct ~ cond*cog + (cog|room:cond), md_16.4b)
   lmer4_small <- lmer(induct ~ cond+cog + (cog|room:cond), md_16.4b)
   expect_that(fixef(mixed4_2$full_model[[2]]), equals(fixef(lmer4_full)))
@@ -20,7 +20,7 @@ test_that("mixed: Maxell & Delaney (2004), Table 16.4, p. 842: Type 3", {
   md_16.4b <- md_16.4
   md_16.4b$cog <- scale(md_16.4b$cog, scale=FALSE)
   contrasts(md_16.4b$cond) <- "contr.sum"
-  suppressWarnings(mixed4_2 <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, type = 3, progress=FALSE))
+  mixed4_2 <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, type = 3, progress=FALSE, method = "nested-KR")
   lmer4_full <- lmer(induct ~ cond*cog + (cog|room:cond), md_16.4b)
   lmer4_small <- lmer(induct ~ cond+cog + (cog|room:cond), md_16.4b)
   expect_that(fixef(mixed4_2$full_model), equals(fixef(lmer4_full)))
@@ -32,7 +32,7 @@ test_that("mixed, obk.long: type 2 and LRTs", {
   data(obk.long, package = "afex")
   contrasts(obk.long$treatment) <- "contr.sum"
   contrasts(obk.long$phase) <- "contr.sum"
-  suppressWarnings(t2 <- mixed(value ~ treatment*phase +(1|id), data = obk.long, method = "LRT", type = 2, progress=FALSE))
+  t2 <- mixed(value ~ treatment*phase +(1|id), data = obk.long, method = "LRT", type = 2, progress=FALSE)
   expect_output(print(t2), "treatment")
   a2.f <- lmer(value ~ treatment*phase +(1|id), data = obk.long, REML=FALSE)
   a2.h <- lmer(value ~ treatment+phase +(1|id), data = obk.long, REML=FALSE)
@@ -204,17 +204,77 @@ test_that("mixed: return=data works", {
 })
 
 
-test_that("mixed all_fit = TRUE works", {
+test_that("mixed with all available methods", {
+  data("sk2011.2") # see example("mixed")
+  sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+  for (i in c(2, 3)) {
+    sk2_aff_kr <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+                        expand_re = TRUE, all_fit = FALSE, method = "KR", 
+                        progress=FALSE, type = i)
+    sk2_aff_s <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+                       expand_re = TRUE, all_fit = FALSE, method = "S", 
+                       progress=FALSE, type = i)
+    sk2_aff_nkr <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+                         progress = FALSE, type = i,
+                         expand_re = TRUE, all_fit = FALSE, method = "nested-KR")
+    sk2_aff_lrt <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+                         progress = FALSE, type = i,
+                         expand_re = TRUE, all_fit = FALSE, method = "LRT")
+    sk2_aff_pb <- mixed(response ~ instruction*type+(inference||id), sk2_aff,
+                        progress = FALSE, type = i, args_test = list(nsim = 10),
+                        expand_re = TRUE, all_fit = FALSE, method = "PB")
+    expect_is(sk2_aff_kr, "mixed")
+    expect_is(sk2_aff_s, "mixed")
+    expect_is(sk2_aff_nkr, "mixed")
+    expect_is(sk2_aff_lrt, "mixed")
+    expect_is(sk2_aff_pb, "mixed")
+    expect_is(anova(sk2_aff_kr), "anova")
+    expect_is(anova(sk2_aff_s), "anova")
+    expect_is(anova(sk2_aff_nkr), "anova")
+    expect_is(anova(sk2_aff_lrt), "anova")
+    expect_is(anova(sk2_aff_pb), "anova")
+    expect_output(print(sk2_aff_kr), "Effect")
+    expect_output(print(sk2_aff_kr), "F")
+    expect_output(print(sk2_aff_s), "Effect")
+    expect_output(print(sk2_aff_s), "F")
+    expect_output(print(sk2_aff_nkr), "Effect")
+    expect_output(print(sk2_aff_nkr), "F")
+    expect_output(print(sk2_aff_lrt), "Effect")
+    expect_output(print(sk2_aff_lrt), "Chisq")
+    expect_output(print(sk2_aff_pb), "Effect")
+    expect_output(print(sk2_aff_pb), "Chisq")
+  }
+})
+
+
+test_that("mixed all_fit = TRUE works with old methods", {
   data("sk2011.2") # see example("mixed")
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
   sk2_aff_b <- mixed(response ~ instruction+(inference*type||id), sk2_aff,
-               expand_re = TRUE, all_fit = TRUE)
+               expand_re = TRUE, all_fit = TRUE, method = "nested-KR")
   sk2_aff_b2 <- mixed(response ~ instruction*type+(inference||id), sk2_aff,
-               type = 2, expand_re = TRUE, all_fit = TRUE)
+               type = 2, expand_re = TRUE, all_fit = TRUE, method = "nested-KR")
   expect_is(sk2_aff_b, "mixed")
   expect_length(attr(sk2_aff_b, "all_fit_selected"), 2)
   expect_length(attr(sk2_aff_b, "all_fit_logLik"), 2)
   expect_is(sk2_aff_b2, "mixed")
   expect_length(attr(sk2_aff_b2, "all_fit_selected"), 5)
   expect_length(attr(sk2_aff_b2, "all_fit_logLik"), 5)
+})
+
+
+
+test_that("mixed all_fit = TRUE works with new (KR) methods", {
+  data("sk2011.2") # see example("mixed")
+  sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+  sk2_aff_b <- mixed(response ~ instruction+(inference*type||id), sk2_aff,
+               expand_re = TRUE, all_fit = TRUE, method = "KR")
+  sk2_aff_b2 <- mixed(response ~ instruction*type+(inference||id), sk2_aff,
+               type = 2, expand_re = TRUE, all_fit = TRUE, method = "KR")
+  expect_is(sk2_aff_b, "mixed")
+  expect_named(attr(sk2_aff_b, "all_fit_selected"), "full_model")
+  expect_false(is.null(attr(sk2_aff_b, "all_fit_logLik")))
+  expect_is(sk2_aff_b2, "mixed")
+  expect_named(attr(sk2_aff_b2, "all_fit_selected"), "full_model")
+  expect_false(is.null(attr(sk2_aff_b2, "all_fit_logLik")))
 })

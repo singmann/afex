@@ -186,7 +186,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   }
   #warning(str_c("Calculating Type 3 sums with contrasts = ", options("contrasts")[[1]][1], ".\n  Use options(contrasts=c('contr.sum','contr.poly')) instead"))
   # browser()
-  method <- match.arg(method, c("KR", "PB", "LRT", "F"), several.ok=TRUE)
+  method <- match.arg(method, c("KR", "S", "PB", "LRT", "nested-KR", "F"), several.ok=TRUE)
   ####################
   ### Part I: prepare fitting (i.e., obtain model info, check model, ...)
   ####################
@@ -259,6 +259,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   if ("family" %in% names(mf)) {
     mf[[1]] <- as.name("glmer")
     use_reml <- FALSE
+    if (!(method[1] %in% c("LRT", "PB"))) stop("GLMMs can only be estimated with 'LRT' or 'PB'.")
   } else {
     if (afex_options("lmer_function") == "lmerTest") mf[[1]] <- quote(lmerTest::lmer)
     else if (afex_options("lmer_function") == "lme4") mf[[1]] <- quote(lme4::lmer)
@@ -277,278 +278,313 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     if(set_data_arg) out@call[["data"]] <- mc[["data"]]
     return(out)
   }
-  ## prepare (g)lmer formulas:
-  if (type == 3 | type == "III") {
-    if (attr(terms(rh2, data = data), "intercept") == 1) fixed.effects <- c("(Intercept)", fixed.effects)
-    # The next part alters the mapping of parameters to effects/variables if
-    # per_parameter is not NULL (this does the complete magic).
-    if (!is.null(per_parameter)) {
-      fixed.to.change <- c()
-      for (parameter in per_parameter) {
-        fixed.to.change <- c(fixed.to.change, grep(parameter, fixed.effects))
+  if (method[1] %in% c("KR", "S")) {  ## do not calculate nested models for these methods
+    full_model <- eval(mf)
+    if (all_fit) {
+      all_fits <- suppressWarnings(all_fit(full_model, data = data, verbose = FALSE))
+      all_fits <- c(default = full_model, all_fits)
+      tmp_ll <- vapply(all_fits,function(x) tryCatch(logLik(x), error = function(e) NA), 0)
+      full_model <- all_fits[[which.max(tmp_ll)]]
+      full_model@optinfo$logLik_other <- tmp_ll
+    }
+    fits <- NULL
+    tests <- NULL
+    anova_tab_addition <- NULL
+    if (method[1] == "KR") {
+      #lmerTest_method <- if(method[1] == "KR") "Kenward-Roger" else "Satterthwaite"
+      if (test_intercept) {
+        anova_out <- car::Anova(full_model, type = type, test.statistic = "F")
+        anova_table <- as.data.frame(anova_out)
+        anova_table <- anova_table[, c("Df", "Df.res", "F", "Pr(>F)")]
+        colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
+      } else {
+        anova_out <- lmerTest::anova(full_model, ddf = "Kenward-Roger", type = type)
+        anova_table <- as.data.frame(anova_out)
+        anova_table <- anova_table[, c("NumDF", "DenDF", "F.value", "Pr(>F)")]
+        colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
       }
-      fixed.to.change <- fixed.effects[sort(unique(fixed.to.change))]
-      if ("(Intercept)" %in% fixed.to.change) fixed.to.change <- fixed.to.change[-1]
-      fixed.all <- dimnames(m.matrix)[[2]]
-      #tf2 <- fixed.to.change[2]
-      for (tf2 in fixed.to.change) {
-        tf <- which(fixed.effects == tf2)
-        fixed.lower <- fixed.effects[seq_len(tf-1)]
-        fixed.upper <- if (tf < length(fixed.effects)) fixed.effects[(tf+1):length(fixed.effects)] else NULL
-        fixed.effects <- c(fixed.lower, fixed.all[which(mapping == (tf-1))], fixed.upper)
-        map.to.replace <- which(mapping == (tf-1))
-        map.lower <- mapping[seq_len(map.to.replace[1]-1)]
-        map.upper <- if (max(map.to.replace) < length(mapping)) mapping[(map.to.replace[length(map.to.replace)]+1):length(mapping)] else NULL
-        mapping <- c(map.lower, seq_along(map.to.replace) + map.lower[length(map.lower)], map.upper + length(map.to.replace)-1)
-      }
     }
-    # make formulas
-    formulas <- vector("list", length(fixed.effects) + 1)
-    formulas[[1]] <- mf[["formula"]]
-    for (i in seq_along(fixed.effects)) {
-      tmp.columns <- str_c(deparse(-which(mapping == (i-1))), collapse = "")
-      formulas[[i+1]] <- as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
+    if (method == "S") {
+      anova_out <- lmerTest::anova(full_model, ddf = "Satterthwaite", type = type)
+      anova_table <- as.data.frame(anova_out)
+      anova_table <- anova_table[, c("NumDF", "DenDF", "F.value", "Pr(>F)")]
+      colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
     }
-    names(formulas) <- c("full_model", fixed.effects)
-    if (!test_intercept && fixed.effects[1] == "(Intercept)") {
-      fixed.effects <- fixed.effects[-1]
-      formulas[["(Intercept)"]] <- NULL
-    }
-  } else if (type == 2 | type == "II") {
-    #warning("Implementation of Type 2 method not unproblematic.\n  Check documentation or use car::Anova (Wald tests).")
-    if (!is.null(per_parameter)) stop("per_parameter argument only implemented for Type 3 tests.")
-    full_model.formulas <- vector("list", max.effect.order)
-    submodel.formulas <- vector("list", length(fixed.effects))
-    full_model.formulas[[length(full_model.formulas)]] <- mf[["formula"]]
-    for (c in seq_len(max.effect.order)) {
-      if (c == max.effect.order) next 
-      tmp.columns <- str_c(deparse(-which(mapping %in% which(effect.order > c))), collapse = "")
-      full_model.formulas[[c]] <-  as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
-    }
-    for (c in seq_along(fixed.effects)) {
-      order.c <- effect.order[c]
-      tmp.columns <- str_c(deparse(-which(mapping == (c) | mapping %in% if (order.c == max.effect.order) -1 else which(effect.order > order.c))), collapse = "")
-      submodel.formulas[[c]] <- as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
-    }
-    formulas <- c(full_model.formulas, submodel.formulas)
-  } else stop('Only type 3 and type 2 tests implemented.')
-  ## Part IIb: fit models
-  # single core
-  if (is.null(cl)) {
-    if (progress) cat(str_c("Fitting ", length(formulas), " (g)lmer() models:\n["))
-    fits <- vector("list", length(formulas))
-    if (all_fit) all_fits <- vector("list", length(formulas))
-    for (i in seq_along(formulas)) {
-      mf[["formula"]] <- formulas[[i]]
-      fits[[i]] <- eval(mf)
-      if (all_fit) {
-        all_fits[[i]] <- suppressWarnings(all_fit(fits[[i]], data = data, verbose = FALSE))
-        all_fits[[i]] <- c(default = fits[[i]], all_fits[[i]])
-        tmp_ll <- vapply(all_fits[[i]],function(x) tryCatch(logLik(x), error = function(e) NA), 0)
-        fits[[i]] <- all_fits[[i]][[which.max(tmp_ll)]]
-        fits[[i]]@optinfo$logLik_other <- tmp_ll
-      }
-      if (progress) cat(".")
-    }
-    if (progress) cat("]\n")
-  } else {  # multicore
-    eval.cl <- function(formula, m.call, progress, all_fit, data) {
-      m.call[[2]] <- formula
-      res <- eval(m.call)
-      if (all_fit) {
-        all_fits <- suppressWarnings(all_fit(res, data = data, verbose = FALSE))
-        all_fits <- c(default = res, all_fits)
-        tmp_ll <- vapply(all_fits,function(x) tryCatch(logLik(x), error = function(e) NA), 0)
-        res <- all_fits[[which.max(tmp_ll)]]
-        res@optinfo$logLik_other <- tmp_ll
-      }
-      if (progress) cat(".")
-      return(res)
-    }
-    if (progress) cat(paste0("Fitting ", length(formulas), " (g)lmer() models.\n"))
-    #junk <- clusterEvalQ(cl = cl, library("lme4", character.only = TRUE))
-    junk <- clusterCall(cl = cl, "require", package = "afex", character.only = TRUE)
-    #junk <- clusterEvalQ(cl = cl, loadNamespace("lme4"))
-    if (check_contrasts)  {
-      curr.contrasts <- getOption("contrasts")
-      clusterExport(cl = cl, "curr.contrasts", envir = sys.nframe())
-      junk <- clusterEvalQ(cl = cl, options(contrasts=curr.contrasts))
-    }
-    if (progress) junk <- clusterEvalQ(cl = cl, cat("["))
-    fits <- clusterApplyLB(cl = cl, x = formulas, eval.cl, m.call = mf, progress = progress, all_fit=all_fit, data = data)
-    if (progress) junk <- clusterEvalQ(cl = cl, cat("]"))
-  }
-
-  ####################
-  ### Part IIb: likelihood checks and refitting (refitting is DISABLED for the time being!)
-  ####################
-  
-  check_likelihood <- function(fits) {
+  } else { ## do calculate nested models for the methods below
+    ## prepare (g)lmer formulas:
     if (type == 3 | type == "III") {
-      logLik_full <- as.numeric(logLik(fits[[1]]))
-      logLik_restricted <- as.numeric(vapply(fits[2:length(fits)], logLik, 0))
-      if(any(logLik_restricted > logLik_full)) return(fixed.effects[logLik_restricted > logLik_full])
+      if (attr(terms(rh2, data = data), "intercept") == 1) fixed.effects <- c("(Intercept)", fixed.effects)
+      # The next part alters the mapping of parameters to effects/variables if
+      # per_parameter is not NULL (this does the complete magic).
+      if (!is.null(per_parameter)) {
+        fixed.to.change <- c()
+        for (parameter in per_parameter) {
+          fixed.to.change <- c(fixed.to.change, grep(parameter, fixed.effects))
+        }
+        fixed.to.change <- fixed.effects[sort(unique(fixed.to.change))]
+        if ("(Intercept)" %in% fixed.to.change) fixed.to.change <- fixed.to.change[-1]
+        fixed.all <- dimnames(m.matrix)[[2]]
+        #tf2 <- fixed.to.change[2]
+        for (tf2 in fixed.to.change) {
+          tf <- which(fixed.effects == tf2)
+          fixed.lower <- fixed.effects[seq_len(tf-1)]
+          fixed.upper <- if (tf < length(fixed.effects)) fixed.effects[(tf+1):length(fixed.effects)] else NULL
+          fixed.effects <- c(fixed.lower, fixed.all[which(mapping == (tf-1))], fixed.upper)
+          map.to.replace <- which(mapping == (tf-1))
+          map.lower <- mapping[seq_len(map.to.replace[1]-1)]
+          map.upper <- if (max(map.to.replace) < length(mapping)) mapping[(map.to.replace[length(map.to.replace)]+1):length(mapping)] else NULL
+          mapping <- c(map.lower, seq_along(map.to.replace) + map.lower[length(map.lower)], map.upper + length(map.to.replace)-1)
+        }
+      }
+      # make formulas
+      formulas <- vector("list", length(fixed.effects) + 1)
+      formulas[[1]] <- mf[["formula"]]
+      for (i in seq_along(fixed.effects)) {
+        tmp.columns <- str_c(deparse(-which(mapping == (i-1))), collapse = "")
+        formulas[[i+1]] <- as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
+      }
+      names(formulas) <- c("full_model", fixed.effects)
+      if (!test_intercept && fixed.effects[1] == "(Intercept)") {
+        fixed.effects <- fixed.effects[-1]
+        formulas[["(Intercept)"]] <- NULL
+      }
     } else if (type == 2 | type == "II") {
-      logLik_full <- as.numeric(vapply(fits[1:max.effect.order],logLik, 0))
-      logLik_restricted <- as.numeric(vapply(fits[(max.effect.order+1):length(fits)], logLik, 0))
-      warn_logLik <- c()
+      #warning("Implementation of Type 2 method not unproblematic.\n  Check documentation or use car::Anova (Wald tests).")
+      if (!is.null(per_parameter)) stop("per_parameter argument only implemented for Type 3 tests.")
+      full_model.formulas <- vector("list", max.effect.order)
+      submodel.formulas <- vector("list", length(fixed.effects))
+      full_model.formulas[[length(full_model.formulas)]] <- mf[["formula"]]
+      for (c in seq_len(max.effect.order)) {
+        if (c == max.effect.order) next 
+        tmp.columns <- str_c(deparse(-which(mapping %in% which(effect.order > c))), collapse = "")
+        full_model.formulas[[c]] <-  as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
+      }
       for (c in seq_along(fixed.effects)) {
         order.c <- effect.order[c]
-        if(logLik_restricted[[c]] > logLik_full[[order.c]]) warn_logLik <- c(warn_logLik, fixed.effects[c])
+        tmp.columns <- str_c(deparse(-which(mapping == (c) | mapping %in% if (order.c == max.effect.order) -1 else which(effect.order > order.c))), collapse = "")
+        submodel.formulas[[c]] <- as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
       }
-      if(length(warn_logLik)>0) return(warn_logLik)
-    }
-    return(TRUE)    
-  }
-  
-  # check for smaller likelihood of nested model and refit if test fails:
-  if (FALSE) {
-    if(!isTRUE(check_likelihood(fits))) {
-      if (progress) cat("refitting...")
-      refits <- lapply(fits, all_fit, verbose=FALSE, data = data)
-      browser()
-      str(fits[[1]], 2)
-      fits[[1]]@call
-      #sapply(all_fit(fits[[1]], data=md_16.4b), function(y) try(logLik(y)))
-      sapply(refits, function(x) sapply(x, function(y) tryCatch(as.numeric(logLik(y)), error = function(e) as.numeric(NA))))
-      
-      fits <- lapply(refits, function(x) {
-        tmp_llk <- vapply(x, function(y) tryCatch(logLik(y), error = function(e) as.numeric(NA)), 0)
-        x[[which.min(tmp_llk)]]
-      })
-    }
-  }
-  # check again and warn 
-  if(!isREML(fits[[1]]) & !isTRUE(check_likelihood(fits))) {
-    warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(fits), collapse = ", "), "\n  Results cannot be trusted. Try all_fit=TRUE!"))
-  }
-  
-  if(set_data_arg){
-    for (i in seq_along(fits)) {
-      fits[[i]]@call[["data"]] <- mc[["data"]]
-    }
-  }
-  ## prepare for p-values:
-  if (type == 3 | type == "III") {
-    full_model <- fits[[1]]
-    fits <- fits[-1]
-  } else if (type == 2 | type == "II") {
-    full_model <- fits[1:max.effect.order]
-    fits <- fits[(max.effect.order+1):length(fits)]
-  }
-  names(fits) <- fixed.effects  
-  
-  ####################
-  ### Part III: obtain p-values
-  ####################
-  ## obtain p-values:
-  #browser()
-  if (method[1] == "KR") {
-    if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
-    tests <- vector("list", length(fixed.effects))
-    for (c in seq_along(fixed.effects)) {
-      if (type == 3 | type == "III") tests[[c]] <- KRmodcomp(full_model, fits[[c]])
-      else if (type == 2 | type == "II") {
-        order.c <- effect.order[c]
-        tests[[c]] <- KRmodcomp(full_model[[order.c]], fits[[c]])
+      formulas <- c(full_model.formulas, submodel.formulas)
+    } else stop('Only type 3 and type 2 tests implemented.')
+    ## Part IIb: fit models
+    # single core
+    if (is.null(cl)) {
+      if (progress) cat(str_c("Fitting ", length(formulas), " (g)lmer() models:\n["))
+      fits <- vector("list", length(formulas))
+      if (all_fit) all_fits <- vector("list", length(formulas))
+      for (i in seq_along(formulas)) {
+        mf[["formula"]] <- formulas[[i]]
+        fits[[i]] <- eval(mf)
+        if (all_fit) {
+          all_fits[[i]] <- suppressWarnings(all_fit(fits[[i]], data = data, verbose = FALSE))
+          all_fits[[i]] <- c(default = fits[[i]], all_fits[[i]])
+          tmp_ll <- vapply(all_fits[[i]],function(x) tryCatch(logLik(x), error = function(e) NA), 0)
+          fits[[i]] <- all_fits[[i]][[which.max(tmp_ll)]]
+          fits[[i]]@optinfo$logLik_other <- tmp_ll
+        }
+        if (progress) cat(".")
       }
-      if (progress) cat(".")
-    }
-    if (progress) cat("]\n")
-    names(tests) <- fixed.effects
-    #df.out <- data.frame(Effect = fixed.effects, stringsAsFactors = FALSE)
-    anova_table <- data.frame(t(vapply(tests, function(x) unlist(x[["test"]][1,]), unlist(tests[[1]][["test"]][1,]))))
-    #FtestU <- vapply(tests, function(x) unlist(x[["test"]][2,]), unlist(tests[[1]][["test"]][2,]))
-    #row.names(FtestU) <- str_c(row.names(FtestU), ".U")
-    #anova_table <- cbind(anova_table, t(FtestU))
-    rownames(anova_table) <- fixed.effects
-    colnames(anova_table) <- c("F", "num Df", "den Df", "F.scaling", "Pr(>F)")
-    anova_table <- anova_table[, c("num Df", "den Df", "F.scaling", "F", "Pr(>F)")]
-    anova_tab_addition <- NULL
-  } else if (method[1] == "PB") {
-    if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
-    tests <- vector("list", length(fixed.effects))
-    for (c in seq_along(fixed.effects)) {
-      if (type == 3 | type == "III") tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full_model, smallModel = fits[[c]], args_test))
-      else if (type == 2 | type == "II") {
-        order.c <- effect.order[c]
-        tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full_model[[order.c]], smallModel = fits[[c]], args_test))
+      if (progress) cat("]\n")
+    } else {  # multicore
+      eval.cl <- function(formula, m.call, progress, all_fit, data) {
+        m.call[[2]] <- formula
+        res <- eval(m.call)
+        if (all_fit) {
+          all_fits <- suppressWarnings(all_fit(res, data = data, verbose = FALSE))
+          all_fits <- c(default = res, all_fits)
+          tmp_ll <- vapply(all_fits,function(x) tryCatch(logLik(x), error = function(e) NA), 0)
+          res <- all_fits[[which.max(tmp_ll)]]
+          res@optinfo$logLik_other <- tmp_ll
+        }
+        if (progress) cat(".")
+        return(res)
       }
-      if (progress) cat(".")
-    }
-    if (progress) cat("]\n")
-    names(tests) <- fixed.effects
-    #browser()
-    #df.out<- data.frame(Effect = fixed.effects, stringsAsFactors = FALSE)
-    anova_table <- data.frame(t(vapply(tests, function(x) unlist(x[["test"]][2,]), unlist(tests[[1]][["test"]][2,]))))
-    anova_table <- anova_table[,-2]
-    LRT <- vapply(tests, function(x) unlist(x[["test"]][1,]), unlist(tests[[1]][["test"]][1,]))
-    row.names(LRT) <- str_c(row.names(LRT), ".LRT")
-    anova_table <- cbind(anova_table, t(LRT))
-    rownames(anova_table) <- fixed.effects
-    anova_table <- anova_table[, c("stat", "df.LRT", "p.value.LRT", "p.value")]
-    colnames(anova_table) <- c("Chisq", "Chi Df", "Pr(>Chisq)", "Pr(>PB)")
-    anova_tab_addition <- NULL
-  } else if (method[1] == "LRT") {
-    tests <- vector("list", length(fixed.effects))
-    for (c in seq_along(fixed.effects)) {
-      if (type == 3 | type == "III") tests[[c]] <- anova(full_model, fits[[c]])
-      else if (type == 2 | type == "II") {
-        order.c <- effect.order[c]
-        tmpModel  <- full_model[[order.c]] 
-        tests[[c]] <- anova(tmpModel, fits[[c]])
+      if (progress) cat(paste0("Fitting ", length(formulas), " (g)lmer() models.\n"))
+      #junk <- clusterEvalQ(cl = cl, library("lme4", character.only = TRUE))
+      junk <- clusterCall(cl = cl, "require", package = "afex", character.only = TRUE)
+      #junk <- clusterEvalQ(cl = cl, loadNamespace("lme4"))
+      if (check_contrasts)  {
+        curr.contrasts <- getOption("contrasts")
+        clusterExport(cl = cl, "curr.contrasts", envir = sys.nframe())
+        junk <- clusterEvalQ(cl = cl, options(contrasts=curr.contrasts))
       }
+      if (progress) junk <- clusterEvalQ(cl = cl, cat("["))
+      fits <- clusterApplyLB(cl = cl, x = formulas, eval.cl, m.call = mf, progress = progress, all_fit=all_fit, data = data)
+      if (progress) junk <- clusterEvalQ(cl = cl, cat("]"))
     }
-    names(tests) <- fixed.effects
-    df.large  <- vapply(tests, function(x) x[["Df"]][2], 0)
-    df.small  <- vapply(tests, function(x) x[["Df"]][1], 0)
-    chisq  <- vapply(tests, function(x) x[["Chisq"]][2], 0)
-    df  <- vapply(tests, function(x) x[["Chi Df"]][2], 0)
-    p.value  <- vapply(tests, function(x) x[["Pr(>Chisq)"]][2], 0)
-    anova_table <- data.frame(Df = df.small, Chisq = chisq, "Chi Df" = df, "Pr(>Chisq)"=p.value, stringsAsFactors = FALSE, check.names = FALSE)
-    rownames(anova_table) <- fixed.effects
-    if (type == 3 | type == "III") anova_tab_addition <- paste0("Df full model: ", df.large[1])
-    else anova_tab_addition <- paste0("Df full model(s): ", df.large)
     
-    # 
-    # attr(anova_table, "heading") <- c(paste0("Mixed Model Anova Table (Type ", type , " tests)\n"), paste0("Response: ", dv)
-    #title <- "Analysis of Variance Table\n"
-    #topnote <- paste("Model ", format(1L:nmodels), ": ", variables, 
-    #    sep = "", collapse = "\n")
-  } else if (method[1] == "F") {
-    #browser()
-    tests <- vector("list", length(fixed.effects))
-    getFvalue <- function(largeModel, smallModel) {
-      #browser()
-      L  <- .model2restrictionMatrix(largeModel, smallModel)
-      #PhiA  <- vcovAdj(largeModel, details = 0)
-      PhiA  <- vcov(largeModel)
-      beta <- fixef(largeModel)
-      betaH <- 0
-      betaDiff <- cbind( beta - betaH )
-      Wald  <- as.numeric(t(betaDiff) %*% t(L) %*% solve(L%*%PhiA%*%t(L), L%*%betaDiff))
-      q <- rankMatrix(L)
-      FstatU <- Wald/q      
-      list(df1 = q, F = FstatU)
+    ####################
+    ### Part IIb: likelihood checks and refitting (refitting is DISABLED for the time being!)
+    ####################
+    
+    check_likelihood <- function(fits) {
+      if (type == 3 | type == "III") {
+        logLik_full <- as.numeric(logLik(fits[[1]]))
+        logLik_restricted <- as.numeric(vapply(fits[2:length(fits)], logLik, 0))
+        if(any(logLik_restricted > logLik_full)) return(fixed.effects[logLik_restricted > logLik_full])
+      } else if (type == 2 | type == "II") {
+        logLik_full <- as.numeric(vapply(fits[1:max.effect.order],logLik, 0))
+        logLik_restricted <- as.numeric(vapply(fits[(max.effect.order+1):length(fits)], logLik, 0))
+        warn_logLik <- c()
+        for (c in seq_along(fixed.effects)) {
+          order.c <- effect.order[c]
+          if(logLik_restricted[[c]] > logLik_full[[order.c]]) warn_logLik <- c(warn_logLik, fixed.effects[c])
+        }
+        if(length(warn_logLik)>0) return(warn_logLik)
+      }
+      return(TRUE)    
     }
-    for (c in seq_along(fixed.effects)) {
-      if (type == 3 | type == "III") tests[[c]] <- getFvalue(full_model, fits[[c]])
-      else if (type == 2 | type == "II") {
-        order.c <- effect.order[c]
-        tmpModel  <- full_model[[order.c]] 
-        tests[[c]] <- getFvalue(tmpModel, fits[[c]])
+    
+    # check for smaller likelihood of nested model and refit if test fails:
+    if (FALSE) {
+      if(!isTRUE(check_likelihood(fits))) {
+        if (progress) cat("refitting...")
+        refits <- lapply(fits, all_fit, verbose=FALSE, data = data)
+        browser()
+        str(fits[[1]], 2)
+        fits[[1]]@call
+        #sapply(all_fit(fits[[1]], data=md_16.4b), function(y) try(logLik(y)))
+        sapply(refits, function(x) sapply(x, function(y) tryCatch(as.numeric(logLik(y)), error = function(e) as.numeric(NA))))
+        
+        fits <- lapply(refits, function(x) {
+          tmp_llk <- vapply(x, function(y) tryCatch(logLik(y), error = function(e) as.numeric(NA)), 0)
+          x[[which.min(tmp_llk)]]
+        })
       }
     }
-    names(tests) <- fixed.effects
-    df.out <- data.frame(Effect = fixed.effects, F = vapply(tests, "[[", i = "F", 0), ndf = vapply(tests, "[[", i = "df1", 0), p.value = NA, stringsAsFactors = FALSE)
-    rownames(df.out) <- NULL
-  } else stop('Only methods "KR", "PB", "LRT" or "F" currently implemented.')
+    # check again and warn 
+    if(!isREML(fits[[1]]) & !isTRUE(check_likelihood(fits))) {
+      warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(fits), collapse = ", "), "\n  Results cannot be trusted. Try all_fit=TRUE!"))
+    }
+    
+    if(set_data_arg){
+      for (i in seq_along(fits)) {
+        fits[[i]]@call[["data"]] <- mc[["data"]]
+      }
+    }
+    ## prepare for p-values:
+    if (type == 3 | type == "III") {
+      full_model <- fits[[1]]
+      fits <- fits[-1]
+    } else if (type == 2 | type == "II") {
+      full_model <- fits[1:max.effect.order]
+      fits <- fits[(max.effect.order+1):length(fits)]
+    }
+    names(fits) <- fixed.effects  
+    
+    ####################
+    ### Part III: obtain p-values
+    ####################
+    ## obtain p-values:
+    #browser()
+    if (method[1] == "nested-KR") {
+      if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
+      tests <- vector("list", length(fixed.effects))
+      for (c in seq_along(fixed.effects)) {
+        if (type == 3 | type == "III") tests[[c]] <- KRmodcomp(full_model, fits[[c]])
+        else if (type == 2 | type == "II") {
+          order.c <- effect.order[c]
+          tests[[c]] <- KRmodcomp(full_model[[order.c]], fits[[c]])
+        }
+        if (progress) cat(".")
+      }
+      if (progress) cat("]\n")
+      names(tests) <- fixed.effects
+      #df.out <- data.frame(Effect = fixed.effects, stringsAsFactors = FALSE)
+      anova_table <- data.frame(t(vapply(tests, function(x) unlist(x[["test"]][1,]), unlist(tests[[1]][["test"]][1,]))))
+      #FtestU <- vapply(tests, function(x) unlist(x[["test"]][2,]), unlist(tests[[1]][["test"]][2,]))
+      #row.names(FtestU) <- str_c(row.names(FtestU), ".U")
+      #anova_table <- cbind(anova_table, t(FtestU))
+      rownames(anova_table) <- fixed.effects
+      colnames(anova_table) <- c("F", "num Df", "den Df", "F.scaling", "Pr(>F)")
+      anova_table <- anova_table[, c("num Df", "den Df", "F.scaling", "F", "Pr(>F)")]
+      anova_tab_addition <- NULL
+    } else if (method[1] == "PB") {
+      if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
+      tests <- vector("list", length(fixed.effects))
+      for (c in seq_along(fixed.effects)) {
+        if (type == 3 | type == "III") tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full_model, smallModel = fits[[c]], args_test))
+        else if (type == 2 | type == "II") {
+          order.c <- effect.order[c]
+          tests[[c]] <- do.call(PBmodcomp, args = c(largeModel = full_model[[order.c]], smallModel = fits[[c]], args_test))
+        }
+        if (progress) cat(".")
+      }
+      if (progress) cat("]\n")
+      names(tests) <- fixed.effects
+      #browser()
+      #df.out<- data.frame(Effect = fixed.effects, stringsAsFactors = FALSE)
+      anova_table <- data.frame(t(vapply(tests, function(x) unlist(x[["test"]][2,]), unlist(tests[[1]][["test"]][2,]))))
+      anova_table <- anova_table[,-2]
+      LRT <- vapply(tests, function(x) unlist(x[["test"]][1,]), unlist(tests[[1]][["test"]][1,]))
+      row.names(LRT) <- str_c(row.names(LRT), ".LRT")
+      anova_table <- cbind(anova_table, t(LRT))
+      rownames(anova_table) <- fixed.effects
+      anova_table <- anova_table[, c("stat", "df.LRT", "p.value.LRT", "p.value")]
+      colnames(anova_table) <- c("Chisq", "Chi Df", "Pr(>Chisq)", "Pr(>PB)")
+      anova_tab_addition <- NULL
+    } else if (method[1] == "LRT") {
+      tests <- vector("list", length(fixed.effects))
+      for (c in seq_along(fixed.effects)) {
+        if (type == 3 | type == "III") tests[[c]] <- anova(full_model, fits[[c]])
+        else if (type == 2 | type == "II") {
+          order.c <- effect.order[c]
+          tmpModel  <- full_model[[order.c]] 
+          tests[[c]] <- anova(tmpModel, fits[[c]])
+        }
+      }
+      names(tests) <- fixed.effects
+      df.large  <- vapply(tests, function(x) x[["Df"]][2], 0)
+      df.small  <- vapply(tests, function(x) x[["Df"]][1], 0)
+      chisq  <- vapply(tests, function(x) x[["Chisq"]][2], 0)
+      df  <- vapply(tests, function(x) x[["Chi Df"]][2], 0)
+      p.value  <- vapply(tests, function(x) x[["Pr(>Chisq)"]][2], 0)
+      anova_table <- data.frame(Df = df.small, Chisq = chisq, "Chi Df" = df, "Pr(>Chisq)"=p.value, stringsAsFactors = FALSE, check.names = FALSE)
+      rownames(anova_table) <- fixed.effects
+      if (type == 3 | type == "III") anova_tab_addition <- paste0("Df full model: ", df.large[1])
+      else anova_tab_addition <- paste0("Df full model(s): ", df.large)
+      
+      # 
+      # attr(anova_table, "heading") <- c(paste0("Mixed Model Anova Table (Type ", type , " tests)\n"), paste0("Response: ", dv)
+      #title <- "Analysis of Variance Table\n"
+      #topnote <- paste("Model ", format(1L:nmodels), ": ", variables, 
+      #    sep = "", collapse = "\n")
+    } else if (method[1] == "F") {
+      #browser()
+      tests <- vector("list", length(fixed.effects))
+      getFvalue <- function(largeModel, smallModel) {
+        #browser()
+        L  <- .model2restrictionMatrix(largeModel, smallModel)
+        #PhiA  <- vcovAdj(largeModel, details = 0)
+        PhiA  <- vcov(largeModel)
+        beta <- fixef(largeModel)
+        betaH <- 0
+        betaDiff <- cbind( beta - betaH )
+        Wald  <- as.numeric(t(betaDiff) %*% t(L) %*% solve(L%*%PhiA%*%t(L), L%*%betaDiff))
+        q <- rankMatrix(L)
+        FstatU <- Wald/q      
+        list(df1 = q, F = FstatU)
+      }
+      for (c in seq_along(fixed.effects)) {
+        if (type == 3 | type == "III") tests[[c]] <- getFvalue(full_model, fits[[c]])
+        else if (type == 2 | type == "II") {
+          order.c <- effect.order[c]
+          tmpModel  <- full_model[[order.c]] 
+          tests[[c]] <- getFvalue(tmpModel, fits[[c]])
+        }
+      }
+      names(tests) <- fixed.effects
+      df.out <- data.frame(Effect = fixed.effects, F = vapply(tests, "[[", i = "F", 0), ndf = vapply(tests, "[[", i = "df1", 0), p.value = NA, stringsAsFactors = FALSE)
+      rownames(df.out) <- NULL
+    } else stop('Only methods "KR", "PB", "LRT", or "nested-KR" currently implemented.')
+    
+  } 
   ####################
   ### Part IV: prepare output
   ####################
   class(anova_table) <- c("anova", "data.frame")
   attr(anova_table, "heading") <- c(
-    paste0("Mixed Model Anova Table (Type ", type , " tests)\n"), 
+    paste0("Mixed Model Anova Table (Type ", type , " tests, ", method, "-method)\n"), 
     paste0("Model: ", deparse(formula.f)),
     paste0("Data: " ,mc[["data"]]),
     anova_tab_addition
@@ -667,8 +703,6 @@ anova.mixed <- function(object, ..., refit = FALSE) {
     object$anova_table
   }
 }
-
-
 
 
 ## support for lsmeans for mixed objects:

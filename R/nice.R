@@ -144,9 +144,20 @@ nice.mixed <- function(object, sig_symbols = c(" +", " *", " **", " ***"), ...) 
   if (is.null(attr(object, "method"))) {
     df.out <- object[[1]]
     warning("mixed object was created with old version of afex, table not nicely formatted.")
-  } else if (attr(object, "method") == "KR") {
+  } else if (attr(object, "method") %in% c("KR", "S", "nested-KR") ) {
     anova_table[,"df"] <- paste(ifelse(is.wholenumber(anova_table[,"num Df"]), round(anova_table[,"num Df"]), formatC(anova_table[,"num Df"], digits = 2, format = "f")),  ifelse(is.wholenumber(anova_table[,"den Df"]), round(anova_table[,"den Df"]), formatC(anova_table[,"den Df"], digits = 2, format = "f")), sep = ", ")
-    df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"df"], "F.scaling" = formatC(anova_table[,"F.scaling"], digits = 2, format = "f"), stringsAsFactors = FALSE, check.names = FALSE)
+    if ("F.scaling" %in% anova_table) {
+      df.out <- data.frame(
+      Effect = row.names(anova_table), 
+      df = anova_table[,"df"], 
+      "F.scaling" = formatC(anova_table[,"F.scaling"], digits = 2, format = "f"), 
+      stringsAsFactors = FALSE, check.names = FALSE) 
+    } else {
+      df.out <- data.frame(
+      Effect = row.names(anova_table), 
+      df = anova_table[,"df"], 
+      stringsAsFactors = FALSE, check.names = FALSE) 
+    }
     df.out <- cbind(df.out, data.frame(F = make.stat(anova_table, stat = "F", symbols.use), stringsAsFactors = FALSE))
     df.out$p.value  <-  round_ps(anova_table[,"Pr(>F)"])
   } else if (attr(object, "method") == "PB") {

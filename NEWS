@@ -13,8 +13,8 @@
         requires less RAM.
     
     o   mixed() methods "KR" and "S" are now obtained via tests on the full 
-        model directed. No restricted models are calculated in this case. The 
-        former KR method is still available: method="nested-KR"
+        model directly. No restricted models are calculated for these methods. 
+        The former KR method is still available: method="nested-KR"
     
     o   mixed() now per default exports and uses lmerTest::lmer and not 
         lme4::lmer(). This can be changed via calling 

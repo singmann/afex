@@ -18,13 +18,13 @@ lmer_alt(formula, data, check_contrasts = FALSE, ...)
 \arguments{
 \item{formula}{a formula describing the full mixed-model to be fitted. As this formula is passed to \code{lmer}, it needs at least one random term.}
 
-\item{data}{data.frame containing the data. Should have all the variables present in \code{fixed}, \code{random}, and \code{dv} as columns.}
+\item{data}{\code{data.frame} containing the data. Should have all the variables present in \code{fixed}, \code{random}, and \code{dv} as columns.}
 
 \item{type}{type of test on which effects are based. Default is to use type 3 tests, taken from \code{\link{afex_options}}.}
 
-\item{method}{character vector indicating which methods for obtaining p-values should be used: \code{"KR"} corresponds to the Kenward-Roger approximation for degrees of freedom (only working with linear mixed models), \code{"PB"} calculates p-values based on parametric bootstrap, \code{"LRT"} calculates p-values via the likelihood ratio tests implemented in the \code{anova} method for \code{merMod} objects (only recommended for models with many [i.e., > 50] levels for the random factors). The default (currently \code{"KR"}) is taken from \code{\link{afex_options}}.}
+\item{method}{character vector indicating which methods for obtaining p-values should be used: \code{"KR"} corresponds to the Kenward-Roger approximation for degrees of freedom (only LMMs), \code{"S"} corresponds to the Satterthwaite approximation for degrees of freedom (via \code{\link{lmerTest}}, only LMMs), \code{"PB"} calculates p-values based on parametric bootstrap, \code{"LRT"} calculates p-values via the likelihood ratio tests implemented in the \code{anova} method for \code{merMod} objects (only recommended for models with many [i.e., > 50] levels for the random factors). The default (currently \code{"KR"}) is taken from \code{\link{afex_options}}. For historical compatibility \code{"nested-KR"} is also supported which was the default KR-method in previous versions.}
 
-\item{per_parameter}{\code{character} vector specifying for which variable tests should be run for each parameter (instead for the overall effect). Can be useful e.g., for testing ordered factors. Relatively untested so results should be compared with a second run without setting this argument. Uses \code{\link{grep}} for selecting parameters among the fixed effects so regular expressions (\code{\link{regex}}) are possible. See Examples.}
+\item{per_parameter}{\code{character} vector specifying for which variable tests should be run for each parameter (instead for the overall effect). Can be useful e.g., for testing ordered factors. Uses \code{\link{grep}} for selecting parameters among the fixed effects so regular expressions (\code{\link{regex}}) are possible. See Examples.}
 
 \item{args_test}{\code{list} of arguments passed to the function calculating the p-values. See Details.}
 
@@ -34,17 +34,17 @@ lmer_alt(formula, data, check_contrasts = FALSE, ...)
 
 \item{expand_re}{logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.}
 
-\item{all_fit}{logical. Should \code{\link{all_fit}} be used to fit each model with each available optimization algorithm and the results that provided the best fit in each case be used? Warning: This can dramatically increase the optimization time. Adds two new attributes to the returned object designating which algorithm was selected and the log-likelihoods for each algorithm. Note that only warnings from the initial fit are emitted during fitting. The warnings of the finally chosen models are emitted when printing the returned object.}
+\item{all_fit}{logical. Should \code{\link{all_fit}} be used to fit each model with each available optimization algorithm and the results that provided the best fit in each case be used? Warning: This can dramatically increase the optimization time. Adds two new attributes to the returned object designating which algorithm was selected and the log-likelihoods for each algorithm. Note that only warnings from the initial fit are emitted during fitting. The warnings of the chosen models are emitted when printing the returned object.}
 
 \item{set_data_arg}{\code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}.}
 
 \item{progress}{if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.}
 
-\item{cl}{A vector identifying a cluster; used for distributing the estimation of the different models using several cores. See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args_test} for this.}
+\item{cl}{A vector identifying a cluster; used for distributing the estimation of the different models using several cores (if seveal models are calculated). See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args_test} for this.}
 
 \item{return}{the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model (note that the data is also part of the returned object).}
 
-\item{...}{further arguments (such as \code{weights}/\code{family}) passed to \code{\link{lmer}}/\code{\link{glmer}}.}
+\item{...}{further arguments (such as \code{weights}/\code{family}) passed to \code{\link{lmer}}/\code{\link{glmer}}, such as \code{control}.}
 }
 \value{
 An object of class \code{"mixed"} (i.e., a list) with the following elements:
@@ -65,12 +65,12 @@ Two similar methods exist for objects of class \code{"mixed"}: \code{print} and 
 \item \code{p.value} estimated p-value for the effect
 }
 
-For LMMs with \code{method="KR"} the following further columns are returned (note: the Kenward-Roger correction does two separate things: (1) it computes an effective number for the denominator df; (2) it scales the statistic by a calculated amount, see also \url{http://stackoverflow.com/a/25612960/289572}):
+For LMMs with \code{method="KR"} or \code{method="S"} the following further columns are returned (note: the Kenward-Roger correction does two separate things: (1) it computes an effective number for the denominator df; (2) it scales the statistic by a calculated amount, see also \url{http://stackoverflow.com/a/25612960/289572}):
 \enumerate{
 \item \code{F} computed F statistic
 \item \code{ndf} numerator degrees of freedom (number of parameters used for the effect)
 \item \code{ddf} denominator degrees of freedom (effective residual degrees of freedom for testing the effect), computed from the Kenward-Roger correction using \code{pbkrtest::KRmodcomp}
-\item \code{F.scaling} scaling of F-statistic computing from Kenward-Roger approximation.
+\item \code{F.scaling} scaling of F-statistic computing from Kenward-Roger approximation (only printed if \code{method="nested-KR"})
 }
 
 For models with \code{method="LRT"} the following further columns are returned:
@@ -93,31 +93,35 @@ The \code{summary} method for objects of class \code{mixed} simply calls \code{\
 If \code{return = "merMod"}, an object of class \code{"merMod"}, as returned from \code{g/lmer}, is returned.
 }
 \description{
-Calculates p-values for all fixed effects in a mixed model. This is done by first fitting (with \code{\link[lme4]{lmer}}) the full model and then versions thereof in which a single effect is removed and comparing the reduced model to the full model. The default is to calculate type 3 like p-values using the Kenward-Roger approximation for degrees-of-freedom (using \code{\link[pbkrtest]{KRmodcomp}}; for LMMs only). Other methods for obtaining p-values are parametric bootstrap (\code{method = "PB"}) or likelihood ratio tests (\code{method = "LRT"}), both of which are available for both LMMs and GLMMs. \code{print}, \code{summary}, and \code{anova} methods for the returned object of class \code{"mixed"} are available (the last two return the same data.frame). \code{lmer_alt} is simply a wrapper for mixed that only returns the \code{"merMod"} object and correctly uses the \code{||} notation to remove correlation among factors, but otherwise behaves like \code{g/lmer} (as for \code{mixed}, it calls \code{glmer} as soon as a \code{family} argument is present).
+Calculates p-values for all fixed effects in a mixed model. The default method \code{"KR"} (= Kenward-Roger) as well as  \code{method="S"} (Satterthwaite) support LMMs and fit the model with \code{\link[lme4]{lmer}}) and then pass it to either \code{\link[lmerTest]{anova.merModLmerTest}} (or \code{\link[car]{Anova}}). The other methods (\code{"LRT"} = likelihood-ratio tests and \code{"PB"} = parametric bootstrap) support both LMMs and GLMMs (i.e., with \code{family} argument) and fit a full model and restricted models in which the parameters corresponding to the effect (i.e., model term) are withhold (i.e., fixed to 0) and tests statistics are based on comparing the full model with the restricted models. The default is tests based on Type 3 sums of squares. \code{print}, \code{summary}, and \code{anova} methods for the returned object of class \code{"mixed"} are available (the last two return the same data.frame). \code{lmer_alt} is simply a wrapper for mixed that only returns the \code{"merMod"} object and correctly uses the \code{||} notation to remove correlation among factors, but otherwise behaves like \code{g/lmer} (as for \code{mixed}, it calls \code{glmer} as soon as a \code{family} argument is present).
 }
 \details{
 For an introduction to mixed-modeling for experimental designs see Barr, Levy, Scheepers, & Tily (2013; I highly recommend reading this paper if you use this function), arguments for using the Kenward-Roger approximation for obtaining p-values are given by Judd, Westfall, and Kenny (2012). Further introductions to mixed-modeling for experimental designs are given by Baayen and colleagues (Baayen, 2008; Baayen, Davidson & Bates, 2008; Baayen & Milin, 2010). Specific recommendations on which random effects structure to specify for confirmatory tests can be found in Barr and colleagues (2013) and Barr (2013), but also see Bates et al. (2015).
 
 \subsection{p-value Calculations}{
 
-p-values are per default calculated via methods from \pkg{pbkrtest}. When \code{method = "KR"} (the default), the Kenward-Roger approximation for degrees-of-freedom is calculated using \code{\link[pbkrtest]{KRmodcomp}}, which is only applicable to linear-mixed models. The test statistic in the output is a F-value (\code{F}).
+When \code{method = "KR"} (the default, implemented via \code{\link[pbkrtest]{KRmodcomp}}), the Kenward-Roger approximation for degrees-of-freedom is calculated using \code{\link[lmerTest]{anova.merModLmerTest}} (if \code{test_intercept=FALSE}) or \code{\link[car]{Anova}} (if \code{test_intercept=TRUE}), which is only applicable to linear-mixed models (LMMs). The test statistic in the output is a F-value (\code{F}).
 
-\code{method = "PB"} calculates p-values using parametric bootstrap using \code{\link[pbkrtest]{PBmodcomp}}. This can be used for linear and also generalized linear mixed models (GLMM) by specifying a \code{\link[stats]{family}} argument to \code{mixed}. Note that you should specify further arguments to \code{PBmodcomp} via \code{args_test}, especially \code{nsim} (the number of simulations to form the reference distribution) or \code{cl} (for using multiple cores). For other arguments see \code{\link[pbkrtest]{PBmodcomp}}. Note that \code{REML} (argument to \code{[g]lmer}) will be set to \code{FALSE} if method is \code{PB}.
+A similar method that requires less RAM is \code{method = "S"} which calculates the Satterthwaite approximation for degrees-of-freedom via \code{\link[lmerTest]{anova.merModLmerTest}} and is also only applicable to LMMs.
+
+\code{method = "PB"} calculates p-values using parametric bootstrap using \code{\link[pbkrtest]{PBmodcomp}}. This can be used for linear and also generalized linear mixed models (GLMMs) by specifying a \code{\link[stats]{family}} argument to \code{mixed}. Note that you should specify further arguments to \code{PBmodcomp} via \code{args_test}, especially \code{nsim} (the number of simulations to form the reference distribution) or \code{cl} (for using multiple cores). For other arguments see \code{\link[pbkrtest]{PBmodcomp}}. Note that \code{REML} (argument to \code{[g]lmer}) will be set to \code{FALSE} if method is \code{PB}.
 
 \code{method = "LRT"} calculates p-values via likelihood ratio tests implemented in the \code{anova} method for \code{"merMod"} objects. This is recommended by Barr et al. (2013; which did not test the other methods implemented here). Using likelihood ratio tests is only recommended for models with many levels for the random effects (> 50), but can be pretty helpful in case the other methods fail (due to memory and/or time limitations). The \href{http://glmm.wikidot.com/faq}{lme4 faq} also recommends the other methods over likelihood ratio tests.
 }
 
 \subsection{Implementation Details}{
 
-Type 3 tests are obtained by comparing a model in which only the tested effect is excluded with the full model (containing all effects). This corresponds to the (type 3) Wald tests given by \code{car::Anova} for \code{"lmerMod"} models. The submodels in which the tested effect is excluded are obtained by manually creating a model matrix which is then fitted in \code{"lme4"}. This is done to avoid R's "feature" to not allow this behavior.
+For methods \code{"KR"} and \code{"PB"} type 3 and 2 tests are implemented as in \code{\link[car]{Anova}}.
 
-Type 2 tests are truly sequential. They are obtained by comparing a model in which the tested effect and all higher oder effect (e.g., all three-way interactions for testing a two-way interaction) are excluded with a model in which only effects up to the order of the tested effect are present and all higher order effects absent. In other words, there are multiple full models, one for each order of effects. Consequently, the results for lower order effects are identical of whether or not higher order effects are part of the model or not. This latter feature is not consistent with classical ANOVA type 2 tests but a consequence of the sequential tests (and \href{https://stat.ethz.ch/pipermail/r-sig-mixed-models/2012q3/018992.html}{I didn't find a better way} of implementing the Type 2 tests). This \strong{does not} correspond to the (type 2) Wald test reported by \code{car::Anova}. If you want type 2 Wald tests instead of truly sequential typde 2 tests, use \code{car::Anova} with \code{test = "F"}. Note that the order in which the effects are entered into the formula does not matter (in contrast to type 1 tests).
+For all other methods, type 3 tests are obtained by comparing a model in which only the tested effect is excluded with the full model (containing all effects). For method \code{"nested-KR"} (which was the default in previous versions) this corresponds to the (type 3) Wald tests given by \code{car::Anova} for \code{"lmerMod"} models. The submodels in which the tested effect is excluded are obtained by manually creating a model matrix which is then fitted in \code{"lme4"}. This is done to avoid R's "feature" to not allow this behavior.
+
+Type 2 tests are truly sequential. They are obtained by comparing a model in which the tested effect and all higher oder effect (e.g., all three-way interactions for testing a two-way interaction) are excluded with a model in which only effects up to the order of the tested effect are present and all higher order effects absent. In other words, there are multiple full models, one for each order of effects. Consequently, the results for lower order effects are identical of whether or not higher order effects are part of the model or not. This latter feature is not consistent with classical ANOVA type 2 tests but a consequence of the sequential tests (and \href{https://stat.ethz.ch/pipermail/r-sig-mixed-models/2012q3/018992.html}{I didn't find a better way} of implementing the Type 2 tests). This \strong{does not} correspond to the (type 2) Wald test reported by \code{car::Anova}.
 
 If \code{check_contrasts = TRUE}, contrasts will be set to \code{"contr.sum"} for all factors in the formula if default contrasts are not equal to \code{"contr.sum"} or \code{attrib(factor, "contrasts") != "contr.sum"}. Furthermore, the current contrasts (obtained via \code{getOption("contrasts")}) will be set at the cluster nodes if \code{cl} is not \code{NULL}.
 }
 
 \subsection{Expand Random Effects}{
-The latest addition, motivated by Bates et al. (2015), is the possibility to expand the random effects structure before passing it to \code{lmer} by setting \code{expand_re = TRUE}. This allows to disable estimation of correlation among random effects for random effects term containing factors using the \code{||} notation. This is achieved by first creating a model matrix for each random effects term individually, rename and append the so created columns to the data that will be fitted, replace the actual random effects term with the so created variables (concatenated with +), and then fit the model. The variables are renamed by prepending all variables with rei (where i is the number of the random effects term) and replacing ":" with "_by_".
+\code{expand_re = TRUE} allows to expand the random effects structure before passing it to \code{lmer}. This allows to disable estimation of correlation among random effects for random effects term containing factors using the \code{||} notation which may aid in achieving model convergence (see Bates et al., 2015). This is achieved by first creating a model matrix for each random effects term individually, rename and append the so created columns to the data that will be fitted, replace the actual random effects term with the so created variables (concatenated with +), and then fit the model. The variables are renamed by prepending all variables with rei (where i is the number of the random effects term) and replacing ":" with "_by_".
 
 \code{lmer_alt} is simply a wrapper for \code{mixed} that is intended to behave like \code{lmer} (or \code{glmer} if a \code{family} argument is present), but also allows to use \code{||} with factors correctly (by always using \code{expand_re = TRUE}). This means that \code{lmer_alt} per default does not enforce a specific contrast on factors and only returns the \code{"merMod"} object without calculating any additional models or p-values (this is achieved by setting \code{return = "merMod"}). Note that it most likely differs from \code{g/lmer} in how it handles missing values so it is recommended to only pass data without missing values to it!
 
@@ -125,9 +129,11 @@ One consequence of using \code{expand_re = TRUE} is that the data that is fitted
  }
 }
 \note{
-When \code{method = "KR"}, obtaining p-values is known to crash due too insufficient memory or other computational limitations (especially with complex random effects structures). In these cases, the other methods should be used. The RAM demand is a problem especially on 32 bit Windows which only supports up to 2 or 3GB RAM (see \href{https://CRAN.R-project.org/bin/windows/base/rw-FAQ.html}{R Windows FAQ}). Then it is probably a good idea to use methods "LRT" or "PB".
+When \code{method = "KR"}, obtaining p-values is known to crash due too insufficient memory or other computational limitations (especially with complex random effects structures). In these cases, the other methods should be used. The RAM demand is a problem especially on 32 bit Windows which only supports up to 2 or 3GB RAM (see \href{https://CRAN.R-project.org/bin/windows/base/rw-FAQ.html}{R Windows FAQ}). Then it is probably a good idea to use methods "S", "LRT", or "PB".
 
 \code{"mixed"} will throw a message if numerical variables are not centered on 0, as main effects (of other variables then the numeric one) can be hard to interpret if numerical variables appear in interactions. See Dalal & Zickar (2012).
+
+Per default \code{mixed} uses \code{\link[lmerTest]{lmer}}, this can be changed to \code{\link[lme4]{lmer}} by calling: \code{afex_options(lmer_function = "lme4")}
 
 Formulas longer than 500 characters will most likely fail due to the use of \code{\link{deparse}}.
 
@@ -155,8 +161,12 @@ sk_m1 <- mixed(response ~ instruction*inference*type+(inference*type|id), sk2_af
 sk_m1 # prints ANOVA table with nicely rounded numbers (i.e., as characters)
 nice(sk_m1)  # returns the same but without printing potential warnings
 anova(sk_m1) # returns and prints numeric ANOVA table (i.e., not-rounded)
-lmerTest::anova(sk_m1$full_model) # p-value susing Satterthwaite approximation
 summary(sk_m1) # lmer summary of full model
+
+# same model but using Satterthwaite approximation of df, very similar results
+sk_m1b <- mixed(response ~ instruction*inference*type+(inference*type|id), 
+                sk2_aff, method="S")
+nice(sk_m1b)
 
 # suppressing correlation among random slopes:
 # very similar results, but significantly faster and often better convergence. 
@@ -172,7 +182,9 @@ lsmip(sk_m1, instruction~type+inference)
 
 # set up reference grid for custom contrasts:
 # this can be made faster via:
-# lsm.options(disable.pbkrtest = TRUE)
+lsm.options(lmer.df = "Kenward-Roger") # set df for lsmeans to KR
+# lsm.options(lmer.df = "Satterthwaite") # the default
+# lsm.options(lmer.df = "asymptotic") # the fastest, no df
 (rg1 <- lsmeans(sk_m1, c("instruction", "type", "inference")))
 
 # set up contrasts on reference grid:
@@ -194,7 +206,7 @@ contrast(rg1, contr_sk2, adjust = "holm")
 
 ### replicate results from Table 15.4 (Maxwell & Delaney, 2004, p. 789)
 data(md_15.1)
-# random intercept plus slope
+# random intercept plus random slope
 (t15.4a <- mixed(iq ~ timecat + (1+time|id),data=md_15.1))
 
 # to also replicate exact parameters use treatment.contrasts and the last level as base level:
@@ -277,13 +289,13 @@ data(obk.long, package = "afex")
 obk.long$hour <- ordered(obk.long$hour)
 
 # tests only the main effect parameters of hour individually per parameter.
-mixed(value ~ treatment*phase*hour +(1|id), per.parameter = "^hour$", data = obk.long)
+mixed(value ~ treatment*phase*hour +(1|id), per_parameter = "^hour$", data = obk.long)
 
 # tests all parameters including hour individually
-mixed(value ~ treatment*phase*hour +(1|id), per.parameter = "hour", data = obk.long)
+mixed(value ~ treatment*phase*hour +(1|id), per_parameter = "hour", data = obk.long)
 
 # tests all parameters individually
-mixed(value ~ treatment*phase*hour +(1|id), per.parameter = ".", data = obk.long)
+mixed(value ~ treatment*phase*hour +(1|id), per_parameter = ".", data = obk.long)
 
 # example data from package languageR:
 # Lexical decision latencies elicited from 21 subjects for 79 English concrete nouns, 
@@ -293,18 +305,17 @@ data(lexdec, package = "languageR")
 # using the simplest model
 m1 <- mixed(RT ~ Correct + Trial + PrevType * meanWeight + 
     Frequency + NativeLanguage * Length + (1|Subject) + (1|Word), data = lexdec)
-
 m1
-##                  Effect  stat ndf     ddf F.scaling p.value
-## 1               Correct  8.15   1 1627.73      1.00    .004
-## 2                 Trial  7.57   1 1592.43      1.00    .006
-## 3              PrevType  0.17   1 1605.39      1.00     .68
-## 4            meanWeight 14.85   1   75.39      1.00   .0002
-## 5             Frequency 56.53   1   76.08      1.00  <.0001
-## 6        NativeLanguage  0.70   1   27.11      1.00     .41
-## 7                Length  8.70   1   75.83      1.00    .004
-## 8   PrevType:meanWeight  6.18   1 1601.18      1.00     .01
-## 9 NativeLanguage:Length 14.24   1 1555.49      1.00   .0002
+#                  Effect         df         F p.value
+# 1               Correct 1, 1627.73   8.15 **    .004
+# 2                 Trial 1, 1592.43   7.57 **    .006
+# 3              PrevType 1, 1605.39      0.17     .68
+# 4            meanWeight   1, 75.39 14.85 ***   .0002
+# 5             Frequency   1, 76.08 56.53 ***  <.0001
+# 6        NativeLanguage   1, 27.11      0.70     .41
+# 7                Length   1, 75.83   8.70 **    .004
+# 8   PrevType:meanWeight 1, 1601.18    6.18 *     .01
+# 9 NativeLanguage:Length 1, 1555.49 14.24 ***   .0002
 
 # Fitting a GLMM using parametric bootstrap:
 require("mlmRev") # for the data, see ?Contraception

@@ -8,14 +8,14 @@ Imports: stringr, coin, Matrix (>= 1.1.1), pbkrtest (>= 0.4-1), lmerTest, car,
          reshape2, stats, methods
 Description: Provides convenience functions for analyzing factorial experiments using
          ANOVA or mixed models. aov_ez(), aov_car(), and aov_4() allow specification
-         of between, within (i.e., repeated-measures), or mixed between-within
-         (i.e., split-plot) ANOVAs for data in long format (i.e., one observation
-         per row), potentially aggregating multiple observations per individual and
-         cell of the design. mixed() fits mixed models using lme4::lmer() and
-         computes p-values for all fixed effects using either Kenward-Roger
+         of between, within (i.e., repeated-measures), or mixed between-within (i.e.,
+         split-plot) ANOVAs for data in long format (i.e., one observation per row),
+         potentially aggregating multiple observations per individual and cell of the
+         design. mixed() fits mixed models using lme4::lmer() and computes p-values
+         for all fixed effects using either Kenward-Roger or Satterthwaite
          approximation for degrees of freedom (LMM only), parametric bootstrap (LMMs
-         and GLMMs), or likelihood ratio tests (LMMs and GLMMs). afex uses type 3
-         sums of squares as default (imitating commercial statistical software).
+         and GLMMs), or likelihood ratio tests (LMMs and GLMMs). afex uses type 3 sums
+         of squares as default (imitating commercial statistical software).
 URL: https://github.com/singmann/afex
 License: GPL (>=2)
 Encoding: UTF-8
@@ -23,12 +23,11 @@ VignetteBuilder: knitr
 Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"),
          email="singmann+afex@gmail.com"), person(given="Ben", family="Bolker",
          role=c("aut")), person(given="Jake", family="Westfall", role=c("aut")),
-         person(given="Frederik", family="Aust", role=c("aut")),
-         person(given="Søren", family="Højsgaard", role=c("ctb")),
-         person(given="John", family="Fox", role=c("ctb")), person(given="Michael
-         A.", family="Lawrence", role=c("ctb")), person(given="Ulf",
-         family="Mertens", role=c("ctb")), person(given="Jonathan", family="Love",
-         role=c("ctb")) )
-Version: 0.17-3
-Date: 2017-03-09
+         person(given="Frederik", family="Aust", role=c("aut")), person(given="Søren",
+         family="Højsgaard", role=c("ctb")), person(given="John", family="Fox",
+         role=c("ctb")), person(given="Michael A.", family="Lawrence", role=c("ctb")),
+         person(given="Ulf", family="Mertens", role=c("ctb")),
+         person(given="Jonathan", family="Love", role=c("ctb")) )
+Version: 0.17-4
+Date: 2017-03-11
 RoxygenNote: 6.0.1

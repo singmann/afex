@@ -7,10 +7,19 @@
 
     Significant User Visible Changes and New Features
 
-    o   mixed() now per default exports and uses lmerTest::lmer and not 
-        lme4::lmer(). This allows to easily use the Satterthwaite approximation 
-        for obtaining p-values.
+    o   Added Satterthwaite approximation (method="S") to mixed(), which is 
+        implemented via lmerTest. Satterthwaite approximates the deegrees-of-
+        freedom of an F-test, similar to the default Kenward-Roger method, but
+        requires less RAM.
     
+    o   mixed() methods "KR" and "S" are now obtained via tests on the full 
+        model directed. No restricted models are calculated in this case. The 
+        former KR method is still available: method="nested-KR"
+    
+    o   mixed() now per default exports and uses lmerTest::lmer and not 
+        lme4::lmer(). This can be changed via calling 
+        afex_options(lmer_function = "lme4")
+        
     o   All arguments with "." in the name have been renamed to use "_". The old
         names have been deprecated (i.e., still work, but should not be used).
         check.contrasts = check_contrasts, test.intercept = test_intercept,
@@ -61,7 +70,8 @@
     o   all_fit() now uses a data argument correctly and passes it update(). 
         This again allows to use it for data with suppressed correlations. 
         all_fit(... verbose = TRUE) now correctly signals if a fit failed.
-    
+
+
                     *************************
                     ** afex VERSION 0.16-x **
                     *************************

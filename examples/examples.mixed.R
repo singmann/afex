@@ -19,8 +19,12 @@ sk_m1 <- mixed(response ~ instruction*inference*type+(inference*type|id), sk2_af
 sk_m1 # prints ANOVA table with nicely rounded numbers (i.e., as characters)
 nice(sk_m1)  # returns the same but without printing potential warnings
 anova(sk_m1) # returns and prints numeric ANOVA table (i.e., not-rounded)
-lmerTest::anova(sk_m1$full_model) # p-value susing Satterthwaite approximation
 summary(sk_m1) # lmer summary of full model
+
+# same model but using Satterthwaite approximation of df, very similar results
+sk_m1b <- mixed(response ~ instruction*inference*type+(inference*type|id), 
+                sk2_aff, method="S")
+nice(sk_m1b)
 
 # suppressing correlation among random slopes:
 # very similar results, but significantly faster and often better convergence. 
@@ -36,7 +40,9 @@ lsmip(sk_m1, instruction~type+inference)
 
 # set up reference grid for custom contrasts:
 # this can be made faster via:
-# lsm.options(disable.pbkrtest = TRUE)
+lsm.options(lmer.df = "Kenward-Roger") # set df for lsmeans to KR
+# lsm.options(lmer.df = "Satterthwaite") # the default
+# lsm.options(lmer.df = "asymptotic") # the fastest, no df
 (rg1 <- lsmeans(sk_m1, c("instruction", "type", "inference")))
 
 # set up contrasts on reference grid:
@@ -58,7 +64,7 @@ contrast(rg1, contr_sk2, adjust = "holm")
 
 ### replicate results from Table 15.4 (Maxwell & Delaney, 2004, p. 789)
 data(md_15.1)
-# random intercept plus slope
+# random intercept plus random slope
 (t15.4a <- mixed(iq ~ timecat + (1+time|id),data=md_15.1))
 
 # to also replicate exact parameters use treatment.contrasts and the last level as base level:
@@ -141,13 +147,13 @@ data(obk.long, package = "afex")
 obk.long$hour <- ordered(obk.long$hour)
 
 # tests only the main effect parameters of hour individually per parameter.
-mixed(value ~ treatment*phase*hour +(1|id), per.parameter = "^hour$", data = obk.long)
+mixed(value ~ treatment*phase*hour +(1|id), per_parameter = "^hour$", data = obk.long)
 
 # tests all parameters including hour individually
-mixed(value ~ treatment*phase*hour +(1|id), per.parameter = "hour", data = obk.long)
+mixed(value ~ treatment*phase*hour +(1|id), per_parameter = "hour", data = obk.long)
 
 # tests all parameters individually
-mixed(value ~ treatment*phase*hour +(1|id), per.parameter = ".", data = obk.long)
+mixed(value ~ treatment*phase*hour +(1|id), per_parameter = ".", data = obk.long)
 
 # example data from package languageR:
 # Lexical decision latencies elicited from 21 subjects for 79 English concrete nouns, 
@@ -157,18 +163,17 @@ data(lexdec, package = "languageR")
 # using the simplest model
 m1 <- mixed(RT ~ Correct + Trial + PrevType * meanWeight + 
     Frequency + NativeLanguage * Length + (1|Subject) + (1|Word), data = lexdec)
-
 m1
-##                  Effect  stat ndf     ddf F.scaling p.value
-## 1               Correct  8.15   1 1627.73      1.00    .004
-## 2                 Trial  7.57   1 1592.43      1.00    .006
-## 3              PrevType  0.17   1 1605.39      1.00     .68
-## 4            meanWeight 14.85   1   75.39      1.00   .0002
-## 5             Frequency 56.53   1   76.08      1.00  <.0001
-## 6        NativeLanguage  0.70   1   27.11      1.00     .41
-## 7                Length  8.70   1   75.83      1.00    .004
-## 8   PrevType:meanWeight  6.18   1 1601.18      1.00     .01
-## 9 NativeLanguage:Length 14.24   1 1555.49      1.00   .0002
+#                  Effect         df         F p.value
+# 1               Correct 1, 1627.73   8.15 **    .004
+# 2                 Trial 1, 1592.43   7.57 **    .006
+# 3              PrevType 1, 1605.39      0.17     .68
+# 4            meanWeight   1, 75.39 14.85 ***   .0002
+# 5             Frequency   1, 76.08 56.53 ***  <.0001
+# 6        NativeLanguage   1, 27.11      0.70     .41
+# 7                Length   1, 75.83   8.70 **    .004
+# 8   PrevType:meanWeight 1, 1601.18    6.18 *     .01
+# 9 NativeLanguage:Length 1, 1555.49 14.24 ***   .0002
 
 # Fitting a GLMM using parametric bootstrap:
 require("mlmRev") # for the data, see ?Contraception

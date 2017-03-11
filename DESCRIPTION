@@ -3,9 +3,8 @@ Type: Package
 Title: Analysis of Factorial Experiments
 Depends: R (>= 3.1.0), lme4 (>= 1.1-8), lsmeans (>= 2.17)
 Suggests: ascii, xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown, lattice,
-         multcomp, testthat, mlmRev, dplyr,dfoptim
-Imports: stringr, coin, Matrix (>= 1.1.1), pbkrtest (>= 0.4-1), lmerTest, car,
-         reshape2, stats, methods
+         multcomp, testthat, mlmRev, dplyr,dfoptim, Matrix
+Imports: stringr, coin, pbkrtest (>= 0.4-1), lmerTest, car, reshape2, stats, methods
 Description: Provides convenience functions for analyzing factorial experiments using
          ANOVA or mixed models. aov_ez(), aov_car(), and aov_4() allow specification
          of between, within (i.e., repeated-measures), or mixed between-within (i.e.,

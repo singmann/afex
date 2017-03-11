@@ -133,14 +133,10 @@
 #'
 #'
 #' @import pbkrtest
-#' @importFrom lme4 glmer nobars getME fixef isREML
-##### @importFrom lmerTest lmer
+#' @importFrom lme4 glmer nobars getME isREML
 #' @importFrom stringr str_replace
-#' @importMethodsFrom Matrix t isSymmetric "%*%" solve diag
-#' @importClassesFrom Matrix Matrix
-#' @importFrom Matrix Matrix sparseMatrix rankMatrix
 #' @importFrom parallel clusterCall clusterExport clusterEvalQ clusterApplyLB
-#' @importFrom stats logLik terms as.formula contrasts<- model.matrix model.frame anova vcov
+#' @importFrom stats logLik terms as.formula contrasts<- model.matrix model.frame anova
 #' @importFrom methods is
 #' @encoding UTF-8
 #' 
@@ -555,33 +551,6 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       #title <- "Analysis of Variance Table\n"
       #topnote <- paste("Model ", format(1L:nmodels), ": ", variables, 
       #    sep = "", collapse = "\n")
-    } else if (method[1] == "F") {
-      #browser()
-      tests <- vector("list", length(fixed.effects))
-      getFvalue <- function(largeModel, smallModel) {
-        #browser()
-        L  <- .model2restrictionMatrix(largeModel, smallModel)
-        #PhiA  <- vcovAdj(largeModel, details = 0)
-        PhiA  <- vcov(largeModel)
-        beta <- fixef(largeModel)
-        betaH <- 0
-        betaDiff <- cbind( beta - betaH )
-        Wald  <- as.numeric(t(betaDiff) %*% t(L) %*% solve(L%*%PhiA%*%t(L), L%*%betaDiff))
-        q <- rankMatrix(L)
-        FstatU <- Wald/q      
-        list(df1 = q, F = FstatU)
-      }
-      for (c in seq_along(fixed.effects)) {
-        if (type == 3 | type == "III") tests[[c]] <- getFvalue(full_model, fits[[c]])
-        else if (type == 2 | type == "II") {
-          order.c <- effect.order[c]
-          tmpModel  <- full_model[[order.c]] 
-          tests[[c]] <- getFvalue(tmpModel, fits[[c]])
-        }
-      }
-      names(tests) <- fixed.effects
-      df.out <- data.frame(Effect = fixed.effects, F = vapply(tests, "[[", i = "F", 0), ndf = vapply(tests, "[[", i = "df1", 0), p.value = NA, stringsAsFactors = FALSE)
-      rownames(df.out) <- NULL
     } else stop('Only methods "KR", "PB", "LRT", or "nested-KR" currently implemented.')
     
   } 
@@ -728,51 +697,3 @@ lsm.basis.mixed <- function(object, trms, xlev, grid, ...) {
   lsm.basis(object[[full_model_name]], trms, xlev, grid, ...)
 }
 
-
-
-
-
-
-### old stuff (actually not usable right now)
-# is.mixed <- function(x) inherits(x, "mixed")
-
-## some code copied from pbkrtest.
-
-.restrictionMatrixBA<-function(B,A) {
-  ## <A> in <B>
-  ## determine L such that  <A>={Bb| b in Lb=0}
-  d <- rankMatrix(cbind(A,B)) - rankMatrix(B)
-  if (d > 0) {
-    stop('Error:  <A> not subspace of <B> \n')
-  }
-  Q  <- qr.Q(qr(cbind(A,B)))
-  Q2 <- Q[,(rankMatrix(A)+1):rankMatrix(B)] 
-  L  <- t(Q2)  %*% B
-  ##make rows of L2 orthogonal
-  L <-t(qr.Q(qr(t(L))))
-  L
-}
-
-.model2restrictionMatrix <- function (largeModel, smallModel) {
-  L <- if(is.matrix(smallModel)) {
-    ## ensures  that L is of full row rank:
-    LL <- smallModel
-    q  <- rankMatrix(LL)
-    if (q < nrow(LL) ){
-      t(qr.Q(qr(t(LL)))[,1:qr(LL)$rank])
-    } else {
-      smallModel
-    }
-  } else  { #smallModel is mer model
-    .restrictionMatrixBA(getME(largeModel,'X'),getME(smallModel,'X'))
-  }
-  L<-.makeSparse(L)
-  L
-}
-
-.makeSparse<-function(X) {
-  X<-as.matrix(X)
-  w<-cbind(c(row(X)),c(col(X)),c(X))
-  w<-w[abs(w[,3])>1e-16,,drop=FALSE]
-  Y<-sparseMatrix(w[,1],w[,2],x=w[,3],dims=dim(X))
-}

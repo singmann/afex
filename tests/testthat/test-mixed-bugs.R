@@ -45,3 +45,9 @@ test_that("nice.mixed, print.mixed, and anova.mixed can handle objects with full
   expect_is(anova(sk_m2), "data.frame")
   expect_is(anova(t2), "data.frame")
 })
+
+test_that("lmer_alt works with GLMMs", {
+  if (require("mlmRev")) {
+    expect_that(lmer_alt(use ~ age*urban + (1 | district), family = binomial, data = Contraception, progress=FALSE), is_a("glmerMod"))
+  }
+})

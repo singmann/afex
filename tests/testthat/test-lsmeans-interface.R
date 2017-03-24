@@ -3,13 +3,13 @@ context("interplay with lsmeans")
 
 test_that("ANOVA functions work with lsmeans", {
   data(sk2011.1)
-  a1 <- aov_ez("id", "response", sk2011.1, between = "instruction", within = c("inference", "plausibility"), fun.aggregate = mean)
+  a1 <- aov_ez("id", "response", sk2011.1, between = "instruction", within = c("inference", "plausibility"), fun_aggregate = mean)
   expect_is(lsmeans(a1, ~ inference), "lsmobj")
-  a2 <- aov_ez("id", "response", sk2011.1, between = "instruction", within = c("inference"), fun.aggregate = mean)
+  a2 <- aov_ez("id", "response", sk2011.1, between = "instruction", within = c("inference"), fun_aggregate = mean)
   expect_is(lsmeans(a2, ~ inference), "lsmobj")
-  a3 <- aov_ez("id", "response", sk2011.1, within = c("inference"), fun.aggregate = mean)
+  a3 <- aov_ez("id", "response", sk2011.1, within = c("inference"), fun_aggregate = mean)
   expect_is(lsmeans(a3, ~ inference), "lsmobj")
-  a4 <- aov_ez("id", "response", sk2011.1, between = "instruction", fun.aggregate = mean)
+  a4 <- aov_ez("id", "response", sk2011.1, between = "instruction", fun_aggregate = mean)
   expect_is(lsmeans(a4, ~ instruction), "lsmobj")
 })
 

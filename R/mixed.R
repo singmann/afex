@@ -261,7 +261,6 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   if ("family" %in% names(mf)) {
     mf[[1]] <- as.name("glmer")
     use_reml <- FALSE
-    if (!(method[1] %in% c("LRT", "PB"))) stop("GLMMs can only be estimated with 'LRT' or 'PB'.")
   } else {
     if (afex_options("lmer_function") == "lmerTest") mf[[1]] <- quote(lmerTest::lmer)
     else if (afex_options("lmer_function") == "lme4") mf[[1]] <- quote(lme4::lmer)
@@ -278,6 +277,9 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   if (return == "merMod") {
     out <- eval(mf)
     return(out)
+  }
+  if ("family" %in% names(mf)) {
+    if (!(method[1] %in% c("LRT", "PB"))) stop("GLMMs can only be estimated with 'LRT' or 'PB'.")
   }
   if (method[1] %in% c("KR", "S")) {  ## do not calculate nested models for these methods
     if (progress) cat(str_c("Fitting one lmer() model. "))

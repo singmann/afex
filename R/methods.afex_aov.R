@@ -113,6 +113,7 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
   attr(anova_table, "es") <- es
   attr(anova_table, "correction") <- if(length(attr(object, "within")) > 0 && any(vapply(object$data$long[, attr(object, "within"), drop = FALSE], nlevels, 0) > 2)) correction else "none"
   attr(anova_table, "observed") <- if(!is.null(observed) & length(observed) > 0) observed else character(0)
+  attr(anova_table, "sig_symbols") <- if(!is.null(dots$sig_symbols)) dots$sig_symbols else afex_options("sig_symbols")
   anova_table
 }
 
@@ -122,6 +123,16 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
 print.afex_aov <- function(x, ...) {
   out <- nice(x$anova_table, ...)
   print(out)
+  
+  sleg <- paste(paste(c(0, 0.001, 0.01, 0.05, 0.1), rev(paste0("‘", c(" ", gsub(" ", "", attr(x$anova_table, "sig_symbols"))), "’")), collapse = " "), 1)
+  width <- getOption("width")
+  
+  if(width < nchar(sleg)) {
+    sleg <- strwrap(sleg, width = width - 2, prefix = "  ")
+  } 
+  
+  cat("---\nSignif. codes:  ", sleg, sep = "", fill = getOption("width") + 4 + max(nchar(sleg, "bytes") - nchar(sleg)))
+  
   invisible(out)
 }
 

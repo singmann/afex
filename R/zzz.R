@@ -11,7 +11,8 @@
     afex.es_aov = "ges",
     afex.correction_aov = "GG",
     afex.factorize = TRUE,
-    afex.lmer_function = "lmerTest"
+    afex.lmer_function = "lmerTest",
+    afex.sig_symbols = c(" +", " *", " **", " ***")
   )
   toset <- !(names(op.afex) %in% names(op))
   if(any(toset)) options(op.afex[toset])

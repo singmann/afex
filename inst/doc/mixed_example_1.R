@@ -59,7 +59,6 @@ xyplot(mean ~ density:frequency|task+stimulus, agg_p, jitter.x = TRUE, pch = 20,
        }) + 
 bwplot(mean ~ density:frequency|task+stimulus, agg_p, pch="|", do.out = FALSE)
 
-
 ## ---- fig.width=7, fig.height=6---------------------------------------------------------
 agg_i <- fhch %>% group_by(item, task, stimulus, density, frequency) %>%
   summarise(mean = mean(log_rt)) %>%
@@ -72,7 +71,6 @@ xyplot(mean ~ density:frequency|task+stimulus, agg_i, jitter.x = TRUE, pch = 20,
          panel.points(tmp$x, tmp$y, pch = 13, cex =1.5)
        }) + 
 bwplot(mean ~ density:frequency|task+stimulus, agg_i, pch="|", do.out = FALSE)
-
 
 ## ---- eval = FALSE----------------------------------------------------------------------
 #  
@@ -120,7 +118,36 @@ res_lrt
 ## ---------------------------------------------------------------------------------------
 nice_lrt[[2]]
 
+## ---------------------------------------------------------------------------------------
+lsm.options(lmer.df = "asymptotic") # also possible: 'satterthwaite', 'kenward-roger'
+emm_i1 <- lsmeans(m2s, "frequency", by = c("stimulus", "task"))
+emm_i1
+
+## ---------------------------------------------------------------------------------------
+contrast(pairs(emm_i1), by = NULL, adjust = "holm")
+
+## ---------------------------------------------------------------------------------------
+emm_i1b <- summary(contrast(emm_i1, by = NULL))
+emm_i1b[,c("estimate", "SE")] <- exp(emm_i1b[,c("estimate", "SE")])
+emm_i1b
+
+## ---------------------------------------------------------------------------------------
+emm_i2 <- lsmeans(m2s, c("density", "frequency"), by = c("stimulus", "task"))
+con1 <- contrast(emm_i2, "trt.vs.ctrl1", by = c("frequency", "stimulus", "task")) # density
+con2 <- contrast(con1, "trt.vs.ctrl1", by = c("contrast", "stimulus", "task")) 
+test(con2, joint = TRUE, by = c("stimulus", "task"))
+
+## ---------------------------------------------------------------------------------------
+emm_i2
+# desired contrats:
+des_c <- list(
+  ll_hl = c(1, -1, 0, 0),
+  lh_hh = c(0, 0, 1, -1)
+  )
+contrast(contrast(emm_i2, des_c), by = NULL, adjust = "holm")
+
 ## ---- echo=FALSE, eval = FALSE----------------------------------------------------------
+#  ### OLD STUFF BELOW. PLEASE IGNORE.
 #  load("freeman_models.rda")
 #  load("../freeman_models_all.rda")
 #  m1lrt$restricted_models <- list(NULL)

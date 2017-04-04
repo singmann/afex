@@ -22,7 +22,7 @@ This documents reanalysis response time data from an Experiment performed by Fre
 
 ## Description of Experiment and Data
 
-The data are lexical decision and word naming latencies for 300 words and 300 nonwords from 45 participants presented in \textcite{freeman_item_2010}. The 300 items in each \texttt{stimulus} condition were selected to form a balanced $2 \times 2$ design with factors neighborhood \texttt{density} (low versus high) and \texttt{frequency} (low versus high). The \texttt{task} was a between subjects factor: 25 participants worked on the lexical decision task and 20 participants on the naming task. After excluding erroneous responses each participants responded to between 135 and 150 words and between 124 and 150 nonwords. We analyzed log RTs which showed a approximately normal picture. 
+The data are lexical decision and word naming latencies for 300 words and 300 nonwords from 45 participants presented in Freeman, Heathcote, Chalmers, and Hockley (2010). The 300 items in each `stimulus` condition were selected to form a balanced $2 \times 2$ design with factors neighborhood `density` (low versus high) and `frequency` (low versus high). The `task` was a between subjects factor: 25 participants worked on the lexical decision task and 20 participants on the naming task. After excluding erroneous responses each participants responded to between 135 and 150 words and between 124 and 150 nonwords. We analyzed log RTs which showed an approximately normal picture. 
 
 ## Data and R Preperation
 
@@ -86,7 +86,7 @@ histogram(~rt|rt_type, fhch_long, breaks = "Scott", type = "density",
 
 The main factors in the experiment were the between-subjects factor `task` (`naming` vs. `lexdec`), and the within-subjects factors `stimulus` (`word` vs. `nonword`), `density` (`low` vs. `high`), and frequency (`low` vs. `high`). Before running an analysis it is a good idea to visually inspect the data to gather some expectations regarding the results. Should the statistical results dramatically disagree with the expectations this suggests some type of error along the way (e.g., model misspecification) or at least encourages a through check to make sure everything is correct. We first begin by plotting the data aggregated by-participant. 
 
-In each plot we plot the raw data in the background. To make the individual data points visible we add some `jitter` on the x-axis and choose `pch` and `alpha` values such that we see where more data points are. Then we add the mean as a x in a circle. Both of this is done in the same call to `xyplot` using a custom panel function. Finally, we combine this plot with a simple boxplot using `bwplot`.
+In each plot we plot the raw data in the background. To make the individual data points visible we add some `jitter` on the x-axis and choose `pch` and `alpha` values such that we see where more data points are. Then we add the mean as a x in a circle. Both of this is done in the same call to `xyplot` using a custom panel function. Finally, we combine this plot with a simple boxplot using `bwplot`. 
 
 ```{r, fig.width=7, fig.height=6}
 agg_p <- fhch %>% group_by(id, task, stimulus, density, frequency) %>%
@@ -100,7 +100,6 @@ xyplot(mean ~ density:frequency|task+stimulus, agg_p, jitter.x = TRUE, pch = 20,
          panel.points(tmp$x, tmp$y, pch = 13, cex =1.5)
        }) + 
 bwplot(mean ~ density:frequency|task+stimulus, agg_p, pch="|", do.out = FALSE)
-
 ```
 
 Now we plot the same data but aggregated across items:
@@ -117,15 +116,15 @@ xyplot(mean ~ density:frequency|task+stimulus, agg_i, jitter.x = TRUE, pch = 20,
          panel.points(tmp$x, tmp$y, pch = 13, cex =1.5)
        }) + 
 bwplot(mean ~ density:frequency|task+stimulus, agg_i, pch="|", do.out = FALSE)
-
 ```
 
 These two plots suggest several things:
-* Responses to nonwords appear slower than responses to words, at least for the `naming` task.
+
+* Responses to `nonwords` appear slower than responses to `words`, at least for the `naming` task.
 * `lexdec` responses appear to be slower than `naming` responses, particularly in the `word` condition.
 * In the `nonword` and `naming` condition we see a clear effect of `frequency` with slower responses to `high` than `low` `frequency` words. 
 * In the `word` conditions the `frequency` pattern appear opposite to what just described: faster responses to `low` `frequency` than to `high` `frequency` words.
-* `density` appears to have no effect, perhaps with the exception of the `nonword` `lexdec` decision.
+* `density` appears to have no effect, perhaps with the exception of the `nonword` `lexdec` condition.
 
 ## Model Setup
 
@@ -196,9 +195,9 @@ m4lrt <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*freq
                control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
 ```
 
-Because the resulting `mixed` objects are of considerable size, we do not include the full objects, but only the resulting ANOVA tables and `data.frame`s (`nice_lrt` is a list containing the result from calling `nice` on the objects, `anova_lrt` contains the result from calling `anova`). 
+Because the resulting `mixed` objects are of considerable size, we do not include the full objects, but only the resulting ANOVA tables and `data.frames` (`nice_lrt` is a list containing the result from calling `nice` on the objects, `anova_lrt` contains the result from calling `anova`). 
 
-Before considering the results, we again first consider the warnings emitted when fitting the models. Because methods `'LRT'` and `'PB'` fit one `full_model` and one `restricted_model` for each effect (i.e., term), there can be more warnings than for methods `'KR'` and `'S'` which only fit one model (the `full_model`). And this is exactly what happens. For `m1lrt` there are 11 convergence warnings, almost one per fitted model. However, none of those immediately invalidates the results. This is different for models 2 and 3 for both of which warnings indicate that `nested model(s) provide better fit than full model`. What this warning means that the `full_model` does not provide a better fit than at least one of the `restricted_model`, which is mathematically impossible as the `restricted_model`s are nested within the full model (i.e., they result from setting one or several parameters equal to 0, so the `full_model` can always provide an at least as good account as the `restricted_model`s). Model 4 finally shows no warnings.
+Before considering the results, we again first consider the warnings emitted when fitting the models. Because methods `'LRT'` and `'PB'` fit one `full_model` and one `restricted_model` for each effect (i.e., term), there can be more warnings than for methods `'KR'` and `'S'` which only fit one model (the `full_model`). And this is exactly what happens. For `m1lrt` there are 11 convergence warnings, almost one per fitted model. However, none of those immediately invalidates the results. This is different for models 2 and 3 for both of which warnings indicate that `nested model(s) provide better fit than full model`. What this warning means that the `full_model` does not provide a better fit than at least one of the `restricted_model`, which is mathematically impossible as the `restricted_models` are nested within the full model (i.e., they result from setting one or several parameters equal to 0, so the `full_model` can always provide an at least as good account as the `restricted_models`). Model 4 finally shows no warnings.
 
 The following code produces a single output comparing models 1 and 4 next to each other. The results show basically the same pattern as obtained with the Satterthwaite approximation. Even the $p$-values are extremely similar to the $p$-values of the Satterthwaite models. The only 'difference' is that the `stimulus:density:frequency` three-way interaction is significant in each case now, although only barely.
 
@@ -216,9 +215,70 @@ We can also compare this with the results from model 3. Although the `full_model
 nice_lrt[[2]]
 ```
 
-### Summary
+### Summary of Results
 
-## Follow-Up Analyses and Plots
+Fortunately, the results from all models that actually produced results and converged without a critical warning (e.g., one critical warning is that a `restricted_model` provides a better fit than the `full_model`) agreed very strongly providing a high degree of confidence in the results. This might not be too surprising given the comparatively large number of total data points and the fact that each random effect grouping factor has a considerable number of levels (way above 20 for both participants and items). This also suggests that the convergence warnings are likely false positives; the models seem to have converged successfully to the maximum likelihood estimate, or at least to a value very near the maximum likelihood estimate. How further reducing the random effects structure (e.g., removing the random slopes for the highest interaction) affects the results is left as an exercise for the reader.
+
+In terms of the significant findings, there are many that seem to be in line with the descriptive results described above. For example, the highly significant effect of `task:stimulus:frequency` with $F(1, 190.61) = 109.33$, $p < .0001$ (values from `m2s`), appears to be in line with the observation that the frequency effect appears to change its sign depending on the `task:stimulus` cell (with `nonword` and `naming` showing the opposite patterns than the other three conditions). Consequently, we start by investigating this interaction further below.
+
+## Follow-Up Analyses
+
+Before investigating the significant interaction in detail it is a good idea to remind oneself what a significant interaction represent on a conceptual level; that one or multiple of the variables in the interaction moderate (i.e., affect) the effect of the other variable or variables. Consequently, there are several ways to investigate a significant interaction. Each of the involved variables can be seen as the moderating variables and each of the variables can be seen as the effect of interest. Which one of those question is of interest in a given situation highly depends on the actual data and research question and multiple views can be 'correct' in a given situation.
+
+In addition to this conceptual issue, there are also multiple technical ways to investigate a significant interaction. One approach not followed here is to split the data according to the moderating variables and compute the statistical model again for the splitted data sets with the effect variable(s) as remaining fixed effect. This approach, also called _simple effects_ analysis, is, for example, recommended by Maxwell and Delaney (2004) as it does not assume variance homogeneity and is faithful to the data at each level. The approach taken here is to simply perform the test on the fitted full model. This approach assumes variance homogeneity (i.e., that the variances in all groups are homogeneous) and has the added benefit that it is computationally relatively simple. In addition, it can all be achieved using the framework provided by `lsmeans` (Lenth, 2015).
+
+### task:stimulus:frequency Interaction
+
+Our interest in the beginning is on the effect of `frequency` by `task:stimulus` combination. So let us first look at the estimated marginal means os this effect. In `lsmeans` parlance these estimated means are called 'least-square means' because of historical reasons, but because of lack of least-square estimation in mixed models we prefer the term estimated marginal means, or EMMs for short. Those can be obtained in the following way. To prevent `lsmeans` to calculate the $df$ for the EMMs (which can be quite costly), we use asymptotic $df$s (i.e., $z$ values and tests).
+
+```{r}
+lsm.options(lmer.df = "asymptotic") # also possible: 'satterthwaite', 'kenward-roger'
+emm_i1 <- lsmeans(m2s, "frequency", by = c("stimulus", "task"))
+emm_i1
+```
+
+`lsmeans` requires to first specify the variable(s) one wants to treat as the effect variable(s) (here `frequency`) and then allows to specify condition variables. The returned values are in line with our observation that the `nonword` and `naming` condition diverges from the other three. But is there actual evidence that the effect flips?
+
+```{r}
+contrast(pairs(emm_i1), by = NULL, adjust = "holm")
+```
+
+Here we first use the `pairs` function which provides us with a pairwise test of the effect of `frequency` in each `task:stimulus` combination. Then we want to combined the four tests within one object to obtain a familywise error rate correction which we do via `contrast(..., by = NULL)` (i.e., we revert the effect of the `by` statement from the earlier `lsmeans` call) and finally we select the `holm` method for controlling for family wise error rate (the Holm mrethod is uniformly more powerful than the Bonferroni method and hence my preferred method). All these function are part of `lsmeans`. 
+
+We see that the results are exactly as expected. In the `nonword` and `naming` condition we have a clear negative effect of frequency while in the other three conditions it is clearly positive. We could now also use the EMMs and retransform them onto the response scale (i.e., RTs) which we could use for plotting. Note that the $p$-values in this ouput report the test whether or ns left as an exercise for the readerot a value is significantly above 0...
+
+```{r}
+emm_i1b <- summary(contrast(emm_i1, by = NULL))
+emm_i1b[,c("estimate", "SE")] <- exp(emm_i1b[,c("estimate", "SE")])
+emm_i1b
+```
+
+### task:stimulus:density:frequency Interaction
+
+Let us now take a look at the significant four-way interaction of `task:stimulus:density:frequency`, $F(1, 111.32) = 10.07$, $p = .002$. Here we might be interested in a slightly more difficult question namely whether the `density:frequency` interaction varies across `task:stimulus` conditions. If we again look at the figures above, it appears that there is a difference between `low:low` and `high:low` in the `nonword` and `lexdec` condition, but not in the other conditions. We again first begin by obtaining the EMMs. However, the actual values are not interesting at the moment, we are basically only interested in the interaction for each `task:stimulus` condition. Therefore, we use the EMMs to create two consecutive contrasts, the first one for `density` and then for `frequency` using the fist contrast. Then we run a joint test conditional on the `task:stimulus` conditions.
+
+```{r}
+emm_i2 <- lsmeans(m2s, c("density", "frequency"), by = c("stimulus", "task"))
+con1 <- contrast(emm_i2, "trt.vs.ctrl1", by = c("frequency", "stimulus", "task")) # density
+con2 <- contrast(con1, "trt.vs.ctrl1", by = c("contrast", "stimulus", "task")) 
+test(con2, joint = TRUE, by = c("stimulus", "task"))
+```
+
+This test indeed shows that the `density:frequency` interaction is only significant in the `nonword` and `lexdec` condition. Next, let's see if we can unpack this interaction meaningfully. For this we compare `low:low` and `high:low` in each of the four groups. And to produce a more interesting example, we also compare `low:high` and `high:high`. This can simply be done by specifying a list of custom contrasts on the EMMs (or reference grid in `lsmeans` parlance) which can be passed again to the `contrast` function. To control for the family wise error rate across all tests, we use `contrast` a second time on the result. Note that although we entered the variables into `lsmeans` in the same order as into our plot call above, the order of the four EMMs differs.
+
+```{r}
+emm_i2
+# desired contrats:
+des_c <- list(
+  ll_hl = c(1, -1, 0, 0),
+  lh_hh = c(0, 0, 1, -1)
+  )
+contrast(contrast(emm_i2, des_c), by = NULL, adjust = "holm")
+```
+
+In contrast to our expectation, the results show two significant effects. As expected, in the `nonword` and `lexdec` condition the EMM of `low:high` is smaller than the EMM for `high:high`, $z = -6.30$, $p < .0001$. However, in the `nonword` and `naming` condition we found the opposite pattern; the EMM of `low:high` is larger than the EMM for `high:high`, $z = 3.65$, $p = .002$. For all other effects $|z| < 1.3$, $p > .99$.
+
+
 
 ## References 
 
@@ -226,9 +286,11 @@ nice_lrt[[2]]
 * Bretz, F., Hothorn, T., & Westfall, P. H. (2011). _Multiple comparisons using R_. Boca Raton, FL: CRC Press. http://cran.r-project.org/package=multcomp
 * Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in recognition memory for words. _Journal of Memory and Language_, 62(1), 1-18. https://doi.org/10.1016/j.jml.2009.09.004
 * Lenth, R. V. (2015). _lsmeans: Least-Squares Means_. R package version 2.16-4. http://cran.r-project.org/package=lsmeans
+* Maxwell, S. E., & Delaney, H. D. (2004). Designing experiments and analyzing data: a model-comparisons perspective. Mahwah, N.J.: Lawrence Erlbaum Associates.
 
 
 ```{r, echo=FALSE, eval = FALSE}
+### OLD STUFF BELOW. PLEASE IGNORE.
 load("freeman_models.rda")
 load("../freeman_models_all.rda")
 m1lrt$restricted_models <- list(NULL)

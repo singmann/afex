@@ -127,6 +127,9 @@ emm_i1
 contrast(pairs(emm_i1), by = NULL, adjust = "holm")
 
 ## ---------------------------------------------------------------------------------------
+summary(as.glht(contrast(pairs(emm_i1), by = NULL)), test = adjusted("holm"))
+
+## ---------------------------------------------------------------------------------------
 emm_i1b <- summary(contrast(emm_i1, by = NULL))
 emm_i1b[,c("estimate", "SE")] <- exp(emm_i1b[,c("estimate", "SE")])
 emm_i1b

@@ -50,7 +50,7 @@ nice <- function(object, ...) UseMethod("nice", object)
 #' @rdname nice
 #' @method nice afex_aov
 #' @export
-nice.afex_aov <- function(object, es = attr(object$anova_table, "es"), observed = attr(object$anova_table, "observed"), correction = attr(object$anova_table, "correction"), MSE = NULL, intercept = NULL, p_adjust_method = attr(object$anova_table, "p_adjust_method"), sig_symbols = c(" +", " *", " **", " ***"), ...) { 
+nice.afex_aov <- function(object, es = attr(object$anova_table, "es"), observed = attr(object$anova_table, "observed"), correction = attr(object$anova_table, "correction"), MSE = NULL, intercept = NULL, p_adjust_method = attr(object$anova_table, "p_adjust_method"), sig_symbols = attr(object$anova_table, "sig_symbols"), ...) { 
   # if(is.null(es)) { # Defaults to afex_options("es") because of default set in anova.afex_aov
   #   es <- c("pes", "ges")[c("pes", "ges") %in% colnames(object$anova_table)]
   # }
@@ -76,7 +76,7 @@ nice.afex_aov <- function(object, es = attr(object$anova_table, "es"), observed 
 #' @rdname nice
 #' @method nice anova
 #' @export
-nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = c(" +", " *", " **", " ***"), sig.symbols, ...) {
+nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = attr(object, "sig_symbols"), sig.symbols, ...) {
   dots <- list(...)
   if(is.null(MSE)) { # Defaults to TRUE because of default set in anova.afex_aov
     MSE <- "MSE" %in% colnames(object)
@@ -87,6 +87,8 @@ nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = c(" +
   if("sig.symbols" %in% names(dots)) {  #(!missing(sig.symbols)) {
     warn_deprecated_arg("sig.symbols", "sig_symbols")
     sig_symbols <- dots$sig.symbols
+  } else if(is.null(sig_symbols)) {
+    sig_symbols <- afex_options("sig_symbols")
   }
   
   

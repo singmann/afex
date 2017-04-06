@@ -11,7 +11,8 @@
 \usage{
 \method{anova}{afex_aov}(object, es = afex_options("es_aov"),
   observed = NULL, correction = afex_options("correction_aov"),
-  MSE = TRUE, intercept = FALSE, p_adjust_method = NULL, ...)
+  MSE = TRUE, intercept = FALSE, p_adjust_method = NULL,
+  sig_symbols = afex_options("sig_symbols"), ...)
 
 \method{print}{afex_aov}(x, ...)
 
@@ -36,6 +37,8 @@
 
 \item{p_adjust_method}{\code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details).}
 
+\item{sig_symbols}{Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig_symbols = ""} will display the stars but not the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols. The default is given by \code{afex_options("sig_symbols")}.}
+
 \item{...}{further arguments passed through, see description of return value for details.}
 
 \item{trms, xlev, grid}{same as for \code{\link{lsm.basis}}.}
@@ -57,5 +60,5 @@ Exploratory ANOVA, for which no detailed hypotheses have been specified a priori
 \code{p_adjust_method} defaults to the method specified in the call to \code{\link{aov_car}} in \code{anova_table}. If no method was specified and \code{p_adjust_method = NULL} p-values are not adjusted.
 }
 \references{
-Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1–8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
+Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1-8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
 }

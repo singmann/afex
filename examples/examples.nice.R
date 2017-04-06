@@ -4,7 +4,9 @@
 data(md_12.1)
 # create object of class afex_aov:
 rmd <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
+rmd
 nice(rmd)
+str(nice(rmd))
 # use different es:
 nice(rmd, es = "pes") # noise: .82
 nice(rmd, es = "ges") # noise: .39
@@ -23,7 +25,7 @@ tmp.aov <- aov_car(value ~ treatment * gender + Error(id/phase*hour), data = obk
 
 nice(tmp.aov, observed = "gender")
 
-nice(tmp.aov, observed = "gender", sig.symbols = rep("", 4))
+nice(tmp.aov, observed = "gender", sig_symbols = rep("", 4))
 
 \dontrun{
 # use package ascii or xtable for formatting of tables ready for printing.

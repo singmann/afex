@@ -8,7 +8,7 @@
 #' @param observed character vector referring to the observed (i.e., non manipulated) variables/effects in the design. Important for calculation of generalized eta-squared (ignored if \code{es} is not \code{"ges"}), see details.
 #' @param correction Character. Which sphericity correction of the degrees of freedom should be reported for the within-subject factors.  The default is given by \code{afex_options("correction_aov")}, which is initially set to \code{"GG"} corresponding to the Greenhouse-Geisser correction. Possible values are \code{"GG"}, \code{"HF"} (i.e., Hyunh-Feldt correction), and \code{"none"} (i.e., no correction).
 #' @param p_adjust_method \code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details). The default \code{NULL} corresponds to no adjustment.
-#' @param sig_symbols Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig_symbols = ""} will display the stars but not the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols.
+#' @param sig_symbols Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig_symbols = ""} will display the stars but not the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols. The default is given by \code{afex_options("sig_symbols")}.
 #' @param MSE logical. Should the column containing the Mean Sqaured Error (MSE) be displayed? Default is \code{TRUE}.
 #' @param intercept logical. Should intercept (if present) be included in the ANOVA table? Default is \code{FALSE} which hides the intercept.
 #' @param sig.symbols deprecated argument, only for backwards compatibility, use \code{"sig_symbols"} instead.
@@ -140,7 +140,7 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) 
 #' @rdname nice
 #' @method nice mixed
 #' @export
-nice.mixed <- function(object, sig_symbols = c(" +", " *", " **", " ***"), ...) {
+nice.mixed <- function(object, sig_symbols = afex_options("sig_symbols"), ...) {
   anova_table <- object$anova_table
   dots <- list(...)
   if("sig.symbols" %in% names(dots)) {  #(!missing(sig.symbols)) {

@@ -15,12 +15,13 @@ nice(object, ...)
   observed = attr(object$anova_table, "observed"),
   correction = attr(object$anova_table, "correction"), MSE = NULL,
   intercept = NULL, p_adjust_method = attr(object$anova_table,
-  "p_adjust_method"), sig_symbols = c(" +", " *", " **", " ***"), ...)
+  "p_adjust_method"), sig_symbols = attr(object$anova_table, "sig_symbols"),
+  ...)
 
 \method{nice}{anova}(object, MSE = NULL, intercept = NULL,
-  sig_symbols = c(" +", " *", " **", " ***"), sig.symbols, ...)
+  sig_symbols = attr(object, "sig_symbols"), sig.symbols, ...)
 
-\method{nice}{mixed}(object, sig_symbols = c(" +", " *", " **", " ***"), ...)
+\method{nice}{mixed}(object, sig_symbols = afex_options("sig_symbols"), ...)
 
 \method{print}{nice_table}(x, ...)
 }
@@ -41,7 +42,7 @@ nice(object, ...)
 
 \item{p_adjust_method}{\code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details). The default \code{NULL} corresponds to no adjustment.}
 
-\item{sig_symbols}{Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig_symbols = ""} will display the stars but not the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols.}
+\item{sig_symbols}{Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig_symbols = ""} will display the stars but not the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols. The default is given by \code{afex_options("sig_symbols")}.}
 
 \item{sig.symbols}{deprecated argument, only for backwards compatibility, use \code{"sig_symbols"} instead.}
 }
@@ -70,7 +71,9 @@ Exploratory ANOVA, for which no detailed hypotheses have been specified a priori
 data(md_12.1)
 # create object of class afex_aov:
 rmd <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
+rmd
 nice(rmd)
+str(nice(rmd))
 # use different es:
 nice(rmd, es = "pes") # noise: .82
 nice(rmd, es = "ges") # noise: .39
@@ -89,7 +92,7 @@ tmp.aov <- aov_car(value ~ treatment * gender + Error(id/phase*hour), data = obk
 
 nice(tmp.aov, observed = "gender")
 
-nice(tmp.aov, observed = "gender", sig.symbols = rep("", 4))
+nice(tmp.aov, observed = "gender", sig_symbols = rep("", 4))
 
 \dontrun{
 # use package ascii or xtable for formatting of tables ready for printing.

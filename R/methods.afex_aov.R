@@ -21,7 +21,7 @@
 #' \code{p_adjust_method} defaults to the method specified in the call to \code{\link{aov_car}} in \code{anova_table}. If no method was specified and \code{p_adjust_method = NULL} p-values are not adjusted.
 #' 
 #' @references 
-#' Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1–8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
+#' Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1-8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
 #' 
 #' @name afex_aov-methods
 #' @importFrom stats p.adjust
@@ -33,7 +33,7 @@ NULL
 #' @inheritParams nice
 #' @method anova afex_aov
 #' @export
-anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, p_adjust_method = NULL, ...) {
+anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, p_adjust_method = NULL, sig_symbols = afex_options("sig_symbols"), ...) {
   # internal functions:
   # check arguments
   dots <- list(...)
@@ -113,18 +113,19 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
   attr(anova_table, "es") <- es
   attr(anova_table, "correction") <- if(length(attr(object, "within")) > 0 && any(vapply(object$data$long[, attr(object, "within"), drop = FALSE], nlevels, 0) > 2)) correction else "none"
   attr(anova_table, "observed") <- if(!is.null(observed) & length(observed) > 0) observed else character(0)
-  attr(anova_table, "sig_symbols") <- if(!is.null(dots$sig_symbols)) dots$sig_symbols else afex_options("sig_symbols")
+  attr(anova_table, "sig_symbols") <- if(!is.null(sig_symbols)) sig_symbols else afex_options("sig_symbols")
   anova_table
 }
 
 #' @rdname afex_aov-methods
 #' @method print afex_aov 
+#' @importFrom stats symnum
 #' @export
 print.afex_aov <- function(x, ...) {
   out <- nice(x$anova_table, ...)
   print(out)
-  
-  sleg <- paste(paste(c(0, 0.001, 0.01, 0.05, 0.1), rev(paste0("‘", c(" ", gsub(" ", "", attr(x$anova_table, "sig_symbols"))), "’")), collapse = " "), 1)
+  sleg <- attr(symnum(0, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1), 
+         symbols = rev(c(" " ,stringr::str_trim(attr(x$anova_table, "sig_symbols"))))), "legend")
   width <- getOption("width")
   
   if(width < nchar(sleg)) {

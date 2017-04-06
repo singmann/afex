@@ -21,7 +21,8 @@ nice(sk_m1)  # returns the same but without printing potential warnings
 anova(sk_m1) # returns and prints numeric ANOVA table (i.e., not-rounded)
 summary(sk_m1) # lmer summary of full model
 
-# same model but using Satterthwaite approximation of df, very similar results
+# same model but using Satterthwaite approximation of df
+# very similar results but faster
 sk_m1b <- mixed(response ~ instruction*inference*type+(inference*type|id), 
                 sk2_aff, method="S")
 nice(sk_m1b)
@@ -29,7 +30,7 @@ nice(sk_m1b)
 lmerTest::anova(sk_m1$full_model)
 
 # suppressing correlation among random slopes:
-# very similar results, but significantly faster and often better convergence. 
+# very similar results, but significantly faster and often less convergence warnings. 
 sk_m2 <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_aff,
                expand_re = TRUE)
 sk_m2
@@ -182,6 +183,7 @@ require("mlmRev") # for the data, see ?Contraception
 
 gm1 <- mixed(use ~ age + I(age^2) + urban + livch + (1 | district), method = "PB",
  family = binomial, data = Contraception, args_test = list(nsim = 10))
+## note that nsim = 10 is way too low for all real examples!
 
 #######################
 ### Using Multicore ###

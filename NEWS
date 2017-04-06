@@ -39,11 +39,13 @@
         Added method dfoptim::nmkb() to all_fit(). To use nmkb, dfoptim needs to
         be loaded explicitly via library (see examples). 
         
-    o   added argument all_fit to mixed(). If TRUE, each model is fitted with 
+    o   Added argument all_fit to mixed(). If TRUE, each model is fitted with 
         all available optimizers and the best fit in each case selected.
         
     o   mixed objects have an additional slot, "data", that contains the data 
         used for fitting.
+        
+    o   Added vignette with extensive mixed model example.
         
     Bugfixes
 

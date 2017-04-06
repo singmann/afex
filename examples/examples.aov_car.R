@@ -28,33 +28,35 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
         within = c("phase", "hour"), observed = "gender")
 
 # the three calls return the same ANOVA table:
-## Anova Table (Type 3 tests)
-##
-## Response: value
-##                         Effect          df   MSE         F  ges p.value
-## 1                    treatment       2, 10 22.81    3.94 +  .20     .05
-## 2                       gender       1, 10 22.81    3.66 +  .11     .08
-## 3             treatment:gender       2, 10 22.81      2.86  .18     .10
-## 4                        phase 1.60, 15.99  5.02 16.13 ***  .15   .0003
-## 5              treatment:phase 3.20, 15.99  5.02    4.85 *  .10     .01
-## 6                 gender:phase 1.60, 15.99  5.02      0.28 .003     .71
-## 7       treatment:gender:phase 3.20, 15.99  5.02      0.64  .01     .61
-## 8                         hour 1.84, 18.41  3.39 16.69 ***  .13  <.0001
-## 9               treatment:hour 3.68, 18.41  3.39      0.09 .002     .98
-## 10                 gender:hour 1.84, 18.41  3.39      0.45 .004     .63
-## 11       treatment:gender:hour 3.68, 18.41  3.39      0.62  .01     .64
-## 12                  phase:hour 3.60, 35.96  2.67      1.18  .02     .33
-## 13        treatment:phase:hour 7.19, 35.96  2.67      0.35 .009     .93
-## 14           gender:phase:hour 3.60, 35.96  2.67      0.93  .01     .45
-## 15 treatment:gender:phase:hour 7.19, 35.96  2.67      0.74  .02     .65
-##
-## Sphericity correction method: GG 
+# Anova Table (Type 3 tests)
+# 
+# Response: value
+#                         Effect          df   MSE         F  ges p.value
+# 1                    treatment       2, 10 22.81    3.94 +  .20     .05
+# 2                       gender       1, 10 22.81    3.66 +  .11     .08
+# 3             treatment:gender       2, 10 22.81      2.86  .18     .10
+# 4                        phase 1.60, 15.99  5.02 16.13 ***  .15   .0003
+# 5              treatment:phase 3.20, 15.99  5.02    4.85 *  .10     .01
+# 6                 gender:phase 1.60, 15.99  5.02      0.28 .003     .71
+# 7       treatment:gender:phase 3.20, 15.99  5.02      0.64  .01     .61
+# 8                         hour 1.84, 18.41  3.39 16.69 ***  .13  <.0001
+# 9               treatment:hour 3.68, 18.41  3.39      0.09 .002     .98
+# 10                 gender:hour 1.84, 18.41  3.39      0.45 .004     .63
+# 11       treatment:gender:hour 3.68, 18.41  3.39      0.62  .01     .64
+# 12                  phase:hour 3.60, 35.96  2.67      1.18  .02     .33
+# 13        treatment:phase:hour 7.19, 35.96  2.67      0.35 .009     .93
+# 14           gender:phase:hour 3.60, 35.96  2.67      0.93  .01     .45
+# 15 treatment:gender:phase:hour 7.19, 35.96  2.67      0.74  .02     .65
+# 
+# Sphericity correction method: GG 
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
 
 # "numeric" variables are per default converted to factors (as long as factorize = TRUE):
 obk.long$hour2 <- as.numeric(as.character(obk.long$hour))
 
 # gives same results as calls before
-aov_car(value ~ treatment * gender + Error(id/hour2*phase), 
+aov_car(value ~ treatment * gender + Error(id/phase*hour2), 
         data = obk.long, observed = c("gender"))
 
 
@@ -100,7 +102,7 @@ aov_car(value ~ treatment * gender + Error(id/(phase*hour)),
 # add p-value adjustment for all effects (see Cramer et al., 2015, PB&R)
 aov_ez("id", "value", obk.long, between = "treatment", 
        within = c("phase", "hour"), 
-       anova_table = list(p.adjust.method = "holm"))
+       anova_table = list(p_adjust_method = "holm"))
 
 
 ###########################

@@ -3,12 +3,12 @@
                     *************************
                     
                     Changes in afex Version 0.17-x
-                    Released XXX 2017
+                    Released April 2017
 
     Significant User Visible Changes and New Features
 
     o   Added Satterthwaite approximation (method="S") to mixed(), which is 
-        implemented via lmerTest. Satterthwaite approximates the deegrees-of-
+        implemented via lmerTest. Satterthwaite approximates the degrees-of-
         freedom of an F-test, similar to the default Kenward-Roger method, but
         requires less RAM.
     
@@ -46,6 +46,8 @@
         used for fitting.
         
     o   Added vignette with extensive mixed model example.
+    
+    o   Created forum for providing afex support: http://afex.singmann.science/
         
     Bugfixes
 

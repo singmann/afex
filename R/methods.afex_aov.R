@@ -124,16 +124,17 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
 print.afex_aov <- function(x, ...) {
   out <- nice(x$anova_table, ...)
   print(out)
-  sleg <- attr(symnum(0, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1), 
-         symbols = rev(c(" " ,stringr::str_trim(attr(x$anova_table, "sig_symbols"))))), "legend")
-  width <- getOption("width")
-  
-  if(width < nchar(sleg)) {
-    sleg <- strwrap(sleg, width = width - 2, prefix = "  ")
-  } 
-  
-  cat("---\nSignif. codes:  ", sleg, sep = "", fill = getOption("width") + 4 + max(nchar(sleg, "bytes") - nchar(sleg)))
-  
+  if (!is.null(attr(x$anova_table, "sig_symbols"))) {
+    sleg <- attr(symnum(0, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1), 
+                        symbols = rev(c(" " ,stringr::str_trim(attr(x$anova_table, "sig_symbols"))))), "legend")
+    width <- getOption("width")
+    
+    if(width < nchar(sleg)) {
+      sleg <- strwrap(sleg, width = width - 2, prefix = "  ")
+    } 
+    
+    cat("---\nSignif. codes:  ", sleg, sep = "", fill = getOption("width") + 4 + max(nchar(sleg, "bytes") - nchar(sleg)))
+  }
   invisible(out)
 }
 

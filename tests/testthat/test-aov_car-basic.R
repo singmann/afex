@@ -122,3 +122,18 @@ test_that("Data from O'Brien & Kaiser adjusted for familywise error rate (p. 328
   expect_equal(out1[["anova_table"]], anova_tab, check.attributes = FALSE)
   
 })
+
+test_that("afex_aov printing", {
+  data(sk2011.1, package = "afex")
+  out_new <-  aov_ez("id", "response", sk2011.1[ sk2011.1$what == "affirmation",], within = c("inference", "type"), between = "instruction", anova_table=(es = "pes"), fun_aggregate = mean, return = "afex_aov")
+  
+  expect_output(print(out_new), "Signif. codes")
+  expect_output(print(anova(out_new)), "Signif. codes")
+  expect_output(print(nice(out_new)), "Anova")
+  
+  load("afex_aov_16_1.rda")
+  expect_output(print(out1), "Anova")
+  expect_output(print(anova(out1)), "Signif. codes")
+  expect_output(print(nice(out1)), "Anova")
+})
+

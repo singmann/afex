@@ -4,6 +4,7 @@ load_all()
 
 options(error = NULL)
 devtools::test()
+devtools::build()
 
 test_package("afex", filter = "aov")
 test_package("afex", filter = "mixed")

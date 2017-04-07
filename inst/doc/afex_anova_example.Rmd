@@ -82,7 +82,7 @@ print(xtable::xtable(anova(a1), digits = c(rep(2, 5), 3, 4)), type = "html")
 
 # Post-Hoc Contrasts and Plotting
 
-To further analyze the data we need to pass it to package `lsmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `lsmeans` can be obtained in [its vignette](http://cran.r-project.org/web/packages/lsmeans/vignettes/using-lsmeans.pdf). `lsmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `lsmeans`. `lsmeans` uses the ANOVA model estimated via base R's `aov` function that  is part of an `afex_aov` object.
+To further analyze the data we need to pass it to package `lsmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `lsmeans` can be obtained in [its vignette](https://CRAN.R-project.org/package=lsmeans/vignettes/using-lsmeans.pdf). `lsmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `lsmeans`. `lsmeans` uses the ANOVA model estimated via base R's `aov` function that  is part of an `afex_aov` object.
 
 ## Some First Contrasts
 
@@ -215,8 +215,8 @@ The pattern for the affirmation problems is in line with the expectations: We fi
 
 # References 
 
-* Bretz, F., Hothorn, T., & Westfall, P. H. (2011). _Multiple comparisons using R_. Boca Raton, FL: CRC Press. http://cran.r-project.org/package=multcomp
+* Bretz, F., Hothorn, T., & Westfall, P. H. (2011). _Multiple comparisons using R_. Boca Raton, FL: CRC Press. https://CRAN.R-project.org/package=multcomp
 * Singmann, H., & Klauer, K. C. (2011). Deductive and inductive conditional inferences: Two modes of reasoning. _Thinking & Reasoning_, 17(3), 247-281. doi: 10.1080/13546783.2011.572718
-* Lenth, R. V. (2015). _lsmeans: Least-Squares Means_. R package version 2.16-4. http://cran.r-project.org/package=lsmeans
+* Lenth, R. V. (2015). _lsmeans: Least-Squares Means_. R package version 2.16-4. https://CRAN.R-project.org/package=lsmeans
 
 

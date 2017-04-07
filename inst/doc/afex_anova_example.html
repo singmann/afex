@@ -12,7 +12,7 @@
 
 <meta name="author" content="Henrik Singmann" />
 
-<meta name="date" content="2017-04-06" />
+<meta name="date" content="2017-04-07" />
 
 <title>ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)</h1>
 <h4 class="author"><em>Henrik Singmann</em></h4>
-<h4 class="date"><em>2017-04-06</em></h4>
+<h4 class="date"><em>2017-04-07</em></h4>
 
 
 
@@ -244,7 +244,7 @@ How valid is the conclusion/How likely is it that the person fell into a swimmin
 <p>Alternatively, the <code>anova</code> method for <code>afex_aov</code> objects returns a <code>data.frame</code> of class <code>anova</code> that can be passed to, for example, <code>xtable</code> for nice formatting:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(xtable::<span class="kw">xtable</span>(<span class="kw">anova</span>(a1), <span class="dt">digits =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">2</span>, <span class="dv">5</span>), <span class="dv">3</span>, <span class="dv">4</span>)), <span class="dt">type =</span> <span class="st">&quot;html&quot;</span>)</code></pre></div>
 <!-- html table generated in R 3.3.3 by xtable 1.8-2 package -->
-<!-- Thu Apr  6 20:27:09 2017 -->
+<!-- Fri Apr  7 19:23:02 2017 -->
 <table border="1">
 <tr>
 <th>
@@ -433,7 +433,7 @@ instruction:inference:plausibility
 </div>
 <div id="post-hoc-contrasts-and-plotting" class="section level1">
 <h1>Post-Hoc Contrasts and Plotting</h1>
-<p>To further analyze the data we need to pass it to package <code>lsmeans</code>, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on <code>lsmeans</code> can be obtained in <a href="http://cran.r-project.org/web/packages/lsmeans/vignettes/using-lsmeans.pdf">its vignette</a>. <code>lsmeans</code> can work with <code>afex_aov</code> objects directly as <strong>afex</strong> comes with the necessary methods for the generic functions defined in <code>lsmeans</code>. <code>lsmeans</code> uses the ANOVA model estimated via base R’s <code>aov</code> function that is part of an <code>afex_aov</code> object.</p>
+<p>To further analyze the data we need to pass it to package <code>lsmeans</code>, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on <code>lsmeans</code> can be obtained in <a href="https://CRAN.R-project.org/package=lsmeans/vignettes/using-lsmeans.pdf">its vignette</a>. <code>lsmeans</code> can work with <code>afex_aov</code> objects directly as <strong>afex</strong> comes with the necessary methods for the generic functions defined in <code>lsmeans</code>. <code>lsmeans</code> uses the ANOVA model estimated via base R’s <code>aov</code> function that is part of an <code>afex_aov</code> object.</p>
 <div id="some-first-contrasts" class="section level2">
 <h2>Some First Contrasts</h2>
 <div id="main-effects-only" class="section level3">
@@ -470,12 +470,12 @@ instruction:inference:plausibility
 ## 
 ## Linear Hypotheses:
 ##              Estimate Std. Error t value Pr(&gt;|t|)    
-## MP - MT == 0   10.831      4.612   2.349  0.06896 .  
-## MP - AC == 0   18.100      4.612   3.925  0.00099 ***
-## MP - DA == 0    4.556      4.612   0.988  0.32527    
-## MT - AC == 0    7.269      4.612   1.576  0.28144    
-## MT - DA == 0   -6.275      4.612  -1.361  0.29693    
-## AC - DA == 0  -13.544      4.612  -2.937  0.01766 *  
+## MP - MT == 0   10.831      4.612   2.349 0.068858 .  
+## MP - AC == 0   18.100      4.612   3.925 0.000814 ***
+## MP - DA == 0    4.556      4.612   0.988 0.325273    
+## MT - AC == 0    7.269      4.612   1.576 0.281786    
+## MT - DA == 0   -6.275      4.612  -1.361 0.296932    
+## AC - DA == 0  -13.544      4.612  -2.937 0.017804 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## (Adjusted p values reported -- free method)</code></pre>
@@ -717,8 +717,8 @@ instruction:inference:plausibility
 ## Linear Hypotheses:
 ##             Estimate Std. Error t value Pr(&gt;|t|)    
 ## diff_1 == 0    4.175      8.500   0.491 0.623874    
-## diff_2 == 0   34.925      8.500   4.109 0.000227 ***
-## diff_3 == 0  -23.600      8.500  -2.777 0.017336 *  
+## diff_2 == 0   34.925      8.500   4.109 0.000229 ***
+## diff_3 == 0  -23.600      8.500  -2.777 0.017316 *  
 ## diff_4 == 0   -8.100      8.500  -0.953 0.564739    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
@@ -731,10 +731,10 @@ instruction:inference:plausibility
 ## 
 ## Linear Hypotheses:
 ##             Estimate Std. Error t value Pr(&gt;|t|)  
-## diff_1 == 0  -22.425      8.500  -2.638    0.033 *
-## diff_2 == 0   -2.700      8.500  -0.318    0.955  
-## diff_3 == 0   -0.925      8.500  -0.109    0.955  
-## diff_4 == 0   -3.650      8.500  -0.429    0.955  
+## diff_1 == 0  -22.425      8.500  -2.638   0.0331 *
+## diff_2 == 0   -2.700      8.500  -0.318   0.9554  
+## diff_3 == 0   -0.925      8.500  -0.109   0.9554  
+## diff_4 == 0   -3.650      8.500  -0.429   0.9554  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## (Adjusted p values reported -- free method)</code></pre>
@@ -802,9 +802,9 @@ instruction:inference:plausibility
 <div id="references" class="section level1">
 <h1>References</h1>
 <ul>
-<li>Bretz, F., Hothorn, T., &amp; Westfall, P. H. (2011). <em>Multiple comparisons using R</em>. Boca Raton, FL: CRC Press. <a href="http://cran.r-project.org/package=multcomp" class="uri">http://cran.r-project.org/package=multcomp</a></li>
+<li>Bretz, F., Hothorn, T., &amp; Westfall, P. H. (2011). <em>Multiple comparisons using R</em>. Boca Raton, FL: CRC Press. <a href="https://CRAN.R-project.org/package=multcomp" class="uri">https://CRAN.R-project.org/package=multcomp</a></li>
 <li>Singmann, H., &amp; Klauer, K. C. (2011). Deductive and inductive conditional inferences: Two modes of reasoning. <em>Thinking &amp; Reasoning</em>, 17(3), 247-281. doi: 10.1080/13546783.2011.572718</li>
-<li>Lenth, R. V. (2015). <em>lsmeans: Least-Squares Means</em>. R package version 2.16-4. <a href="http://cran.r-project.org/package=lsmeans" class="uri">http://cran.r-project.org/package=lsmeans</a></li>
+<li>Lenth, R. V. (2015). <em>lsmeans: Least-Squares Means</em>. R package version 2.16-4. <a href="https://CRAN.R-project.org/package=lsmeans" class="uri">https://CRAN.R-project.org/package=lsmeans</a></li>
 </ul>
 </div>
 

@@ -286,10 +286,10 @@ In contrast to our expectation, the results show two significant effects and not
 ## References 
 
 * Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. _Journal of Memory and Language_, 68(3), 255-278. https://doi.org/10.1016/j.jml.2012.11.001
-* Bretz, F., Hothorn, T., & Westfall, P. H. (2011). _Multiple comparisons using R_. Boca Raton, FL: CRC Press. http://cran.r-project.org/package=multcomp
+* Bretz, F., Hothorn, T., & Westfall, P. H. (2011). _Multiple comparisons using R_. Boca Raton, FL: CRC Press. https://CRAN.R-project.org/package=multcomp
 * Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in recognition memory for words. _Journal of Memory and Language_, 62(1), 1-18. https://doi.org/10.1016/j.jml.2009.09.004
-* Lenth, R. V. (2015). _lsmeans: Least-Squares Means_. R package version 2.16-4. http://cran.r-project.org/package=lsmeans
-* Maxwell, S. E., & Delaney, H. D. (2004). Designing experiments and analyzing data: a model-comparisons perspective. Mahwah, N.J.: Lawrence Erlbaum Associates.
+* Lenth, R. V. (2015). _lsmeans: Least-Squares Means_. R package version 2.16-4. https://CRAN.R-project.org/package=lsmeans
+* Maxwell, S. E., & Delaney, H. D. (2004). _Designing experiments and analyzing data: a model-comparisons perspective_. Mahwah, N.J.: Lawrence Erlbaum Associates.
 
 
 ```{r, echo=FALSE, eval = FALSE}

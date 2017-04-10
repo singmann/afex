@@ -76,8 +76,15 @@ test_that("anova_table attributes", {
   
   symbol_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(sig_symbols = c(" ", " a", " aa", " aaa")), return = "nice")
   expect_output(print(symbol_test), "aaa")
+  
   symbol_test <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), anova_table = list(sig_symbols = c(" ", " a", " aa", " aaa")))
-  #expect_output(print(symbol_test), "aaa")
+  expect_output(print(symbol_test), "aaa")
+  
+  new_symbols <- c(" ", " b", " bb", " bbb")
+  symbol_test <- anova(symbol_test, sig_symbols = c(" ", " b", " bb", " bbb"))
+  expect_identical(attr(symbol_test, "sig_symbols"), new_symbols)
+  expect_output(print(nice(symbol_test)), "bbb")
+  
   
   # Test support for old afex objects
   old_afex_object <- default_options <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))

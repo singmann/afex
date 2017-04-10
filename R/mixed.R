@@ -17,6 +17,7 @@
 #' @param progress  if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.
 #' @param cl  A vector identifying a cluster; used for distributing the estimation of the different models using several cores (if seveal models are calculated). See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args_test} for this.
 #' @param return the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model (note that the data is also part of the returned object).
+#' @param sig_symbols Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig_symbols = ""} will display the stars but not the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols. The default is given by \code{afex_options("sig_symbols")}.
 #' @param ... further arguments (such as \code{weights}/\code{family}) passed to \code{\link{lmer}}/\code{\link{glmer}}, such as \code{control}.
 #'
 #'
@@ -143,7 +144,7 @@
 #' @example examples/examples.mixed.R
 #' 
 #' @export
-mixed <- function(formula, data, type = afex_options("type"), method = afex_options("method_mixed"), per_parameter = NULL, args_test = list(), test_intercept = FALSE, check_contrasts = afex_options("check_contrasts"), expand_re = FALSE, all_fit = FALSE, set_data_arg = TRUE, progress = TRUE, cl = NULL, return = "mixed", ...) {
+mixed <- function(formula, data, type = afex_options("type"), method = afex_options("method_mixed"), per_parameter = NULL, args_test = list(), test_intercept = FALSE, check_contrasts = afex_options("check_contrasts"), expand_re = FALSE, all_fit = FALSE, set_data_arg = TRUE, progress = TRUE, cl = NULL, return = "mixed", sig_symbols = afex_options("sig_symbols"), ...) {
   dots <- list(...)
   ### deprercate old argument names:
   if("per.parameter" %in% names(dots)) {
@@ -165,6 +166,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   if("set.data.arg" %in% names(dots)) {  
     warn_deprecated_arg("set.data.arg", "set_data_arg")
     set_data_arg <- dots$set.data.arg
+  }
+  if("sig.symbols" %in% names(dots)) {  #(!missing(sig.symbols)) {
+    warn_deprecated_arg("sig.symbols", "sig_symbols")
+    sig_symbols <- dots$sig.symbols
   }
   
   ## real function begins:
@@ -256,7 +261,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   ### Part II: obtain the lmer fits
   ####################
   ## Part IIa: prepare formulas
-  mf <- mc[!names(mc) %in% c("type", "method", "args.test", "args_test", "progress", "check.contrasts", "check_contrasts", "per.parameter", "per_parameter", "cl", "test.intercept", "test_intercept","expand_re", "return", "all_fit")]
+  mf <- mc[!names(mc) %in% c("type", "method", "args.test", "args_test", "progress", "check.contrasts", "check_contrasts", "per.parameter", "per_parameter", "cl", "test.intercept", "test_intercept","expand_re", "return", "all_fit", "sig_symbols", "sig.symbols")]
   mf[["formula"]] <-as.formula(str_c(dv,deparse(rh2, width.cutoff = 500L),"+",random))   #formula.f
   if ("family" %in% names(mf)) {
     mf[[1]] <- as.name("glmer")
@@ -574,6 +579,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     paste0("Data: " ,mc[["data"]]),
     anova_tab_addition
     )
+  attr(anova_table, "sig_symbols") <- sig_symbols
   list.out <- list(
     anova_table = anova_table, 
     full_model = full_model, 
@@ -669,7 +675,7 @@ summary.mixed <- function(object, ...) {
 
 #' @method anova mixed
 #' @export
-anova.mixed <- function(object, ..., refit = FALSE) {
+anova.mixed <- function(object, sig_symbols = attr(object$anova_table, "sig_symbols"), ..., refit = FALSE) {
   mCall <- match.call(expand.dots = TRUE)
   full_model_name <- names(object)[[2]]
   dots <- list(...)
@@ -680,13 +686,16 @@ anova.mixed <- function(object, ..., refit = FALSE) {
   if (any(modp)) {
     model.names <- c(deparse(mCall[["object"]]), vapply(which(modp), function(x) deparse(mCall[[x+2]]), ""))
     for (i in which(as.logical(vapply(dots, is, NA, "mixed")))) dots[[i]] <- dots[[i]][[full_model_name]]
-    return(do.call(anova, args = c(object = object[[full_model_name]], dots, model.names = list(model.names), refit = refit)))
+    anova_table <- do.call(anova, args = c(object = object[[full_model_name]], dots, model.names = list(model.names), refit = refit))
   } else {
     try(if(!isREML(object[[full_model_name]]) && !isTRUE(check_likelihood(object))) 
       warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(object), collapse = ", "), "\n  Results cannot be trusted. Try all_fit=TRUE!"), call. = FALSE), silent=TRUE)
     get_mixed_warnings(object)
-    object$anova_table
+    anova_table <- object$anova_table
   }
+  
+  attr(anova_table, "sig_symbols") <- if(!is.null(sig_symbols)) sig_symbols else afex_options("sig_symbols")
+  anova_table
 }
 
 

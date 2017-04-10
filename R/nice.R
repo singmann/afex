@@ -87,7 +87,8 @@ nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = attr(
   if("sig.symbols" %in% names(dots)) {  #(!missing(sig.symbols)) {
     warn_deprecated_arg("sig.symbols", "sig_symbols")
     sig_symbols <- dots$sig.symbols
-  } else if(is.null(sig_symbols)) {
+  }
+  if(is.null(sig_symbols)) {
     sig_symbols <- afex_options("sig_symbols")
   }
   
@@ -117,6 +118,7 @@ nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = attr(
   attr(df.out, "correction") <- attr(object, "correction")
   attr(df.out, "observed") <- attr(object, "observed")
   attr(df.out, "es") <- attr(object, "es")
+  attr(df.out, "sig_symbols") <- symbols.use
   class(df.out) <- c("nice_table", class(df.out))
   df.out
 }
@@ -140,13 +142,15 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) 
 #' @rdname nice
 #' @method nice mixed
 #' @export
-nice.mixed <- function(object, sig_symbols = afex_options("sig_symbols"), ...) {
+nice.mixed <- function(object, sig_symbols = attr(object$anova_table, "sig_symbols"), ...) {
   anova_table <- object$anova_table
   dots <- list(...)
   if("sig.symbols" %in% names(dots)) {  #(!missing(sig.symbols)) {
     warn_deprecated_arg("sig.symbols", "sig_symbols")
     sig_symbols <- dots$sig.symbols
   }
+  if(is.null("sig_symbols")) sig_symbols <- afex_options("sig_symbols")
+  
   symbols.use <-  c(" +", " *", " **", " ***")
   symbols.use[seq_along(sig_symbols)] <- sig_symbols
   
@@ -176,6 +180,8 @@ nice.mixed <- function(object, sig_symbols = afex_options("sig_symbols"), ...) {
     df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"Chi Df"], Chisq = make.stat(anova_table, stat = "Chisq", symbols.use), p.value = round_ps(anova_table[,"Pr(>Chisq)"]), stringsAsFactors = FALSE, check.names = FALSE)
   } else stop("method of mixed object not supported.")
   rownames(df.out) <- NULL
+  attr(df.out, "heading") <- attr(anova_table, "heading")
+  attr(df.out, "sig_symbols") <- symbols.use
   class(df.out) <- c("nice_table", class(df.out))
   df.out
 }
@@ -189,6 +195,7 @@ print.nice_table <- function(x, ...) {
     cat(heading, sep = "\n")
   }
   print.data.frame(x)
+  if(!is.null(attr(x, "sig_symbols"))) print_legend(x)
   if(!is.null(correction_method <- attr(x, "correction")) && correction_method != "none") {
     cat("\nSphericity correction method:", correction_method, "\n")
   }

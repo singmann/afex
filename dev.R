@@ -74,9 +74,10 @@ closeAllConnections()
 
 ### check reverse dependencies:
 
-revdep()
+#revdep()
 revdep_check(libpath = "../revdep", check_dir = "../revdep_checks")
-revdep_check(libpath = "../revdep")
+#revdep_check(libpath = "../revdep")
+install.packages("ez", lib = "../revdep")
 install.packages("apa", lib = "../revdep")
 revdep_check_resume()
 revdep_check_save_summary()

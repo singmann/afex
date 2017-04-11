@@ -675,7 +675,7 @@ summary.mixed <- function(object, ...) {
 
 #' @method anova mixed
 #' @export
-anova.mixed <- function(object, sig_symbols = attr(object$anova_table, "sig_symbols"), ..., refit = FALSE) {
+anova.mixed <- function(object, ..., sig_symbols = attr(object$anova_table, "sig_symbols"), refit = FALSE) {
   mCall <- match.call(expand.dots = TRUE)
   full_model_name <- names(object)[[2]]
   dots <- list(...)

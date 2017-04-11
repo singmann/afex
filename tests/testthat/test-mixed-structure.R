@@ -288,7 +288,7 @@ test_that("anova_table attributes", {
   
   symbol_test <- mixed(value ~ treatment * phase + (1|id), obk.long, sig_symbols = c("", "a", "aa", "aaa"))
   expect_output(print(symbol_test), "aaa")
-  expect_output(print(nice(mixed1, sig_symbols = c("", "b", "bb", "bbb"))), "bbb")
+  expect_output(print(nice(symbol_test, sig_symbols = c("", "b", "bb", "bbb"))), "bbb")
   
   new_symbols <- c(" ", " b", " bb", " bbb")
   symbol_test <- anova(symbol_test, sig_symbols = c(" ", " b", " bb", " bbb"))

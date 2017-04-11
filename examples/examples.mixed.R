@@ -167,6 +167,11 @@ data(lexdec, package = "languageR")
 m1 <- mixed(RT ~ Correct + Trial + PrevType * meanWeight + 
     Frequency + NativeLanguage * Length + (1|Subject) + (1|Word), data = lexdec)
 m1
+# Mixed Model Anova Table (Type 3 tests, KR-method)
+# 
+# Model: RT ~ Correct + Trial + PrevType * meanWeight + Frequency + NativeLanguage * 
+# Model:     Length + (1 | Subject) + (1 | Word)
+# Data: lexdec
 #                  Effect         df         F p.value
 # 1               Correct 1, 1627.73   8.15 **    .004
 # 2                 Trial 1, 1592.43   7.57 **    .006
@@ -177,6 +182,8 @@ m1
 # 7                Length   1, 75.83   8.70 **    .004
 # 8   PrevType:meanWeight 1, 1601.18    6.18 *     .01
 # 9 NativeLanguage:Length 1, 1555.49 14.24 ***   .0002
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
 
 # Fitting a GLMM using parametric bootstrap:
 require("mlmRev") # for the data, see ?Contraception

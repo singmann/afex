@@ -21,7 +21,8 @@ nice(object, ...)
 \method{nice}{anova}(object, MSE = NULL, intercept = NULL,
   sig_symbols = attr(object, "sig_symbols"), sig.symbols, ...)
 
-\method{nice}{mixed}(object, sig_symbols = afex_options("sig_symbols"), ...)
+\method{nice}{mixed}(object, sig_symbols = attr(object$anova_table,
+  "sig_symbols"), ...)
 
 \method{print}{nice_table}(x, ...)
 }

@@ -11,7 +11,7 @@ mixed(formula, data, type = afex_options("type"),
   args_test = list(), test_intercept = FALSE,
   check_contrasts = afex_options("check_contrasts"), expand_re = FALSE,
   all_fit = FALSE, set_data_arg = TRUE, progress = TRUE, cl = NULL,
-  return = "mixed", ...)
+  return = "mixed", sig_symbols = afex_options("sig_symbols"), ...)
 
 lmer_alt(formula, data, check_contrasts = FALSE, ...)
 }
@@ -43,6 +43,8 @@ lmer_alt(formula, data, check_contrasts = FALSE, ...)
 \item{cl}{A vector identifying a cluster; used for distributing the estimation of the different models using several cores (if seveal models are calculated). See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args_test} for this.}
 
 \item{return}{the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model (note that the data is also part of the returned object).}
+
+\item{sig_symbols}{Character. What should be the symbols designating significance? When entering an vector with \code{length(sig.symbol) < 4} only those elements of the default (\code{c(" +", " *", " **", " ***")}) will be replaced. \code{sig_symbols = ""} will display the stars but not the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols. The default is given by \code{afex_options("sig_symbols")}.}
 
 \item{...}{further arguments (such as \code{weights}/\code{family}) passed to \code{\link{lmer}}/\code{\link{glmer}}, such as \code{control}.}
 }
@@ -309,6 +311,11 @@ data(lexdec, package = "languageR")
 m1 <- mixed(RT ~ Correct + Trial + PrevType * meanWeight + 
     Frequency + NativeLanguage * Length + (1|Subject) + (1|Word), data = lexdec)
 m1
+# Mixed Model Anova Table (Type 3 tests, KR-method)
+# 
+# Model: RT ~ Correct + Trial + PrevType * meanWeight + Frequency + NativeLanguage * 
+# Model:     Length + (1 | Subject) + (1 | Word)
+# Data: lexdec
 #                  Effect         df         F p.value
 # 1               Correct 1, 1627.73   8.15 **    .004
 # 2                 Trial 1, 1592.43   7.57 **    .006
@@ -319,6 +326,8 @@ m1
 # 7                Length   1, 75.83   8.70 **    .004
 # 8   PrevType:meanWeight 1, 1601.18    6.18 *     .01
 # 9 NativeLanguage:Length 1, 1555.49 14.24 ***   .0002
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
 
 # Fitting a GLMM using parametric bootstrap:
 require("mlmRev") # for the data, see ?Contraception

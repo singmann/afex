@@ -152,13 +152,12 @@ obk_anova <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)),
 # in contrast to aov you do not need the within-subject factors outside Error()
 
 str(obk_anova, 1, give.attr = FALSE)
-## List of 6
-##  $ anova_table:Classes 'anova' and 'data.frame':  15 obs. of  6 variables:
-##  $ aov        :List of 5
-##  $ Anova      :List of 14
-##  $ lm         :List of 13
-##  $ data       :List of 3
-##  $ information:List of 5
+# List of 5
+#  $ anova_table:Classes ‘anova’ and 'data.frame':	15 obs. of  6 variables:
+#  $ aov        :List of 5
+#  $ Anova      :List of 14
+#  $ lm         :List of 13
+#  $ data       :List of 3
 
 obk_anova$Anova
 ## Type II Repeated Measures MANOVA Tests: Pillai test statistic

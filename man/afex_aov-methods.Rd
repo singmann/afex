@@ -12,7 +12,7 @@
 \method{anova}{afex_aov}(object, es = afex_options("es_aov"),
   observed = NULL, correction = afex_options("correction_aov"),
   MSE = TRUE, intercept = FALSE, p_adjust_method = NULL,
-  sig_symbols = afex_options("sig_symbols"), ...)
+  sig_symbols = attr(object$anova_table, "sig_symbols"), ...)
 
 \method{print}{afex_aov}(x, ...)
 

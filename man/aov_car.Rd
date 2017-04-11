@@ -43,7 +43,7 @@ aov_4(formula, data, observed = NULL, fun_aggregate = NULL, type = afex_options(
 
 \item{observed}{\code{character} vector indicating which of the variables are observed (i.e, measured) as compared to experimentally manipulated. The default effect size reported (generalized eta-squared) requires correct specification of the obsered (in contrast to manipulated) variables.}
 
-\item{anova_table}{\code{list} of further arguments passed to function producing the ANOVA table.  Arguments such as \code{es} (effect size) or \code{correction}  are passed to either \code{anova.afex_aov} or \code{nice}. \code{sig_symbols} is currently ignored. Note that those settings can also be changed once an object of class \code{afex_aov} is created by invoking the \code{anova} method directly.}
+\item{anova_table}{\code{list} of further arguments passed to function producing the ANOVA table.  Arguments such as \code{es} (effect size) or \code{correction}  are passed to either \code{anova.afex_aov} or \code{nice}. Note that those settings can also be changed once an object of class \code{afex_aov} is created by invoking the \code{anova} method directly.}
 
 \item{...}{Further arguments passed to \code{fun_aggregate}.}
 
@@ -288,13 +288,12 @@ obk_anova <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)),
 # in contrast to aov you do not need the within-subject factors outside Error()
 
 str(obk_anova, 1, give.attr = FALSE)
-## List of 6
-##  $ anova_table:Classes 'anova' and 'data.frame':  15 obs. of  6 variables:
-##  $ aov        :List of 5
-##  $ Anova      :List of 14
-##  $ lm         :List of 13
-##  $ data       :List of 3
-##  $ information:List of 5
+# List of 5
+#  $ anova_table:Classes ‘anova’ and 'data.frame':	15 obs. of  6 variables:
+#  $ aov        :List of 5
+#  $ Anova      :List of 14
+#  $ lm         :List of 13
+#  $ data       :List of 3
 
 obk_anova$Anova
 ## Type II Repeated Measures MANOVA Tests: Pillai test statistic

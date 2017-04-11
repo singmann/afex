@@ -279,3 +279,24 @@ test_that("mixed all_fit = TRUE works with new (KR) methods", {
   expect_named(attr(sk2_aff_b2, "all_fit_selected"), "full_model")
   expect_false(is.null(attr(sk2_aff_b2, "all_fit_logLik")))
 })
+
+
+test_that("anova_table attributes", {
+  data(obk.long)
+  symbol_test <- mixed(value ~ treatment * phase + (1|id), obk.long, sig_symbols = c("", "a", "aa", "aaa"), return = "nice")
+  expect_output(print(symbol_test), "aaa")
+  
+  symbol_test <- mixed(value ~ treatment * phase + (1|id), obk.long, sig_symbols = c("", "a", "aa", "aaa"))
+  expect_output(print(symbol_test), "aaa")
+  expect_output(print(nice(symbol_test, sig_symbols = c("", "b", "bb", "bbb"))), "bbb")
+  
+  new_symbols <- c(" ", " b", " bb", " bbb")
+  symbol_test <- anova(symbol_test, sig_symbols = c(" ", " b", " bb", " bbb"))
+  expect_identical(attr(symbol_test, "sig_symbols"), new_symbols)
+  expect_output(print(nice(symbol_test)), "bbb")
+  
+  # Test support for old afex objects
+  old_afex_object <- default_options <- mixed(value ~ treatment * phase + (1|id), obk.long)
+  attr(old_afex_object$anova_table, "sig_symbols") <- NULL
+  expect_that(nice(old_afex_object), is_identical_to(nice(default_options)))
+})

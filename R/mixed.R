@@ -70,18 +70,16 @@
 #'
 #'\subsection{p-value Calculations}{
 #'
-#' When \code{method = "KR"} (the default, implemented via \code{\link[pbkrtest]{KRmodcomp}}), the Kenward-Roger approximation for degrees-of-freedom is calculated using \code{\link[lmerTest]{anova.merModLmerTest}} (if \code{test_intercept=FALSE}) or \code{\link[car]{Anova}} (if \code{test_intercept=TRUE}), which is only applicable to linear-mixed models (LMMs). The test statistic in the output is a F-value (\code{F}).
-#' 
-#' A similar method that requires less RAM is \code{method = "S"} which calculates the Satterthwaite approximation for degrees-of-freedom via \code{\link[lmerTest]{anova.merModLmerTest}} and is also only applicable to LMMs.
+#' When \code{method = "KR"} (the default, implemented via \code{\link[pbkrtest]{KRmodcomp}}), the Kenward-Roger approximation for degrees-of-freedom is calculated using \code{\link[lmerTest]{anova.merModLmerTest}} (if \code{test_intercept=FALSE}) or \code{\link[car]{Anova}} (if \code{test_intercept=TRUE}), which is only applicable to linear-mixed models (LMMs). The test statistic in the output is an F-value (\code{F}). A similar method that requires less RAM is \code{method = "S"} which calculates the Satterthwaite approximation for degrees-of-freedom via \code{\link[lmerTest]{anova.merModLmerTest}} and is also only applicable to LMMs. \code{method = "KR"} or \code{method = "S"} provide the best control for Type 1 errors for LMMs (Luke, 2017).
 #'
 #' \code{method = "PB"} calculates p-values using parametric bootstrap using \code{\link[pbkrtest]{PBmodcomp}}. This can be used for linear and also generalized linear mixed models (GLMMs) by specifying a \code{\link[stats]{family}} argument to \code{mixed}. Note that you should specify further arguments to \code{PBmodcomp} via \code{args_test}, especially \code{nsim} (the number of simulations to form the reference distribution) or \code{cl} (for using multiple cores). For other arguments see \code{\link[pbkrtest]{PBmodcomp}}. Note that \code{REML} (argument to \code{[g]lmer}) will be set to \code{FALSE} if method is \code{PB}.
 #'
-#' \code{method = "LRT"} calculates p-values via likelihood ratio tests implemented in the \code{anova} method for \code{"merMod"} objects. This is recommended by Barr et al. (2013; which did not test the other methods implemented here). Using likelihood ratio tests is only recommended for models with many levels for the random effects (> 50), but can be pretty helpful in case the other methods fail (due to memory and/or time limitations). The \href{http://glmm.wikidot.com/faq}{lme4 faq} also recommends the other methods over likelihood ratio tests.
+#' \code{method = "LRT"} calculates p-values via likelihood ratio tests implemented in the \code{anova} method for \code{"merMod"} objects. This is the method recommended by Barr et al. (2013; which did not test the other methods implemented here). Using likelihood ratio tests is only recommended for models with many levels for the random effects (> 50), but can be pretty helpful in case the other methods fail (due to memory and/or time limitations). The \href{http://glmm.wikidot.com/faq}{lme4 faq} also recommends the other methods over likelihood ratio tests.
 #' }
 #' 
 #' \subsection{Implementation Details}{
 #' 
-#' For methods \code{"KR"} and \code{"PB"} type 3 and 2 tests are implemented as in \code{\link[car]{Anova}}.
+#' For methods \code{"KR"} and \code{"S"} type 3 and 2 tests are implemented as in \code{\link[car]{Anova}}.
 #' 
 #' For all other methods, type 3 tests are obtained by comparing a model in which only the tested effect is excluded with the full model (containing all effects). For method \code{"nested-KR"} (which was the default in previous versions) this corresponds to the (type 3) Wald tests given by \code{car::Anova} for \code{"lmerMod"} models. The submodels in which the tested effect is excluded are obtained by manually creating a model matrix which is then fitted in \code{"lme4"}. This is done to avoid R's "feature" to not allow this behavior.
 #'
@@ -129,6 +127,8 @@
 #' Dalal, D. K., & Zickar, M. J. (2012). Some Common Myths About Centering Predictor Variables in Moderated Multiple Regression and Polynomial Regression. \emph{Organizational Research Methods}, 15(3), 339-362. doi:10.1177/1094428111430540
 #'
 #' Judd, C. M., Westfall, J., & Kenny, D. A. (2012). Treating stimuli as a random factor in social psychology: A new and comprehensive solution to a pervasive but largely ignored problem. \emph{Journal of Personality and Social Psychology}, 103(1), 54-69. doi:10.1037/a0028347
+#' 
+#' Luke, S. (2017). Evaluating significance in linear mixed-effects models in R. \emph{Behavior Research Methods}. \url{https://doi.org/10.3758/s13428-016-0809-y}
 #' 
 #' Maxwell, S. E., & Delaney, H. D. (2004). \emph{Designing experiments and analyzing data: a model-comparisons perspective.} Mahwah, N.J.: Lawrence Erlbaum Associates.
 #'

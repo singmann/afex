@@ -47,6 +47,7 @@ test_that("nice.mixed, print.mixed, and anova.mixed can handle objects with full
 })
 
 test_that("lmer_alt works with GLMMs", {
+  skip_if_not_installed("mlmRev")
   if (require("mlmRev")) {
     expect_that(lmer_alt(use ~ age*urban + (1 | district), family = binomial, data = Contraception, progress=FALSE), is_a("glmerMod"))
   }

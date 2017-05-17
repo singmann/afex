@@ -58,6 +58,7 @@ test_that("mixed, obk.long: type 2 and LRTs", {
 })
 
 test_that("mixed, mlmRev: type 3 and 2 LRTs for GLMMs", {
+  skip_if_not_installed("mlmRev")
   if (require("mlmRev")) {
     suppressWarnings(gm1 <- mixed(use ~ age*urban + (1 | district), family = binomial, data = Contraception, method = "LRT", progress=FALSE))
     suppressWarnings(gm2 <- mixed(use ~ age*urban + (1 | district), family = binomial, data = Contraception, method = "LRT", type = 2, progress=FALSE))
@@ -94,6 +95,7 @@ test_that("print(mixed) works: only 1 or 2 fixed effects with all methods", {
   expect_that(print(mixed(value ~ treatment+phase+(1|id), data = obk.long)), is_a("data.frame"))
   expect_that(print(mixed(value ~ treatment+(1|id), data = obk.long, method = "LRT")), is_a("data.frame"))
   expect_that(print(mixed(value ~ treatment+phase+(1|id), data = obk.long, method = "LRT")), is_a("data.frame"))
+  skip_if_not_installed("mlmRev")
   require("mlmRev") # for the data, see ?Contraception
   expect_that(print(mixed(use ~ urban + (1 | district), method = "PB", family = binomial, data = Contraception, args_test=list(nsim=2))), is_a("data.frame"))
   expect_that(print(mixed(use ~ urban + livch + (1 | district), method = "PB", family = binomial, data = Contraception, args_test=list(nsim=2))), is_a("data.frame"))  

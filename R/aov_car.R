@@ -412,15 +412,15 @@ aov_4 <- function(formula, data, observed = NULL, fun_aggregate = NULL, type = a
 
 aov_ez <- function(id, dv, data, between = NULL, within = NULL, covariate = NULL, observed = NULL, fun_aggregate = NULL, type = afex_options("type"), factorize = afex_options("factorize"), check_contrasts = afex_options("check_contrasts"), return = afex_options("return_aov"), anova_table = list(), ..., print.formula = FALSE) {
   if (is.null(between) & is.null(within)) stop("Either between or within need to be non-NULL!")
-  if (!is.null(covariate)) covariate <- str_c(covariate, collapse = "+")
+  if (!is.null(covariate)) {
+    covariate <- escape_vars(covariate)
+    covariate <- str_c(covariate, collapse = "+")
+  }
   #browser()
-  
   id        <- escape_vars(id)
   dv        <- escape_vars(dv)
   between   <- escape_vars(between)
   within    <- escape_vars(within)
-  covariate <- escape_vars(covariate)
-  
   rh <- if (!is.null(between) || !is.null(covariate)) str_c(if (!is.null(between)) str_c(between, collapse = " * ") else NULL, covariate, sep = " + ") else "1"
   error <- str_c(" + Error(", id, if (!is.null(within)) "/(" else "", str_c(within, collapse = " * "), if (length(within) > 0) ")" else "", ")")
   formula <- str_c(dv, " ~ ", rh, error)

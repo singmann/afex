@@ -32,13 +32,13 @@ After loading the packages, we will load the data (which comes with `afex`), rem
 
 ```{r message=FALSE, warning=FALSE}
 require(afex) # needed for ANOVA, lsmeans is loaded automatically.
+require(dplyr) # for working with data frames
+require(tidyr) # for transforming data frames from wide to long and the other way round.
 require(multcomp) # for advanced control for multiple testing/Type 1 errors.
 require(lattice) # for plots
 require(latticeExtra) # for combining lattice plots, etc.
 lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
 lattice.options(default.args = list(as.table = TRUE)) # better ordering
-require(dplyr) # for working with data frames
-require(tidyr) # for transforming dtaa frames from wide to long and the other way round.
 
 data("fhch2010") # load 
 fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors

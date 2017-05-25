@@ -41,6 +41,8 @@ In contrast to the analysis reported in the manuscript, we initially do not sepa
 require(afex) # needed for ANOVA, lsmeans is loaded automatically.
 require(multcomp) # for advanced control for multiple testing/Type 1 errors.
 require(lattice) # for plots
+lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
+lattice.options(default.args = list(as.table = TRUE)) # better ordering
 ```
 
 ```{r}

@@ -5,6 +5,8 @@ options(width = 90)
 require(afex) # needed for ANOVA, lsmeans is loaded automatically.
 require(multcomp) # for advanced control for multiple testing/Type 1 errors.
 require(lattice) # for plots
+lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
+lattice.options(default.args = list(as.table = TRUE)) # better ordering
 
 ## ---------------------------------------------------------------------------------------
 data(sk2011.1)

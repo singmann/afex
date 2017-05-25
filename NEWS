@@ -1,4 +1,18 @@
                     *************************
+                    ** afex VERSION 0.18-x **
+                    *************************
+                    
+                    Changes in afex Version 0.18-0
+                    Released May 2017
+        
+    Bugfixes
+
+    o   aov_ez did not work with more than one covariate 
+    (https://github.com/singmann/afex/issues/29).
+
+
+
+                    *************************
                     ** afex VERSION 0.17-x **
                     *************************
                     

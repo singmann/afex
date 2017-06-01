@@ -127,7 +127,7 @@ emm_i1
 contrast(pairs(emm_i1), by = NULL, adjust = "holm")
 
 ## ---------------------------------------------------------------------------------------
-summary(as.glht(contrast(pairs(emm_i1), by = NULL)), test = adjusted("holm"))
+summary(as.glht(contrast(pairs(emm_i1), by = NULL)), test = adjusted("free"))
 
 ## ---------------------------------------------------------------------------------------
 emm_i1b <- summary(contrast(emm_i1, by = NULL))

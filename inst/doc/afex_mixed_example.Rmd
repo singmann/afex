@@ -246,7 +246,7 @@ contrast(pairs(emm_i1), by = NULL, adjust = "holm")
 We could also use a slightly more powerful method than the Holm method, method `free` from package `multcomp`, which takes the correlation of the model parameters into account:
 
 ```{r}
-summary(as.glht(contrast(pairs(emm_i1), by = NULL)), test = adjusted("holm"))
+summary(as.glht(contrast(pairs(emm_i1), by = NULL)), test = adjusted("free"))
 ```
 
 

@@ -237,18 +237,17 @@ emm_i1 <- lsmeans(m2s, "frequency", by = c("stimulus", "task"))
 emm_i1
 ```
 
-The returned values are in line with our observation that the `nonword` and `naming` condition diverges from the other three. But is there actual evidence that the effect flips? We can test this using additional `lsmeans` functionality. Specifically, we first use the `pairs` function which provides us with a pairwise test of the effect of `frequency` in each `task:stimulus` combination. Then we need to combine the four tests within one object to obtain a familywise error rate correction which we do via `contrast(..., by = NULL)` (i.e., we revert the effect of the `by` statement from the earlier `lsmeans` call) and finally we select the `holm` method for controlling for family wise error rate (the Holm method is uniformly more powerful than the Bonferroni). 
+The returned values are in line with our observation that the `nonword` and `naming` condition diverges from the other three. But is there actual evidence that the effect flips? We can test this using additional `lsmeans` functionality. Specifically, we first use the `pairs` function which provides us with a pairwise test of the effect of `frequency` in each `task:stimulus` combination. Then we need to combine the four tests within one object to obtain a familywise error rate correction which we do via `update(..., by = NULL)` (i.e., we revert the effect of the `by` statement from the earlier `lsmeans` call) and finally we select the `holm` method for controlling for family wise error rate (the Holm method is uniformly more powerful than the Bonferroni). 
 
 ```{r}
-contrast(pairs(emm_i1), by = NULL, adjust = "holm")
+update(pairs(emm_i1), by = NULL, adjust = "holm")
 ```
 
 We could also use a slightly more powerful method than the Holm method, method `free` from package `multcomp`, which takes the correlation of the model parameters into account:
 
 ```{r}
-summary(as.glht(contrast(pairs(emm_i1), by = NULL)), test = adjusted("free"))
+summary(as.glht(update(pairs(emm_i1), by = NULL)), test = adjusted("free"))
 ```
-
 
 We see that the results are exactly as expected. In the `nonword` and `naming` condition we have a clear negative effect of frequency while in the other three conditions it is clearly positive. We could now also use the EMMs and retransform them onto the response scale (i.e., RTs) which we could use for plotting. Note that the $p$-values in this ouput are for the $z$ test of whether or not a value is significantly above 0 on the `log_rt`-scale (i.e., above 1 second on the response scale). That seems not the most interesting test, but the output is interesting because of the EMMs and standard errors that could be used for printing.
 
@@ -269,7 +268,7 @@ con2 <- contrast(con1, "trt.vs.ctrl1", by = c("contrast", "stimulus", "task"))
 test(con2, joint = TRUE, by = c("stimulus", "task"))
 ```
 
-This test indeed shows that the `density:frequency` interaction is only significant in the `nonword` and `lexdec` condition. Next, let's see if we can unpack this interaction in a meaningful manner. For this we compare `low:low` and `high:low` in each of the four groups. And just for the sake of making the example more complex, we also compare `low:high` and `high:high`. This can simply be done by specifying a list of custom contrasts on the EMMs (or reference grid in `lsmeans` parlance) which can be passed again to the `contrast` function. The contrasts are a `list` where each element should sum to one (i.e., be a proper contrast) and be of length equal to the number of EMMs (although we have 16 EMMs in total, we only need to specify it for a length of four due to conditiong by `c("stimulus", "task")`). To control for the family wise error rate across all tests, we use `contrast` a second time on the result this time again specifying `by = NULL` to revert the effect of conditiong. Note that although we entered the variables into `lsmeans` in the same order as into our plot call above, the order of the four EMMs differs.
+This test indeed shows that the `density:frequency` interaction is only significant in the `nonword` and `lexdec` condition. Next, let's see if we can unpack this interaction in a meaningful manner. For this we compare `low:low` and `high:low` in each of the four groups. And just for the sake of making the example more complex, we also compare `low:high` and `high:high`. This can simply be done by specifying a list of custom contrasts on the EMMs (or reference grid in `lsmeans` parlance) which can be passed again to the `contrast` function. The contrasts are a `list` where each element should sum to one (i.e., be a proper contrast) and be of length equal to the number of EMMs (although we have 16 EMMs in total, we only need to specify it for a length of four due to conditiong by `c("stimulus", "task")`). To control for the family wise error rate across all tests, we again use `update(..., by = NULL)` on the result this time again specifying `by = NULL` to revert the effect of conditiong. Note that although we entered the variables into `lsmeans` in the same order as into our plot call above, the order of the four EMMs differs.
 
 ```{r}
 emm_i2
@@ -278,7 +277,7 @@ des_c <- list(
   ll_hl = c(1, -1, 0, 0),
   lh_hh = c(0, 0, 1, -1)
   )
-contrast(contrast(emm_i2, des_c), by = NULL, adjust = "holm")
+update(contrast(emm_i2, des_c), by = NULL, adjust = "holm")
 ```
 
 In contrast to our expectation, the results show two significant effects and not only one. In line with our expectations, in the `nonword` and `lexdec` condition the EMM of `low:high` is smaller than the EMM for `high:high`, $z = -6.30$, $p < .0001$. However, in the `nonword` and `naming` condition we found the opposite pattern; the EMM of `low:high` is larger than the EMM for `high:high`, $z = 3.65$, $p = .002$. For all other effects $|z| < 1.3$, $p > .99$. In addition, there is no difference between `low:high` and `high:high` in any condition. 

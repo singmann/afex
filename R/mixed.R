@@ -268,7 +268,10 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     use_reml <- FALSE
   } else {
     if (afex_options("lmer_function") == "lmerTest") mf[[1]] <- quote(lmerTest::lmer)
-    else if (afex_options("lmer_function") == "lme4") mf[[1]] <- quote(lme4::lmer)
+    else if (afex_options("lmer_function") == "lme4") {
+      if (method %in% c("KR", "S")) stop('afex_options("lmer_function") needs to be "lmerTest" for method="', method, '"', call. = FALSE)
+      mf[[1]] <- quote(lme4::lmer)
+    }
     else stop("value of afex_options('lmer_function') not supported.")
     use_reml <- TRUE
   }

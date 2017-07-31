@@ -709,7 +709,7 @@ recover.data.mixed <- function(object, ...) {
     recover.data(object[[full_model_name]], ...)
   } else if (inherits(object[[full_model_name]][[1]], "merMod")) {
     message("lsmeans are based on full model which includes all effects.")
-    recover.data(object[[full_model_name]][[1]], ...)
+    recover.data(object[[full_model_name]][[length(object[[full_model_name]])]], ...)
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")
   }
@@ -723,7 +723,8 @@ lsm.basis.mixed <- function(object, trms, xlev, grid, ...) {
   if (inherits(object[[full_model_name]], "merMod")) {
     lsm.basis(object[[full_model_name]], trms, xlev, grid, ...)
   } else if (inherits(object[[full_model_name]][[1]], "merMod")) {
-    lsm.basis(object[[full_model_name]][[1]], trms, xlev, grid, ...)
+    lsm.basis(object[[full_model_name]][[length(object[[full_model_name]])]], 
+              trms, xlev, grid, ...)
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")
   }

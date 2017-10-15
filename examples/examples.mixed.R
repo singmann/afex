@@ -145,18 +145,25 @@ summary(mixed4_orig)
 data(obk.long)
 mixed(value ~ treatment * phase + (1|id), obk.long)
 
-# Examples for using the per.parammeter argument:
+# Examples for using the per.parameter argument 
+# note, require method = "nested-KR", "LRT", or "PB" 
+# also we use custom contrasts
 data(obk.long, package = "afex")
 obk.long$hour <- ordered(obk.long$hour)
+contrasts(obk.long$phase) <- "contr.sum"
+contrasts(obk.long$treatment) <- "contr.sum" 
 
 # tests only the main effect parameters of hour individually per parameter.
-mixed(value ~ treatment*phase*hour +(1|id), per_parameter = "^hour$", data = obk.long)
+mixed(value ~ treatment*phase*hour +(1|id), per_parameter = "^hour$", 
+      data = obk.long, method = "nested-KR", check_contrasts = FALSE)
 
 # tests all parameters including hour individually
-mixed(value ~ treatment*phase*hour +(1|id), per_parameter = "hour", data = obk.long)
+mixed(value ~ treatment*phase*hour +(1|id), per_parameter = "hour", 
+      data = obk.long, method = "nested-KR", check_contrasts = FALSE)
 
 # tests all parameters individually
-mixed(value ~ treatment*phase*hour +(1|id), per_parameter = ".", data = obk.long)
+mixed(value ~ treatment*phase*hour +(1|id), per_parameter = ".", 
+      data = obk.long, method = "nested-KR", check_contrasts = FALSE)
 
 # example data from package languageR:
 # Lexical decision latencies elicited from 21 subjects for 79 English concrete nouns, 

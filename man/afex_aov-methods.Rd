@@ -5,8 +5,8 @@
 \alias{anova.afex_aov}
 \alias{print.afex_aov}
 \alias{summary.afex_aov}
-\alias{recover.data.afex_aov}
-\alias{lsm.basis.afex_aov}
+\alias{recover_data.afex_aov}
+\alias{emm_basis.afex_aov}
 \title{Methods for afex_aov objects}
 \usage{
 \method{anova}{afex_aov}(object, es = afex_options("es_aov"),
@@ -18,9 +18,9 @@
 
 \method{summary}{afex_aov}(object, ...)
 
-\method{recover.data}{afex_aov}(object, ...)
+\method{recover_data}{afex_aov}(object, ...)
 
-\method{lsm.basis}{afex_aov}(object, trms, xlev, grid, ...)
+\method{emm_basis}{afex_aov}(object, trms, xlev, grid, ...)
 }
 \arguments{
 \item{object, x}{object of class \code{afex_aov} as returned from \code{\link{aov_car}} and related functions.}

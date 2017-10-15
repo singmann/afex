@@ -181,7 +181,7 @@ sk_m2
 
 # recreates basically Figure 4 (S&K, 2011, upper panel)
 # only the 4th and 6th x-axis position are flipped
-lsmip(sk_m1, instruction~type+inference)
+emmip(sk_m1, instruction~type+inference)
 
 # set up reference grid for custom contrasts:
 # this can be made faster via:

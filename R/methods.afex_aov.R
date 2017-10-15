@@ -145,22 +145,22 @@ summary.afex_aov <- function(object, ...) {
 
 #--------------------------------------------------------------
 ### afex package - mixed objects ###
-# just need to provide an 'lsmeans' method here
+# just need to provide an 'emmeans' method here
 
 #' @rdname afex_aov-methods
-#' @importFrom lsmeans recover.data lsm.basis
-#' @method recover.data afex_aov 
+#' @importFrom emmeans recover_data emm_basis
+## @method recover.data afex_aov 
 #' @export
-recover.data.afex_aov = function(object, ...) {
+recover_data.afex_aov = function(object, ...) {
   #do.call(do.call(":::", args = list(pkg = "lsmeans", name = "recover.data.aovlist")), args = list(object = object$aov, data = object$data$long, list(...)))
-  recover.data(object = object$aov, ...)
+  recover_data(object = object$aov, ...)
 }
 
 #' @rdname afex_aov-methods
-#' @method lsm.basis afex_aov 
+## @method lsm.basis afex_aov 
 #' @export
-lsm.basis.afex_aov = function(object, trms, xlev, grid, ...) {
+emm_basis.afex_aov = function(object, trms, xlev, grid, ...) {
   #do.call(do.call(":::", args = list(pkg = "lsmeans", name = "lsm.basis.aovlist")), args = list(object = object$aov, trms = trms, xlev = xlev, grid = grid))
-  lsm.basis(object$aov, trms, xlev, grid, ...)
+  emm_basis(object$aov, trms, xlev, grid, ...)
 }
 

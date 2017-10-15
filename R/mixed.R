@@ -704,30 +704,30 @@ anova.mixed <- function(object, ..., sig_symbols = attr(object$anova_table, "sig
 
 
 ## support for lsmeans for mixed objects:
-#' @importFrom lsmeans recover.data lsm.basis
-#' @method recover.data mixed
+#' @importFrom emmeans recover_data emm_basis
+## @method recover_data mixed
 #' @export
-recover.data.mixed <- function(object, ...) {
+recover_data.mixed <- function(object, ...) {
   full_model_name <- names(object)[[2]]
   if (inherits(object[[full_model_name]], "merMod")) {
-    recover.data(object[[full_model_name]], ...)
+    recover_data(object[[full_model_name]], ...)
   } else if (inherits(object[[full_model_name]][[1]], "merMod")) {
-    message("lsmeans are based on full model which includes all effects.")
-    recover.data(object[[full_model_name]][[length(object[[full_model_name]])]], ...)
+    message("emmeans are based on full model which includes all effects.")
+    recover_data(object[[full_model_name]][[length(object[[full_model_name]])]], ...)
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")
   }
 }
 
 
-#' @method lsm.basis mixed 
+## @method lsm_basis mixed 
 #' @export
-lsm.basis.mixed <- function(object, trms, xlev, grid, ...) {
+emm_basis.mixed <- function(object, trms, xlev, grid, ...) {
   full_model_name <- names(object)[[2]]
   if (inherits(object[[full_model_name]], "merMod")) {
-    lsm.basis(object[[full_model_name]], trms, xlev, grid, ...)
+    emm_basis(object[[full_model_name]], trms, xlev, grid, ...)
   } else if (inherits(object[[full_model_name]][[1]], "merMod")) {
-    lsm.basis(object[[full_model_name]][[length(object[[full_model_name]])]], 
+    emm_basis(object[[full_model_name]][[length(object[[full_model_name]])]], 
               trms, xlev, grid, ...)
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")

@@ -116,11 +116,16 @@ data(obk.long, package = "afex")
 a1 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
         within = c("phase", "hour"), observed = "gender")
 
-# 1b. plot data:
-lsmip(a1, gender ~ hour | treatment+phase)
+# 1b. plot data (per default with ggplot2):
+emmip(a1, gender ~ hour | treatment+phase)
+
+# use lattice instead of ggplot2:
+emm_options(graphics.engine = "lattice") 
+emmip(a1, gender ~ hour | treatment+phase)
+emm_options(graphics.engine = "ggplot") # reset options 
 
 # 2. obtain reference grid object:
-r1 <- lsmeans(a1, ~treatment +phase)
+r1 <- emmeans(a1, ~treatment +phase)
 r1
 
 # 3. create list of contrasts on the reference grid:
@@ -139,7 +144,7 @@ contrast(r1, c1)
 contrast(r1, c1, adjust = "holm")
 
 # 2. (alternative): all pairwise comparisons of treatment:
-lsmeans(a1, "treatment", contr = "pairwise")
+emmeans(a1, "treatment", contr = "pairwise")
 
 #######################
 ## 3: Other examples ##

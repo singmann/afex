@@ -163,6 +163,7 @@ mixed <- function(formula,
   dots <- list(...)
   data <- as.data.frame(data) # adding droplevels() here seems to lead to problems 
   # with factors that have contrasts associated with it.
+  
   ### deprercate old argument names:
   if("per.parameter" %in% names(dots)) {
     warn_deprecated_arg("per.parameter", "per_parameter")
@@ -263,31 +264,9 @@ mixed <- function(formula,
                     " (e.g., main) effects difficult."))
   }
   if (expand_re) {
-    random_parts <- str_c(all.terms[grepl("\\|", all.terms)])
-    which_random_double_bars <- str_detect(random_parts, "\\|\\|")
-    random_units <- str_replace(random_parts, "^.+\\|\\s+", "")
-    tmp_random <- lapply(str_replace(random_parts, "\\|.+$", ""), 
-                         function(x) as.formula(str_c("~", x)))
-    tmp_model.matrix <- vector("list", length(random_parts))
-    re_contains_intercept <- rep(FALSE, length(random_parts))
-    new_random <- vector("character", length(random_parts))
-    for (i in seq_along(random_parts)) {
-      tmp_model.matrix[[i]] <- model.matrix(tmp_random[[i]], data = data)
-      if (ncol(tmp_model.matrix[[i]]) == 0) 
-        stop("Invalid random effects term, e.g., (0|id)")
-      if (colnames(tmp_model.matrix[[i]])[1] == "(Intercept)") {
-        tmp_model.matrix[[i]] <- tmp_model.matrix[[i]][,-1, drop = FALSE]
-        re_contains_intercept[i] <- TRUE
-      }
-      if (ncol(tmp_model.matrix[[i]]) > 0) {
-        colnames(tmp_model.matrix[[i]]) <- str_c("re", i, ".", str_replace_all(colnames(tmp_model.matrix[[i]]), ":", "_by_"))
-        new_random[i] <- str_c("(", as.numeric(re_contains_intercept[i]), "+", str_c(colnames(tmp_model.matrix[[i]]), collapse = "+"), if (which_random_double_bars[i]) "||" else "|", random_units[i], ")")
-      } else {
-        new_random[i] <- str_c("(", as.numeric(re_contains_intercept[i]), if (which_random_double_bars[i]) "||" else "|", random_units[i], ")")
-      }
-    }
-    data <- cbind(data, as.data.frame(do.call(cbind, tmp_model.matrix)))
-    random <- str_c(new_random, collapse = "+")
+    expand_re_out <- expand_re_fun(all.terms = all.terms, data = data)
+    data <- expand_re_out$data
+    random <- expand_re_out$random
   }
   if (return == "data") return(data)
   ####################
@@ -332,7 +311,8 @@ mixed <- function(formula,
     if (!(method[1] %in% c("LRT", "PB"))) 
       stop("GLMMs can only be estimated with 'LRT' or 'PB'.")
   }
-  if (method[1] %in% c("KR", "S")) {  ## do not calculate nested models for these methods
+  ## do not calculate nested models for these methods:
+  if (method[1] %in% c("KR", "S")) {
     if (progress) cat(str_c("Fitting one lmer() model. "))
     full_model <- eval(mf)
     if (all_fit) {
@@ -705,6 +685,48 @@ mixed <- function(formula,
              function(x) x@optinfo$logLik_other, how = "replace"))
   }
   list.out
+}
+
+## expand random effects sructure
+expand_re_fun <- function(all.terms, data) {
+    random_parts <- str_c(all.terms[grepl("\\|", all.terms)])
+    which_random_double_bars <- str_detect(random_parts, "\\|\\|")
+    random_units <- str_replace(random_parts, "^.+\\|\\s+", "")
+    tmp_random <- lapply(str_replace(random_parts, "\\|.+$", ""), 
+                         function(x) as.formula(str_c("~", x)))
+    
+    tmp_model.matrix <- vector("list", length(random_parts))
+    re_contains_intercept <- rep(FALSE, length(random_parts))
+    new_random <- vector("character", length(random_parts))
+    
+    for (i in seq_along(random_parts)) {
+      tmp_model.matrix[[i]] <- model.matrix(tmp_random[[i]], data = data)
+      if (ncol(tmp_model.matrix[[i]]) == 0) 
+        stop("Invalid random effects term, e.g., (0|id)")
+      if (colnames(tmp_model.matrix[[i]])[1] == "(Intercept)") {
+        tmp_model.matrix[[i]] <- tmp_model.matrix[[i]][,-1, drop = FALSE]
+        re_contains_intercept[i] <- TRUE
+      }
+      if (ncol(tmp_model.matrix[[i]]) > 0) {
+        colnames(tmp_model.matrix[[i]]) <- 
+          str_c("re", i, ".", 
+                str_replace_all(colnames(tmp_model.matrix[[i]]), ":", "_by_"))
+        new_random[i] <- 
+          str_c("(", as.numeric(re_contains_intercept[i]), "+", 
+                str_c(colnames(tmp_model.matrix[[i]]), collapse = "+"), 
+                if (which_random_double_bars[i]) "||" else "|", 
+                random_units[i], ")")
+      } else {
+        new_random[i] <- str_c("(", 
+                               as.numeric(re_contains_intercept[i]), 
+                               if (which_random_double_bars[i]) "||" else "|", 
+                               random_units[i], ")")
+      }
+    }
+    data <- cbind(data, as.data.frame(do.call(cbind, tmp_model.matrix)))
+    random <- str_c(new_random, collapse = "+")
+    return(list(data = data,
+                random = random))
 }
 
 get_mixed_warnings <- function(x) {

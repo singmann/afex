@@ -1,24 +1,10 @@
 # Sample .travis.yml for R projects
 
 language: r
-sudo: true
+sudo: false
 cache: packages
 r:
   - devel
 r_binary_packages:
  - ez
- - stringr
- - coin
- - dfoptim
- - dplyr
- - tidyr
- - knitr
- - plyr
- - optimx
- - rmarkdown
- - testthat
- - psych
- - pbkrtest
- - car
- - reshape2
  

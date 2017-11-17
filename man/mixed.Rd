@@ -36,7 +36,7 @@ lmer_alt(formula, data, check_contrasts = FALSE, ...)
 
 \item{all_fit}{logical. Should \code{\link{all_fit}} be used to fit each model with each available optimization algorithm and the results that provided the best fit in each case be used? Warning: This can dramatically increase the optimization time. Adds two new attributes to the returned object designating which algorithm was selected and the log-likelihoods for each algorithm. Note that only warnings from the initial fit are emitted during fitting. The warnings of the chosen models are emitted when printing the returned object.}
 
-\item{set_data_arg}{\code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}.}
+\item{set_data_arg}{\code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{emmeans}). Default is \code{TRUE}.}
 
 \item{progress}{if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.}
 

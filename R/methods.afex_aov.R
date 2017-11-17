@@ -12,7 +12,7 @@
 #'   \item{\code{anova}}{Returns an ANOVA table of class \code{c("anova", "data.frame")}. Information such as effect size (\code{es}) or df-correction are calculated each time this method is called.}
 #'   \item{\code{summary}}{For ANOVAs containing within-subject factors it returns the full output of the within-subject tests: the uncorrected results, results containing Greenhousse-Geisser and Hyunh-Feldt correction, and the results of the Mauchly test of sphericity (all achieved via \code{summary.Anova.mlm}). For other ANOVAs, the \code{anova} table is simply returned.}
 #'   \item{\code{print}}{Prints (and invisibly returns) the ANOVA table as constructed from \code{\link{nice}} (i.e., as strings rounded nicely). Arguments in \code{...} are passed to \code{nice} allowing to pass arguments such as \code{es} and \code{correction}.}
-#'   \item{\code{recover.data} and \code{lsm.basis}}{Provide the backbone for using \code{\link{lsmeans}} and related functions from \pkg{lsmeans} directly on \code{afex_aov} objects by returning a \code{\link{ref.grid}} object. Should not be called directly but through the functionality provided by \pkg{lsmeans}.}
+#'   \item{\code{recover_data} and \code{emm_basis}}{Provide the backbone for using \code{\link{emmeans}} and related functions from \pkg{emmeans} directly on \code{afex_aov} objects by returning a \code{\link{ref.grid}} object. Should not be called directly but through the functionality provided by \pkg{emmeans}.}
 #'   
 #' }
 #'
@@ -152,7 +152,7 @@ summary.afex_aov <- function(object, ...) {
 ## @method recover.data afex_aov 
 #' @export
 recover_data.afex_aov = function(object, ...) {
-  #do.call(do.call(":::", args = list(pkg = "lsmeans", name = "recover.data.aovlist")), args = list(object = object$aov, data = object$data$long, list(...)))
+  #do.call(do.call(":::", args = list(pkg = "emmeans", name = "recover_data.aovlist")), args = list(object = object$aov, data = object$data$long, list(...)))
   recover_data(object = object$aov, ...)
 }
 
@@ -160,7 +160,7 @@ recover_data.afex_aov = function(object, ...) {
 ## @method lsm.basis afex_aov 
 #' @export
 emm_basis.afex_aov = function(object, trms, xlev, grid, ...) {
-  #do.call(do.call(":::", args = list(pkg = "lsmeans", name = "lsm.basis.aovlist")), args = list(object = object$aov, trms = trms, xlev = xlev, grid = grid))
+  #do.call(do.call(":::", args = list(pkg = "emmeans", name = "emm_basis.aovlist")), args = list(object = object$aov, trms = trms, xlev = xlev, grid = grid))
   emm_basis(object$aov, trms, xlev, grid, ...)
 }
 

@@ -144,7 +144,22 @@
 #' @example examples/examples.mixed.R
 #' 
 #' @export
-mixed <- function(formula, data, type = afex_options("type"), method = afex_options("method_mixed"), per_parameter = NULL, args_test = list(), test_intercept = FALSE, check_contrasts = afex_options("check_contrasts"), expand_re = FALSE, all_fit = FALSE, set_data_arg = TRUE, progress = TRUE, cl = NULL, return = "mixed", sig_symbols = afex_options("sig_symbols"), ...) {
+mixed <- function(formula, 
+                  data, 
+                  type = afex_options("type"), 
+                  method = afex_options("method_mixed"), 
+                  per_parameter = NULL, 
+                  args_test = list(), 
+                  test_intercept = FALSE, 
+                  check_contrasts = afex_options("check_contrasts"), 
+                  expand_re = FALSE, 
+                  all_fit = FALSE, 
+                  set_data_arg = TRUE, 
+                  progress = TRUE, 
+                  cl = NULL, 
+                  return = "mixed", 
+                  sig_symbols = afex_options("sig_symbols"), 
+                  ...) {
   dots <- list(...)
   data <- as.data.frame(data) # adding droplevels() here seems to lead to problems 
   # with factors that have contrasts associated with it.
@@ -181,35 +196,39 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     resetted <- NULL
     for (i in vars.to.check) {
       if (is.factor(data[,i])) {
-        if (is.null(attr(data[,i], "contrasts")) & (options("contrasts")[[1]][1] != "contr.sum")) {
+        if (is.null(attr(data[,i], "contrasts")) & 
+            (options("contrasts")[[1]][1] != "contr.sum")) {
           contrasts(data[,i]) <- "contr.sum"
           resetted  <- c(resetted, i)
         }
-        else if (!is.null(attr(data[,i], "contrasts")) && attr(data[,i], "contrasts") != "contr.sum") {
+        else if (!is.null(attr(data[,i], "contrasts")) && 
+                 attr(data[,i], "contrasts") != "contr.sum") {
           contrasts(data[,i]) <- "contr.sum"
           resetted  <- c(resetted, i)
         }
       }
     }
-    if (!is.null(resetted)) message(str_c("Contrasts set to contr.sum for the following variables: ", str_c(resetted, collapse=", ")))
+    if (!is.null(resetted)) 
+      message(str_c("Contrasts set to contr.sum for the following variables: ", 
+                    str_c(resetted, collapse=", ")))
   }
-  #warning(str_c("Calculating Type 3 sums with contrasts = ", options("contrasts")[[1]][1], ".\n  Use options(contrasts=c('contr.sum','contr.poly')) instead"))
-  # browser()
-  method <- match.arg(method, c("KR", "S", "PB", "LRT", "nested-KR", "F"), several.ok=FALSE)
+  method <- match.arg(method, c("KR", "S", "PB", "LRT", "nested-KR", "F"), 
+                      several.ok=FALSE)
+  
   ####################
   ### Part I: prepare fitting (i.e., obtain model info, check model, ...)
   ####################
   mc <- match.call()
-  #browser()
   formula.f <- as.formula(formula)
-  #if (class(formula) != "formula") message("Formula (the first argument) converted to formula.")
-  if (!inherits(formula, "formula")) message("Formula (the first argument) converted to formula.")
+  if (!inherits(formula, "formula")) 
+    message("Formula (the first argument) converted to formula.")
   dv <- as.character(formula.f)[[2]]
   all.terms <- attr(terms(formula.f), "term.labels")
   effect.order <- attr(terms(formula.f), "order")
   effect.order <- effect.order[!grepl("\\|", all.terms)]
   max.effect.order <- max(effect.order)
-  random <- str_c(str_c("(", all.terms[grepl("\\|", all.terms)], ")"), collapse = " + ")
+  random <- str_c(str_c("(", all.terms[grepl("\\|", all.terms)], ")"), 
+                  collapse = " + ")
   rh2 <- nobars(formula.f)
   rh2[[2]] <- NULL
   m.matrix <- model.matrix(rh2, data = data)
@@ -218,9 +237,14 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   fixed.vars <- all.vars(rh2)
   # check for missing values in variables used:
   if (nrow(m.matrix) != nrow(data)) {
-    data <- model.frame(as.formula(str_c(vars.to.check[1], "~", str_c(vars.to.check[-1], collapse = "+"))), data = data)
+    data <- model.frame(
+      as.formula(str_c(vars.to.check[1], 
+                       "~", 
+                       str_c(vars.to.check[-1], collapse = "+"))), 
+      data = data)
     m.matrix <- model.matrix(rh2, data = data)
-    warning(str_c("Due to missing values, reduced number of observations to ", nrow(data)))
+    warning(str_c("Due to missing values, reduced number of observations to ", 
+                  nrow(data)))
     if(set_data_arg) {
       warning("Due to missing values, set_data_arg set to FALSE.")
       set_data_arg <- FALSE
@@ -230,20 +254,27 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   # check if numerical variables are centered
   c.ns <- fixed.vars[vapply(data[, fixed.vars, drop = FALSE], is.numeric, TRUE)]
   if (length(c.ns) > 0) {
-    non.null <- c.ns[!abs(vapply(data[, c.ns, drop = FALSE], mean, 0)) < .Machine$double.eps ^ 0.5]
-    if (length(non.null) > 0) message(str_c("Numerical variables NOT centered on 0 (i.e., interpretation of all main effects might be difficult if in interactions): ", str_c(non.null, collapse = ", ")))
+    non.null <- c.ns[!abs(vapply(data[, c.ns, drop = FALSE], mean, 0)) < 
+                       .Machine$double.eps ^ 0.5]
+    if (length(non.null) > 0) 
+      message(str_c("Numerical variables NOT centered on 0: ", 
+                    str_c(non.null, collapse = ", "), 
+                    "\nIf in interactions, interpretation of lower order", 
+                    " (e.g., main) effects difficult."))
   }
   if (expand_re) {
     random_parts <- str_c(all.terms[grepl("\\|", all.terms)])
     which_random_double_bars <- str_detect(random_parts, "\\|\\|")
     random_units <- str_replace(random_parts, "^.+\\|\\s+", "")
-    tmp_random <- lapply(str_replace(random_parts, "\\|.+$", ""), function(x) as.formula(str_c("~", x)))
+    tmp_random <- lapply(str_replace(random_parts, "\\|.+$", ""), 
+                         function(x) as.formula(str_c("~", x)))
     tmp_model.matrix <- vector("list", length(random_parts))
     re_contains_intercept <- rep(FALSE, length(random_parts))
     new_random <- vector("character", length(random_parts))
     for (i in seq_along(random_parts)) {
       tmp_model.matrix[[i]] <- model.matrix(tmp_random[[i]], data = data)
-      if (ncol(tmp_model.matrix[[i]]) == 0) stop("Invalid random effects term, e.g., (0|id)")
+      if (ncol(tmp_model.matrix[[i]]) == 0) 
+        stop("Invalid random effects term, e.g., (0|id)")
       if (colnames(tmp_model.matrix[[i]])[1] == "(Intercept)") {
         tmp_model.matrix[[i]] <- tmp_model.matrix[[i]][,-1, drop = FALSE]
         re_contains_intercept[i] <- TRUE
@@ -263,41 +294,54 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   ### Part II: obtain the lmer fits
   ####################
   ## Part IIa: prepare formulas
-  mf <- mc[!names(mc) %in% c("type", "method", "args.test", "args_test", "progress", "check.contrasts", "check_contrasts", "per.parameter", "per_parameter", "cl", "test.intercept", "test_intercept","expand_re", "return", "all_fit", "sig_symbols", "sig.symbols")]
-  mf[["formula"]] <-as.formula(str_c(dv,deparse(rh2, width.cutoff = 500L),"+",random))   #formula.f
+  mf <- mc[!names(mc) %in% c("type", "method", "args.test", "args_test", 
+                             "progress", "check.contrasts", "check_contrasts", 
+                             "per.parameter", "per_parameter", "cl", 
+                             "test.intercept", "test_intercept","expand_re", 
+                             "return", "all_fit", "sig_symbols", "sig.symbols")]
+  mf[["formula"]] <- 
+    as.formula(str_c(dv,deparse(rh2, width.cutoff = 500L),"+",random))
   if ("family" %in% names(mf)) {
     mf[[1]] <- as.name("glmer")
     use_reml <- FALSE
   } else {
-    if (afex_options("lmer_function") == "lmerTest") mf[[1]] <- quote(lmerTest::lmer)
+    if (afex_options("lmer_function") == "lmerTest") 
+      mf[[1]] <- quote(lmerTest::lmer)
     else if (afex_options("lmer_function") == "lme4") {
-      if (!(return %in% c("merMod")) && method %in% c("KR", "S")) stop('afex_options("lmer_function") needs to be "lmerTest" for method="', method, '"', call. = FALSE)
+      if (!(return %in% c("merMod")) && method %in% c("KR", "S")) 
+        stop('afex_options("lmer_function") needs to be "lmerTest" for method="', 
+             method, '"', call. = FALSE)
       mf[[1]] <- quote(lme4::lmer)
     }
     else stop("value of afex_options('lmer_function') not supported.")
     use_reml <- TRUE
   }
   mf[["data"]] <- as.name("data")
-  if ((method[1] %in% c("PB", "LRT")) & !("family" %in% names(mf))) if ((!"REML" %in% names(mf)) || mf[["REML"]]) {
-    message("REML argument to lmer() set to FALSE for method = 'PB' or 'LRT'")
-    mf[["REML"]] <- FALSE
-    use_reml <- FALSE
+  if ((method[1] %in% c("PB", "LRT")) & !("family" %in% names(mf))) {
+    if ((!"REML" %in% names(mf)) || mf[["REML"]]) {
+      message("REML argument to lmer() set to FALSE for method = 'PB' or 'LRT'")
+      mf[["REML"]] <- FALSE
+      use_reml <- FALSE
+    }
   }
-  #browser()
   if (return == "merMod") {
     out <- eval(mf)
     return(out)
   }
   if ("family" %in% names(mf)) {
-    if (!(method[1] %in% c("LRT", "PB"))) stop("GLMMs can only be estimated with 'LRT' or 'PB'.")
+    if (!(method[1] %in% c("LRT", "PB"))) 
+      stop("GLMMs can only be estimated with 'LRT' or 'PB'.")
   }
   if (method[1] %in% c("KR", "S")) {  ## do not calculate nested models for these methods
     if (progress) cat(str_c("Fitting one lmer() model. "))
     full_model <- eval(mf)
     if (all_fit) {
-      all_fits <- suppressWarnings(all_fit(full_model, data = data, verbose = FALSE))
+      all_fits <- 
+        suppressWarnings(all_fit(full_model, data = data, verbose = FALSE))
       all_fits <- c(default = full_model, all_fits)
-      tmp_ll <- vapply(all_fits,function(x) tryCatch(logLik(x), error = function(e) NA), 0)
+      tmp_ll <- 
+        vapply(all_fits, 
+               function(x) tryCatch(logLik(x), error = function(e) NA), 0)
       full_model <- all_fits[[which.max(tmp_ll)]]
       full_model@optinfo$logLik_other <- tmp_ll
     }
@@ -319,7 +363,8 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
         colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
       }
     } else if (method[1] == "S") {
-      if (test_intercept) warning("Cannot test intercept with Satterthwaite approximation.")
+      if (test_intercept) 
+        warning("Cannot test intercept with Satterthwaite approximation.")
       anova_out <- lmerTest::anova(full_model, ddf = "Satterthwaite", type = type)
       anova_table <- as.data.frame(anova_out)
       if (!("Pr(>F)" %in% colnames(anova_table))) {
@@ -335,7 +380,8 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   } else { ## do calculate nested models for the methods below
     ## prepare (g)lmer formulas:
     if (type == 3 | type == "III") {
-      if (attr(terms(rh2, data = data), "intercept") == 1) fixed.effects <- c("(Intercept)", fixed.effects)
+      if (attr(terms(rh2, data = data), "intercept") == 1) 
+        fixed.effects <- c("(Intercept)", fixed.effects)
       # The next part alters the mapping of parameters to effects/variables if
       # per_parameter is not NULL (this does the complete magic).
       if (!is.null(per_parameter)) {
@@ -344,18 +390,27 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
           fixed.to.change <- c(fixed.to.change, grep(parameter, fixed.effects))
         }
         fixed.to.change <- fixed.effects[sort(unique(fixed.to.change))]
-        if ("(Intercept)" %in% fixed.to.change) fixed.to.change <- fixed.to.change[-1]
+        if ("(Intercept)" %in% fixed.to.change) 
+          fixed.to.change <- fixed.to.change[-1]
         fixed.all <- dimnames(m.matrix)[[2]]
         #tf2 <- fixed.to.change[2]
         for (tf2 in fixed.to.change) {
           tf <- which(fixed.effects == tf2)
           fixed.lower <- fixed.effects[seq_len(tf-1)]
-          fixed.upper <- if (tf < length(fixed.effects)) fixed.effects[(tf+1):length(fixed.effects)] else NULL
-          fixed.effects <- c(fixed.lower, fixed.all[which(mapping == (tf-1))], fixed.upper)
+          fixed.upper <- 
+            if (tf < length(fixed.effects)) 
+              fixed.effects[(tf+1):length(fixed.effects)] else NULL
+          fixed.effects <- 
+            c(fixed.lower, fixed.all[which(mapping == (tf-1))], fixed.upper)
           map.to.replace <- which(mapping == (tf-1))
           map.lower <- mapping[seq_len(map.to.replace[1]-1)]
-          map.upper <- if (max(map.to.replace) < length(mapping)) mapping[(map.to.replace[length(map.to.replace)]+1):length(mapping)] else NULL
-          mapping <- c(map.lower, seq_along(map.to.replace) + map.lower[length(map.lower)], map.upper + length(map.to.replace)-1)
+          map.upper <- 
+            if (max(map.to.replace) < length(mapping)) 
+              mapping[(map.to.replace[length(map.to.replace)]+1):
+                        length(mapping)] else NULL
+          mapping <- c(map.lower, seq_along(map.to.replace) + 
+                         map.lower[length(map.lower)], 
+                       map.upper + length(map.to.replace)-1)
         }
       }
       # make formulas
@@ -363,7 +418,8 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       formulas[[1]] <- mf[["formula"]]
       for (i in seq_along(fixed.effects)) {
         tmp.columns <- str_c(deparse(-which(mapping == (i-1))), collapse = "")
-        formulas[[i+1]] <- as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
+        formulas[[i+1]] <- 
+          as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
       }
       names(formulas) <- c("full_model", fixed.effects)
       if (!test_intercept && fixed.effects[1] == "(Intercept)") {
@@ -371,36 +427,48 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
         formulas[["(Intercept)"]] <- NULL
       }
     } else if (type == 2 | type == "II") {
-      #warning("Implementation of Type 2 method not unproblematic.\n  Check documentation or use car::Anova (Wald tests).")
-      if (!is.null(per_parameter)) stop("per_parameter argument only implemented for Type 3 tests.")
+      if (!is.null(per_parameter)) 
+        stop("per_parameter argument only implemented for Type 3 tests.")
       full_model.formulas <- vector("list", max.effect.order)
       submodel.formulas <- vector("list", length(fixed.effects))
       full_model.formulas[[length(full_model.formulas)]] <- mf[["formula"]]
       for (c in seq_len(max.effect.order)) {
         if (c == max.effect.order) next 
-        tmp.columns <- str_c(deparse(-which(mapping %in% which(effect.order > c))), collapse = "")
-        full_model.formulas[[c]] <-  as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
+        tmp.columns <- 
+          str_c(deparse(-which(mapping %in% which(effect.order > c))), 
+                collapse = "")
+        full_model.formulas[[c]] <- 
+          as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
       }
       for (c in seq_along(fixed.effects)) {
         order.c <- effect.order[c]
-        tmp.columns <- str_c(deparse(-which(mapping == (c) | mapping %in% if (order.c == max.effect.order) -1 else which(effect.order > order.c))), collapse = "")
-        submodel.formulas[[c]] <- as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
+        tmp.columns <- 
+          str_c(deparse(-which(mapping == (c) | mapping %in% 
+                                 if (order.c == max.effect.order) -1 else 
+                                   which(effect.order > order.c))), 
+                collapse = "")
+        submodel.formulas[[c]] <- as.formula(
+          str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
       }
       formulas <- c(full_model.formulas, submodel.formulas)
     } else stop('Only type 3 and type 2 tests implemented.')
     ## Part IIb: fit models
     # single core
     if (is.null(cl)) {
-      if (progress) cat(str_c("Fitting ", length(formulas), " (g)lmer() models:\n["))
+      if (progress) 
+        cat(str_c("Fitting ", length(formulas), " (g)lmer() models:\n["))
       fits <- vector("list", length(formulas))
       if (all_fit) all_fits <- vector("list", length(formulas))
       for (i in seq_along(formulas)) {
         mf[["formula"]] <- formulas[[i]]
         fits[[i]] <- eval(mf)
         if (all_fit) {
-          all_fits[[i]] <- suppressWarnings(all_fit(fits[[i]], data = data, verbose = FALSE))
+          all_fits[[i]] <- suppressWarnings(
+            all_fit(fits[[i]], data = data, verbose = FALSE))
           all_fits[[i]] <- c(default = fits[[i]], all_fits[[i]])
-          tmp_ll <- vapply(all_fits[[i]],function(x) tryCatch(logLik(x), error = function(e) NA), 0)
+          tmp_ll <- vapply(all_fits[[i]], 
+                           function(x) tryCatch(logLik(x), 
+                                                error = function(e) NA), 0)
           fits[[i]] <- all_fits[[i]][[which.max(tmp_ll)]]
           fits[[i]]@optinfo$logLik_other <- tmp_ll
         }
@@ -414,24 +482,34 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
         if (all_fit) {
           all_fits <- suppressWarnings(all_fit(res, data = data, verbose = FALSE))
           all_fits <- c(default = res, all_fits)
-          tmp_ll <- vapply(all_fits,function(x) tryCatch(logLik(x), error = function(e) NA), 0)
+          tmp_ll <- vapply(all_fits,
+                           function(x) tryCatch(logLik(x),
+                                                error = function(e) NA), 0)
           res <- all_fits[[which.max(tmp_ll)]]
           res@optinfo$logLik_other <- tmp_ll
         }
         if (progress) cat(".")
         return(res)
       }
-      if (progress) cat(paste0("Fitting ", length(formulas), " (g)lmer() models.\n"))
-      #junk <- clusterEvalQ(cl = cl, library("lme4", character.only = TRUE))
-      junk <- clusterCall(cl = cl, "require", package = "afex", character.only = TRUE)
-      #junk <- clusterEvalQ(cl = cl, loadNamespace("lme4"))
+      if (progress) 
+        cat(paste0("Fitting ", length(formulas), " (g)lmer() models.\n"))
+      junk <- clusterCall(cl = cl, 
+                          "require", 
+                          package = "afex", 
+                          character.only = TRUE)
       if (check_contrasts)  {
         curr.contrasts <- getOption("contrasts")
         clusterExport(cl = cl, "curr.contrasts", envir = sys.nframe())
         junk <- clusterEvalQ(cl = cl, options(contrasts=curr.contrasts))
       }
       if (progress) junk <- clusterEvalQ(cl = cl, cat("["))
-      fits <- clusterApplyLB(cl = cl, x = formulas, eval.cl, m.call = mf, progress = progress, all_fit=all_fit, data = data)
+      fits <- clusterApplyLB(cl = cl, 
+                             x = formulas, 
+                             eval.cl, 
+                             m.call = mf, 
+                             progress = progress, 
+                             all_fit=all_fit, 
+                             data = data)
       if (progress) junk <- clusterEvalQ(cl = cl, cat("]"))
     }
     
@@ -443,14 +521,17 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       if (type == 3 | type == "III") {
         logLik_full <- as.numeric(logLik(fits[[1]]))
         logLik_restricted <- as.numeric(vapply(fits[2:length(fits)], logLik, 0))
-        if(any(logLik_restricted > logLik_full)) return(fixed.effects[logLik_restricted > logLik_full])
+        if(any(logLik_restricted > logLik_full)) 
+          return(fixed.effects[logLik_restricted > logLik_full])
       } else if (type == 2 | type == "II") {
         logLik_full <- as.numeric(vapply(fits[1:max.effect.order],logLik, 0))
-        logLik_restricted <- as.numeric(vapply(fits[(max.effect.order+1):length(fits)], logLik, 0))
+        logLik_restricted <- 
+          as.numeric(vapply(fits[(max.effect.order+1):length(fits)], logLik, 0))
         warn_logLik <- c()
         for (c in seq_along(fixed.effects)) {
           order.c <- effect.order[c]
-          if(logLik_restricted[[c]] > logLik_full[[order.c]]) warn_logLik <- c(warn_logLik, fixed.effects[c])
+          if(logLik_restricted[[c]] > logLik_full[[order.c]]) 
+            warn_logLik <- c(warn_logLik, fixed.effects[c])
         }
         if(length(warn_logLik)>0) return(warn_logLik)
       }
@@ -465,18 +546,24 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
         browser()
         str(fits[[1]], 2)
         fits[[1]]@call
-        #sapply(all_fit(fits[[1]], data=md_16.4b), function(y) try(logLik(y)))
-        sapply(refits, function(x) sapply(x, function(y) tryCatch(as.numeric(logLik(y)), error = function(e) as.numeric(NA))))
+        sapply(refits, function(x) 
+          sapply(x, function(y) 
+            tryCatch(as.numeric(logLik(y)), error = function(e) as.numeric(NA))))
         
         fits <- lapply(refits, function(x) {
-          tmp_llk <- vapply(x, function(y) tryCatch(logLik(y), error = function(e) as.numeric(NA)), 0)
+          tmp_llk <- vapply(x, function(y) 
+            tryCatch(logLik(y), error = function(e) as.numeric(NA)), 0)
           x[[which.min(tmp_llk)]]
         })
       }
     }
     # check again and warn 
     if(!isREML(fits[[1]]) & !isTRUE(check_likelihood(fits))) {
-      warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(fits), collapse = ", "), "\n  Results cannot be trusted. Try all_fit=TRUE!"))
+      warning(paste(
+        "Following nested model(s) provide better fit than full model:", 
+        paste(check_likelihood(fits), collapse = ", "), 
+        "\n  Results cannot be trusted.", 
+        "Try all_fit=TRUE or reduce random effect structure!"))
     }
     
     if(set_data_arg){
@@ -500,10 +587,12 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
     ## obtain p-values:
     #browser()
     if (method[1] == "nested-KR") {
-      if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
+      if (progress) 
+        cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
       tests <- vector("list", length(fixed.effects))
       for (c in seq_along(fixed.effects)) {
-        if (type == 3 | type == "III") tests[[c]] <- pbkrtest::KRmodcomp(full_model, fits[[c]])
+        if (type == 3 | type == "III") 
+          tests[[c]] <- pbkrtest::KRmodcomp(full_model, fits[[c]])
         else if (type == 2 | type == "II") {
           order.c <- effect.order[c]
           tests[[c]] <- pbkrtest::KRmodcomp(full_model[[order.c]], fits[[c]])
@@ -512,43 +601,56 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       }
       if (progress) cat("]\n")
       names(tests) <- fixed.effects
-      #df.out <- data.frame(Effect = fixed.effects, stringsAsFactors = FALSE)
-      anova_table <- data.frame(t(vapply(tests, function(x) unlist(x[["test"]][1,]), unlist(tests[[1]][["test"]][1,]))))
-      #FtestU <- vapply(tests, function(x) unlist(x[["test"]][2,]), unlist(tests[[1]][["test"]][2,]))
-      #row.names(FtestU) <- str_c(row.names(FtestU), ".U")
-      #anova_table <- cbind(anova_table, t(FtestU))
+      anova_table <- data.frame(
+        t(vapply(tests, 
+                 function(x) unlist(x[["test"]][1,]), 
+                 unlist(tests[[1]][["test"]][1,]))))
       rownames(anova_table) <- fixed.effects
-      colnames(anova_table) <- c("F", "num Df", "den Df", "F.scaling", "Pr(>F)")
-      anova_table <- anova_table[, c("num Df", "den Df", "F.scaling", "F", "Pr(>F)")]
+      colnames(anova_table) <- 
+        c("F", "num Df", "den Df", "F.scaling", "Pr(>F)")
+      anova_table <- 
+        anova_table[, c("num Df", "den Df", "F.scaling", "F", "Pr(>F)")]
       anova_tab_addition <- NULL
     } else if (method[1] == "PB") {
-      if (progress) cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
+      if (progress) 
+        cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
       tests <- vector("list", length(fixed.effects))
       for (c in seq_along(fixed.effects)) {
-        if (type == 3 | type == "III") tests[[c]] <- do.call(pbkrtest::PBmodcomp, args = c(largeModel = full_model, smallModel = fits[[c]], args_test))
+        if (type == 3 | type == "III") 
+          tests[[c]] <- do.call(pbkrtest::PBmodcomp, 
+                                args = c(largeModel = full_model, 
+                                         smallModel = fits[[c]], 
+                                         args_test))
         else if (type == 2 | type == "II") {
           order.c <- effect.order[c]
-          tests[[c]] <- do.call(pbkrtest::PBmodcomp, args = c(largeModel = full_model[[order.c]], smallModel = fits[[c]], args_test))
+          tests[[c]] <- do.call(pbkrtest::PBmodcomp, 
+                                args = c(largeModel = full_model[[order.c]], 
+                                         smallModel = fits[[c]], args_test))
         }
         if (progress) cat(".")
       }
       if (progress) cat("]\n")
       names(tests) <- fixed.effects
-      #browser()
-      #df.out<- data.frame(Effect = fixed.effects, stringsAsFactors = FALSE)
-      anova_table <- data.frame(t(vapply(tests, function(x) unlist(x[["test"]][2,]), unlist(tests[[1]][["test"]][2,]))))
+      anova_table <- 
+        data.frame(t(vapply(tests, 
+                            function(x) unlist(x[["test"]][2,]), 
+                            unlist(tests[[1]][["test"]][2,]))))
       anova_table <- anova_table[,-2]
-      LRT <- vapply(tests, function(x) unlist(x[["test"]][1,]), unlist(tests[[1]][["test"]][1,]))
+      LRT <- vapply(tests, 
+                    function(x) unlist(x[["test"]][1,]), 
+                    unlist(tests[[1]][["test"]][1,]))
       row.names(LRT) <- str_c(row.names(LRT), ".LRT")
       anova_table <- cbind(anova_table, t(LRT))
       rownames(anova_table) <- fixed.effects
-      anova_table <- anova_table[, c("stat", "df.LRT", "p.value.LRT", "p.value")]
+      anova_table <- 
+        anova_table[, c("stat", "df.LRT", "p.value.LRT", "p.value")]
       colnames(anova_table) <- c("Chisq", "Chi Df", "Pr(>Chisq)", "Pr(>PB)")
       anova_tab_addition <- NULL
     } else if (method[1] == "LRT") {
       tests <- vector("list", length(fixed.effects))
       for (c in seq_along(fixed.effects)) {
-        if (type == 3 | type == "III") tests[[c]] <- anova(full_model, fits[[c]])
+        if (type == 3 | type == "III") 
+          tests[[c]] <- anova(full_model, fits[[c]])
         else if (type == 2 | type == "II") {
           order.c <- effect.order[c]
           tmpModel  <- full_model[[order.c]] 
@@ -561,16 +663,15 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
       chisq  <- vapply(tests, function(x) x[["Chisq"]][2], 0)
       df  <- vapply(tests, function(x) x[["Chi Df"]][2], 0)
       p.value  <- vapply(tests, function(x) x[["Pr(>Chisq)"]][2], 0)
-      anova_table <- data.frame(Df = df.small, Chisq = chisq, "Chi Df" = df, "Pr(>Chisq)"=p.value, stringsAsFactors = FALSE, check.names = FALSE)
+      anova_table <- data.frame(Df = df.small, 
+                                Chisq = chisq, 
+                                "Chi Df" = df, 
+                                "Pr(>Chisq)"=p.value, 
+                                stringsAsFactors = FALSE, check.names = FALSE)
       rownames(anova_table) <- fixed.effects
-      if (type == 3 | type == "III") anova_tab_addition <- paste0("Df full model: ", df.large[1])
+      if (type == 3 | type == "III") 
+        anova_tab_addition <- paste0("Df full model: ", df.large[1])
       else anova_tab_addition <- paste0("Df full model(s): ", df.large)
-      
-      # 
-      # attr(anova_table, "heading") <- c(paste0("Mixed Model Anova Table (Type ", type , " tests)\n"), paste0("Response: ", dv)
-      #title <- "Analysis of Variance Table\n"
-      #topnote <- paste("Model ", format(1L:nmodels), ": ", variables, 
-      #    sep = "", collapse = "\n")
     } else stop('Only methods "KR", "PB", "LRT", or "nested-KR" currently implemented.')
     
   } 
@@ -579,7 +680,8 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   ####################
   class(anova_table) <- c("anova", "data.frame")
   attr(anova_table, "heading") <- c(
-    paste0("Mixed Model Anova Table (Type ", type , " tests, ", method, "-method)\n"), 
+    paste0("Mixed Model Anova Table (Type ", type , " tests, ", method, 
+           "-method)\n"), 
     paste0("Model: ", deparse(formula.f)),
     paste0("Data: " ,mc[["data"]]),
     anova_tab_addition
@@ -595,8 +697,12 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   attr(list.out, "type") <- type
   attr(list.out, "method") <- method
   if (all_fit) {
-    attr(list.out, "all_fit_selected") <- rapply(c(full_model = list.out$full_model, list.out$restricted_models), function(x) x@optinfo$optimizer, how = "unlist")
-    attr(list.out, "all_fit_logLik") <-  as.data.frame(rapply(c(full_model = list.out$full_model, list.out$restricted_models), function(x) x@optinfo$logLik_other, how = "replace"))
+    attr(list.out, "all_fit_selected") <- 
+      rapply(c(full_model = list.out$full_model, list.out$restricted_models), 
+             function(x) x@optinfo$optimizer, how = "unlist")
+    attr(list.out, "all_fit_logLik") <-  as.data.frame(
+      rapply(c(full_model = list.out$full_model, list.out$restricted_models), 
+             function(x) x@optinfo$logLik_other, how = "replace"))
   }
   list.out
 }
@@ -605,15 +711,25 @@ get_mixed_warnings <- function(x) {
   full_model_name <- names(x)[[2]]
   ntry <- function(x) tryCatch(x, error = function(e) NULL)
   if (is.list(x$full)) {
-    warnings1 <- c(full = lapply(x[[2]], function(y) y@optinfo$warnings), lapply(x[[3]], function(y) y@optinfo$warnings))  
-    warnings2 <- c(full = lapply(x[[2]], function(y) ntry(y@optinfo$conv$lme4$messages)), lapply(x[[3]], function(y) ntry(y@optinfo$conv$lme4$messages)))
+    warnings1 <- c(full = lapply(x[[2]], function(y) y@optinfo$warnings), 
+                   lapply(x[[3]], function(y) y@optinfo$warnings))  
+    warnings2 <- 
+      c(full = lapply(x[[2]], function(y) ntry(y@optinfo$conv$lme4$messages)), 
+        lapply(x[[3]], function(y) ntry(y@optinfo$conv$lme4$messages)))
   } else {
-    warnings1 <- c(full = list(x[[full_model_name]]@optinfo$warnings), lapply(x[[3]], function(y) y@optinfo$warnings))  
-    warnings2 <- c(full = list(ntry(x[[full_model_name]]@optinfo$conv$lme4$messages)), lapply(x[[3]], function(y) ntry(y@optinfo$conv$lme4$messages)))
+    warnings1 <- c(full = list(x[[full_model_name]]@optinfo$warnings), 
+                   lapply(x[[3]], function(y) y@optinfo$warnings))  
+    warnings2 <- 
+      c(full = list(ntry(x[[full_model_name]]@optinfo$conv$lme4$messages)), 
+        lapply(x[[3]], function(y) ntry(y@optinfo$conv$lme4$messages)))
   }
-  warnings <- mapply(function(x, y) c(unlist(x), y), warnings1, warnings2, SIMPLIFY=FALSE)  
+  warnings <- mapply(function(x, y) c(unlist(x), y), 
+                     warnings1, warnings2, SIMPLIFY=FALSE)  
   warn <- vapply(warnings, function(y) !length(y)==0, NA)
-  for (i in names(warn)[warn]) warning("lme4 reported (at least) the following warnings for '", i, "':\n  * ", paste(warnings[[i]], collapse = "\n  * "), call. = FALSE)
+  for (i in names(warn)[warn]) 
+    warning("lme4 reported (at least) the following warnings for '", i, 
+            "':\n  * ", paste(warnings[[i]], collapse = "\n  * "), 
+            call. = FALSE)
 }
 
 check_likelihood <- function(object) {
@@ -625,18 +741,12 @@ check_likelihood <- function(object) {
   
   if (attr(object, "type") == 3 | attr(object, "type") == "III") {
     logLik_full <- as.numeric(logLik(object[[full_model_name]]))
-    logLik_restricted <- as.numeric(vapply(object[[restricted_models_name]], logLik, 0))
-    if(any(logLik_restricted > logLik_full)) return(rownames(object$anova_table)[logLik_restricted > logLik_full])
+    logLik_restricted <- 
+      as.numeric(vapply(object[[restricted_models_name]], logLik, 0))
+    if(any(logLik_restricted > logLik_full)) 
+      return(rownames(object$anova_table)[logLik_restricted > logLik_full])
   } else if (attr(object, "type") == 2 | attr(object, "type") == "II") {
     NULL
-#     logLik_full <- as.numeric(vapply(fits[1:max.effect.order],logLik, 0))
-#     logLik_restricted <- as.numeric(vapply(fits[(max.effect.order+1):length(fits)], logLik, 0))
-#     warn_logLik <- c()
-#     for (c in seq_along(fixed.effects)) {
-#       order.c <- effect.order[c]
-#       if(logLik_restricted[[c]] > logLik_full[[order.c]]) warn_logLik <- c(warn_logLik, fixed.effects[c])
-#     }
-#     if(length(warn_logLik)>0) return(warn_logLik)
   }
   return(TRUE)    
 }
@@ -661,7 +771,10 @@ lmer_alt <- function(formula, data, check_contrasts = FALSE, ...) {
 print.mixed <- function(x, ...) {
   full_model_name <- names(x)[[2]]
   try(if(!isREML(x[[full_model_name]]) && !isTRUE(check_likelihood(x))) 
-    warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(x), collapse = ", "), "\n  Results cannot be trusted. Try all_fit=TRUE!"), call. = FALSE), silent = TRUE)
+    warning(paste("Following nested model(s) provide better fit than full model:", 
+                  paste(check_likelihood(x), collapse = ", "), 
+                  "\n  Results cannot be trusted. Try all_fit=TRUE!"), 
+            call. = FALSE), silent = TRUE)
   get_mixed_warnings(x)
   tmp <- nice.mixed(x, ...)
   print(tmp)
@@ -674,13 +787,23 @@ print.mixed <- function(x, ...) {
 #' @method summary mixed
 #' @export
 summary.mixed <- function(object, ...) {
-  if ("full_model" %in% names(object)) summary(object = if (length(object[["full_model"]]) == 1) object[["full_model"]] else object[["full_model"]][[length(object[["full_model"]])]], ...)
-  else if("full.model" %in% names(object)) summary(object = if (length(object[["full.model"]]) == 1) object[["full.model"]] else object[["full.model"]][[length(object[["full.model"]])]], ...)
+  if ("full_model" %in% names(object)) 
+    summary(object = 
+              if (length(object[["full_model"]]) == 1) 
+                object[["full_model"]] else 
+                  object[["full_model"]][[length(object[["full_model"]])]], ...)
+  else if("full.model" %in% names(object)) 
+    summary(object = if (length(object[["full.model"]]) == 1) 
+      object[["full.model"]] else 
+        object[["full.model"]][[length(object[["full.model"]])]], ...)
 }
 
 #' @method anova mixed
 #' @export
-anova.mixed <- function(object, ..., sig_symbols = attr(object$anova_table, "sig_symbols"), refit = FALSE) {
+anova.mixed <- function(object, 
+                        ..., 
+                        sig_symbols = attr(object$anova_table, "sig_symbols"), 
+                        refit = FALSE) {
   mCall <- match.call(expand.dots = TRUE)
   full_model_name <- names(object)[[2]]
   dots <- list(...)
@@ -689,17 +812,30 @@ anova.mixed <- function(object, ..., sig_symbols = attr(object$anova_table, "sig
              as.logical(vapply(dots, is, NA, "mixed"))
            )
   if (any(modp)) {
-    model.names <- c(deparse(mCall[["object"]]), vapply(which(modp), function(x) deparse(mCall[[x+2]]), ""))
-    for (i in which(as.logical(vapply(dots, is, NA, "mixed")))) dots[[i]] <- dots[[i]][[full_model_name]]
-    anova_table <- do.call(anova, args = c(object = object[[full_model_name]], dots, model.names = list(model.names), refit = refit))
+    model.names <- c(deparse(mCall[["object"]]), 
+                     vapply(which(modp), function(x) deparse(mCall[[x+2]]), ""))
+    for (i in which(as.logical(vapply(dots, is, NA, "mixed")))) 
+      dots[[i]] <- dots[[i]][[full_model_name]]
+    anova_table <- do.call(anova, 
+                           args = c(object = object[[full_model_name]], 
+                                    dots, 
+                                    model.names = list(model.names), 
+                                    refit = refit))
   } else {
-    try(if(!isREML(object[[full_model_name]]) && !isTRUE(check_likelihood(object))) 
-      warning(paste("Following nested model(s) provide better fit than full model:", paste(check_likelihood(object), collapse = ", "), "\n  Results cannot be trusted. Try all_fit=TRUE!"), call. = FALSE), silent=TRUE)
+    try(if(!isREML(object[[full_model_name]]) && 
+           !isTRUE(check_likelihood(object))) 
+      warning(
+        paste("Following nested model(s) provide better fit than full model:", 
+              paste(check_likelihood(object), collapse = ", "), 
+              "\n  Results cannot be trusted. Try all_fit=TRUE!"), 
+        call. = FALSE), silent=TRUE)
     get_mixed_warnings(object)
     anova_table <- object$anova_table
   }
   
-  attr(anova_table, "sig_symbols") <- if(!is.null(sig_symbols)) sig_symbols else afex_options("sig_symbols")
+  attr(anova_table, "sig_symbols") <- 
+    if (!is.null(sig_symbols)) sig_symbols else 
+      afex_options("sig_symbols")
   anova_table
 }
 
@@ -714,7 +850,8 @@ recover_data.mixed <- function(object, ...) {
     recover_data(object[[full_model_name]], ...)
   } else if (inherits(object[[full_model_name]][[1]], "merMod")) {
     message("emmeans are based on full model which includes all effects.")
-    recover_data(object[[full_model_name]][[length(object[[full_model_name]])]], ...)
+    recover_data(object[[full_model_name]][[length(object[[full_model_name]])]], 
+                 ...)
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")
   }

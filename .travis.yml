@@ -1,10 +1,12 @@
 # Sample .travis.yml for R projects
 
 language: r
-sudo: false
+sudo: true
 cache: packages
 r:
   - devel
 r_binary_packages:
  - ez
+ - lme4
+ - stringr
  

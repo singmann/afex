@@ -9,4 +9,20 @@ r_binary_packages:
  - ez
  - lme4
  - stringr
+ - emmeans
+ - coin
+ - dfoptim
+ - dplyr
+ - tidyr
+ - knitr
+ - plyr
+ - optimx
+ - rmarkdown
+ - testthat
+ - mlmRev
+ - psych
+ - pbkrtest
+ - lmerTest
+ - car
+ - reshape2
  

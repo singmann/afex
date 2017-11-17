@@ -146,7 +146,8 @@
 #' @export
 mixed <- function(formula, data, type = afex_options("type"), method = afex_options("method_mixed"), per_parameter = NULL, args_test = list(), test_intercept = FALSE, check_contrasts = afex_options("check_contrasts"), expand_re = FALSE, all_fit = FALSE, set_data_arg = TRUE, progress = TRUE, cl = NULL, return = "mixed", sig_symbols = afex_options("sig_symbols"), ...) {
   dots <- list(...)
-  data <- droplevels(as.data.frame(data))
+  data <- as.data.frame(data) # adding droplevels() here seems to lead to problems 
+  # with factors that have contrasts associated with it.
   ### deprercate old argument names:
   if("per.parameter" %in% names(dots)) {
     warn_deprecated_arg("per.parameter", "per_parameter")

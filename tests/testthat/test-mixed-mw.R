@@ -44,5 +44,5 @@ test_that("mixed: Maxell & Delaney (2004), Table 16.10, p. 862 (does not replica
   #note: the values in this test should not replicate the table...
   md_16.4b$cog <- scale(md_16.4b$cog, scale=FALSE)
   mixed4 <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, progress=FALSE, check_contrasts=FALSE)
-  expect_that(round(fixef(mixed4$full_model), 2), is_equivalent_to(c(36.1, -9.07, 0.64, 0.03)))
+  expect_that(unname(round(fixef(mixed4$full_model), 2)), is_equivalent_to(c(36.1, -9.07, 0.64, 0.03)))
 })

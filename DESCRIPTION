@@ -1,7 +1,7 @@
 Package: afex
 Type: Package
 Title: Analysis of Factorial Experiments
-Depends: R (>= 3.1.0), lme4 (>= 1.1-8), lsmeans (>= 2.17)
+Depends: R (>= 3.1.0), lme4 (>= 1.1-8), emmeans
 Suggests: xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown,
        lattice, latticeExtra, multcomp, testthat, mlmRev, dplyr,
        tidyr, dfoptim, Matrix, psych
@@ -26,7 +26,8 @@ License: GPL (>=2)
 Encoding: UTF-8
 VignetteBuilder: knitr
 Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut",
-       "cre"), email="singmann+afex@gmail.com"), person(given="Ben",
+       "cre"), email="singmann+afex@gmail.com",
+       comment=c(ORCID="0000-0002-4842-3657")), person(given="Ben",
        family="Bolker", role=c("aut")), person(given="Jake",
        family="Westfall", role=c("aut")), person(given="Frederik",
        family="Aust", role=c("aut")), person(given="Søren",
@@ -35,6 +36,6 @@ Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut",
        family="Lawrence", role=c("ctb")), person(given="Ulf",
        family="Mertens", role=c("ctb")), person(given="Jonathan",
        family="Love", role=c("ctb")) )
-Version: 0.18-0
-Date: 2017-10-15
+Version: 0.19-0
+Date: 2017-11-17
 RoxygenNote: 6.0.1

@@ -13,7 +13,7 @@
 #' @param check_contrasts \code{logical}. Should contrasts be checked and (if necessary) changed to \code{"contr.sum"}? See Details. The default (\code{"TRUE"}) is taken from \code{\link{afex_options}}.
 #' @param expand_re logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.
 #' @param all_fit logical. Should \code{\link{all_fit}} be used to fit each model with each available optimization algorithm and the results that provided the best fit in each case be used? Warning: This can dramatically increase the optimization time. Adds two new attributes to the returned object designating which algorithm was selected and the log-likelihoods for each algorithm. Note that only warnings from the initial fit are emitted during fitting. The warnings of the chosen models are emitted when printing the returned object.
-#' @param set_data_arg \code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{lsmeans}). Default is \code{TRUE}. 
+#' @param set_data_arg \code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{emmeans}). Default is \code{TRUE}. 
 #' @param progress  if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.
 #' @param cl  A vector identifying a cluster; used for distributing the estimation of the different models using several cores (if seveal models are calculated). See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args_test} for this.
 #' @param return the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model (note that the data is also part of the returned object).
@@ -146,7 +146,8 @@
 #' @export
 mixed <- function(formula, data, type = afex_options("type"), method = afex_options("method_mixed"), per_parameter = NULL, args_test = list(), test_intercept = FALSE, check_contrasts = afex_options("check_contrasts"), expand_re = FALSE, all_fit = FALSE, set_data_arg = TRUE, progress = TRUE, cl = NULL, return = "mixed", sig_symbols = afex_options("sig_symbols"), ...) {
   dots <- list(...)
-  data <- droplevels(as.data.frame(data))
+  data <- as.data.frame(data) # adding droplevels() here seems to lead to problems 
+  # with factors that have contrasts associated with it.
   ### deprercate old argument names:
   if("per.parameter" %in% names(dots)) {
     warn_deprecated_arg("per.parameter", "per_parameter")
@@ -270,7 +271,7 @@ mixed <- function(formula, data, type = afex_options("type"), method = afex_opti
   } else {
     if (afex_options("lmer_function") == "lmerTest") mf[[1]] <- quote(lmerTest::lmer)
     else if (afex_options("lmer_function") == "lme4") {
-      if (method %in% c("KR", "S")) stop('afex_options("lmer_function") needs to be "lmerTest" for method="', method, '"', call. = FALSE)
+      if (!(return %in% c("merMod")) && method %in% c("KR", "S")) stop('afex_options("lmer_function") needs to be "lmerTest" for method="', method, '"', call. = FALSE)
       mf[[1]] <- quote(lme4::lmer)
     }
     else stop("value of afex_options('lmer_function') not supported.")
@@ -703,31 +704,31 @@ anova.mixed <- function(object, ..., sig_symbols = attr(object$anova_table, "sig
 }
 
 
-## support for lsmeans for mixed objects:
-#' @importFrom lsmeans recover.data lsm.basis
-#' @method recover.data mixed
+## support for emmeans for mixed objects:
+#' @importFrom emmeans recover_data emm_basis
+## @method recover_data mixed
 #' @export
-recover.data.mixed <- function(object, ...) {
+recover_data.mixed <- function(object, ...) {
   full_model_name <- names(object)[[2]]
   if (inherits(object[[full_model_name]], "merMod")) {
-    recover.data(object[[full_model_name]], ...)
+    recover_data(object[[full_model_name]], ...)
   } else if (inherits(object[[full_model_name]][[1]], "merMod")) {
-    message("lsmeans are based on full model which includes all effects.")
-    recover.data(object[[full_model_name]][[length(object[[full_model_name]])]], ...)
+    message("emmeans are based on full model which includes all effects.")
+    recover_data(object[[full_model_name]][[length(object[[full_model_name]])]], ...)
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")
   }
 }
 
 
-#' @method lsm.basis mixed 
+## @method lsm_basis mixed 
 #' @export
-lsm.basis.mixed <- function(object, trms, xlev, grid, ...) {
+emm_basis.mixed <- function(object, trms, xlev, grid, ...) {
   full_model_name <- names(object)[[2]]
   if (inherits(object[[full_model_name]], "merMod")) {
-    lsm.basis(object[[full_model_name]], trms, xlev, grid, ...)
+    emm_basis(object[[full_model_name]], trms, xlev, grid, ...)
   } else if (inherits(object[[full_model_name]][[1]], "merMod")) {
-    lsm.basis(object[[full_model_name]][[length(object[[full_model_name]])]], 
+    emm_basis(object[[full_model_name]][[length(object[[full_model_name]])]], 
               trms, xlev, grid, ...)
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")

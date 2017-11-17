@@ -5,8 +5,8 @@
 \alias{anova.afex_aov}
 \alias{print.afex_aov}
 \alias{summary.afex_aov}
-\alias{recover.data.afex_aov}
-\alias{lsm.basis.afex_aov}
+\alias{recover_data.afex_aov}
+\alias{emm_basis.afex_aov}
 \title{Methods for afex_aov objects}
 \usage{
 \method{anova}{afex_aov}(object, es = afex_options("es_aov"),
@@ -18,9 +18,9 @@
 
 \method{summary}{afex_aov}(object, ...)
 
-\method{recover.data}{afex_aov}(object, ...)
+\method{recover_data}{afex_aov}(object, ...)
 
-\method{lsm.basis}{afex_aov}(object, trms, xlev, grid, ...)
+\method{emm_basis}{afex_aov}(object, trms, xlev, grid, ...)
 }
 \arguments{
 \item{object, x}{object of class \code{afex_aov} as returned from \code{\link{aov_car}} and related functions.}
@@ -48,7 +48,7 @@
   \item{\code{anova}}{Returns an ANOVA table of class \code{c("anova", "data.frame")}. Information such as effect size (\code{es}) or df-correction are calculated each time this method is called.}
   \item{\code{summary}}{For ANOVAs containing within-subject factors it returns the full output of the within-subject tests: the uncorrected results, results containing Greenhousse-Geisser and Hyunh-Feldt correction, and the results of the Mauchly test of sphericity (all achieved via \code{summary.Anova.mlm}). For other ANOVAs, the \code{anova} table is simply returned.}
   \item{\code{print}}{Prints (and invisibly returns) the ANOVA table as constructed from \code{\link{nice}} (i.e., as strings rounded nicely). Arguments in \code{...} are passed to \code{nice} allowing to pass arguments such as \code{es} and \code{correction}.}
-  \item{\code{recover.data} and \code{lsm.basis}}{Provide the backbone for using \code{\link{lsmeans}} and related functions from \pkg{lsmeans} directly on \code{afex_aov} objects by returning a \code{\link{ref.grid}} object. Should not be called directly but through the functionality provided by \pkg{lsmeans}.}
+  \item{\code{recover_data} and \code{emm_basis}}{Provide the backbone for using \code{\link{emmeans}} and related functions from \pkg{emmeans} directly on \code{afex_aov} objects by returning a \code{\link{ref.grid}} object. Should not be called directly but through the functionality provided by \pkg{emmeans}.}
   
 }
 }

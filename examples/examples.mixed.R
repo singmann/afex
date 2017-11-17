@@ -39,14 +39,19 @@ sk_m2
 
 # recreates basically Figure 4 (S&K, 2011, upper panel)
 # only the 4th and 6th x-axis position are flipped
-lsmip(sk_m1, instruction~type+inference)
+emmip(sk_m1, instruction~type+inference)
+
+# use lattice instead of ggplot2:
+emm_options(graphics.engine = "lattice") 
+emmip(sk_m1, instruction~type+inference)
+emm_options(graphics.engine = "ggplot") # reset options 
 
 # set up reference grid for custom contrasts:
 # this can be made faster via:
-lsm.options(lmer.df = "Kenward-Roger") # set df for lsmeans to KR
-# lsm.options(lmer.df = "Satterthwaite") # the default
-# lsm.options(lmer.df = "asymptotic") # the fastest, no df
-(rg1 <- lsmeans(sk_m1, c("instruction", "type", "inference")))
+emm_options(lmer.df = "Kenward-Roger") # set df for lsmeans to KR
+# emm_options(lmer.df = "Satterthwaite") # the default
+# emm_options(lmer.df = "asymptotic") # the fastest, no df
+(rg1 <- emmeans(sk_m1, c("instruction", "type", "inference")))
 
 # set up contrasts on reference grid:
 contr_sk2 <- list(

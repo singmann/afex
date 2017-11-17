@@ -64,7 +64,7 @@ aov_4(formula, data, observed = NULL, fun_aggregate = NULL, type = afex_options(
 
 \describe{
   \item{\code{"anova_table"}}{An ANOVA table of class \code{c("anova", "data.frame")}.}
-  \item{\code{"aov"}}{\code{aov} object returned from \code{\link{aov}} (should not be used to evaluate significance of effects, but can be passed to \code{lsmeans} for post-hoc tests).}
+  \item{\code{"aov"}}{\code{aov} object returned from \code{\link{aov}} (should not be used to evaluate significance of effects, but can be passed to \code{emmeans} for post-hoc tests).}
   \item{\code{"Anova"}}{object returned from \code{\link[car]{Anova}}, an object of class \code{"Anova.mlm"} (if within-subjects factors are present) or of class \code{c("anova", "data.frame")}.}
   \item{\code{"lm"}}{the object fitted with \code{lm} and passed to \code{Anova} (i.e., an object of class \code{"lm"} or \code{"mlm"}). Also returned if \code{return = "lm"}.}
   \item{\code{"data"}}{a list containing: (1) \code{long} (the possibly aggregated data in long format used for \code{aov}), \code{wide} (the data used to fit the \code{lm} object), and \code{idata} (if within-subject factors are present, the \code{idata} argument passed to \code{car::Anova}). Also returned if \code{return = "data"}.}
@@ -74,7 +74,7 @@ In addition, the object has the following attributes: \code{"dv"}, \code{"id"}, 
 The \link[=afex_aov-methods]{print} method for \code{afex_aov} objects (invisibly) returns (and prints) the same as if \code{return} is \code{"nice"}: a nice ANOVA table (produced by \code{\link{nice}}) with the following columns: \code{Effect}, \code{df}, \code{MSE} (mean-squared errors), \code{F} (potentially with significant symbols), \code{ges} (generalized eta-squared), \code{p}.
 }
 \description{
-These functions allow convenient specification of any type of ANOVAs (i.e., purely within-subjects ANOVAs, purely between-subjects ANOVAs, and mixed between-within or split-plot ANOVAs) for data in the \strong{long} format (i.e., one observation per row). If the data has more than one observation per individual and cell of the design (e.g., multiple responses per condition), the data will by automatically aggregated. The default settings reproduce results from commercial statistical packages such as SPSS or SAS. \code{aov_ez} is called specifying the factors as character vectors, \code{aov_car} is called using a formula similar to \code{\link{aov}} specifying an error strata for the within-subject factor(s), and \code{aov_4} is called with a \pkg{lme4}-like formula (all ANOVA functions return identical results). The returned object contains the ANOVA also fitted via base R's \code{\link{aov}} which can be passed to e.g., \pkg{lsmeans} for further analysis (e.g., follow-up tests, contrasts, plotting, etc.). These functions employ \code{\link[car]{Anova}} (from the \pkg{car} package) to provide test of effects avoiding the somewhat unhandy format of \code{car::Anova}.
+These functions allow convenient specification of any type of ANOVAs (i.e., purely within-subjects ANOVAs, purely between-subjects ANOVAs, and mixed between-within or split-plot ANOVAs) for data in the \strong{long} format (i.e., one observation per row). If the data has more than one observation per individual and cell of the design (e.g., multiple responses per condition), the data will by automatically aggregated. The default settings reproduce results from commercial statistical packages such as SPSS or SAS. \code{aov_ez} is called specifying the factors as character vectors, \code{aov_car} is called using a formula similar to \code{\link{aov}} specifying an error strata for the within-subject factor(s), and \code{aov_4} is called with a \pkg{lme4}-like formula (all ANOVA functions return identical results). The returned object contains the ANOVA also fitted via base R's \code{\link{aov}} which can be passed to e.g., \pkg{emmeans} for further analysis (e.g., follow-up tests, contrasts, plotting, etc.). These functions employ \code{\link[car]{Anova}} (from the \pkg{car} package) to provide test of effects avoiding the somewhat unhandy format of \code{car::Anova}.
 }
 \details{
 \subsection{Details of ANOVA Specification}{ 
@@ -97,21 +97,21 @@ Note that lower order effects (e.g., main effects) in type 3 ANOVAs are only mea
 }
 
 \subsection{Follow-Up Contrasts and Post-Hoc Tests}{ 
-The S3 object returned per default can be directly passed to \code{lsmeans::lsmeans} for further analysis. This allows to test any type of contrasts that might be of interest independent of whether or not this contrast involves between-subject variables, within-subject variables, or a combination thereof. The general procedure to run those contrasts is the following (see Examples for a full example):
+The S3 object returned per default can be directly passed to \code{emmeans::emmeans} for further analysis. This allows to test any type of contrasts that might be of interest independent of whether or not this contrast involves between-subject variables, within-subject variables, or a combination thereof. The general procedure to run those contrasts is the following (see Examples for a full example):
 
  \enumerate{
    \item Estimate an \code{afex_aov} object with the function returned here. For example: \code{x <- aov_car(dv ~ a*b + (id/c), d)}
-   \item Obtain a \code{\link[lsmeans]{ref.grid}} object by running \code{\link[lsmeans]{lsmeans}} on the \code{afex_aov} object from step 1 using the factors involved in the contrast. For example: \code{r <- lsmeans(x, ~a:c)}
+   \item Obtain a \code{\link[emmeans]{emmGrid}} object by running \code{\link[emmeans]{emmeans}} on the \code{afex_aov} object from step 1 using the factors involved in the contrast. For example: \code{r <- emmeans(x, ~a:c)}
    \item Create a list containing the desired contrasts on the reference grid object from step 2. For example: \code{con1 <- list(a_x = c(-1, 1, 0, 0, 0, 0), b_x = c(0, 0, -0.5, -0.5, 0, 1))}
-   \item Test the contrast on the reference grid using \code{\link[lsmeans]{contrast}}. For example: \code{contrast(r, con1)}
+   \item Test the contrast on the reference grid using \code{\link[emmeans]{contrast}}. For example: \code{contrast(r, con1)}
    \item To control for multiple testing p-value adjustments can be specified. For example the Bonferroni-Holm correction: \code{contrast(r, con1, adjust = "holm")}
  }
  
- Note that \pkg{lsmeans} allows for a variety of advanced settings and simplifiations, for example: all pairwise comparison of a single factor using one command (e.g., \code{lsmeans(x, "a", contr = "pairwise")}) or advanced control for multiple testing by passing objects to \pkg{multcomp}. A comprehensive overview of the functionality is provided in the accompanying vignettes (see \href{https://CRAN.R-project.org/package=lsmeans}{here}).
+ Note that \pkg{emmeans} allows for a variety of advanced settings and simplifiations, for example: all pairwise comparison of a single factor using one command (e.g., \code{emmeans(x, "a", contr = "pairwise")}) or advanced control for multiple testing by passing objects to \pkg{multcomp}. A comprehensive overview of the functionality is provided in the accompanying vignettes (see \href{https://CRAN.R-project.org/package=emmeans}{here}).
  
- A caveat regarding the use of \pkg{lsmeans} concerns the assumption of sphericity for ANOVAs including within-subjects/repeated-measures factors (with more than two levels). While the ANOVA tables per default report results using the Greenhousse-Geisser correction, no such correction is available when using \pkg{lsmeans}. This may result in anti-conservative tests.
+ A caveat regarding the use of \pkg{emmeans} concerns the assumption of sphericity for ANOVAs including within-subjects/repeated-measures factors (with more than two levels). While the ANOVA tables per default report results using the Greenhousse-Geisser correction, no such correction is available when using \pkg{emmeans}. This may result in anti-conservative tests.
  
- \pkg{lsmeans} is loaded/attached automatically when loading \pkg{afex} via \code{library} or \code{require}.
+ \pkg{emmeans} is loaded/attached automatically when loading \pkg{afex} via \code{library} or \code{require}.
 }  
 
 \subsection{Methods for \code{afex_aov} Objects}{
@@ -252,11 +252,16 @@ data(obk.long, package = "afex")
 a1 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
         within = c("phase", "hour"), observed = "gender")
 
-# 1b. plot data:
-lsmip(a1, gender ~ hour | treatment+phase)
+# 1b. plot data (per default with ggplot2):
+emmip(a1, gender ~ hour | treatment+phase)
+
+# use lattice instead of ggplot2:
+emm_options(graphics.engine = "lattice") 
+emmip(a1, gender ~ hour | treatment+phase)
+emm_options(graphics.engine = "ggplot") # reset options 
 
 # 2. obtain reference grid object:
-r1 <- lsmeans(a1, ~treatment +phase)
+r1 <- emmeans(a1, ~treatment +phase)
 r1
 
 # 3. create list of contrasts on the reference grid:
@@ -275,7 +280,7 @@ contrast(r1, c1)
 contrast(r1, c1, adjust = "holm")
 
 # 2. (alternative): all pairwise comparisons of treatment:
-lsmeans(a1, "treatment", contr = "pairwise")
+emmeans(a1, "treatment", contr = "pairwise")
 
 #######################
 ## 3: Other examples ##

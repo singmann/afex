@@ -4,7 +4,10 @@
                     
                     Changes in afex Version 0.19-0
                     Released xxx 2017
-        
+    Significant User Visible Changes and New Features
+    
+    o   afex now works with emmeans (predecessor of lsmeans pckage).
+    
     Bugfixes
 
     o   lsmeans did not work with mixed objects if type=2 and method used nested

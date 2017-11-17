@@ -7,7 +7,6 @@ r:
   - devel
 r_binary_packages:
  - ez
- - lme4
  - stringr
  - coin
  - dfoptim

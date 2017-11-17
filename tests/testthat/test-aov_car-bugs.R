@@ -1,6 +1,12 @@
 
 context("ANOVAs: known bugs")
 
+test_that("aov does not throw 'Error() model is singular' warning for missing values", {
+  data(md_12.1)
+  md_12.1b <- md_12.1[-1,]
+  expect_warning(aov_ez("id", "rt", md_12.1b, within = c("angle", "noise")), "Missing values", all = TRUE)
+})
+
 test_that("regex works correctly in aov_car when also having within factors outside the Error term", {
   data(obk.long)
   expect_is(aov_car(value ~ treatment * gender*phase*hour + Error(id/phase*hour), data = obk.long), "afex_aov")

@@ -176,8 +176,10 @@ aov_car <- function(formula,
   Terms <- terms(formula, "Error", data = data)
   indError <- attr(Terms, "specials")$Error
   if (length(indError) > 1L) 
-    stop(sprintf(ngettext(length(indError), "there are %d Error terms: only 1 is allowed", 
-                          "there are %d Error terms: only 1 is allowed"), length(indError)), 
+    stop(sprintf(ngettext(length(indError), 
+                          "there are %d Error terms: only 1 is allowed", 
+                          "there are %d Error terms: only 1 is allowed"), 
+                 length(indError)), 
          domain = NA)
   
   # from here, code by Henrik Singmann:
@@ -226,13 +228,18 @@ aov_car <- function(formula,
     # check if numeric variables are centered.
     c.ns <- between[vapply(data[, between, drop = FALSE], is.numeric, TRUE)]
     if (length(c.ns) > 0) {
-      non.null <- c.ns[!abs(vapply(data[, c.ns, drop = FALSE], mean, 0)) < .Machine$double.eps ^ 0.5]
-      if (length(non.null) > 0) warning(str_c("Numerical variables NOT centered on 0 (i.e., likely bogus results): ", str_c(non.null, collapse = ", ")), call. = FALSE)
+      non.null <- 
+        c.ns[!abs(vapply(data[, c.ns, drop = FALSE], mean, 0)) < .Machine$double.eps ^ 0.5]
+      if (length(non.null) > 0) 
+        warning(str_c("Numerical variables NOT centered on 0 (i.e., likely bogus results): ", 
+                      str_c(non.null, collapse = ", ")), call. = FALSE)
     }
   }
   
   for (i in c(between, within)) {
-    if (is.factor(data[,i]) && length(unique(data[,i])) == 1) stop(paste0("Factor \"", i, "\" consists of one level only. Remove factor from model?"))
+    if (is.factor(data[,i]) && length(unique(data[,i])) == 1) 
+      stop(paste0("Factor \"", i, 
+                  "\" consists of one level only. Remove factor from model?"))
   }
   
   # make formulas
@@ -272,9 +279,11 @@ aov_car <- function(formula,
                function(x) unique(unlist(
                  lapply(ids.per.condition[-x], 
                         function(y, z = ids.per.condition[[x]]) intersect(z, y)))))))
-    if (length(ids.in.more.condition) > 0) 
-      stop(str_c("Following ids are in more than one between subjects condition:\n", 
-                 str_c(ids.in.more.condition, collapse = ", ")))
+    if (length(ids.in.more.condition) > 0) {
+      stop(
+        str_c("Following ids are in more than one between subjects condition:\n", 
+              str_c(ids.in.more.condition, collapse = ", ")))
+    }
   }
   
   # Is fun_aggregate NULL and aggregation necessary?
@@ -298,6 +307,7 @@ aov_car <- function(formula,
   #   }
   
   # prepare the data:
+  
   tmp.dat <- do.call(
     dcast, 
     args = 
@@ -310,10 +320,14 @@ aov_car <- function(formula,
   # check for missing values:
   if (any(is.na(tmp.dat))) {
     missing.values <- apply(tmp.dat, 1, function(x) any(is.na(x)))
+    missing_ids <- unique(tmp.dat[missing.values,1])
     warning(str_c("Missing values for following ID(s):\n", 
-                  str_c(tmp.dat[missing.values,1], collapse = ", "), 
-                  "\nRemoving those cases from the analysis."), call. = FALSE)        
+                  str_c(missing_ids, collapse = ", "), 
+                  "\nRemoving those cases from the analysis."), call. = FALSE) 
+    tmp.dat <- tmp.dat[!missing.values,]
+    data <- data[ !(data[,id] %in% missing_ids),]
   }
+
   #   if (length(between) > 0) {
   #     n_data_points <- xtabs(as.formula(paste("~", paste(between, collapse = "+"))), data = tmp.dat)
   #     if (any(n_data_points == 0)) warning("Some cells of the fully crossed between-subjects design are empty. A full model might not be estimable.")

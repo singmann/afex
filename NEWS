@@ -12,6 +12,9 @@
 
     o   lsmeans did not work with mixed objects if type=2 and method used nested
         model comparions (e.g., LRT or PB).
+        
+    o   removed warning 'Error() model is singular' when units of observations 
+        have missing values for ANOVAs.
 
 
 

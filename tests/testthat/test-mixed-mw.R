@@ -16,7 +16,7 @@ test_that("mixed: Maxell & Delaney (2004), Table 16.6, p. 845", {
   skip_if_not_installed("Matrix")
   md_16.4b <- within(md_16.4, cond <- C(cond, contr.treatment, base = 2))
   mixed2_orig <- mixed(induct ~ cond + (1|room:cond), md_16.4b, check_contrasts=FALSE, progress=FALSE)
-  expect_that(round(fixef(mixed2_orig$full_model), 4), is_equivalent_to(c(35.6261, -8.1485)))
+  expect_equivalent(unname(round(fixef(mixed2_orig$full_model), 4)), c(35.6261, -8.1485))
   expect_that(round(sqrt(Matrix::diag(vcov(mixed2_orig$full_model))), 3), equals(c(3.229, 4.548)))
   expect_that(round(mixed2_orig[[1]]$F, 1), equals(3.2))    
 })

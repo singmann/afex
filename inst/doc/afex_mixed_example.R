@@ -2,7 +2,7 @@
 options(width = 90)
 
 ## ----message=FALSE, warning=FALSE-------------------------------------------------------
-require(afex) # needed for ANOVA, lsmeans is loaded automatically.
+require(afex) # needed for ANOVA, emmeans is loaded automatically.
 require(dplyr) # for working with data frames
 require(tidyr) # for transforming data frames from wide to long and the other way round.
 require(multcomp) # for advanced control for multiple testing/Type 1 errors.
@@ -119,8 +119,8 @@ res_lrt
 nice_lrt[[2]]
 
 ## ---------------------------------------------------------------------------------------
-lsm.options(lmer.df = "asymptotic") # also possible: 'satterthwaite', 'kenward-roger'
-emm_i1 <- lsmeans(m2s, "frequency", by = c("stimulus", "task"))
+emm_options(lmer.df = "asymptotic") # also possible: 'satterthwaite', 'kenward-roger'
+emm_i1 <- emmeans(m2s, "frequency", by = c("stimulus", "task"))
 emm_i1
 
 ## ---------------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ emm_i1b[,c("estimate", "SE")] <- exp(emm_i1b[,c("estimate", "SE")])
 emm_i1b
 
 ## ---------------------------------------------------------------------------------------
-emm_i2 <- lsmeans(m2s, c("density", "frequency"), by = c("stimulus", "task"))
+emm_i2 <- emmeans(m2s, c("density", "frequency"), by = c("stimulus", "task"))
 con1 <- contrast(emm_i2, "trt.vs.ctrl1", by = c("frequency", "stimulus", "task")) # density
 con2 <- contrast(con1, "trt.vs.ctrl1", by = c("contrast", "stimulus", "task")) 
 test(con2, joint = TRUE, by = c("stimulus", "task"))

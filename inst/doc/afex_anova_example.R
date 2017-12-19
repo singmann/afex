@@ -2,11 +2,8 @@
 options(width = 90)
 
 ## ----message=FALSE, warning=FALSE-------------------------------------------------------
-require(afex) # needed for ANOVA, lsmeans is loaded automatically.
+require(afex) # needed for ANOVA, emmeans is loaded automatically.
 require(multcomp) # for advanced control for multiple testing/Type 1 errors.
-require(lattice) # for plots
-lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
-lattice.options(default.args = list(as.table = TRUE)) # better ordering
 
 ## ---------------------------------------------------------------------------------------
 data(sk2011.1)
@@ -28,7 +25,7 @@ knitr::kable(nice(a1))
 print(xtable::xtable(anova(a1), digits = c(rep(2, 5), 3, 4)), type = "html")
 
 ## ---------------------------------------------------------------------------------------
-m1 <- lsmeans(a1, ~ inference)
+m1 <- emmeans(a1, ~ inference)
 m1
 
 ## ---------------------------------------------------------------------------------------
@@ -38,14 +35,14 @@ pairs(m1)
 summary(as.glht(pairs(m1)), test=adjusted("free"))
 
 ## ---------------------------------------------------------------------------------------
-m2 <- lsmeans(a1, ~ inference|instruction)
+m2 <- emmeans(a1, ~ inference|instruction)
 m2
 
 ## ---------------------------------------------------------------------------------------
 pairs(m2)
 
 ## ---------------------------------------------------------------------------------------
-m3 <- lsmeans(a1, ~ inference:instruction)
+m3 <- emmeans(a1, ~ inference:instruction)
 m3
 pairs(m3)
 
@@ -60,7 +57,17 @@ contrast(m3, c1, adjust = "holm")
 summary(as.glht(contrast(m3, c1)), test =adjusted("free"))
 
 ## ----fig.width=7.5, fig.height=4--------------------------------------------------------
-lsmip(a1, instruction ~ inference|plausibility)
+emmip(a1, instruction ~ inference|plausibility, CIs = TRUE)
+
+## ----fig.width=7.5, fig.height=4--------------------------------------------------------
+emmip(a1, instruction ~ inference|plausibility, CIs = TRUE) +
+  ggplot2::theme_light()
+
+## ---- fig.width=7.5, fig.height=4-------------------------------------------------------
+require(lattice) # for plots
+lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
+lattice.options(default.args = list(as.table = TRUE)) # better ordering
+emmip(a1, instruction ~ inference|plausibility, engine = "lattice")
 
 ## ---------------------------------------------------------------------------------------
 a2 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
@@ -68,14 +75,15 @@ a2 <- aov_ez("id", "response", sk2011.1, between = "instruction",
 a2
 
 ## ----fig.width=7.5, fig.height=4--------------------------------------------------------
-lsmip(a2, ~instruction ~ plausibility+validity|what, 
+emmip(a2, ~instruction ~ plausibility+validity|what, 
+      engine = "lattice",
       scales = list(x=list(
         at = 1:4,
         labels = c("pl:v", "im:v", "pl:i", "im:i")
         )))
 
 ## ---------------------------------------------------------------------------------------
-(m4 <- lsmeans(a2, ~instruction+plausibility+validity|what))
+(m4 <- emmeans(a2, ~instruction+plausibility+validity|what))
 c2 <- list(
   diff_1 = c(1, -1, 0, 0, 0, 0, 0, 0),
   diff_2 = c(0, 0, 1, -1, 0, 0, 0, 0),

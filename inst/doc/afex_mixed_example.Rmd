@@ -18,7 +18,7 @@ options(width = 90)
 
 ## Overview
 
-This documents reanalysis response time data from an Experiment performed by Freeman, Heathcote, Chalmers, and Hockley (2010) using the mixed model functionality of __afex__ implemented in function `mixed` followed by post-hoc tests using package __lsmeans__ (Lenth, 2015). After a brief description of the data set and research question, the code and results are presented. 
+This documents reanalysis response time data from an Experiment performed by Freeman, Heathcote, Chalmers, and Hockley (2010) using the mixed model functionality of __afex__ implemented in function `mixed` followed by post-hoc tests using package __emmeans__ (Lenth, 2017). After a brief description of the data set and research question, the code and results are presented. 
 
 ## Description of Experiment and Data
 
@@ -31,7 +31,7 @@ We start with loading some packages we will need throughout this example. For da
 After loading the packages, we will load the data (which comes with `afex`), remove the errors, and take a look at the variables in the data.
 
 ```{r message=FALSE, warning=FALSE}
-require(afex) # needed for ANOVA, lsmeans is loaded automatically.
+require(afex) # needed for ANOVA, emmeans is loaded automatically.
 require(dplyr) # for working with data frames
 require(tidyr) # for transforming data frames from wide to long and the other way round.
 require(multcomp) # for advanced control for multiple testing/Type 1 errors.
@@ -225,19 +225,19 @@ In terms of the significant findings, there are many that seem to be in line wit
 
 Before investigating the significant interaction in detail it is a good idea to remind oneself what a significant interaction represents on a conceptual level; that one or multiple of the variables in the interaction moderate (i.e., affect) the effect of the other variable or variables. Consequently, there are several ways to investigate a significant interaction. Each of the involved variables can be seen as the moderating variables and each of the variables can be seen as the effect of interest. Which one of those possible interpretations is of interest in a given situation highly depends on the actual data and research question and multiple views can be 'correct' in a given situation.
 
-In addition to this conceptual issue, there are also multiple technical ways to investigate a significant interaction. One approach not followed here is to split the data according to the moderating variables and compute the statistical model again for the splitted data sets with the effect variable(s) as remaining fixed effect. This approach, also called _simple effects_ analysis, is, for example, recommended by Maxwell and Delaney (2004) as it does not assume variance homogeneity and is faithful to the data at each level. The approach taken here is to simply perform the test on the fitted full model. This approach assumes variance homogeneity (i.e., that the variances in all groups are homogeneous) and has the added benefit that it is computationally relatively simple. In addition, it can all be achieved using the framework provided by `lsmeans` (Lenth, 2015).
+In addition to this conceptual issue, there are also multiple technical ways to investigate a significant interaction. One approach not followed here is to split the data according to the moderating variables and compute the statistical model again for the splitted data sets with the effect variable(s) as remaining fixed effect. This approach, also called _simple effects_ analysis, is, for example, recommended by Maxwell and Delaney (2004) as it does not assume variance homogeneity and is faithful to the data at each level. The approach taken here is to simply perform the test on the fitted full model. This approach assumes variance homogeneity (i.e., that the variances in all groups are homogeneous) and has the added benefit that it is computationally relatively simple. In addition, it can all be achieved using the framework provided by [`emmeans`](https://cran.r-project.org/package=emmeans) (Lenth, 2017).
 
 ### task:stimulus:frequency Interaction
 
-Our interest in the beginning is on the effect of `frequency` by `task:stimulus` combination. So let us first look at the estimated marginal means os this effect. In `lsmeans` parlance these estimated means are called 'least-square means' because of historical reasons, but because of the lack of least-square estimation in mixed models we prefer the term estimated marginal means, or EMMs for short. Those can be obtained in the following way. To prevent `lsmeans` from calculating the *df* for the EMMs (which can be quite costly), we use asymptotic *df*s (i.e., $z$ values and tests). `lsmeans` requires to first specify the variable(s) one wants to treat as the effect variable(s) (here `frequency`) and then allows to specify condition variables. 
+Our interest in the beginning is on the effect of `frequency` by `task:stimulus` combination. So let us first look at the estimated marginal means os this effect. In `emmeans` parlance these estimated means are called 'least-square means' because of historical reasons, but because of the lack of least-square estimation in mixed models we prefer the term estimated marginal means, or EMMs for short. Those can be obtained in the following way. To prevent `emmeans` from calculating the *df* for the EMMs (which can be quite costly), we use asymptotic *df*s (i.e., $z$ values and tests). `emmeans` requires to first specify the variable(s) one wants to treat as the effect variable(s) (here `frequency`) and then allows to specify condition variables. 
 
 ```{r}
-lsm.options(lmer.df = "asymptotic") # also possible: 'satterthwaite', 'kenward-roger'
-emm_i1 <- lsmeans(m2s, "frequency", by = c("stimulus", "task"))
+emm_options(lmer.df = "asymptotic") # also possible: 'satterthwaite', 'kenward-roger'
+emm_i1 <- emmeans(m2s, "frequency", by = c("stimulus", "task"))
 emm_i1
 ```
 
-The returned values are in line with our observation that the `nonword` and `naming` condition diverges from the other three. But is there actual evidence that the effect flips? We can test this using additional `lsmeans` functionality. Specifically, we first use the `pairs` function which provides us with a pairwise test of the effect of `frequency` in each `task:stimulus` combination. Then we need to combine the four tests within one object to obtain a familywise error rate correction which we do via `update(..., by = NULL)` (i.e., we revert the effect of the `by` statement from the earlier `lsmeans` call) and finally we select the `holm` method for controlling for family wise error rate (the Holm method is uniformly more powerful than the Bonferroni). 
+The returned values are in line with our observation that the `nonword` and `naming` condition diverges from the other three. But is there actual evidence that the effect flips? We can test this using additional `emmeans` functionality. Specifically, we first use the `pairs` function which provides us with a pairwise test of the effect of `frequency` in each `task:stimulus` combination. Then we need to combine the four tests within one object to obtain a familywise error rate correction which we do via `update(..., by = NULL)` (i.e., we revert the effect of the `by` statement from the earlier `emmeans` call) and finally we select the `holm` method for controlling for family wise error rate (the Holm method is uniformly more powerful than the Bonferroni). 
 
 ```{r}
 update(pairs(emm_i1), by = NULL, adjust = "holm")
@@ -262,13 +262,13 @@ emm_i1b
 As the last example, let us take a look at the significant four-way interaction of `task:stimulus:density:frequency`, $F(1, 111.32) = 10.07$, $p = .002$. Here we might be interested in a slightly more difficult question namely whether the `density:frequency` interaction varies across `task:stimulus` conditions. If we again look at the figures above, it appears that there is a difference between `low:low` and `high:low` in the `nonword` and `lexdec` condition, but not in the other conditions. We again first begin by obtaining the EMMs. However, the actual values are not interesting at the moment, we are basically only interested in the interaction for each `task:stimulus` condition. Therefore, we use the EMMs to create two consecutive contrasts, the first one for `density` and then for `frequency` using the fist contrast. Then we run a joint test conditional on the `task:stimulus` conditions.
 
 ```{r}
-emm_i2 <- lsmeans(m2s, c("density", "frequency"), by = c("stimulus", "task"))
+emm_i2 <- emmeans(m2s, c("density", "frequency"), by = c("stimulus", "task"))
 con1 <- contrast(emm_i2, "trt.vs.ctrl1", by = c("frequency", "stimulus", "task")) # density
 con2 <- contrast(con1, "trt.vs.ctrl1", by = c("contrast", "stimulus", "task")) 
 test(con2, joint = TRUE, by = c("stimulus", "task"))
 ```
 
-This test indeed shows that the `density:frequency` interaction is only significant in the `nonword` and `lexdec` condition. Next, let's see if we can unpack this interaction in a meaningful manner. For this we compare `low:low` and `high:low` in each of the four groups. And just for the sake of making the example more complex, we also compare `low:high` and `high:high`. This can simply be done by specifying a list of custom contrasts on the EMMs (or reference grid in `lsmeans` parlance) which can be passed again to the `contrast` function. The contrasts are a `list` where each element should sum to one (i.e., be a proper contrast) and be of length equal to the number of EMMs (although we have 16 EMMs in total, we only need to specify it for a length of four due to conditiong by `c("stimulus", "task")`). To control for the family wise error rate across all tests, we again use `update(..., by = NULL)` on the result this time again specifying `by = NULL` to revert the effect of conditiong. Note that although we entered the variables into `lsmeans` in the same order as into our plot call above, the order of the four EMMs differs.
+This test indeed shows that the `density:frequency` interaction is only significant in the `nonword` and `lexdec` condition. Next, let's see if we can unpack this interaction in a meaningful manner. For this we compare `low:low` and `high:low` in each of the four groups. And just for the sake of making the example more complex, we also compare `low:high` and `high:high`. This can simply be done by specifying a list of custom contrasts on the EMMs (or reference grid in `emmeans` parlance) which can be passed again to the `contrast` function. The contrasts are a `list` where each element should sum to one (i.e., be a proper contrast) and be of length equal to the number of EMMs (although we have 16 EMMs in total, we only need to specify it for a length of four due to conditiong by `c("stimulus", "task")`). To control for the family wise error rate across all tests, we again use `update(..., by = NULL)` on the result this time again specifying `by = NULL` to revert the effect of conditiong. Note that although we entered the variables into `emmeans` in the same order as into our plot call above, the order of the four EMMs differs.
 
 ```{r}
 emm_i2
@@ -287,7 +287,7 @@ In contrast to our expectation, the results show two significant effects and not
 * Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. _Journal of Memory and Language_, 68(3), 255-278. https://doi.org/10.1016/j.jml.2012.11.001
 * Bretz, F., Hothorn, T., & Westfall, P. H. (2011). _Multiple comparisons using R_. Boca Raton, FL: CRC Press. https://CRAN.R-project.org/package=multcomp
 * Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in recognition memory for words. _Journal of Memory and Language_, 62(1), 1-18. https://doi.org/10.1016/j.jml.2009.09.004
-* Lenth, R. V. (2015). _lsmeans: Least-Squares Means_. R package version 2.16-4. https://CRAN.R-project.org/package=lsmeans
+* Lenth, R. (2017). _emmeans: Estimated Marginal Means, aka Least-Squares Means_. R package version 0.9.1. https://CRAN.R-project.org/package=emmeans
 * Maxwell, S. E., & Delaney, H. D. (2004). _Designing experiments and analyzing data: a model-comparisons perspective_. Mahwah, N.J.: Lawrence Erlbaum Associates.
 
 

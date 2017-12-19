@@ -15,7 +15,7 @@ options(width = 90)
 
 # Overview
 
-This documents reanalysis a dataset from an Experiment performed by Singmann and Klauer (2011) using the ANOVA functionality of __afex__ followed by post-hoc tests using package __lsmeans__ (Lenth, 2015). After a brief description of the dataset and research question, the code and results are presented. 
+This documents reanalysis a dataset from an Experiment performed by Singmann and Klauer (2011) using the ANOVA functionality of __afex__ followed by post-hoc tests using package [__emmeans__](https://cran.r-project.org/package=emmeans) (Lenth, 2017). After a brief description of the dataset and research question, the code and results are presented. 
 
 # Description of Experiment and Data
 
@@ -38,11 +38,8 @@ In contrast to the analysis reported in the manuscript, we initially do not sepa
 # Data and R Preperation
 
 ```{r message=FALSE, warning=FALSE}
-require(afex) # needed for ANOVA, lsmeans is loaded automatically.
+require(afex) # needed for ANOVA, emmeans is loaded automatically.
 require(multcomp) # for advanced control for multiple testing/Type 1 errors.
-require(lattice) # for plots
-lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
-lattice.options(default.args = list(as.table = TRUE)) # better ordering
 ```
 
 ```{r}
@@ -84,16 +81,16 @@ print(xtable::xtable(anova(a1), digits = c(rep(2, 5), 3, 4)), type = "html")
 
 # Post-Hoc Contrasts and Plotting
 
-To further analyze the data we need to pass it to package `lsmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `lsmeans` can be obtained in [its vignette](https://CRAN.R-project.org/package=lsmeans/vignettes/using-lsmeans.pdf). `lsmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `lsmeans`. `lsmeans` uses the ANOVA model estimated via base R's `aov` function that  is part of an `afex_aov` object.
+To further analyze the data we need to pass it to package `emmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `emmeans` can be obtained in [its vignettes](https://cran.r-project.org/package=emmeans) and [faq](https://cran.r-project.org/web/packages/emmeans/vignettes/FAQs.html). `emmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `emmeans`. `emmeans` uses the ANOVA model estimated via base R's `aov` function that  is part of an `afex_aov` object.
 
 ## Some First Contrasts
 
 ### Main Effects Only
 
-This object can now be passed to `lsmeans`, for example to obtain the marginal means of the four inferences:
+This object can now be passed to `emmeans`, for example to obtain the marginal means of the four inferences:
 
 ```{r}
-m1 <- lsmeans(a1, ~ inference)
+m1 <- emmeans(a1, ~ inference)
 m1
 ```
 
@@ -111,11 +108,11 @@ summary(as.glht(pairs(m1)), test=adjusted("free"))
 
 ### A Simple interaction
 
-We could now also be interested in the marginal means of the inferences across the two instruction types. `lsmeans` offers two ways to do so. The first splits the contrasts across levels of the factor.
+We could now also be interested in the marginal means of the inferences across the two instruction types. `emmeans` offers two ways to do so. The first splits the contrasts across levels of the factor.
 
 
 ```{r}
-m2 <- lsmeans(a1, ~ inference|instruction)
+m2 <- emmeans(a1, ~ inference|instruction)
 m2
 ```
 
@@ -128,7 +125,7 @@ pairs(m2)
 The second version treats all factor combinations together, producing a considerably larger number of pairwise comparisons:
 
 ```{r}
-m3 <- lsmeans(a1, ~ inference:instruction)
+m3 <- emmeans(a1, ~ inference:instruction)
 m3
 pairs(m3)
 
@@ -136,7 +133,7 @@ pairs(m3)
 
 ### Running Custom Contrasts
 
-Objects returned from `lsmeans` can also be used to test specific contrasts. For this, we can simply create a list, where each element corresponds to one contrasts. A contrast is defined as a vector of constants on the reference grid (i.e., the object returned from `lsmeans`, here `m3`). For example, we might be interested in whether there is a difference between the valid and invalid inferences in each of the two conditions.
+Objects returned from `emmeans` can also be used to test specific contrasts. For this, we can simply create a list, where each element corresponds to one contrasts. A contrast is defined as a vector of constants on the reference grid (i.e., the object returned from `emmeans`, here `m3`). For example, we might be interested in whether there is a difference between the valid and invalid inferences in each of the two conditions.
 
 ```{r}
 c1 <- list(
@@ -152,12 +149,29 @@ The results can be interpreted as in line with expectations. Responses are large
 
 ## Plotting
 
-Function `lsmip` from package `lsmeans` can be used for plotting the data directly from an `afex_aov` object. As said initially, we are interested in the three-way interaction of instruction with inference, plausibility, and instruction. A plot of this interaction could be the following:
+Function `emmip` from package `emmeans` can be used for plotting the data directly from an `afex_aov` object. As said initially, we are interested in the three-way interaction of instruction with inference, plausibility, and instruction. We show a few variants of this plot in the following. `emmeans` supports plotting via either `lattice` or `ggplot2`. The default plot function uses `ggplot2`, which also supports model based confidence intervals (i.e., these intervals cannot be used to gauge whether or not two conditions differ).
 
 
 ```{r fig.width=7.5, fig.height=4}
-lsmip(a1, instruction ~ inference|plausibility)
+emmip(a1, instruction ~ inference|plausibility, CIs = TRUE)
 ```
+
+We can also pass a different theme for `ggplot2`, if we do not like the default one:
+
+```{r fig.width=7.5, fig.height=4}
+emmip(a1, instruction ~ inference|plausibility, CIs = TRUE) +
+  ggplot2::theme_light()
+```
+
+One downside of the `ggplot2` version is that it appears to always distinguish the different lines by color and does not appear to support distinguishing the lines by linetype. For this, we can use `lattice` if we set the appropriate options:
+
+```{r, fig.width=7.5, fig.height=4}
+require(lattice) # for plots
+lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
+lattice.options(default.args = list(as.table = TRUE)) # better ordering
+emmip(a1, instruction ~ inference|plausibility, engine = "lattice")
+```
+
 
 # Replicate Analysis from Singmann and Klauer (2011)
 
@@ -169,10 +183,11 @@ a2 <- aov_ez("id", "response", sk2011.1, between = "instruction",
 a2
 ```
 
-Then we plot the data from this ANOVA.
+Then we plot the data from this ANOVA. Note that we again use the `lattice` engine to pass corrected x-axis labels directly.
 
 ```{r fig.width=7.5, fig.height=4}
-lsmip(a2, ~instruction ~ plausibility+validity|what, 
+emmip(a2, ~instruction ~ plausibility+validity|what, 
+      engine = "lattice",
       scales = list(x=list(
         at = 1:4,
         labels = c("pl:v", "im:v", "pl:i", "im:i")
@@ -183,7 +198,7 @@ We see the critical predicted cross-over interaction in the left of those two gr
 
 
 ```{r}
-(m4 <- lsmeans(a2, ~instruction+plausibility+validity|what))
+(m4 <- emmeans(a2, ~instruction+plausibility+validity|what))
 c2 <- list(
   diff_1 = c(1, -1, 0, 0, 0, 0, 0, 0),
   diff_2 = c(0, 0, 1, -1, 0, 0, 0, 0),
@@ -210,15 +225,15 @@ The pattern for the affirmation problems is in line with the expectations: We fi
 
 # Some Cautionary Notes
 
-* While the df of the ANOVA tables are Greenhouse-Geisser corrected per default for within-subject factors with more than two levels, this is not the case for post-hoc tests or contrasts using `lsmeans`. The contrasts use uncorrected degrees of freedom that are Satterthwaite approximated. This most likely produces anti-conservative tests if compound symmetry/sphericity is violated.
-* For unbalanced samples, `aov` is usually not the correct choise. This is why the test of effects is based on `car::Anova`. However, for `lsmeans` we need to use `aov` models. However, `lsmeans` offers the option to weight the marginal means differently in case of different group sizes (i.e., unbalanced data). For example, it offers the option   that each group is assumed to be of equal size (i.e., `weights = "equal"`) or proportionally (i.e., `weights = "proportional"`). See help of `lsmeans` for more information.
+* While the df of the ANOVA tables are Greenhouse-Geisser corrected per default for within-subject factors with more than two levels, this is not the case for post-hoc tests or contrasts using `emmeans`. The contrasts use uncorrected degrees of freedom that are Satterthwaite approximated. This most likely produces anti-conservative tests if compound symmetry/sphericity is violated.
+* For unbalanced samples, `aov` is usually not the correct choise. This is why the test of effects is based on `car::Anova`. However, for `emmeans` we need to use `aov` models. However, `emmeans` offers the option to weight the marginal means differently in case of different group sizes (i.e., unbalanced data). For example, it offers the option   that each group is assumed to be of equal size (i.e., `weights = "equal"`) or proportionally (i.e., `weights = "proportional"`). See help of `emmeans` for more information.
 * Choosing the right correction for multiple testing can be difficult. In fact `multcomp` comes with an accompanying book (Bretz et al., 2011). If the degrees-of-freedom of all contrasts are identical using `multcomp`'s method `free` is more powerful than simply using the Bonferroni-Holm method. `free` is a generalization of the Bonferroni-Holm method that takes the correlations among the model parameters into account and uniformly more powerful.
-* For data sets with many within-subject factors, creating the `aov` object can take some time (i.e., compared to producing the ANOVA table which is usually very fast). Those objects are also comparatively large, often multiple MB. If speed is important and one is not interested in employing `lsmeans` one can set `return = "nice"` in the call to the ANOVA function to only receive the ANOVA table (this can also be done globally: `afex_options(return_aov = "nice")`).
+* For data sets with many within-subject factors, creating the `aov` object can take some time (i.e., compared to producing the ANOVA table which is usually very fast). Those objects are also comparatively large, often multiple MB. If speed is important and one is not interested in employing `emmeans` one can set `return = "nice"` in the call to the ANOVA function to only receive the ANOVA table (this can also be done globally: `afex_options(return_aov = "nice")`).
 
 # References 
 
 * Bretz, F., Hothorn, T., & Westfall, P. H. (2011). _Multiple comparisons using R_. Boca Raton, FL: CRC Press. https://CRAN.R-project.org/package=multcomp
 * Singmann, H., & Klauer, K. C. (2011). Deductive and inductive conditional inferences: Two modes of reasoning. _Thinking & Reasoning_, 17(3), 247-281. doi: 10.1080/13546783.2011.572718
-* Lenth, R. V. (2015). _lsmeans: Least-Squares Means_. R package version 2.16-4. https://CRAN.R-project.org/package=lsmeans
+* Lenth, R. (2017). _emmeans: Estimated Marginal Means, aka Least-Squares Means_. R package version 0.9.1.   https://CRAN.R-project.org/package=emmeans
 
 

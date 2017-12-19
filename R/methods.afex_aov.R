@@ -56,7 +56,8 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
       t.out[row.names(tmp[["pval.adjustments"]]), "Pr(>F)"] <- tmp[["pval.adjustments"]][,"Pr(>F[GG])"]
     } else {
       if (correction[1] == "HF") {
-        if (any(tmp[["pval.adjustments"]][,"HF eps"] > 1)) warning("HF eps > 1 treated as 1", call. = FALSE)
+        try(if (any(tmp[["pval.adjustments"]][,"HF eps"] > 1))
+          warning("HF eps > 1 treated as 1", call. = FALSE), silent = TRUE)
         tmp[["pval.adjustments"]] <- tmp[["pval.adjustments"]][!is.na(tmp[["pval.adjustments"]][,"HF eps"]),, drop = FALSE]
         t.out[row.names(tmp[["pval.adjustments"]]), "num Df"] <- t.out[row.names(tmp[["pval.adjustments"]]), "num Df"] * pmin(1, tmp[["pval.adjustments"]][,"HF eps"])
         t.out[row.names(tmp[["pval.adjustments"]]), "den Df"] <- t.out[row.names(tmp[["pval.adjustments"]]), "den Df"] * pmin(1, tmp[["pval.adjustments"]][,"HF eps"])

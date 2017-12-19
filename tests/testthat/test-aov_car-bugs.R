@@ -232,3 +232,16 @@ test_that("aov_ez works with multiple covariates", {
   expect_is(aov_ez(data=msq2, dv="Extraversion", id = "ID", between = "condition", 
     covariate=c("TOD", "MSQ_Time"), factorize=FALSE, fun_aggregate = mean), "afex_aov")
 })
+
+test_that("aov_car works with p.val adjustment == NA for HF as well as GG", {
+  # see: https://github.com/singmann/afex/issues/36
+  load("anova_hf_error.rda")
+  expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"))), 
+            "nice_table")
+  expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"), 
+                   anova_table = list(correction = "GG"))),
+            "nice_table")
+  expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"), 
+                   anova_table = list(correction = "HF"))),
+            "nice_table")
+})

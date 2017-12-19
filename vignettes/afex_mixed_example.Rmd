@@ -243,9 +243,9 @@ The returned values are in line with our observation that the `nonword` and `nam
 update(pairs(emm_i1), by = NULL, adjust = "holm")
 ```
 
-We could also use a slightly more powerful method than the Holm method, method `free` from package `multcomp`, which takes the correlation of the model parameters into account:
+We could also use a slightly more powerful method than the Holm method, method `free` from package `multcomp`, which takes the correlation of the model parameters into account (note that due a bug in the current emmenas version this is currently deactivated):
 
-```{r}
+```{r, eval=FALSE}
 summary(as.glht(update(pairs(emm_i1), by = NULL)), test = adjusted("free"))
 ```
 

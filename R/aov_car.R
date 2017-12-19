@@ -80,7 +80,7 @@
 #' 
 #'  \enumerate{
 #'    \item Estimate an \code{afex_aov} object with the function returned here. For example: \code{x <- aov_car(dv ~ a*b + (id/c), d)}
-#'    \item Obtain a \code{\link[emmeans]{emmGrid}} object by running \code{\link[emmeans]{emmeans}} on the \code{afex_aov} object from step 1 using the factors involved in the contrast. For example: \code{r <- emmeans(x, ~a:c)}
+#'    \item Obtain a \code{\link[emmeans]{emmGrid-class}} object by running \code{\link[emmeans]{emmeans}} on the \code{afex_aov} object from step 1 using the factors involved in the contrast. For example: \code{r <- emmeans(x, ~a:c)}
 #'    \item Create a list containing the desired contrasts on the reference grid object from step 2. For example: \code{con1 <- list(a_x = c(-1, 1, 0, 0, 0, 0), b_x = c(0, 0, -0.5, -0.5, 0, 1))}
 #'    \item Test the contrast on the reference grid using \code{\link[emmeans]{contrast}}. For example: \code{contrast(r, con1)}
 #'    \item To control for multiple testing p-value adjustments can be specified. For example the Bonferroni-Holm correction: \code{contrast(r, con1, adjust = "holm")}

@@ -46,7 +46,7 @@ roxy.package(
 		AuthorsR = "c(person(given=\"Henrik\", family=\"Singmann\", role=c(\"aut\", \"cre\"), email=\"singmann+afex@gmail.com\", comment=c(ORCID=\"0000-0002-4842-3657\")),
         person(given=\"Ben\", family=\"Bolker\", role=c(\"aut\")),
         person(given=\"Jake\", family=\"Westfall\", role=c(\"aut\")),
-        person(given=\"Frederik\", family=\"Aust\", role=c(\"aut\")),
+        person(given=\"Frederik\", family=\"Aust\", role=c(\"aut\"), comment = c(ORCID = \"0000-0003-4900-788X\")),
         person(given=\"Søren\", family=\"Højsgaard\", role=c(\"ctb\")),
         person(given=\"John\", family=\"Fox\", role=c(\"ctb\")),
         person(given=\"Michael A.\", family=\"Lawrence\", role=c(\"ctb\")),

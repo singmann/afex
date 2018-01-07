@@ -3,7 +3,8 @@
                     *************************
                     
                     Changes in afex Version 0.19-0
-                    Released xxx 2017
+                    Released Januray 2018
+                    
     Significant User Visible Changes and New Features
     
     o   afex now works with emmeans (predecessor of lsmeans pckage).

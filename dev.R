@@ -38,7 +38,7 @@ R.libs <- "./packages/library"
 closeAllConnections()
 roxy.package(
 	pck.source.dir = pkg.src.dir,
-	pck.version = "0.19-0",
+	pck.version = "0.19-1",
 	pck.description = data.frame(
 		Package = "afex",
 		Type = "Package",

@@ -81,7 +81,7 @@ print(xtable::xtable(anova(a1), digits = c(rep(2, 5), 3, 4)), type = "html")
 
 # Post-Hoc Contrasts and Plotting
 
-To further analyze the data we need to pass it to package `emmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `emmeans` can be obtained in [its vignettes](https://cran.r-project.org/package=emmeans) and [faq](https://cran.r-project.org/web/packages/emmeans/vignettes/FAQs.html). `emmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `emmeans`. `emmeans` uses the ANOVA model estimated via base R's `aov` function that  is part of an `afex_aov` object.
+To further analyze the data we need to pass it to package `emmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `emmeans` can be obtained in [its vignettes](https://cran.r-project.org/package=emmeans) and [faq](https://CRAN.R-project.org/package=emmeans/vignettes/FAQs.html). `emmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `emmeans`. `emmeans` uses the ANOVA model estimated via base R's `aov` function that  is part of an `afex_aov` object.
 
 ## Some First Contrasts
 

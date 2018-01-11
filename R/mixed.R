@@ -191,9 +191,9 @@ mixed <- function(formula,
   }
   
   ## real function begins:
+  vars.to.check <- all.vars(formula)
   if (check_contrasts) {
     #browser()
-    vars.to.check <- all.vars(formula)
     resetted <- NULL
     for (i in vars.to.check) {
       if (is.factor(data[,i])) {

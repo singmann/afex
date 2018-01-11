@@ -52,3 +52,16 @@ test_that("lmer_alt works with GLMMs", {
     expect_that(lmer_alt(use ~ age*urban + (1 | district), family = binomial, data = Contraception, progress=FALSE), is_a("glmerMod"))
   }
 })
+
+test_that("lmer_alt works with NA in independent variables", {
+  data(sk2011.2)
+
+  # use only affirmation problems (S&K also splitted the data like this)
+  sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+  sk2_aff$instruction[5] <- NA
+  assign("sk2_aff", sk2_aff, envir = .GlobalEnv)
+  
+  # set up model with maximal by-participant random slopes 
+  sk_m1 <- suppressWarnings(lmer_alt(response ~ instruction*inference*type+(inference*type||id), sk2_aff, expand_re = TRUE))
+  expect_is(sk_m1, "merModLmerTest")
+})

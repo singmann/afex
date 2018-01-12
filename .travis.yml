@@ -4,7 +4,7 @@ language: r
 sudo: false
 cache: packages
 r:
-  - devel
+  - release
 r_binary_packages:
  - ez
  

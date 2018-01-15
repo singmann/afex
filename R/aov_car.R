@@ -411,7 +411,7 @@ aov_car <- function(formula,
       within.levels <- lapply(lapply(data[,within], levels), factor)
       idata <- rev(expand.grid(rev(within.levels)))
     } else {
-      idata <- data.frame(levels(data[,within]))
+      idata <- data.frame(levels(data[,within]), stringsAsFactors = TRUE)
       colnames(idata) <- within
     }
     tmp.lm <- do.call(

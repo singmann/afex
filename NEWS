@@ -7,7 +7,8 @@
                     
     Significant User Visible Changes and New Features
     
-    o   
+    o   better (i.e., simpler) examples for mixed (use data from MEMSS). Added
+        example showinf how to use mixed() with effects package for plotting.
     
     Bugfixes
 
@@ -18,7 +19,10 @@
         stringsAsFactors was set to FALSE in the global options and repeated 
         measures factors were present (thanks to Will Hopper for the bug report 
         and simultaneous fix).
+        
+    o   set_data_arg now works for lmer_alt and mixed(..., return = "merMod").
 
+    
                     *************************
                     ** afex VERSION 0.19-x **
                     *************************
@@ -28,7 +32,7 @@
                     
     Significant User Visible Changes and New Features
     
-    o   afex now works with emmeans (predecessor of lsmeans pckage).
+    o   afex now works with emmeans (successor of lsmeans pckage).
     
     Bugfixes
 

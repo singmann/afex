@@ -13,6 +13,11 @@
 
     o   removed bug in mixed that caused a crash if check_contrasts = FALSE 
         and the data contained missing values in the IVs.
+        
+    o   removed bug that caused a crash under certain conditions if 
+        stringsAsFactors was set to FALSE in the global options and repeated 
+        measures factors were present (thanks to Will Hopper for the bug report 
+        and simultaneous fix).
 
                     *************************
                     ** afex VERSION 0.19-x **

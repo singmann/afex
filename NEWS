@@ -8,7 +8,7 @@
     Significant User Visible Changes and New Features
     
     o   better (i.e., simpler) examples for mixed (use data from MEMSS). Added
-        example showinf how to use mixed() with effects package for plotting.
+        example showing how to use mixed() with effects package for plotting.
     
     Bugfixes
 
@@ -20,7 +20,8 @@
         measures factors were present (thanks to Will Hopper for the bug report 
         and simultaneous fix).
         
-    o   set_data_arg now works for lmer_alt and mixed(..., return = "merMod").
+    o   set_data_arg now works for lmer_alt and mixed(..., return = "merMod"). 
+        This allows to use those objects with e.g., the effects package.
 
     
                     *************************

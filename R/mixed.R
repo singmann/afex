@@ -305,6 +305,7 @@ mixed <- function(formula,
   }
   if (return == "merMod") {
     out <- eval(mf)
+    if(set_data_arg) out@call[["data"]] <- mc[["data"]]
     return(out)
   }
   if ("family" %in% names(mf)) {
@@ -356,7 +357,7 @@ mixed <- function(formula,
       colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
     }
     if (progress) cat(str_c("[DONE]\n"))
-     if(set_data_arg) full_model@call[["data"]] <- mc[["data"]]
+    if(set_data_arg) full_model@call[["data"]] <- mc[["data"]]
   } else { ## do calculate nested models for the methods below
     ## prepare (g)lmer formulas:
     if (type == 3 | type == "III") {

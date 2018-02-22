@@ -4,7 +4,7 @@ Title: Analysis of Factorial Experiments
 Depends: R (>= 3.1.0), lme4 (>= 1.1-8), emmeans
 Suggests: xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown,
        lattice, latticeExtra, multcomp, testthat, mlmRev, dplyr,
-       tidyr, dfoptim, Matrix, psych, ggplot2
+       tidyr, dfoptim, Matrix, psych, ggplot2, MEMSS, effects
 Imports: stringr, coin, pbkrtest (>= 0.4-1), lmerTest, car,
        reshape2, stats, methods
 Description: Convenience functions for analyzing factorial
@@ -39,6 +39,6 @@ Authors@R: c(person(given="Henrik", family="Singmann",
        role=c("ctb")), person(given="Ulf", family="Mertens",
        role=c("ctb")), person(given="Jonathan", family="Love",
        role=c("ctb")) )
-Version: 0.19-1
-Date: 2018-01-08
+Version: 0.20-0
+Date: 2018-02-22
 RoxygenNote: 6.0.1

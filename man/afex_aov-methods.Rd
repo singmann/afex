@@ -48,7 +48,7 @@
   \item{\code{anova}}{Returns an ANOVA table of class \code{c("anova", "data.frame")}. Information such as effect size (\code{es}) or df-correction are calculated each time this method is called.}
   \item{\code{summary}}{For ANOVAs containing within-subject factors it returns the full output of the within-subject tests: the uncorrected results, results containing Greenhousse-Geisser and Hyunh-Feldt correction, and the results of the Mauchly test of sphericity (all achieved via \code{summary.Anova.mlm}). For other ANOVAs, the \code{anova} table is simply returned.}
   \item{\code{print}}{Prints (and invisibly returns) the ANOVA table as constructed from \code{\link{nice}} (i.e., as strings rounded nicely). Arguments in \code{...} are passed to \code{nice} allowing to pass arguments such as \code{es} and \code{correction}.}
-  \item{\code{recover_data} and \code{emm_basis}}{Provide the backbone for using \code{\link{emmeans}} and related functions from \pkg{emmeans} directly on \code{afex_aov} objects by returning a \code{\link{ref.grid}} object. Should not be called directly but through the functionality provided by \pkg{emmeans}.}
+  \item{\code{recover_data} and \code{emm_basis}}{Provide the backbone for using \code{\link{emmeans}} and related functions from \pkg{emmeans} directly on \code{afex_aov} objects by returning a \code{\link{emmGrid}} object. Should not be called directly but through the functionality provided by \pkg{emmeans}.}
   
 }
 }

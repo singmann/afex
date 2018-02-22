@@ -35,7 +35,7 @@ aov_4(formula, data, observed = NULL, fun_aggregate = NULL, type = afex_options(
 
 \item{type}{The type of sums of squares for the ANOVA. The default is given by \code{afex_options("type")}, which is \strong{initially set to 3}. Passed to \code{\link[car]{Anova}}. Possible values are \code{"II"}, \code{"III"}, \code{2}, or \code{3}.}
 
-\item{factorize}{logical. Should between subject factors be factorized (with note) before running the analysis. he default is given by \code{afex_options("factorize")}, which is initially \code{TRUE}. If one wants to run an ANCOVA, needs to be set to \code{FALSE} (in which case centering on 0 is checked on numeric variables).}
+\item{factorize}{logical. Should between subject factors be factorized (with note) before running the analysis. The default is given by \code{afex_options("factorize")}, which is initially \code{TRUE}. If one wants to run an ANCOVA, this needs to be set to \code{FALSE} (in which case centering on 0 is checked on numeric variables).}
 
 \item{check_contrasts}{\code{logical}. Should contrasts for between-subject factors be checked and (if necessary) changed to be \code{"contr.sum"}. See details. The default is given by \code{afex_options("check_contrasts")}, which is initially \code{TRUE}.}
 

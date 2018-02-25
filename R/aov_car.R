@@ -88,7 +88,7 @@
 #'  
 #'  Note that \pkg{emmeans} allows for a variety of advanced settings and simplifiations, for example: all pairwise comparison of a single factor using one command (e.g., \code{emmeans(x, "a", contr = "pairwise")}) or advanced control for multiple testing by passing objects to \pkg{multcomp}. A comprehensive overview of the functionality is provided in the accompanying vignettes (see \href{https://CRAN.R-project.org/package=emmeans}{here}).
 #'  
-#'  A caveat regarding the use of \pkg{emmeans} concerns the assumption of sphericity for ANOVAs including within-subjects/repeated-measures factors (with more than two levels). The current default for follow-up tests uses a univariate model (\code{model = "univariate"} in the call to \code{emmeans}), which does not adequately control for violations of sphericity. This may result in anti-conservative tests and contrasts somewhat with the default ANOVA table which reports results based on the Greenhousse-Geisser correction. An alternative is to use a multivariate model (\code{model = "multivariate"} in the call to \code{emmeans}) which should handle violations of sphericity better.
+#'  A caveat regarding the use of \pkg{emmeans} concerns the assumption of sphericity for ANOVAs including within-subjects/repeated-measures factors (with more than two levels). The current default for follow-up tests uses a univariate model (\code{model = "univariate"} in the call to \code{emmeans}), which does not adequately control for violations of sphericity. This may result in anti-conservative tests and contrasts somewhat with the default ANOVA table which reports results based on the Greenhousse-Geisser correction. An alternative is to use a multivariate model (\code{model = "multivariate"} in the call to \code{emmeans}) which should handle violations of sphericity better. The default will likely change to multivariate tests in one of the next versions of the package.
 #'  
 #'  \pkg{emmeans} is loaded/attached automatically when loading \pkg{afex} via \code{library} or \code{require}.
 #' }  
@@ -231,9 +231,11 @@ aov_car <- function(formula,
     c.ns <- between[vapply(data[, between, drop = FALSE], is.numeric, TRUE)]
     if (length(c.ns) > 0) {
       non.null <- 
-        c.ns[!abs(vapply(data[, c.ns, drop = FALSE], mean, 0)) < .Machine$double.eps ^ 0.5]
+        c.ns[!abs(vapply(data[, c.ns, drop = FALSE], mean, 0)) < 
+               .Machine$double.eps ^ 0.5]
       if (length(non.null) > 0) 
-        warning(str_c("Numerical variables NOT centered on 0 (i.e., likely bogus results): ", 
+        warning(str_c(
+          "Numerical variables NOT centered on 0 (i.e., likely bogus results): ", 
                       str_c(non.null, collapse = ", ")), call. = FALSE)
     }
   }
@@ -274,13 +276,15 @@ aov_car <- function(formula,
   between.factors <- between[vapply(data[, between, drop = FALSE], is.factor, TRUE)]
   if (length(between.factors) > 0) {
     split.data <- split(data, lapply(between.factors, function(x) data[,x]))
-    ids.per.condition <- lapply(split.data, function(x) unique(as.character(x[,id])))
+    ids.per.condition <- 
+      lapply(split.data, function(x) unique(as.character(x[,id])))
     ids.in.more.condition <- 
       unique(unlist(
         lapply(seq_along(ids.per.condition), 
                function(x) unique(unlist(
                  lapply(ids.per.condition[-x], 
-                        function(y, z = ids.per.condition[[x]]) intersect(z, y)))))))
+                        function(y, z = ids.per.condition[[x]]) 
+                          intersect(z, y)))))))
     if (length(ids.in.more.condition) > 0) {
       stop(
         str_c("Following ids are in more than one between subjects condition:\n", 
@@ -293,7 +297,8 @@ aov_car <- function(formula,
     if (any(xtabs(
       as.formula(str_c("~", id.escaped, if (length(within) > 0) "+", rh1)), 
       data = data) > 1)) {
-      warning("More than one observation per cell, aggregating the data using mean (i.e, fun_aggregate = mean)!", call. = FALSE)
+      warning("More than one observation per cell, aggregating the data using mean (i.e, fun_aggregate = mean)!", 
+              call. = FALSE)
       fun_aggregate <- mean
     }
   } 
@@ -382,7 +387,8 @@ aov_car <- function(formula,
         }
       }
       if((type == 3 | type == "III") && (length(non_sum_contrast)>0)) 
-        warning(str_c("Calculating Type 3 sums with contrasts != 'contr.sum' for: ", 
+        warning(
+          str_c("Calculating Type 3 sums with contrasts != 'contr.sum' for: ", 
                       paste0(non_sum_contrast, collapse=", "), 
                       "\n  Results likely bogus or not interpretable!\n  You probably want check_contrasts = TRUE or options(contrasts=c('contr.sum','contr.poly'))"), 
                 call. = FALSE)
@@ -392,14 +398,16 @@ aov_car <- function(formula,
   else include.aov <- FALSE
   if(include.aov){
     if (check_contrasts) {
-      factor_vars <- vapply(dat.ret[,c(within, between), drop = FALSE], is.factor, NA)
+      factor_vars <- 
+        vapply(dat.ret[,c(within, between), drop = FALSE], is.factor, NA)
       contrasts <- as.list(rep("contr.sum", sum(factor_vars)))
       names(contrasts) <- c(within, between)[factor_vars]
     }
     aov <- aov(formula(paste(
       dv.escaped, "~", paste(c(between.escaped, within.escaped), collapse = "*"),  
       if (length(within) > 0) 
-        paste0("+Error(", id.escaped, "/(",paste(within.escaped, collapse="*"), "))") 
+        paste0("+Error(", id.escaped, "/(",paste(within.escaped, 
+                                                 collapse="*"), "))") 
       else NULL)), data=dat.ret, contrasts = contrasts)
   }
   if(return == "aov") return(aov)
@@ -420,7 +428,8 @@ aov_car <- function(formula,
       "lm", 
       list(formula = 
              as.formula(str_c("cbind(", 
-                              str_c(colnames(tmp.dat[-(seq_along(c(id, between)))]), 
+                              str_c(colnames(
+                                tmp.dat[-(seq_along(c(id, between)))]), 
                                     collapse = ", "), 
                               ") ~ ", 
                               rh2)), 
@@ -523,7 +532,8 @@ aov_4 <- function(formula,
   
   error <- str_c(" + Error(", 
                  id, 
-                 if (length(within) > 0) "/(" else "", str_c(within, collapse = " * "), 
+                 if (length(within) > 0) "/(" else "", 
+                 str_c(within, collapse = " * "), 
                  if (length(within) > 0) ")" else "", 
                  ")")
   lh <- as.character(nobars(formula))

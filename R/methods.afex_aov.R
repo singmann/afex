@@ -34,7 +34,14 @@ NULL
 #' @inheritParams nice
 #' @method anova afex_aov
 #' @export
-anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL, correction = afex_options("correction_aov"), MSE = TRUE, intercept = FALSE, p_adjust_method = NULL, sig_symbols = attr(object$anova_table, "sig_symbols"), ...) {
+anova.afex_aov <- function(object, 
+                           es = afex_options("es_aov"), 
+                           observed = NULL, 
+                           correction = afex_options("correction_aov"), 
+                           MSE = TRUE, intercept = FALSE, 
+                           p_adjust_method = NULL, 
+                           sig_symbols = attr(object$anova_table, "sig_symbols"),
+                           ...) {
   # internal functions:
   # check arguments
   dots <- list(...)
@@ -51,18 +58,30 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
     #browser()
     #t.out <- cbind(t.out, orig_den_df =  t.out[, "den Df"])
     if (correction[1] == "GG") {
-      tmp[["pval.adjustments"]] <- tmp[["pval.adjustments"]][!is.na(tmp[["pval.adjustments"]][,"GG eps"]),, drop = FALSE]
-      t.out[row.names(tmp[["pval.adjustments"]]), "num Df"] <- t.out[row.names(tmp[["pval.adjustments"]]), "num Df"] * tmp[["pval.adjustments"]][,"GG eps"]
-      t.out[row.names(tmp[["pval.adjustments"]]), "den Df"] <- t.out[row.names(tmp[["pval.adjustments"]]), "den Df"] * tmp[["pval.adjustments"]][,"GG eps"]
-      t.out[row.names(tmp[["pval.adjustments"]]), "Pr(>F)"] <- tmp[["pval.adjustments"]][,"Pr(>F[GG])"]
+      tmp[["pval.adjustments"]] <- tmp[["pval.adjustments"]][
+        !is.na(tmp[["pval.adjustments"]][,"GG eps"]),, drop = FALSE]
+      t.out[row.names(tmp[["pval.adjustments"]]), "num Df"] <- 
+        t.out[row.names(tmp[["pval.adjustments"]]), "num Df"] * 
+        tmp[["pval.adjustments"]][,"GG eps"]
+      t.out[row.names(tmp[["pval.adjustments"]]), "den Df"] <- 
+        t.out[row.names(tmp[["pval.adjustments"]]), "den Df"] * 
+        tmp[["pval.adjustments"]][,"GG eps"]
+      t.out[row.names(tmp[["pval.adjustments"]]), "Pr(>F)"] <- 
+        tmp[["pval.adjustments"]][,"Pr(>F[GG])"]
     } else {
       if (correction[1] == "HF") {
         try(if (any(tmp[["pval.adjustments"]][,"HF eps"] > 1))
           warning("HF eps > 1 treated as 1", call. = FALSE), silent = TRUE)
-        tmp[["pval.adjustments"]] <- tmp[["pval.adjustments"]][!is.na(tmp[["pval.adjustments"]][,"HF eps"]),, drop = FALSE]
-        t.out[row.names(tmp[["pval.adjustments"]]), "num Df"] <- t.out[row.names(tmp[["pval.adjustments"]]), "num Df"] * pmin(1, tmp[["pval.adjustments"]][,"HF eps"])
-        t.out[row.names(tmp[["pval.adjustments"]]), "den Df"] <- t.out[row.names(tmp[["pval.adjustments"]]), "den Df"] * pmin(1, tmp[["pval.adjustments"]][,"HF eps"])
-        t.out[row.names(tmp[["pval.adjustments"]]), "Pr(>F)"] <- tmp[["pval.adjustments"]][,"Pr(>F[HF])"]
+        tmp[["pval.adjustments"]] <- tmp[["pval.adjustments"]][
+          !is.na(tmp[["pval.adjustments"]][,"HF eps"]),, drop = FALSE]
+        t.out[row.names(tmp[["pval.adjustments"]]), "num Df"] <- 
+          t.out[row.names(tmp[["pval.adjustments"]]), "num Df"] * 
+          pmin(1, tmp[["pval.adjustments"]][,"HF eps"])
+        t.out[row.names(tmp[["pval.adjustments"]]), "den Df"] <- 
+          t.out[row.names(tmp[["pval.adjustments"]]), "den Df"] * 
+          pmin(1, tmp[["pval.adjustments"]][,"HF eps"])
+        t.out[row.names(tmp[["pval.adjustments"]]), "Pr(>F)"] <- 
+          tmp[["pval.adjustments"]][,"Pr(>F[HF])"]
       } else {
         if (correction[1] == "none") {
           TRUE
@@ -74,7 +93,12 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
   #} else if (class(object$Anova)[1] == "anova") {
   } else if (inherits(object$Anova, "anova")) {
     #browser()
-    tmp.df <- cbind(object$Anova[-nrow(object$Anova),], data.frame("Error SS" = object$Anova[nrow(object$Anova), "Sum Sq"], "den Df" = object$Anova[nrow(object$Anova), "Df"], check.names = FALSE))
+    tmp.df <- cbind(object$Anova[-nrow(object$Anova),], 
+                    data.frame("Error SS" = object$Anova[nrow(object$Anova), 
+                                                         "Sum Sq"], 
+                               "den Df" = object$Anova[nrow(object$Anova), 
+                                                       "Df"], 
+                               check.names = FALSE))
     colnames(tmp.df)[1:3] <- c("SS", "num Df", "F")
     #tmp.df$orig_den_df <- tmp.df[, "den Df"]
     tmp2 <- as.data.frame(tmp.df)
@@ -90,7 +114,8 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
     if(!is.null(observed) & length(observed) > 0){
       obs <- rep(FALSE,nrow(tmp2))
       for(i in observed){
-        if (!any(str_detect(rownames(tmp2),str_c("\\b",i,"\\b")))) stop(str_c("Observed variable not in data: ", i))
+        if (!any(str_detect(rownames(tmp2),str_c("\\b",i,"\\b")))) 
+          stop(str_c("Observed variable not in data: ", i))
         obs <- obs | str_detect(rownames(tmp2),str_c("\\b",i,"\\b"))
       }
       obs_SSn1 <- sum(tmp2$SS*obs)
@@ -99,23 +124,39 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
       obs_SSn1 <- 0
       obs_SSn2 <- 0
     }
-    es_df$ges <- tmp2$SS/(tmp2$SS+sum(unique(tmp2[,"Error SS"]))+obs_SSn1-obs_SSn2)
+    es_df$ges <- tmp2$SS/(tmp2$SS+sum(unique(tmp2[,"Error SS"])) + 
+                            obs_SSn1-obs_SSn2)
   }
-  anova_table <- cbind(tmp2[,c("num Df", "den Df", "MSE", "F")], es_df, "Pr(>F)" = tmp2[,c("Pr(>F)")])
+  anova_table <- cbind(tmp2[,c("num Df", "den Df", "MSE", "F")], es_df, 
+                       "Pr(>F)" = tmp2[,c("Pr(>F)")])
   #browser()
   if (!MSE) anova_table$MSE <- NULL 
-  if (!intercept) if (row.names(anova_table)[1] == "(Intercept)")  anova_table <- anova_table[-1,, drop = FALSE]
+  if (!intercept) if (row.names(anova_table)[1] == "(Intercept)")  
+    anova_table <- anova_table[-1,, drop = FALSE]
   # Correct for multiple comparisons
-  if(is.null(p_adjust_method)) p_adjust_method <- ifelse(is.null(attr(object$anova_table, "p_adjust_method")), "none", attr(object$anova_table, "p_adjust_method"))
-  anova_table[,"Pr(>F)"] <- p.adjust(anova_table[,"Pr(>F)"], method = p_adjust_method)
+  if(is.null(p_adjust_method)) p_adjust_method <- 
+    ifelse(is.null(attr(object$anova_table, "p_adjust_method")), "none", 
+           attr(object$anova_table, "p_adjust_method"))
+  anova_table[,"Pr(>F)"] <- p.adjust(anova_table[,"Pr(>F)"], 
+                                     method = p_adjust_method)
   class(anova_table) <- c("anova", "data.frame")
-  p_adj_heading <- if(p_adjust_method != "none") paste0(", ", p_adjust_method, "-adjusted") else NULL
-  attr(anova_table, "heading") <- c(paste0("Anova Table (Type ", attr(object, "type"), " tests", p_adj_heading, ")\n"), paste("Response:", attr(object, "dv")))
+  p_adj_heading <- if(p_adjust_method != "none") paste0(", ", p_adjust_method, 
+                                                        "-adjusted") else NULL
+  attr(anova_table, "heading") <- c(paste0("Anova Table (Type ", 
+                                           attr(object, "type"), " tests", 
+                                           p_adj_heading, ")\n"), 
+                                    paste("Response:", attr(object, "dv")))
   attr(anova_table, "p_adjust_method") <- p_adjust_method
   attr(anova_table, "es") <- es
-  attr(anova_table, "correction") <- if(length(attr(object, "within")) > 0 && any(vapply(object$data$long[, names(attr(object, "within")), drop = FALSE], nlevels, 0) > 2)) correction else "none"
-  attr(anova_table, "observed") <- if(!is.null(observed) & length(observed) > 0) observed else character(0)
-  attr(anova_table, "sig_symbols") <- if(!is.null(sig_symbols)) sig_symbols else afex_options("sig_symbols")
+  attr(anova_table, "correction") <- 
+    if(length(attr(object, "within")) > 0 && any(
+      vapply(object$data$long[, names(attr(object, "within")), 
+                              drop = FALSE], nlevels, 0) > 2)) 
+      correction else "none"
+  attr(anova_table, "observed") <- 
+    if(!is.null(observed) & length(observed) > 0) observed else character(0)
+  attr(anova_table, "sig_symbols") <- 
+    if(!is.null(sig_symbols)) sig_symbols else afex_options("sig_symbols")
   anova_table
 }
 
@@ -136,7 +177,10 @@ print.afex_aov <- function(x, ...) {
 summary.afex_aov <- function(object, ...) {
   if (inherits(object$Anova, "Anova.mlm")) {
   #if (class(object$Anova)[1] == "Anova.mlm") {
-    if(attr(object$anova_table, "p_adjust_method") != "none") message("Note, results are NOT adjusted for multiple comparisons as requested\n(p_adjust_method = '", attr(object$anova_table, "p_adjust_method"), "')\nbecause the desired method of sphericity correction is unknown.\nFor adjusted p-values print the object (to see object$anova_table), or call\none of anova.afex_aov() or nice().")
+    if(attr(object$anova_table, "p_adjust_method") != "none") 
+      message("Note, results are NOT adjusted for multiple comparisons as requested\n(p_adjust_method = '", 
+              attr(object$anova_table, "p_adjust_method"), 
+              "')\nbecause the desired method of sphericity correction is unknown.\nFor adjusted p-values print the object (to see object$anova_table), or call\none of anova.afex_aov() or nice().")
     return(summary(object$Anova, multivariate = FALSE))
   #} else if (class(object$Anova)[1] == "anova") {
   } else if (inherits(object$Anova, "anova")) {

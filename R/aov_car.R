@@ -453,9 +453,11 @@ aov_car <- function(formula,
     attr(afex_aov, "dv") <- dv
     attr(afex_aov, "id") <- id
     attr(afex_aov, "within") <- 
-      if (length(within) > 0) lapply(data[,within], levels) else list()
+      if (length(within) > 0) lapply(data[,within, drop = FALSE], 
+                                     levels) else list()
     attr(afex_aov, "between") <- 
-      if (length(between) > 0) lapply(data[,between], levels) else list()
+      if (length(between) > 0) lapply(data[,between,drop=FALSE], 
+                                      levels) else list()
     attr(afex_aov, "type") <- type
     afex_aov$anova_table <- 
       do.call("anova", 
@@ -479,9 +481,11 @@ aov_car <- function(formula,
     attr(afex_aov, "dv") <- dv
     attr(afex_aov, "id") <- id
     attr(afex_aov, "within") <- 
-      if (length(within) > 0) lapply(data[,within], levels) else list()
+      if (length(within) > 0) lapply(data[,within, drop = FALSE], 
+                                     levels) else list()
     attr(afex_aov, "between") <- 
-      if (length(between) > 0) lapply(data[,between], levels) else list()
+      if (length(between) > 0) lapply(data[,between,drop=FALSE], 
+                                      levels) else list()
     attr(afex_aov, "type") <- type
     afex_aov$anova_table <- 
       do.call("anova", 

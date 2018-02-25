@@ -1,20 +1,125 @@
 
 context("interplay with emmeans")
 
-test_that("ANOVA functions work with emmeans", {
+test_that("ANOVA functions work with emmeans, univariate & multivariate", {
   data(sk2011.1)
   a1 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
                within = c("inference", "plausibility"), fun_aggregate = mean)
-  expect_is(emmeans(a1, ~ inference), "emmGrid")
+  em1 <- emmeans(a1, ~ inference, mode = "univariate")
+  em2 <- emmeans(a1, ~ inference, mode = "multivariate")
+  expect_is(em1, "emmGrid")
+  expect_is(em2, "emmGrid")
+  expect_equal(as.data.frame(summary(em2))$emmean, 
+               as.data.frame(summary(em1))$emmean)
+  expect_false(isTRUE(all.equal(
+    as.data.frame(summary(em2))$SE, 
+    as.data.frame(summary(em1))$SE)))
+  
+  em1 <- emmeans(a1, ~ inference*plausibility, mode = "univariate")
+  em2 <- emmeans(a1, ~ inference*plausibility, mode = "multivariate")
+  expect_is(em1, "emmGrid")
+  expect_is(em2, "emmGrid")
+  expect_equal(as.data.frame(summary(em2))$emmean, 
+               as.data.frame(summary(em1))$emmean)
+  expect_false(isTRUE(all.equal(
+    as.data.frame(summary(em2))$SE, 
+    as.data.frame(summary(em1))$SE)))
+  
+  em1 <- emmeans(a1, ~ plausibility*inference, mode = "univariate")
+  em2 <- emmeans(a1, ~ plausibility*inference, mode = "multivariate")
+  expect_is(em1, "emmGrid")
+  expect_is(em2, "emmGrid")
+  expect_equal(as.data.frame(summary(em2))$emmean, 
+               as.data.frame(summary(em1))$emmean)
+  expect_false(isTRUE(all.equal(
+    as.data.frame(summary(em2))$SE, 
+    as.data.frame(summary(em1))$SE)))
+  
+  a1b <- aov_ez("id", "response", sk2011.1, between = "instruction", 
+               within = c("plausibility", "inference"), fun_aggregate = mean)
+  em1 <- emmeans(a1b, ~ inference, mode = "univariate")
+  em2 <- emmeans(a1b, ~ inference, mode = "multivariate")
+  expect_is(em1, "emmGrid")
+  expect_is(em2, "emmGrid")
+  expect_equal(as.data.frame(summary(em2))$emmean, 
+               as.data.frame(summary(em1))$emmean)
+  expect_false(isTRUE(all.equal(
+    as.data.frame(summary(em2))$SE, 
+    as.data.frame(summary(em1))$SE)))
+  
   a2 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
                within = c("inference"), fun_aggregate = mean)
-  expect_is(emmeans(a2, ~ inference), "emmGrid")
+  em1 <- emmeans(a2, ~ inference, mode = "univariate")
+  em2 <- emmeans(a2, ~ inference, mode = "multivariate")
+  expect_is(em1, "emmGrid")
+  expect_is(em2, "emmGrid")
+  expect_equal(as.data.frame(summary(em2))$emmean, 
+               as.data.frame(summary(em1))$emmean)
+  expect_false(isTRUE(all.equal(
+    as.data.frame(summary(em2))$SE, 
+    as.data.frame(summary(em1))$SE)))
+  
+  
   a3 <- aov_ez("id", "response", sk2011.1, within = c("inference"), 
                fun_aggregate = mean)
-  expect_is(emmeans(a3, ~ inference), "emmGrid")
+  em1 <- emmeans(a3, ~ inference, mode = "univariate")
+  em2 <- emmeans(a3, ~ inference, mode = "multivariate")
+  expect_is(em1, "emmGrid")
+  expect_is(em2, "emmGrid")
+  expect_equal(as.data.frame(summary(em2))$emmean, 
+               as.data.frame(summary(em1))$emmean)
+  expect_false(isTRUE(all.equal(
+    as.data.frame(summary(em2))$SE, 
+    as.data.frame(summary(em1))$SE)))
+  
   a4 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
                fun_aggregate = mean)
-  expect_is(emmeans(a4, ~ instruction), "emmGrid")
+  em1 <- emmeans(a4, ~ instruction, mode = "univariate")
+  em2 <- emmeans(a4, ~ instruction, mode = "multivariate")
+  expect_is(em1, "emmGrid")
+  expect_is(em2, "emmGrid")
+  expect_equal(as.data.frame(summary(em2))$emmean, 
+               as.data.frame(summary(em1))$emmean)
+  expect_true(isTRUE(all.equal(
+    as.data.frame(summary(em2))$SE, 
+    as.data.frame(summary(em1))$SE)))
+  
+  #### 
+  data("sk2011.2")
+  str(sk2011.2)
+  ab1 <- aov_ez("id", "response", sk2011.2, between = "instruction", 
+               within = c("what", "validity", "type"), fun_aggregate = mean)
+  em1 <- emmeans(ab1, ~ what*validity*type, mode = "univariate")
+  em2 <- emmeans(ab1, ~ what*validity*type, mode = "multivariate")
+  expect_is(em1, "emmGrid")
+  expect_is(em2, "emmGrid")
+  expect_equal(as.data.frame(summary(em2))$emmean, 
+               as.data.frame(summary(em1))$emmean, tolerance = 0.1)
+  expect_false(isTRUE(all.equal(
+    as.data.frame(summary(em2))$SE, 
+    as.data.frame(summary(em1))$SE)))
+  
+  em1 <- emmeans(ab1, ~ validity*what*type, mode = "univariate")
+  em2 <- emmeans(ab1, ~ validity*what*type, mode = "multivariate")
+  expect_is(em1, "emmGrid")
+  expect_is(em2, "emmGrid")
+  expect_equal(as.data.frame(summary(em2))$emmean, 
+               as.data.frame(summary(em1))$emmean, tolerance = 0.1)
+  expect_false(isTRUE(all.equal(
+    as.data.frame(summary(em2))$SE, 
+    as.data.frame(summary(em1))$SE)))
+  
+  em1 <- emmeans(ab1, ~ type, mode = "univariate")
+  em2 <- emmeans(ab1, ~ type, mode = "multivariate")
+  expect_is(em1, "emmGrid")
+  expect_is(em2, "emmGrid")
+  expect_equal(as.data.frame(summary(em2))$emmean, 
+               as.data.frame(summary(em1))$emmean, tolerance = 0.1)
+  expect_false(isTRUE(all.equal(
+    as.data.frame(summary(em2))$SE, 
+    as.data.frame(summary(em1))$SE)))
+  
+  
 })
 
 

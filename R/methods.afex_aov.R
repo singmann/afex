@@ -160,7 +160,9 @@ recover_data.afex_aov = function(object, ...,
     if (packageVersion("emmeans") < "1.1.2")
       stop("emmeans version >= 1.1.2 required for multivariate tests")
     out <- recover_data(object$lm, ...)  
-    out$misc$ylevs <- attr(object, "within")
+    if (length(attr(object, "within")) > 0) {
+      out$misc$ylevs <- rev(attr(object, "within")) 
+    }
     return(out)
   }
     
@@ -174,9 +176,10 @@ emm_basis.afex_aov = function(object, trms, xlev, grid, ...,
   if (mode == "univariate") {
     return(emm_basis(object$aov, trms, xlev, grid, ...)  )
   } else if (mode == "multivariate") {
-    #browser()
-    out <- emm_basis(object$lm, trms, xlev, grid, ...)  
-    out$misc$ylevs <- attr(object, "within")
+    out <- emm_basis(object$lm, trms, xlev, grid, ...)
+    if (length(attr(object, "within")) > 0) {
+      out$misc$ylevs <- rev(attr(object, "within")) 
+    }
     return(out)
   }
 }

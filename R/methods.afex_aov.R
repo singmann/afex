@@ -195,6 +195,7 @@ summary.afex_aov <- function(object, ...) {
 
 #' @rdname afex_aov-methods
 #' @importFrom emmeans recover_data emm_basis
+#' @importFrom utils packageVersion
 ## @method recover.data afex_aov 
 #' @export
 recover_data.afex_aov = function(object, ..., 

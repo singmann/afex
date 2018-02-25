@@ -3,13 +3,17 @@ context("interplay with emmeans")
 
 test_that("ANOVA functions work with emmeans", {
   data(sk2011.1)
-  a1 <- aov_ez("id", "response", sk2011.1, between = "instruction", within = c("inference", "plausibility"), fun_aggregate = mean)
+  a1 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
+               within = c("inference", "plausibility"), fun_aggregate = mean)
   expect_is(emmeans(a1, ~ inference), "emmGrid")
-  a2 <- aov_ez("id", "response", sk2011.1, between = "instruction", within = c("inference"), fun_aggregate = mean)
+  a2 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
+               within = c("inference"), fun_aggregate = mean)
   expect_is(emmeans(a2, ~ inference), "emmGrid")
-  a3 <- aov_ez("id", "response", sk2011.1, within = c("inference"), fun_aggregate = mean)
+  a3 <- aov_ez("id", "response", sk2011.1, within = c("inference"), 
+               fun_aggregate = mean)
   expect_is(emmeans(a3, ~ inference), "emmGrid")
-  a4 <- aov_ez("id", "response", sk2011.1, between = "instruction", fun_aggregate = mean)
+  a4 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
+               fun_aggregate = mean)
   expect_is(emmeans(a4, ~ instruction), "emmGrid")
 })
 
@@ -43,9 +47,9 @@ test_that("mixed works with type=2 and all methods", {
                      method="LRT", progress = FALSE)
   expect_is(emmeans(mixed_lrt, specs = c("type"), data = sk2_aff), "emmGrid")
   
-  mixed_pb <- suppressWarnings(mixed(response ~ inference*type+(1|id), sk2_aff, type=2, 
-                    method="PB", progress = FALSE, 
-                    args_test = list(nsim = 10)))
+  mixed_pb <- suppressWarnings(mixed(response ~ inference*type+(1|id), sk2_aff, 
+                                     type=2, method="PB", progress = FALSE, 
+                                     args_test = list(nsim = 10)))
   expect_is(emmeans(mixed_pb, specs = c("type"), data = sk2_aff), "emmGrid")
   
   mixed_oldkr <- mixed(response ~ inference*type+(1|id), sk2_aff, type=2, 

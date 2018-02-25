@@ -154,6 +154,7 @@ summary.afex_aov <- function(object, ...) {
 #' @export
 recover_data.afex_aov = function(object, ..., 
                                  mode = afex_options("emmeans_mode")) {
+  mode <- match.arg(mode, c("univariate", "multivariate"))
   if (mode == "univariate") {
     recover_data(object = object$aov, ...)
   } else if (mode == "multivariate") {
@@ -173,6 +174,7 @@ recover_data.afex_aov = function(object, ...,
 #' @export
 emm_basis.afex_aov = function(object, trms, xlev, grid, ..., 
                               mode = afex_options("emmeans_mode")) {
+  mode <- match.arg(mode, c("univariate", "multivariate"))
   if (mode == "univariate") {
     return(emm_basis(object$aov, trms, xlev, grid, ...)  )
   } else if (mode == "multivariate") {

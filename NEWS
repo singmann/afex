@@ -7,6 +7,13 @@
                     
     Significant User Visible Changes and New Features
     
+    o   follow-up tests with emmeans for ANOVAs (i.e., objects of class 
+        "afex_aov") with repeated-measures factors can now be based on a 
+        multivariate model. This provides separate standard errors for each 
+        estimate and more adequately accounts for violations of sphericity. To 
+        use this model either call emmeans(..., mode="multivariate") or set 
+        globally via: afex_options("emmeans_mode") <- "multivariate"
+    
     o   better (i.e., simpler) examples for mixed (use data from MEMSS). Added
         example showing how to use mixed() with effects package for plotting.
     

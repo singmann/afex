@@ -152,16 +152,32 @@ summary.afex_aov <- function(object, ...) {
 #' @importFrom emmeans recover_data emm_basis
 ## @method recover.data afex_aov 
 #' @export
-recover_data.afex_aov = function(object, ...) {
-  #do.call(do.call(":::", args = list(pkg = "emmeans", name = "recover_data.aovlist")), args = list(object = object$aov, data = object$data$long, list(...)))
-  recover_data(object = object$aov, ...)
+recover_data.afex_aov = function(object, ..., 
+                                 mode = afex_options("emmeans_mode")) {
+  if (mode == "univariate") {
+    recover_data(object = object$aov, ...)
+  } else if (mode == "multivariate") {
+    if (packageVersion("emmeans") < "1.1.2")
+      stop("emmeans version >= 1.1.2 required for multivariate tests")
+    out <- recover_data(object$lm, ...)  
+    out$misc$ylevs <- attr(object, "within")
+    return(out)
+  }
+    
 }
 
 #' @rdname afex_aov-methods
 ## @method lsm.basis afex_aov 
 #' @export
-emm_basis.afex_aov = function(object, trms, xlev, grid, ...) {
-  #do.call(do.call(":::", args = list(pkg = "emmeans", name = "emm_basis.aovlist")), args = list(object = object$aov, trms = trms, xlev = xlev, grid = grid))
-  emm_basis(object$aov, trms, xlev, grid, ...)
+emm_basis.afex_aov = function(object, trms, xlev, grid, ..., 
+                              mode = afex_options("emmeans_mode")) {
+  if (mode == "univariate") {
+    return(emm_basis(object$aov, trms, xlev, grid, ...)  )
+  } else if (mode == "multivariate") {
+    #browser()
+    out <- emm_basis(object$lm, trms, xlev, grid, ...)  
+    out$misc$ylevs <- attr(object, "within")
+    return(out)
+  }
 }
 

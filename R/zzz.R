@@ -12,7 +12,8 @@
     afex.correction_aov = "GG",
     afex.factorize = TRUE,
     afex.lmer_function = "lmerTest",
-    afex.sig_symbols = c(" +", " *", " **", " ***")
+    afex.sig_symbols = c(" +", " *", " **", " ***"),
+    afex.emmeans_mode = c("univariate")
   )
   toset <- !(names(op.afex) %in% names(op))
   if(any(toset)) options(op.afex[toset])

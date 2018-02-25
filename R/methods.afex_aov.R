@@ -112,7 +112,7 @@ anova.afex_aov <- function(object, es = afex_options("es_aov"), observed = NULL,
   attr(anova_table, "heading") <- c(paste0("Anova Table (Type ", attr(object, "type"), " tests", p_adj_heading, ")\n"), paste("Response:", attr(object, "dv")))
   attr(anova_table, "p_adjust_method") <- p_adjust_method
   attr(anova_table, "es") <- es
-  attr(anova_table, "correction") <- if(length(attr(object, "within")) > 0 && any(vapply(object$data$long[, attr(object, "within"), drop = FALSE], nlevels, 0) > 2)) correction else "none"
+  attr(anova_table, "correction") <- if(length(attr(object, "within")) > 0 && any(vapply(object$data$long[, names(attr(object, "within")), drop = FALSE], nlevels, 0) > 2)) correction else "none"
   attr(anova_table, "observed") <- if(!is.null(observed) & length(observed) > 0) observed else character(0)
   attr(anova_table, "sig_symbols") <- if(!is.null(sig_symbols)) sig_symbols else afex_options("sig_symbols")
   anova_table

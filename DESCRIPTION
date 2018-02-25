@@ -39,6 +39,6 @@ Authors@R: c(person(given="Henrik", family="Singmann",
        role=c("ctb")), person(given="Ulf", family="Mertens",
        role=c("ctb")), person(given="Jonathan", family="Love",
        role=c("ctb")) )
-Version: 0.20-0
-Date: 2018-02-22
+Version: 0.20-1
+Date: 2018-02-25
 RoxygenNote: 6.0.1

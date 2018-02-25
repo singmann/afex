@@ -109,17 +109,19 @@ The S3 object returned per default can be directly passed to \code{emmeans::emme
  
  Note that \pkg{emmeans} allows for a variety of advanced settings and simplifiations, for example: all pairwise comparison of a single factor using one command (e.g., \code{emmeans(x, "a", contr = "pairwise")}) or advanced control for multiple testing by passing objects to \pkg{multcomp}. A comprehensive overview of the functionality is provided in the accompanying vignettes (see \href{https://CRAN.R-project.org/package=emmeans}{here}).
  
- A caveat regarding the use of \pkg{emmeans} concerns the assumption of sphericity for ANOVAs including within-subjects/repeated-measures factors (with more than two levels). While the ANOVA tables per default report results using the Greenhousse-Geisser correction, no such correction is available when using \pkg{emmeans}. This may result in anti-conservative tests.
+ A caveat regarding the use of \pkg{emmeans} concerns the assumption of sphericity for ANOVAs including within-subjects/repeated-measures factors (with more than two levels). The current default for follow-up tests uses a univariate model (\code{model = "univariate"} in the call to \code{emmeans}), which does not adequately control for violations of sphericity. This may result in anti-conservative tests and contrasts somewhat with the default ANOVA table which reports results based on the Greenhousse-Geisser correction. An alternative is to use a multivariate model (\code{model = "multivariate"} in the call to \code{emmeans}) which should handle violations of sphericity better. The default will likely change to multivariate tests in one of the next versions of the package.
  
  \pkg{emmeans} is loaded/attached automatically when loading \pkg{afex} via \code{library} or \code{require}.
 }  
 
 \subsection{Methods for \code{afex_aov} Objects}{
-A full overview over the methods provided for \code{afex_aov} objects is provided in the corresponding help page: \code{\link{afex_aov-methods}}. The probably most important ones for end-users are \code{summary} and \code{anova}.
+A full overview over the methods provided for \code{afex_aov} objects is provided in the corresponding help page: \code{\link{afex_aov-methods}}. The probably most important ones for end-users are \code{summary}, \code{anova}, and \code{\link{nice}}.
 
 The \code{summary} method returns, for ANOVAs containing within-subject (repeated-measures) factors with more than two levels, the complete univariate analysis: Results without df-correction, the Greenhouse-Geisser corrected results, the Hyunh-Feldt corrected results, and the results of the Mauchly test for sphericity.
 
 The \code{anova} method returns a \code{data.frame} of class \code{"anova"} containing the ANOVA table in numeric form (i.e., the one in slot \code{anova_table} of a \code{afex_aov}). This method has arguments such as \code{correction} and \code{es} and can be used to obtain an ANOVA table with different correction than the one initially specified.
+
+The \code{\link{nice}} method also returns a \code{data.frame}, but rounds most values and transforms them into characters for nice printing. Also has arguments like \code{correction} and \code{es} which can be used to obtain an ANOVA table with different correction than the one initially specified.
 }
 }
 \note{

@@ -12,7 +12,7 @@
         multivariate model. This provides separate standard errors for each 
         estimate and more adequately accounts for violations of sphericity. To 
         use this model either call emmeans(..., model="multivariate") or set 
-        globally via: afex_options("emmeans_model") <- "multivariate"
+        globally via: afex_options(emmeans_model = "multivariate")
     
     o   better (i.e., simpler) examples for mixed (use data from MEMSS). Added
         example showing how to use mixed() with effects package for plotting.

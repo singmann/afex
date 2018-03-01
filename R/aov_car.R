@@ -183,12 +183,26 @@ aov_car <- function(formula,
                           "there are %d Error terms: only 1 is allowed"), 
                  length(indError)), 
          domain = NA)
-  
+
   # from here, code by Henrik Singmann:
   vars <- all.vars(formula)
-  dv <- vars[1]
-  if (!is.numeric(data[,dv])) stop("dv needs to be numeric.") #check if dv is numeric
-  vars <- vars[-1]
+  #--- Russ Lenth added/modified code to detect transformed responses:
+  lhs <- all.names(formula[[2]])
+  transf <- setdiff(lhs, all.vars(formula[[2]]))
+  if (length(transf) == 0)
+    transf = NULL
+  if (!is.null(transf)) {
+     origdv <- setdiff(lhs, transf)
+     dv <- paste0(transf[1], ".", origdv)
+     data[[dv]] <- eval(formula[[2]], envir = data)  # add transformed version
+     vars <- vars[!(vars %in% lhs)]
+  }
+  else {
+    dv <- vars[1]
+    if (!is.numeric(data[,dv])) stop("dv needs to be numeric.") #check if dv is numeric
+    vars <- vars[-1]
+  }
+  #--- end RL changes
   parts <- attr(terms(formula, "Error", data = data), "term.labels")
   error.term <- parts[str_detect(parts, "^Error\\(")]
   id <- all.vars(parse(text = error.term))[1]
@@ -470,6 +484,7 @@ aov_car <- function(formula,
       if (length(between) > 0) lapply(data[,between,drop=FALSE], 
                                       levels) else list()
     attr(afex_aov, "type") <- type
+    attr(afex_aov, "transf") <- transf
     afex_aov$anova_table <- 
       do.call("anova", 
               args = c(object = list(afex_aov), observed = list(observed), 

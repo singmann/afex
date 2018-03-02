@@ -32,6 +32,11 @@
 #' @param formula A formula specifying the ANOVA model similar to \code{\link{aov}} (for \code{aov_car} or similar to \code{lme4:lmer} for \code{aov_4}). Should include an error term (i.e., \code{Error(id/...)} for \code{aov_car} or \code{(...|id)} for \code{aov_4}). Note that the within-subject factors do not need to be outside the Error term (this contrasts with \code{aov}). See Details.
 #' @param data A \code{data.frame} containing the data. Mandatory.
 #' @param fun_aggregate The function for aggregating the data before running the ANOVA if there is more than one observation per individual and cell of the design. The default \code{NULL} issues a warning if aggregation is necessary and uses \code{\link{mean}}. Pass \code{mean} directly to avoid the warning.
+#' @param transformation In \code{aov_ez}, a \code{character} vector (of length
+#'   1) indicating the name of a transformation to apply to \code{dv} before
+#'   fitting the model. If missing, no transformation is applied. In
+#'   \code{aov_car} and \code{aov_4}, a response transformation may be
+#'   incorporated in the left-hand side of \code{formula}.
 #' @param type The type of sums of squares for the ANOVA. The default is given by \code{afex_options("type")}, which is \strong{initially set to 3}. Passed to \code{\link[car]{Anova}}. Possible values are \code{"II"}, \code{"III"}, \code{2}, or \code{3}.
 #' @param factorize logical. Should between subject factors be factorized (with note) before running the analysis. The default is given by \code{afex_options("factorize")}, which is initially \code{TRUE}. If one wants to run an ANCOVA, this needs to be set to \code{FALSE} (in which case centering on 0 is checked on numeric variables).
 #' @param check_contrasts \code{logical}. Should contrasts for between-subject factors be checked and (if necessary) changed to be \code{"contr.sum"}. See details. The default is given by \code{afex_options("check_contrasts")}, which is initially \code{TRUE}.
@@ -583,6 +588,7 @@ aov_ez <- function(id,
                    covariate = NULL, 
                    observed = NULL, 
                    fun_aggregate = NULL, 
+                   transformation,
                    type = afex_options("type"), 
                    factorize = afex_options("factorize"), 
                    check_contrasts = afex_options("check_contrasts"), 
@@ -609,6 +615,8 @@ aov_ez <- function(id,
                  str_c(within, collapse = " * "), 
                  if (length(within) > 0) ")" else "", 
                  ")")
+  if (!missing(transformation))
+    dv <- paste0(transformation, "(", dv, ")")
   formula <- str_c(dv, " ~ ", rh, error)
   if (print.formula) message(str_c("Formula send to aov_car: ", formula))
   aov_car(formula = as.formula(formula), 

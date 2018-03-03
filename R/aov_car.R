@@ -148,7 +148,6 @@
 #' 
 #' @encoding UTF-8
 #'
-
 aov_car <- function(formula, 
                     data, 
                     fun_aggregate = NULL, 

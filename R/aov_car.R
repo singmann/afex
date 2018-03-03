@@ -4,7 +4,8 @@
 #'
 #' @usage 
 #' aov_ez(id, dv, data, between = NULL, within = NULL, covariate = NULL, 
-#'      observed = NULL, fun_aggregate = NULL, type = afex_options("type"), 
+#'      observed = NULL, fun_aggregate = NULL, transformation,
+#'      type = afex_options("type"), 
 #'      factorize = afex_options("factorize"), 
 #'      check_contrasts = afex_options("check_contrasts"), 
 #'      return = afex_options("return_aov"), 

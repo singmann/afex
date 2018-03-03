@@ -12,7 +12,7 @@ Analysis of Factorial Experiments.
 Package: \tab afex\cr
 Type: \tab Package\cr
 Version: \tab 0.20-1\cr
-Date: \tab 2018-02-25\cr
+Date: \tab 2018-03-03\cr
 Depends: \tab R (>= 3.1.0), lme4 (>= 1.1-8), emmeans\cr
 Encoding: \tab UTF-8\cr
 License: \tab GPL (>=2)\cr
@@ -29,6 +29,6 @@ effects using either Kenward-Roger or Satterthwaite approximation for degrees of
 GLMMs). afex uses type 3 sums of squares as default (imitating commercial statistical software).
 }
 \author{
-Henrik Singmann, Ben Bolker, Jake Westfall, Frederik Aust, with contributions from Søren Højsgaard, John Fox, Michael A. Lawrence, Ulf Mertens, Jonathan Love
+Henrik Singmann, Ben Bolker, Jake Westfall, Frederik Aust, with contributions from Søren Højsgaard, John Fox, Michael A. Lawrence, Ulf Mertens, Jonathan Love, Russell Lenth
 }
 \keyword{package}

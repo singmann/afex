@@ -8,7 +8,7 @@
 \title{Convenient ANOVA estimation for factorial designs}
 \usage{
 aov_ez(id, dv, data, between = NULL, within = NULL, covariate = NULL, 
-     observed = NULL, fun_aggregate = NULL, transformation, 
+     observed = NULL, fun_aggregate = NULL, transformation,
      type = afex_options("type"), 
      factorize = afex_options("factorize"), 
      check_contrasts = afex_options("check_contrasts"), 

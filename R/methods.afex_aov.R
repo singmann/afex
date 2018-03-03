@@ -222,13 +222,14 @@ emm_basis.afex_aov = function(object, trms, xlev, grid, ...,
                               model = afex_options("emmeans_model")) {
   model <- match.arg(model, c("univariate", "multivariate"))
   if (model == "univariate") {
-    return(emm_basis(object$aov, trms, xlev, grid, ...)  )
+    out <- emm_basis(object$aov, trms, xlev, grid, ...)
   } else if (model == "multivariate") {
     out <- emm_basis(object$lm, trms, xlev, grid, ...)
     if (length(attr(object, "within")) > 0) {
       out$misc$ylevs <- rev(attr(object, "within")) 
     }
-    return(out)
   }
+  out$misc$tran = attr(object, "transf")
+  return(out)
 }
 

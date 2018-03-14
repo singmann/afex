@@ -352,6 +352,8 @@ aov_car <- function(formula,
                   "\nRemoving those cases from the analysis."), call. = FALSE) 
     tmp.dat <- tmp.dat[!missing.values,]
     data <- data[ !(data[,id] %in% missing_ids),]
+  } else {
+    missing_ids <- NULL
   }
 
   #   if (length(between) > 0) {
@@ -483,13 +485,14 @@ aov_car <- function(formula,
     attr(afex_aov, "dv") <- dv
     attr(afex_aov, "id") <- id
     attr(afex_aov, "within") <- 
-      if (length(within) > 0) lapply(data[,within, drop = FALSE], 
+      if (length(within) > 0) lapply(data[, within, drop = FALSE], 
                                      levels) else list()
     attr(afex_aov, "between") <- 
-      if (length(between) > 0) lapply(data[,between,drop=FALSE], 
+      if (length(between) > 0) lapply(data[, between, drop = FALSE], 
                                       levels) else list()
     attr(afex_aov, "type") <- type
     attr(afex_aov, "transf") <- transf
+    attr(afex_aov, "incomplete_cases") <- missing_ids
     afex_aov$anova_table <- 
       do.call("anova", 
               args = c(object = list(afex_aov), observed = list(observed), 

@@ -155,6 +155,7 @@ anova.afex_aov <- function(object,
       correction else "none"
   attr(anova_table, "observed") <- 
     if(!is.null(observed) & length(observed) > 0) observed else character(0)
+  attr(anova_table, "incomplete_cases") <- attr(object, "incomplete_cases")
   attr(anova_table, "sig_symbols") <- 
     if(!is.null(sig_symbols)) sig_symbols else afex_options("sig_symbols")
   anova_table

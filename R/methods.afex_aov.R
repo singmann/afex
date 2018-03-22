@@ -51,7 +51,6 @@ anova.afex_aov <- function(object,
   }
   es <- match.arg(es, c("none", "ges", "pes"), several.ok = TRUE)
   correction <- match.arg(correction, c("GG", "HF", "none"))
-  #if (class(object$Anova)[1] == "Anova.mlm") {
   if (inherits(object$Anova, "Anova.mlm")) {
     tmp <- suppressWarnings(summary(object$Anova, multivariate = FALSE))
     t.out <- tmp[["univariate.tests"]]
@@ -104,6 +103,10 @@ anova.afex_aov <- function(object,
     tmp2 <- as.data.frame(tmp.df)
   } else stop("Non-supported object passed. Slot 'Anova' needs to be of class 'Anova.mlm' or 'anova'.")
   tmp2[,"MSE"] <- tmp2[,"Error SS"]/tmp2[,"den Df"]
+  ## provision for car 3.0 (March 2018), for calculation of es
+  if ("Sum Sq" %in% colnames(tmp2)) {
+    tmp2$SS <- tmp2[,"Sum Sq"]
+  }
   # calculate es
   es_df <- data.frame(row.names = rownames(tmp2))
   if ("pes" %in% es) {
@@ -127,7 +130,10 @@ anova.afex_aov <- function(object,
     es_df$ges <- tmp2$SS/(tmp2$SS+sum(unique(tmp2[,"Error SS"])) + 
                             obs_SSn1-obs_SSn2)
   }
-  anova_table <- cbind(tmp2[,c("num Df", "den Df", "MSE", "F")], es_df, 
+  colname_f <- grep("^F", colnames(tmp2), value = TRUE)
+  anova_table <- cbind(tmp2[,c("num Df", "den Df", "MSE")], 
+                       F = tmp2[,colname_f], 
+                       es_df, 
                        "Pr(>F)" = tmp2[,c("Pr(>F)")])
   #browser()
   if (!MSE) anova_table$MSE <- NULL 

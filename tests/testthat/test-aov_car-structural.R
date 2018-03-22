@@ -110,7 +110,9 @@ test_that("anova_table attributes", {
   expect_that(attr(two_levels_anova$anova_table, "correction"), equals("none"))
   
   # Test incomplete observation attribute
-  incomplete_cases <- aov_ez("id", "rt", md_12.1[-10, ], within = c("angle", "noise"))
+  incomplete_cases <- suppressWarnings(
+    aov_ez("id", "rt", md_12.1[-10, ], within = c("angle", "noise"))
+  )
   
   expect_equal(as.character(attr(incomplete_cases, "incomplete_cases")), "10")
   expect_equal(as.character(attr(incomplete_cases$anova_table, "incomplete_cases")), "10")

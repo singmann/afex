@@ -110,8 +110,8 @@ test_that("print(mixed) works: only 1 or 2 fixed effects with all methods", {
 
 test_that("mixed: set.data.arg", {
   data(obk.long, package = "afex")
-  suppressWarnings(m1 <- mixed(value ~ treatment*phase +(1|id), obk.long, method = "LRT", progress=FALSE))
-  suppressWarnings(m2 <- mixed(value ~ treatment*phase +(1|id), obk.long, method = "LRT", progress=FALSE, set.data.arg = FALSE))
+  suppressWarnings(m1 <- mixed(value ~ treatment*phase +(1|id), obk.long, method = "LRT", progress=FALSE, set_data_arg = TRUE))
+  suppressWarnings(m2 <- mixed(value ~ treatment*phase +(1|id), obk.long, method = "LRT", progress=FALSE, set_data_arg = FALSE))
   expect_that(m1$full_model@call[["data"]], is_identical_to(as.name("obk.long")))
   expect_that(m2$full_model@call[["data"]], is_identical_to(as.name("data")))
 })
@@ -120,10 +120,14 @@ test_that("mixed: anova with multiple mixed objexts", {
   data("sk2011.2")
   data("ks2013.3")
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
-  sk_m1 <- mixed(response ~ instruction+(1|id), sk2_aff, method = "LRT", progress = FALSE)
-  sk_m2 <- mixed(response ~ instruction+(1|id)+(1|content), sk2_aff, method = "LRT", progress = FALSE)
-  sk_m3 <- lmer(response ~ instruction+(1|id)+(validity|content), sk2_aff, REML = FALSE)
-  sk_m4 <- lmer(response ~ instruction+(1|id)+(validity|content), sk2_aff, REML = TRUE)
+  sk_m1 <- mixed(response ~ instruction+(1|id), sk2_aff, method = "LRT", 
+                 progress = FALSE, set_data_arg = TRUE)
+  sk_m2 <- mixed(response ~ instruction+(1|id)+(1|content), sk2_aff, 
+                 method = "LRT", progress = FALSE, set_data_arg = TRUE)
+  sk_m3 <- lmer(response ~ instruction+(1|id)+(validity|content), sk2_aff, 
+                REML = FALSE)
+  sk_m4 <- lmer(response ~ instruction+(1|id)+(validity|content), sk2_aff, 
+                REML = TRUE)
   t <- anova(sk_m1, sk_m2, sk_m3)
   xx <- anova(sk_m1$full_model, sk_m2$full_model, sk_m3, model.names = c("sk_m1", "sk_m2", "sk_m3"))
   expect_identical(rownames(xx), rownames(t))

@@ -13,7 +13,7 @@
 #' @param check_contrasts \code{logical}. Should contrasts be checked and (if necessary) changed to \code{"contr.sum"}? See Details. The default (\code{"TRUE"}) is taken from \code{\link{afex_options}}.
 #' @param expand_re logical. Should random effects terms be expanded (i.e., factors transformed into numerical variables) before fitting with \code{(g)lmer}? Allows to use "||" notation with factors.
 #' @param all_fit logical. Should \code{\link{all_fit}} be used to fit each model with each available optimization algorithm and the results that provided the best fit in each case be used? Warning: This can dramatically increase the optimization time. Adds two new attributes to the returned object designating which algorithm was selected and the log-likelihoods for each algorithm. Note that only warnings from the initial fit are emitted during fitting. The warnings of the chosen models are emitted when printing the returned object.
-#' @param set_data_arg \code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{emmeans}). Default is \code{TRUE}. 
+#' @param set_data_arg \code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? If \code{FALSE} (currently the default) the name will be \code{data}. \code{TRUE} may be helpful when fitted objects are used afterwards (e.g., compared using \code{anova}). \pkg{emmeans} functions appear to work better with \code{FALSE}. Default is given by afex_options("set_data_arg"). 
 #' @param progress  if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.
 #' @param cl  A vector identifying a cluster; used for distributing the estimation of the different models using several cores (if seveal models are calculated). See examples. If \code{ckeck.contrasts}, mixed sets the current contrasts (\code{getOption("contrasts")}) at the nodes. Note this does \emph{not} distribute calculation of p-values (e.g., when using \code{method = "PB"}) across the cluster. Use \code{args_test} for this.
 #' @param return the default is to return an object of class \code{"mixed"}. \code{return = "merMod"} will skip the calculation of all submodels and p-values and simply return the full model fitted with lmer. Can be useful in combination with \code{expand_re = TRUE} which allows to use "||" with factors. \code{return = "data"} will not fit any models but just return the data that would have been used for fitting the model (note that the data is also part of the returned object).
@@ -154,7 +154,7 @@ mixed <- function(formula,
                   check_contrasts = afex_options("check_contrasts"), 
                   expand_re = FALSE, 
                   all_fit = FALSE, 
-                  set_data_arg = TRUE, 
+                  set_data_arg = afex_options("set_data_arg"), 
                   progress = TRUE, 
                   cl = NULL, 
                   return = "mixed", 

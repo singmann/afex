@@ -18,8 +18,14 @@ test_that("purely within ANOVA, return='univ': Maxell & Delaney (2004), Table 12
   expect_that(md_ez_r, is_equivalent_to(md_car_r))
   expect_that(md_ez_r, is_equivalent_to(md_aov_4_r))
   expect_that(round(md_ez_r$anova_table[,"F"], 2), is_equivalent_to(f))
-  expect_that(suppressWarnings(summary(md_ez_r$Anova)$univariate.tests[,"SS"][-1]), is_equivalent_to(ss_num))  
-  expect_that(suppressWarnings(summary(md_ez_r$Anova)$univariate.tests[,"Error SS"])[-1], is_equivalent_to(ss_error))
+  tmp_univ <- suppressWarnings(summary(md_ez_r$Anova)$univariate.tests)
+  if ("Sum Sq" %in% colnames(tmp_univ)) { # to allow both car 3.0 and earlier versions
+    ss_test <- tmp_univ[,"Sum Sq"][-1]
+  } else {
+    ss_test <- tmp_univ[,"SS"][-1]
+  }
+  expect_that(ss_test, is_equivalent_to(ss_num))  
+  expect_that(tmp_univ[,"Error SS"][-1], is_equivalent_to(ss_error))
   expect_that(anova(md_ez_r, correction = "none")[,"num Df"], is_equivalent_to(num_df))
   expect_that(anova(md_ez_r, correction = "none")[,"den Df"], is_equivalent_to(den_df))
 })

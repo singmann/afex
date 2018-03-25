@@ -51,7 +51,8 @@ roxy.package(
         person(given=\"John\", family=\"Fox\", role=c(\"ctb\")),
         person(given=\"Michael A.\", family=\"Lawrence\", role=c(\"ctb\")),
         person(given=\"Ulf\", family=\"Mertens\", role=c(\"ctb\")),
-        person(given=\"Jonathan\", family=\"Love\", role=c(\"ctb\"))
+        person(given=\"Jonathan\", family=\"Love\", role=c(\"ctb\")),
+        person(given=\"Russell\", family=\"Lenth\", role=c(\"ctb\"))
     )",
 		Depends = "R (>= 3.1.0), lme4 (>= 1.1-8), emmeans",
 		Suggests = "xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown, lattice, latticeExtra, multcomp, testthat, mlmRev, dplyr, tidyr, dfoptim, Matrix, psych, ggplot2, MEMSS, effects",

@@ -13,9 +13,16 @@
         estimate and more adequately accounts for violations of sphericity. To 
         use this model either call emmeans(..., model="multivariate") or set 
         globally via: afex_options(emmeans_model = "multivariate")
+
+    o   ANOVA functions now allow transformations of the dv (thanks to 
+        Russell Lenth).
     
     o   better (i.e., simpler) examples for mixed (use data from MEMSS). Added
         example showing how to use mixed() with effects package for plotting.
+        
+    o   afex_aov objects have received an additional attribute, 
+        "incomplete_cases", that contains the IDs of removed participants due to 
+        missing values (thanks to Frederik Aust).
     
     Bugfixes
 
@@ -29,6 +36,8 @@
         
     o   set_data_arg now works for lmer_alt and mixed(..., return = "merMod"). 
         This allows to use those objects with e.g., the effects package.
+        
+    o   afex should now work with car version 3.0.
 
     
                     *************************

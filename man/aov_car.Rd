@@ -8,7 +8,8 @@
 \title{Convenient ANOVA estimation for factorial designs}
 \usage{
 aov_ez(id, dv, data, between = NULL, within = NULL, covariate = NULL, 
-     observed = NULL, fun_aggregate = NULL, type = afex_options("type"), 
+     observed = NULL, fun_aggregate = NULL, transformation,
+     type = afex_options("type"), 
      factorize = afex_options("factorize"), 
      check_contrasts = afex_options("check_contrasts"), 
      return = afex_options("return_aov"), 
@@ -56,6 +57,12 @@ aov_4(formula, data, observed = NULL, fun_aggregate = NULL, type = afex_options(
 \item{within}{\code{character} vector indicating the \strong{within}-subject(s)(or repeated-measures) factor(s)/column(s) in \code{data}.  Default is \code{NULL} indicating no within-subjects factors.}
 
 \item{covariate}{\code{character} vector indicating the between-subject(s) covariate(s) (i.e., column(s)) in \code{data}. Default is \code{NULL} indicating no covariates.}
+
+\item{transformation}{In \code{aov_ez}, a \code{character} vector (of length
+1) indicating the name of a transformation to apply to \code{dv} before
+fitting the model. If missing, no transformation is applied. In
+\code{aov_car} and \code{aov_4}, a response transformation may be
+incorporated in the left-hand side of \code{formula}.}
 
 \item{print.formula}{\code{aov_ez} and \code{aov_4} are wrapper for \code{aov_car}. This boolean argument indicates whether the formula in the call to \code{car.aov} should be printed.}
 }

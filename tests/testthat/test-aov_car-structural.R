@@ -108,4 +108,14 @@ test_that("anova_table attributes", {
   obk.long <- droplevels(obk.long[obk.long$hour %in% c("1","2"),])
   two_levels_anova <- aov_ez("id", "value", obk.long, between = c("treatment"), within = c("phase", "hour"))
   expect_that(attr(two_levels_anova$anova_table, "correction"), equals("none"))
+  
+  # Test incomplete observation attribute
+  incomplete_cases <- suppressWarnings(
+    aov_ez("id", "rt", md_12.1[-10, ], within = c("angle", "noise"))
+  )
+  
+  expect_equal(as.character(attr(incomplete_cases, "incomplete_cases")), "10")
+  expect_equal(as.character(attr(incomplete_cases$anova_table, "incomplete_cases")), "10")
+  expect_equal(as.character(attr(anova(incomplete_cases), "incomplete_cases")), "10")
+  
 })

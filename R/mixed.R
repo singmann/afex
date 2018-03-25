@@ -277,7 +277,8 @@ mixed <- function(formula,
                              "progress", "check.contrasts", "check_contrasts", 
                              "per.parameter", "per_parameter", "cl", 
                              "test.intercept", "test_intercept","expand_re", 
-                             "return", "all_fit", "sig_symbols", "sig.symbols")]
+                             "return", "all_fit", "sig_symbols", "sig.symbols",
+                             "set_data_arg")]
   mf[["formula"]] <- 
     as.formula(str_c(dv,deparse(rh2, width.cutoff = 500L),"+",random))
   if ("family" %in% names(mf)) {

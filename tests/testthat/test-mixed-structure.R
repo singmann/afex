@@ -143,6 +143,7 @@ context("Mixed: Expand random effects")
 
 test_that("mixed: expand_re argument, return = 'merMod'", {
   data("ks2013.3")
+  set_default_contrasts()
   m2 <- mixed(response ~ validity + (believability||id), ks2013.3, expand_re = TRUE, method = "LRT", progress=FALSE)
   m3 <- mixed(response ~ validity + (believability|id), ks2013.3, method = "LRT", progress=FALSE)
   expect_identical(length(unlist(summary(m2)$varcor)), nrow(summary(m3)$varcor$id))

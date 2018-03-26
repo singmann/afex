@@ -13,11 +13,11 @@ O'Brien, R. G., & Kaiser, M. K. (1985). MANOVA method for analyzing repeated mea
 obk.long
 }
 \description{
-This is the long version of the \code{OBrienKaiser} dataset from the \pkg{car} pakage adding a random covariate \code{age}. Originally the dataset ist taken from O'Brien and Kaiser (1985). The description from \code{\link[car]{OBrienKaiser}} says: "These contrived repeated-measures data are taken from O'Brien and Kaiser (1985). The data are from an imaginary study in which 16 female and male subjects, who are divided into three treatments, are measured at a pretest, postest, and a follow-up session; during each session, they are measured at five occasions at intervals of one hour. The design, therefore, has two between-subject and two within-subject factors."
+This is the long version of the \code{OBrienKaiser} dataset from the \pkg{car} pakage adding a random covariate \code{age}. Originally the dataset ist taken from O'Brien and Kaiser (1985). The description from \code{\link[carData]{OBrienKaiser}} says: "These contrived repeated-measures data are taken from O'Brien and Kaiser (1985). The data are from an imaginary study in which 16 female and male subjects, who are divided into three treatments, are measured at a pretest, postest, and a follow-up session; during each session, they are measured at five occasions at intervals of one hour. The design, therefore, has two between-subject and two within-subject factors."
 }
 \examples{
 # The dataset is constructed as follows:
-data("OBrienKaiser", package = "car")
+data("OBrienKaiser", package = "carData")
 set.seed(1)
 OBrienKaiser2 <- within(OBrienKaiser, {
 		id <- factor(1:nrow(OBrienKaiser))

@@ -10,8 +10,9 @@ mixed(formula, data, type = afex_options("type"),
   method = afex_options("method_mixed"), per_parameter = NULL,
   args_test = list(), test_intercept = FALSE,
   check_contrasts = afex_options("check_contrasts"), expand_re = FALSE,
-  all_fit = FALSE, set_data_arg = TRUE, progress = TRUE, cl = NULL,
-  return = "mixed", sig_symbols = afex_options("sig_symbols"), ...)
+  all_fit = FALSE, set_data_arg = afex_options("set_data_arg"),
+  progress = TRUE, cl = NULL, return = "mixed",
+  sig_symbols = afex_options("sig_symbols"), ...)
 
 lmer_alt(formula, data, check_contrasts = FALSE, ...)
 }
@@ -36,7 +37,7 @@ lmer_alt(formula, data, check_contrasts = FALSE, ...)
 
 \item{all_fit}{logical. Should \code{\link{all_fit}} be used to fit each model with each available optimization algorithm and the results that provided the best fit in each case be used? Warning: This can dramatically increase the optimization time. Adds two new attributes to the returned object designating which algorithm was selected and the log-likelihoods for each algorithm. Note that only warnings from the initial fit are emitted during fitting. The warnings of the chosen models are emitted when printing the returned object.}
 
-\item{set_data_arg}{\code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? Otherwise the name will be \code{data}. Helpful if fitted objects are used afterwards (e.g., using \pkg{emmeans}). Default is \code{TRUE}.}
+\item{set_data_arg}{\code{logical}. Should the data argument in the slot \code{call} of the \code{merMod} object returned from \code{lmer} be set to the passed data argument? If \code{FALSE} (currently the default) the name will be \code{data}. \code{TRUE} may be helpful when fitted objects are used afterwards (e.g., compared using \code{anova}). \pkg{emmeans} functions appear to work better with \code{FALSE}. Default is given by afex_options("set_data_arg").}
 
 \item{progress}{if \code{TRUE}, shows progress with a text progress bar and other status messages during fitting.}
 

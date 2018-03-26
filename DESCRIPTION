@@ -2,8 +2,9 @@ Package: afex
 Type: Package
 Title: Analysis of Factorial Experiments
 Depends: R (>= 3.1.0), lme4 (>= 1.1-8), emmeans
-Suggests: xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown, lattice, latticeExtra, multcomp,
-           testthat, mlmRev, dplyr, tidyr, dfoptim, Matrix, psych, ggplot2, MEMSS, effects, carData
+Suggests: xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown, R.rsp, lattice, latticeExtra,
+           multcomp, testthat, mlmRev, dplyr, tidyr, dfoptim, Matrix, psych, ggplot2, MEMSS, effects,
+           carData
 Imports: stringr, coin, pbkrtest (>= 0.4-1), lmerTest, car, reshape2, stats, methods
 Description: Convenience functions for analyzing factorial experiments using ANOVA or mixed models.
            aov_ez(), aov_car(), and aov_4() allow specification of between, within (i.e.,
@@ -18,7 +19,7 @@ URL: http://afex.singmann.science/, https://github.com/singmann/afex
 BugReports: https://github.com/singmann/afex/issues
 License: GPL (>=2)
 Encoding: UTF-8
-VignetteBuilder: knitr
+VignetteBuilder: knitr, R.rsp
 Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"),
            email="singmann+afex@gmail.com", comment=c(ORCID="0000-0002-4842-3657")),
            person(given="Ben", family="Bolker", role=c("aut")), person(given="Jake",

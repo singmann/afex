@@ -76,12 +76,5 @@ closeAllConnections()
 
 ### check reverse dependencies:
 
-#revdep()
-revdep_check(libpath = "../revdep", check_dir = "../revdep_checks")
-#revdep_check(libpath = "../revdep")
-install.packages("ez", lib = "../revdep")
-install.packages("apa", lib = "../revdep")
-revdep_check_resume()
-revdep_check_save_summary()
-revdep_check_print_problems()
-revdep_maintainers()
+library(revdepcheck)  # see https://github.com/r-lib/revdepcheck
+revdep_check(num_workers = 4)

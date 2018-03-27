@@ -1,6 +1,6 @@
 #' p-values for fixed effects of mixed-model via lme4::lmer()
 #'
-#' Calculates p-values for all fixed effects in a mixed model. The default method \code{"KR"} (= Kenward-Roger) as well as  \code{method="S"} (Satterthwaite) support LMMs and fit the model with \code{\link[lme4]{lmer}}) and then pass it to either \code{\link[lmerTest]{anova.merModLmerTest}} (or \code{\link[car]{Anova}}). The other methods (\code{"LRT"} = likelihood-ratio tests and \code{"PB"} = parametric bootstrap) support both LMMs and GLMMs (i.e., with \code{family} argument) and fit a full model and restricted models in which the parameters corresponding to the effect (i.e., model term) are withhold (i.e., fixed to 0) and tests statistics are based on comparing the full model with the restricted models. The default is tests based on Type 3 sums of squares. \code{print}, \code{summary}, and \code{anova} methods for the returned object of class \code{"mixed"} are available (the last two return the same data.frame). \code{lmer_alt} is simply a wrapper for mixed that only returns the \code{"merMod"} object and correctly uses the \code{||} notation to remove correlation among factors, but otherwise behaves like \code{g/lmer} (as for \code{mixed}, it calls \code{glmer} as soon as a \code{family} argument is present).
+#' Calculates p-values for all fixed effects in a mixed model. The default method \code{"KR"} (= Kenward-Roger) as well as  \code{method="S"} (Satterthwaite) support LMMs and fit the model with \code{\link[lme4]{lmer}}) and then pass it to either \code{\link[lmerTest]{anova.lmerModLmerTest}} (or \code{\link[car]{Anova}}). The other methods (\code{"LRT"} = likelihood-ratio tests and \code{"PB"} = parametric bootstrap) support both LMMs and GLMMs (i.e., with \code{family} argument) and fit a full model and restricted models in which the parameters corresponding to the effect (i.e., model term) are withhold (i.e., fixed to 0) and tests statistics are based on comparing the full model with the restricted models. The default is tests based on Type 3 sums of squares. \code{print}, \code{summary}, and \code{anova} methods for the returned object of class \code{"mixed"} are available (the last two return the same data.frame). \code{lmer_alt} is simply a wrapper for mixed that only returns the \code{"merMod"} object and correctly uses the \code{||} notation to remove correlation among factors, but otherwise behaves like \code{g/lmer} (as for \code{mixed}, it calls \code{glmer} as soon as a \code{family} argument is present).
 #'
 #'
 #' @param formula a formula describing the full mixed-model to be fitted. As this formula is passed to \code{lmer}, it needs at least one random term.
@@ -339,22 +339,24 @@ mixed <- function(formula,
         anova_table <- anova_table[, c("Df", "Df.res", "F", "Pr(>F)")]
         colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
       } else {
-        anova_out <- lmerTest::anova(full_model, ddf = "Kenward-Roger", type = type)
+        anova_out <- lmerTest_anova(full_model, ddf = "Kenward-Roger", type = type)
         anova_table <- as.data.frame(anova_out)
-        anova_table <- anova_table[, c("NumDF", "DenDF", "F.value", "Pr(>F)")]
+        get <- c("NumDF", "DenDF", "F.value", "F value", "Pr(>F)")
+        anova_table <- anova_table[, match(get, colnames(anova_table), nomatch = 0L)]
         colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
       }
     } else if (method[1] == "S") {
       if (test_intercept) 
         warning("Cannot test intercept with Satterthwaite approximation.")
-      anova_out <- lmerTest::anova(full_model, ddf = "Satterthwaite", type = type)
+      anova_out <- lmerTest_anova(full_model, ddf = "Satterthwaite", type = type)
       anova_table <- as.data.frame(anova_out)
       if (!("Pr(>F)" %in% colnames(anova_table))) {
         colnames(anova_table)[c(1,4)] <- c("NumDF", "F.value")
         anova_table$DenDF <- NA_real_
         anova_table$`Pr(>F)` <- NA_real_
       }
-      anova_table <- anova_table[, c("NumDF", "DenDF", "F.value", "Pr(>F)")]
+      get <- c("NumDF", "DenDF", "F.value", "F value", "Pr(>F)")
+      anova_table <- anova_table[, match(get, colnames(anova_table), nomatch = 0L)]
       colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
     }
     if (progress) cat(str_c("[DONE]\n"))

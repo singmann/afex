@@ -185,7 +185,7 @@ sk_m1b <- mixed(response ~ instruction*inference*type+(inference*type|id),
                 sk2_aff, method="S")
 nice(sk_m1b)
 # identical results as:
-lmerTest::anova(sk_m1$full_model)
+anova(sk_m1$full_model)
 
 # suppressing correlation among random slopes:
 # very similar results, but significantly faster and often less convergence warnings. 

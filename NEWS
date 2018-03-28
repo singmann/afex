@@ -20,6 +20,11 @@
     o   better (i.e., simpler) examples for mixed (use data from MEMSS). Added
         example showing how to use mixed() with effects package for plotting.
         
+    o   set_data_arg argument of mixed() is now per default controlled via 
+        afex_options("set_data_arg"). The default has also changed from TRUE to 
+        FALSE. The reason for this change is that FALSE appears to work better 
+        with emmeans. Specifically, also when 
+        
     o   afex_aov objects have received an additional attribute, 
         "incomplete_cases", that contains the IDs of removed participants due to 
         missing values (thanks to Frederik Aust).

@@ -38,7 +38,7 @@ R.libs <- "./packages/library"
 closeAllConnections()
 roxy.package(
 	pck.source.dir = pkg.src.dir,
-	pck.version = "0.20-1",
+	pck.version = "0.20-2",
 	pck.description = data.frame(
 		Package = "afex",
 		Type = "Package",
@@ -55,14 +55,14 @@ roxy.package(
         person(given=\"Russell\", family=\"Lenth\", role=c(\"ctb\"))
     )",
 		Depends = "R (>= 3.1.0), lme4 (>= 1.1-8), emmeans",
-		Suggests = "xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown, lattice, latticeExtra, multcomp, testthat, mlmRev, dplyr, tidyr, dfoptim, Matrix, psych, ggplot2, MEMSS, effects",
+		Suggests = "xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown, R.rsp, lattice, latticeExtra, multcomp, testthat, mlmRev, dplyr, tidyr, dfoptim, Matrix, psych, ggplot2, MEMSS, effects, carData",
 		Imports = "stringr, coin, pbkrtest (>= 0.4-1), lmerTest, car, reshape2, stats, methods",
 		Description = "Convenience functions for analyzing factorial experiments using ANOVA or mixed models. aov_ez(), aov_car(), and aov_4() allow specification of between, within (i.e., repeated-measures), or mixed between-within (i.e., split-plot) ANOVAs for data in long format (i.e., one observation per row), aggregating multiple observations per individual and cell of the design. mixed() fits mixed models using lme4::lmer() and computes p-values for all fixed effects using either Kenward-Roger or Satterthwaite approximation for degrees of freedom (LMM only), parametric bootstrap (LMMs and GLMMs), or likelihood ratio tests (LMMs and GLMMs). afex uses type 3 sums of squares as default (imitating commercial statistical software).",
 		URL = "http://afex.singmann.science/, https://github.com/singmann/afex",
 		BugReports = "https://github.com/singmann/afex/issues",
 		License = "GPL (>=2)",
 		Encoding = "UTF-8",
-    VignetteBuilder="knitr",
+    VignetteBuilder="knitr, R.rsp",
 		stringsAsFactors = FALSE),
 		actions = c("roxy"),
 		R.libs = R.libs, 
@@ -76,12 +76,5 @@ closeAllConnections()
 
 ### check reverse dependencies:
 
-#revdep()
-revdep_check(libpath = "../revdep", check_dir = "../revdep_checks")
-#revdep_check(libpath = "../revdep")
-install.packages("ez", lib = "../revdep")
-install.packages("apa", lib = "../revdep")
-revdep_check_resume()
-revdep_check_save_summary()
-revdep_check_print_problems()
-revdep_maintainers()
+library(revdepcheck)  # see https://github.com/r-lib/revdepcheck
+revdep_check(num_workers = 2)

@@ -193,7 +193,7 @@ sk_m2 <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_a
                expand_re = TRUE)
 sk_m2
 
-## mixed objects can be passed to lsmeans directly:
+## mixed objects can be passed to emmeans directly:
 
 # recreates basically Figure 4 (S&K, 2011, upper panel)
 # only the 4th and 6th x-axis position are flipped
@@ -206,7 +206,7 @@ emm_options(graphics.engine = "ggplot") # reset options
 
 # set up reference grid for custom contrasts:
 # this can be made faster via:
-emm_options(lmer.df = "Kenward-Roger") # set df for lsmeans to KR
+emm_options(lmer.df = "Kenward-Roger") # set df for emmeans to KR
 # emm_options(lmer.df = "Satterthwaite") # the default
 # emm_options(lmer.df = "asymptotic") # the fastest, no df
 (rg1 <- emmeans(sk_m1, c("instruction", "type", "inference")))

@@ -2,7 +2,10 @@
 title: "ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)"
 author: "Henrik Singmann"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
 vignette: >
   %\VignetteIndexEntry{ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)}
   %\VignetteEngine{knitr::rmarkdown}
@@ -225,8 +228,8 @@ The pattern for the affirmation problems is in line with the expectations: We fi
 
 # Some Cautionary Notes
 
-* While the df of the ANOVA tables are Greenhouse-Geisser corrected per default for within-subject factors with more than two levels, this is not the case for post-hoc tests or contrasts using `emmeans`. The contrasts use uncorrected degrees of freedom that are Satterthwaite approximated. This most likely produces anti-conservative tests if compound symmetry/sphericity is violated.
-* For unbalanced samples, `aov` is usually not the correct choise. This is why the test of effects is based on `car::Anova`. However, for `emmeans` we need to use `aov` models. However, `emmeans` offers the option to weight the marginal means differently in case of different group sizes (i.e., unbalanced data). For example, it offers the option   that each group is assumed to be of equal size (i.e., `weights = "equal"`) or proportionally (i.e., `weights = "proportional"`). See help of `emmeans` for more information.
+* While the df of the ANOVA tables are Greenhouse-Geisser corrected per default for within-subject factors with more than two levels, the  is not the case for the default univariate post-hoc tests using `emmeans` in `afex`. The contrasts use uncorrected degrees of freedom that are Satterthwaite approximated. This most likely produces anti-conservative tests if compound symmetry/sphericity is violated. To use more appropriate degrees of freedom use `afex_options(emmeans_model = "multivariate")`
+* For unbalanced samples, `aov` is usually not the correct choise. This is why the test of effects is based on `car::Anova`. However, for `emmeans` we need to use `aov` models. However, `emmeans` offers the option to weight the marginal means differently in case of different group sizes (i.e., unbalanced data). For example, it offers the option that each group is assumed to be of equal size (i.e., `weights = "equal"`) or proportionally (i.e., `weights = "proportional"`). See help of `emmeans` for more information.
 * Choosing the right correction for multiple testing can be difficult. In fact `multcomp` comes with an accompanying book (Bretz et al., 2011). If the degrees-of-freedom of all contrasts are identical using `multcomp`'s method `free` is more powerful than simply using the Bonferroni-Holm method. `free` is a generalization of the Bonferroni-Holm method that takes the correlations among the model parameters into account and uniformly more powerful.
 * For data sets with many within-subject factors, creating the `aov` object can take some time (i.e., compared to producing the ANOVA table which is usually very fast). Those objects are also comparatively large, often multiple MB. If speed is important and one is not interested in employing `emmeans` one can set `return = "nice"` in the call to the ANOVA function to only receive the ANOVA table (this can also be done globally: `afex_options(return_aov = "nice")`).
 

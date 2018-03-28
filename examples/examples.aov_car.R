@@ -119,14 +119,26 @@ a1 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
 # 1b. plot data (per default with ggplot2):
 emmip(a1, gender ~ hour | treatment+phase)
 
-# use lattice instead of ggplot2:
+## add univariate CIs:
+emmip(a1, gender ~ hour | treatment+phase, CIs = TRUE)
+
+## add multivariate CIs
+emmip(a1, gender ~ hour | treatment+phase, CIs = TRUE, 
+      model = "multivariate")
+
+# use lattice instead of ggplot2 (which has no CIs):
 emm_options(graphics.engine = "lattice") 
 emmip(a1, gender ~ hour | treatment+phase)
 emm_options(graphics.engine = "ggplot") # reset options 
 
-# 2. obtain reference grid object:
+# 2. obtain reference grid object (default is uses univariate model):
 r1 <- emmeans(a1, ~treatment +phase)
 r1
+
+# multivariate model may be more appropriate
+r1 <- emmeans(a1, ~treatment +phase, model = "multivariate")
+r1
+
 
 # 3. create list of contrasts on the reference grid:
 c1 <- list(
@@ -144,7 +156,10 @@ contrast(r1, c1)
 contrast(r1, c1, adjust = "holm")
 
 # 2. (alternative): all pairwise comparisons of treatment:
-emmeans(a1, "treatment", contr = "pairwise")
+emmeans(a1, "treatment", contr = "pairwise", model = "multivariate")
+
+## set multivariate models globally:
+# afex_options(emmeans_model = "multivariate")
 
 #######################
 ## 3: Other examples ##

@@ -160,3 +160,21 @@ test_that("mixed works with type=2 and all methods", {
                        method="nested-KR", progress = FALSE)
   expect_is(emmeans(mixed_oldkr, specs = c("type"), data = sk2_aff), "emmGrid")
 })
+
+test_that("emmeans works with mixed and expand_er = TRUE", {
+  data("Machines", package = "MEMSS") 
+  m2 <- mixed(score ~ Machine + (Machine||Worker), data=Machines, 
+              expand_re = TRUE, progress = FALSE)
+  t1 <- emmeans(m2, "Machine", lmer.df = "asymptotic")
+  t2 <- emmeans(m2, "Machine", lmer.df = "Satterthwaite")
+  t3 <- emmeans(m2, "Machine", lmer.df = "kenward-roger")
+  
+  expect_is(t1, "emmGrid")
+  expect_is(t2, "emmGrid")
+  expect_is(t3, "emmGrid")
+  
+  expect_is(summary(t1), "data.frame")
+  expect_is(summary(t2), "data.frame")
+  expect_is(summary(t3), "data.frame")
+
+})

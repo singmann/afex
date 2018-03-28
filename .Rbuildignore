@@ -6,3 +6,6 @@ dev.R
 README.md
 ^CONDUCT\.md$
 ^\.travis\.yml$
+revdep
+Rplots.pdf
+

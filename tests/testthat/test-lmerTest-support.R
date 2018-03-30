@@ -17,10 +17,10 @@ test_that("mixed allows both lme4 and lmerText calls and exports lmerTest::lmer"
   expect_is(m2, "merMod")
   afex_options(aop)
   expect_true("Pr(>F)" %in% colnames(lmerTest_anova(m1)))
-  expect_false("Pr(>F)" %in% colnames(lme4:::anova.merMod(m1)))
+  expect_true("Pr(>F)" %in% colnames(anova(m1)))
   expect_true("Pr(>F)" %in% colnames(lmerTest_anova(m1b)))
-  expect_false("Pr(>F)" %in% colnames(lme4:::anova.merMod(m1b)))
-  expect_false("Pr(>F)" %in% colnames(lme4:::anova.merMod(m2)))
+  expect_true("Pr(>F)" %in% colnames(anova(m1b)))
+  expect_false("Pr(>F)" %in% colnames(anova(m2)))
   expect_true("Pr(>F)" %in% colnames(lmerTest_anova(m2)))
 })
 

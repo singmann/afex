@@ -62,9 +62,13 @@ all_fit <- function(m,
                            list(maxfun=maxfun))
     ctrl <- do.call(if(isGLMM(m)) glmerControl else lmerControl, ctrl)
     if ("data" %in% names(dots)) {
-      tt <- system.time(rr <- tryCatch(update(m, control = ctrl, data = dots$data, ...), error = function(e) e))  
+      tt <- system.time(rr <- tryCatch(
+        update(m, control = ctrl, data = dots$data, ...),
+        error = function(e) e))
     } else {
-      tt <- system.time(rr <- tryCatch(update(m, control = ctrl, ...), error = function(e) e))  
+      tt <- system.time(rr <- tryCatch(
+        update(m, control = ctrl, ...), 
+        error = function(e) e))  
     }
     attr(rr, "optCtrl") <- ctrl$optCtrl # contains crucial info here
     attr(rr, "time") <- tt # store timing info

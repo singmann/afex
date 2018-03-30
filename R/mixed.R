@@ -341,22 +341,24 @@ mixed <- function(formula,
         anova_table <- anova_table[, c("Df", "Df.res", "F", "Pr(>F)")]
         colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
       } else {
-        anova_out <- lmerTest::anova(full_model, ddf = "Kenward-Roger", type = type)
+        anova_out <- lmerTest_anova(full_model, ddf = "Kenward-Roger", type = type)
         anova_table <- as.data.frame(anova_out)
-        anova_table <- anova_table[, c("NumDF", "DenDF", "F.value", "Pr(>F)")]
+        get <- c("NumDF", "DenDF", "F.value", "F value", "Pr(>F)")
+        anova_table <- anova_table[, match(get, colnames(anova_table), nomatch = 0L)]
         colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
       }
     } else if (method[1] == "S") {
       if (test_intercept) 
         warning("Cannot test intercept with Satterthwaite approximation.")
-      anova_out <- lmerTest::anova(full_model, ddf = "Satterthwaite", type = type)
+      anova_out <- lmerTest_anova(full_model, ddf = "Satterthwaite", type = type)
       anova_table <- as.data.frame(anova_out)
       if (!("Pr(>F)" %in% colnames(anova_table))) {
         colnames(anova_table)[c(1,4)] <- c("NumDF", "F.value")
         anova_table$DenDF <- NA_real_
         anova_table$`Pr(>F)` <- NA_real_
       }
-      anova_table <- anova_table[, c("NumDF", "DenDF", "F.value", "Pr(>F)")]
+      get <- c("NumDF", "DenDF", "F.value", "F value", "Pr(>F)")
+      anova_table <- anova_table[, match(get, colnames(anova_table), nomatch = 0L)]
       colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
     }
     if (progress) cat(str_c("[DONE]\n"))

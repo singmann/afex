@@ -63,5 +63,5 @@ test_that("lmer_alt works with NA in independent variables", {
   
   # set up model with maximal by-participant random slopes 
   sk_m1 <- suppressWarnings(lmer_alt(response ~ instruction*inference*type+(inference*type||id), sk2_aff, expand_re = TRUE))
-  expect_is(sk_m1, "merModLmerTest")
+  expect_true(inherits(sk_m1, "merModLmerTest") || inherits(sk_m1, "lmerModLmerTest"))
 })

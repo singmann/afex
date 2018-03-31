@@ -200,6 +200,32 @@ test_that("mixed: return=data, expand_re argument, and allFit", {
   expect_is(m6_all_2$nloptwrap.NLOPT_LN_NELDERMEAD, "merMod")
 })
 
+test_that("mixed with all_fit = TRUE", {
+  testthat::skip_if_not_installed("optimx")
+  testthat::skip_if_not_installed("MEMSS")
+  testthat::skip_if_not_installed("dfoptim")
+  require(optimx)
+  data("Machines", package = "MEMSS") 
+  aop <- afex_options()
+  afex_options(lmer_function = "lmerTest")
+  m1 <- mixed(score ~ Machine + (Machine||Worker), data=Machines, 
+              expand_re = TRUE, all_fit = TRUE, progress = FALSE)
+  afex_options(lmer_function = "lme4")
+  m2 <- mixed(score ~ Machine + (Machine||Worker), data=Machines, 
+              expand_re = TRUE, all_fit = TRUE, method = "LRT", 
+              progress = FALSE)
+  afex_options(aop)
+  
+  all_loglik1 <- attr(m1, "all_fit_logLik")
+  all_loglik2 <- attr(m2, "all_fit_logLik")
+  expect_false(any(is.na(all_loglik1[,1])))
+  expect_false(any(is.na(all_loglik2[,1])))
+  expect_equivalent(rep(all_loglik1[1,1], nrow(all_loglik1)), 
+                    all_loglik1[,1])
+  expect_equivalent(rep(all_loglik2[1,1], nrow(all_loglik2)), 
+                    all_loglik2[,1])
+})
+
 
 test_that("mixed: return=data works", {
   data("ks2013.3")

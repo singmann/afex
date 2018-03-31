@@ -23,11 +23,14 @@
     o   set_data_arg argument of mixed() is now per default controlled via 
         afex_options("set_data_arg"). The default has also changed from TRUE to 
         FALSE. The reason for this change is that FALSE appears to work better 
-        with emmeans. Specifically, also when 
+        with emmeans. 
         
     o   afex_aov objects have received an additional attribute, 
         "incomplete_cases", that contains the IDs of removed participants due to 
         missing values (thanks to Frederik Aust).
+        
+    o   afex should now work with the upcoming versions of car (3.0) and 
+        lmerTest (3.0). The latter thanks to Rune Haubo Bojesen. 
     
     Bugfixes
 

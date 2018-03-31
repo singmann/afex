@@ -4,7 +4,7 @@
 #' Package: \tab afex\cr
 #' Type: \tab Package\cr
 #' Version: \tab 0.20-2\cr
-#' Date: \tab 2018-03-26\cr
+#' Date: \tab 2018-03-31\cr
 #' Depends: \tab R (>= 3.1.0), lme4 (>= 1.1-8), emmeans\cr
 #' Encoding: \tab UTF-8\cr
 #' License: \tab GPL (>=2)\cr
@@ -24,6 +24,6 @@
 #' @name afex-package
 #' @docType package
 #' @title The afex Package
-#' @author Henrik Singmann, Ben Bolker, Jake Westfall, Frederik Aust, with contributions from Søren Højsgaard, John Fox, Michael A. Lawrence, Ulf Mertens, Jonathan Love, Russell Lenth
+#' @author Henrik Singmann, Ben Bolker, Jake Westfall, Frederik Aust, with contributions from Søren Højsgaard, John Fox, Michael A. Lawrence, Ulf Mertens, Jonathan Love, Russell Lenth, Rune Haubo Bojesen Christensen
 #' @keywords package
 NULL

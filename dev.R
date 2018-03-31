@@ -52,7 +52,8 @@ roxy.package(
         person(given=\"Michael A.\", family=\"Lawrence\", role=c(\"ctb\")),
         person(given=\"Ulf\", family=\"Mertens\", role=c(\"ctb\")),
         person(given=\"Jonathan\", family=\"Love\", role=c(\"ctb\")),
-        person(given=\"Russell\", family=\"Lenth\", role=c(\"ctb\"))
+        person(given=\"Russell\", family=\"Lenth\", role=c(\"ctb\")),
+        person(given=\"Rune\", family=\"Haubo Bojesen Christensen\", role=c(\"ctb\"))
     )",
 		Depends = "R (>= 3.1.0), lme4 (>= 1.1-8), emmeans",
 		Suggests = "xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown, R.rsp, lattice, latticeExtra, multcomp, testthat, mlmRev, dplyr, tidyr, dfoptim, Matrix, psych, ggplot2, MEMSS, effects, carData",
@@ -78,3 +79,5 @@ closeAllConnections()
 
 library(revdepcheck)  # see https://github.com/r-lib/revdepcheck
 revdep_check(num_workers = 2)
+revdep_summary()
+revdep_details(revdep = "r2glmm")

@@ -11,7 +11,7 @@ test_package("afex", filter = "mixed")
 test_package("afex", filter = "mixed-structure")
 test_package("afex", filter = "mixed-bugs")
 test_package("afex", filter = "mixed-mw")
-test_package("afex", filter = "lsmeans")
+test_package("afex", filter = "emmeans")
 
 
 options(error = recover)

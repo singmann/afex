@@ -174,8 +174,8 @@ con1 <- list(
 contrast(emm1, con1, adjust = "holm")
 
 # plotting 
-emmip(m1, ~Machine)
-emmip(m2, ~Machine)
+emmip(m1, ~Machine, CIs = TRUE)
+emmip(m2, ~Machine, CIs = TRUE)
 
 
 \dontrun{
@@ -199,7 +199,7 @@ mixed(score ~ Machine + (Machine|Worker), data=Machines, cl = cl)
 
 # 2. Obtain PB samples via multicore: 
 mixed(score ~ Machine + (Machine|Worker), data=Machines,
- method = "PB", args_test = list(nsim = 50, cl = cl)) # better use 500 or 100 
+ method = "PB", args_test = list(nsim = 50, cl = cl)) # better use 500 or 1000 
 
 ## Both ways can be combined:
 # 2. Obtain PB samples via multicore: 

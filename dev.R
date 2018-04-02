@@ -51,7 +51,7 @@ roxy.package(
         person(given=\"John\", family=\"Fox\", role=c(\"ctb\")),
         person(given=\"Michael A.\", family=\"Lawrence\", role=c(\"ctb\")),
         person(given=\"Ulf\", family=\"Mertens\", role=c(\"ctb\")),
-        person(given=\"Jonathan\", family=\"Love\", role=c(\"ctb\")),
+        person(given=\"Jonathon\", family=\"Love\", role=c(\"ctb\")),
         person(given=\"Russell\", family=\"Lenth\", role=c(\"ctb\")),
         person(given=\"Rune\", family=\"Haubo Bojesen Christensen\", role=c(\"ctb\"))
     )",

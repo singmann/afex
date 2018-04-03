@@ -183,6 +183,7 @@ test_that("emmeans works with mixed and expand_er = TRUE", {
 
 test_that("emmeans with mixed & expand_re = TRUE with pre 3.0 lmerTest objects", {
   load("m_machines_lmerTest-pre3.0.rda")
+  # load("tests/testthat/m_machines_lmerTest-pre3.0.rda")
   t1 <- emmeans(m_machines, "Machine", lmer.df = "asymptotic")
   t2 <- emmeans(m_machines, "Machine", lmer.df = "Satterthwaite")
   t3 <- emmeans(m_machines, "Machine", lmer.df = "kenward-roger")

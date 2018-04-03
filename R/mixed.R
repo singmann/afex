@@ -874,15 +874,20 @@ anova.mixed <- function(object,
 #' @export
 recover_data.mixed <- function(object, ...) {
   full_model_name <- names(object)[[2]]
-  if (inherits(object[[full_model_name]], "merMod")) {
-    recover_data(object[[full_model_name]], ...)
-  } else if (inherits(object[[full_model_name]][[1]], "merMod")) {
+  if (inherits(object[[full_model_name]], "merMod") | 
+      is_lmerTest_class(object[[full_model_name]])) {
+    obj_use <- object[[full_model_name]]
+  } else if (inherits(object[[full_model_name]][[1]], "merMod") | 
+             is_lmerTest_class(object[[full_model_name]][[1]])) {
     message("emmeans are based on full model which includes all effects.")
-    recover_data(object[[full_model_name]][[length(object[[full_model_name]])]], 
-                 ...)
+    obj_use <- object[[full_model_name]][[length(object[[full_model_name]])]]
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")
   }
+  if (is_lmerTest_class(obj_use)) {
+    class(obj_use) <- "lmerMod"
+  }
+  recover_data(obj_use, ...)
 }
 
 
@@ -890,13 +895,18 @@ recover_data.mixed <- function(object, ...) {
 #' @export
 emm_basis.mixed <- function(object, trms, xlev, grid, ...) {
   full_model_name <- names(object)[[2]]
-  if (inherits(object[[full_model_name]], "merMod")) {
-    emm_basis(object[[full_model_name]], trms, xlev, grid, ...)
-  } else if (inherits(object[[full_model_name]][[1]], "merMod")) {
-    emm_basis(object[[full_model_name]][[length(object[[full_model_name]])]], 
-              trms, xlev, grid, ...)
+  if (inherits(object[[full_model_name]], "merMod") | 
+      is_lmerTest_class(object[[full_model_name]])) {
+    obj_use <- object[[full_model_name]]
+  } else if (inherits(object[[full_model_name]][[1]], "merMod") |
+             is_lmerTest_class(object[[full_model_name]][[1]])) {
+    obj_use <- object[[full_model_name]][[length(object[[full_model_name]])]]
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")
   }
+  if (is_lmerTest_class(obj_use)) {
+    class(obj_use) <- "lmerMod"
+  }
+  emm_basis(obj_use, trms, xlev, grid, ...)
 }
 

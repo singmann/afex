@@ -219,6 +219,16 @@ test_that("aov_car works with column names containing spaces: https://github.com
   expect_is(aov_ez("subject", "dependent", data, within = "RM Factor 1"), "afex_aov")
 })
 
+test_that("aov_car works with column names containing spaces for between factors", {
+  data <- list("dependent" = rnorm(100), "RM Factor 1" = factor(rep(c("Level 1", "Level 2"), 50)), "subject" = factor(rep(1:100)))
+  attr(data, 'row.names') <- seq_len(length(data[[1]]))
+  attr(data, 'class') <- 'data.frame'
+  
+  expect_is(aov_car(dependent ~ `RM Factor 1` + Error(subject), data),  "afex_aov")
+  expect_is(aov_4(dependent ~ `RM Factor 1` + (1|subject), data), "afex_aov")
+  expect_is(aov_ez("subject", "dependent", data, between = "RM Factor 1"), "afex_aov")
+})
+
 
 test_that("aov_ez works with multiple covariates", {
   skip_if_not_installed("psych")

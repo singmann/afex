@@ -123,11 +123,15 @@ test_that("ANOVA functions work with emmeans, univariate & multivariate", {
 
 test_that("ANCOVA with emmeans is correct for univariate & multivariate", {
   data(sk2011.1)
-  # a1 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
-  #              within = c("phase", "hour"), covariate = "age", 
+  # a1 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
+  #              within = c("phase", "hour"), covariate = "age",
   #              observed = c("gender", "age"), factorize = FALSE)
-  # emmeans(a2, ~ treatment + age, model = "multivariate")
-  # emmeans(a2, ~ treatment + age, model = "univariate")
+  # emmeans(a1, ~ phase, model = "multivariate")
+  # emmeans(a1, ~ phase, model = "univariate")
+  # 
+  # emmeans(a1, ~ treatment, model = "multivariate")
+  # emmeans(a1, ~ treatment, model = "univariate")
+  # deactivated, see: https://github.com/rvlenth/emmeans/issues/32
   
   a2 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
                covariate = "age", fun_aggregate = mean,

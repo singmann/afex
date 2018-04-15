@@ -2,12 +2,12 @@ Package: afex
 Type: Package
 Title: Analysis of Factorial Experiments
 Depends: R (>= 3.1.0), lme4 (>= 1.1-8), emmeans
-Suggests: xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown,
-       R.rsp, lattice, latticeExtra, multcomp, testthat, mlmRev,
-       dplyr, tidyr, dfoptim, Matrix, psych, ggplot2, MEMSS,
-       effects, carData
-Imports: stringr, coin, pbkrtest (>= 0.4-1), lmerTest, car,
-       reshape2, stats, methods
+Suggests: coin, xtable, parallel, plyr, optimx, nloptr, knitr,
+       rmarkdown, R.rsp, lattice, latticeExtra, multcomp,
+       testthat, mlmRev, dplyr, tidyr, dfoptim, Matrix, psych,
+       ggplot2, MEMSS, effects, carData
+Imports: stringr, pbkrtest (>= 0.4-1), lmerTest, car, reshape2,
+       stats, methods
 Description: Convenience functions for analyzing factorial
        experiments using ANOVA or mixed models. aov_ez(),
        aov_car(), and aov_4() allow specification of between,
@@ -42,6 +42,6 @@ Authors@R: c(person(given="Henrik", family="Singmann",
        role=c("ctb")), person(given="Russell", family="Lenth",
        role=c("ctb")), person(given="Rune", family="Haubo Bojesen
        Christensen", role=c("ctb")) )
-Version: 0.20-2
-Date: 2018-04-03
+Version: 0.21-0
+Date: 2018-04-15
 RoxygenNote: 6.0.1

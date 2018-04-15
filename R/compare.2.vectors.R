@@ -5,7 +5,7 @@
 #' @usage compare.2.vectors(x, y, paired = FALSE, na.rm = FALSE, 
 #'      tests = c("parametric", "nonparametric"), coin = TRUE, 
 #'      alternative = "two.sided", 
-#'      perm.distribution = approximate(100000), 
+#'      perm.distribution, 
 #'      wilcox.exact = NULL, wilcox.correct = TRUE)
 #'
 #' @param x a (non-empty) numeric vector of data values.

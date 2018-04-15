@@ -8,7 +8,7 @@
 compare.2.vectors(x, y, paired = FALSE, na.rm = FALSE, 
      tests = c("parametric", "nonparametric"), coin = TRUE, 
      alternative = "two.sided", 
-     perm.distribution = approximate(100000), 
+     perm.distribution, 
      wilcox.exact = NULL, wilcox.correct = TRUE)
 }
 \arguments{
@@ -26,7 +26,7 @@ compare.2.vectors(x, y, paired = FALSE, na.rm = FALSE,
 
 \item{alternative}{a character, the alternative hypothesis must be one of \code{"two.sided"} (default), \code{"greater"} or \code{"less"}. You can specify just the initial letter, will be passed to all functions.}
 
-\item{perm.distribution}{\code{distribution} argument to \pkg{coin}, see \code{\link[coin]{NullDistribution}} or , \code{\link[coin]{IndependenceTest}}. Defaults to \code{approximate(100000)} indicating an approximation of the excat conditional distribution with 100.000 Monte Carlo samples. One can use \code{"exact"} for small samples and if \code{paired = FALSE}.}
+\item{perm.distribution}{\code{distribution} argument to \pkg{coin}, see \code{\link[coin]{NullDistribution}} or , \code{\link[coin]{IndependenceTest}}. If missing, defaults to \code{coin::approximate(100000)} indicating an approximation of the excat conditional distribution with 100.000 Monte Carlo samples. One can use \code{"exact"} for small samples and if \code{paired = FALSE}.}
 
 \item{wilcox.exact}{\code{exact} argument to \code{\link{wilcox.test}}.}
 
@@ -68,12 +68,15 @@ with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2]))
 ## 4          median              Z     -1.744      NA 0.17867
 
 # compare with:
-with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], alternative = "less"))
+with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], 
+                              alternative = "less"))
 
-with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], alternative = "greater"))
+with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], 
+                              alternative = "greater"))
 
 # doesn't make much sense as the data is not paired, but whatever:
-with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], paired = TRUE))
+with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], 
+                              paired = TRUE))
 
 # from ?t.test:
 compare.2.vectors(1:10,y=c(7:20, 200))

@@ -323,16 +323,6 @@ aov_car <- function(formula,
     }
   } 
   
-  # if return = "lme4" return the (aggregated) data fitted with lmer! 
-  # (might consider to add later)
-  #   if (return == "lme4") {
-  #     warning("lme4 return is experimental!\nAlso: Missing values and contrasts not checked for return = 'lme4'!")
-  #     n.dat <- dcast(data, formula = as.formula(str_c(lh1, if (length(within) > 0) paste0("+", rh1) else "", "~ .", sep = "")), fun.aggregate = fun.aggregate, ..., value.var = dv)
-  #     colnames(n.dat)[length(colnames(n.dat))] <- "value"
-  #     f.within.new <- str_replace_all(rh1, pattern="\\+", replacement="*")
-  #     return(lmer(as.formula(str_c("value~", rh2, if (length(within) > 0) paste0("*", f.within.new) else "", "+ (1", if (length(within) > 0) paste0("+", f.within.new) else "", "|", id, ")" , sep = "")), data = n.dat))
-  #   }
-  
   # prepare the data:
   
   tmp.dat <- do.call(

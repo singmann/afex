@@ -24,9 +24,9 @@
 #' The \code{nonparametric} tests (currently) contain the Wilcoxon test implemented in \code{\link{wilcox.test}} (\code{stats::Wilcoxon}) and (if \code{coin = TRUE}) the following tests implemented in \pkg{coin}: 
 #'
 #' \itemize{
-#' \item a \code{permutation} test \code{\link{oneway_test}} (the only test in this selction not using a rank transformation),
-#' \item the \code{Wilcoxon} test \code{\link{wilcox_test}} (\code{coin::Wilcoxon}), and 
-#' \item the \code{median} test \code{median_test}. 
+#' \item a \code{permutation} test \code{\link[coin]{oneway_test}} (the only test in this selction not using a rank transformation),
+#' \item the \code{Wilcoxon} test \code{\link[coin]{wilcox_test}} (\code{coin::Wilcoxon}), and 
+#' \item the \code{median} test \code{\link[coin]{median_test}}. 
 #' }
 #' Note that the two implementations of the Wilcoxon test probably differ. This is due to differences in the calculation of the Null distributions.
 #'

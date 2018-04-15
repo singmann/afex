@@ -137,7 +137,6 @@
 #'
 ## @import pbkrtest
 #' @importFrom lme4 glmer nobars getME isREML
-#' @importFrom stringr str_replace
 #' @importFrom parallel clusterCall clusterExport clusterEvalQ clusterApplyLB
 #' @importFrom stats logLik terms as.formula contrasts<- model.matrix model.frame anova
 #' @importFrom methods is
@@ -697,8 +696,8 @@ mixed <- function(formula,
 expand_re_fun <- function(all.terms, data) {
     random_parts <- str_c(all.terms[grepl("\\|", all.terms)])
     which_random_double_bars <- grepl("\\|\\|", random_parts)
-    random_units <- str_replace(random_parts, "^.+\\|\\s+", "")
-    tmp_random <- lapply(str_replace(random_parts, "\\|.+$", ""), 
+    random_units <- sub("^.+\\|\\s+", "", random_parts)
+    tmp_random <- lapply(sub("\\|.+$", "", random_parts), 
                          function(x) as.formula(str_c("~", x)))
     
     tmp_model.matrix <- vector("list", length(random_parts))
@@ -716,7 +715,7 @@ expand_re_fun <- function(all.terms, data) {
       if (ncol(tmp_model.matrix[[i]]) > 0) {
         colnames(tmp_model.matrix[[i]]) <- 
           str_c("re", i, ".", 
-                str_replace_all(colnames(tmp_model.matrix[[i]]), ":", "_by_"))
+                gsub(":", "_by_", colnames(tmp_model.matrix[[i]])))
         new_random[i] <- 
           str_c("(", as.numeric(re_contains_intercept[i]), "+", 
                 str_c(colnames(tmp_model.matrix[[i]]), collapse = "+"), 

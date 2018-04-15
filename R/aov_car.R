@@ -139,7 +139,7 @@
 #' @aliases aov_ez aov_car aov_4
 #' @export aov_ez aov_car  aov_4
 #' @importFrom car Anova
-#' @importFrom stringr str_c str_replace_all
+#' @importFrom stringr str_c
 #' @importFrom reshape2 dcast
 #' @importFrom lme4 findbars nobars 
 #' @importFrom stats terms as.formula xtabs contrasts<- coef

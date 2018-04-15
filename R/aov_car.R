@@ -424,12 +424,17 @@ aov_car <- function(formula,
       contrasts <- as.list(rep("contr.sum", sum(factor_vars)))
       names(contrasts) <- c(within, between)[factor_vars]
     }
-    aov <- aov(formula(paste(
-      dv.escaped, "~", paste(c(between.escaped, within.escaped), collapse = "*"),  
-      if (length(within) > 0) 
-        paste0("+Error(", id.escaped, "/(",paste(within.escaped, 
-                                                 collapse="*"), "))") 
-      else NULL)), data=dat.ret, contrasts = contrasts)
+    tmp_formula <- formula(paste(dv.escaped, "~", 
+      if (length(within) > 0) {
+        paste(
+          if (rh2 == "1") {
+            paste(within.escaped, collapse="*")
+          } else {
+            paste("(" ,rh2, ")*(", paste(within.escaped, collapse="*"), ")")
+          }, "+Error(", id.escaped, "/(", 
+            paste(within.escaped, collapse="*"), "))")
+      } else rh2))
+    aov <- aov(tmp_formula, data=dat.ret, contrasts = contrasts)
   }
   if(return == "aov") return(aov)
   data.l <- list(long = dat.ret, wide = tmp.dat)

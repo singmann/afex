@@ -7,7 +7,8 @@
                     
     Significant User Visible Changes and New Features
     
-    o   
+    o   Smaller package footprint: The coin package (used in compare.2.vectors) 
+        was moved from Imports to Suggests.
     
     Bugfixes
 

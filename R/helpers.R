@@ -44,7 +44,7 @@ afex_options <- function(...) {
   #browser()
   if (length(dots) == 0) {  # branch to get all afex options
     op <- options()
-    afex_op <- op[str_detect(names(op), "^afex.")]
+    afex_op <- op[grepl("^afex.", names(op))]
     names(afex_op) <- str_replace(names(afex_op), "^afex.", "")
     return(afex_op)
   } else if (is.list(dots[[1]])) {  # set several afex options as a list:

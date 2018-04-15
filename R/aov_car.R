@@ -139,7 +139,7 @@
 #' @aliases aov_ez aov_car aov_4
 #' @export aov_ez aov_car  aov_4
 #' @importFrom car Anova
-#' @importFrom stringr str_c str_detect str_replace_all str_extract
+#' @importFrom stringr str_c str_replace_all
 #' @importFrom reshape2 dcast
 #' @importFrom lme4 findbars nobars 
 #' @importFrom stats terms as.formula xtabs contrasts<- coef
@@ -209,7 +209,8 @@ aov_car <- function(formula,
   }
   #--- end RL changes
   parts <- attr(terms(formula, "Error", data = data), "term.labels")
-  error.term <- parts[str_detect(parts, "^Error\\(")]
+  error.term <- parts[grepl("^Error\\(", parts)]
+  
   id <- all.vars(parse(text = error.term))[1]
   within <- all.vars(parse(text = error.term))[-1]
   between <- vars[!(vars %in% c(id, within))]
@@ -219,7 +220,7 @@ aov_car <- function(formula,
   within.escaped  <- escape_vars(within)
   between.escaped <- escape_vars(between)
   
-  effect.parts <- parts[!str_detect(parts, "^Error\\(")]
+  effect.parts <- parts[!grepl("^Error\\(", parts)]
 
   if (length(within) > 0) {
     effect.parts.no.within <- character()

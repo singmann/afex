@@ -696,7 +696,7 @@ mixed <- function(formula,
 ## expand random effects sructure
 expand_re_fun <- function(all.terms, data) {
     random_parts <- str_c(all.terms[grepl("\\|", all.terms)])
-    which_random_double_bars <- str_detect(random_parts, "\\|\\|")
+    which_random_double_bars <- grepl("\\|\\|", random_parts)
     random_units <- str_replace(random_parts, "^.+\\|\\s+", "")
     tmp_random <- lapply(str_replace(random_parts, "\\|.+$", ""), 
                          function(x) as.formula(str_c("~", x)))

@@ -85,7 +85,7 @@ compare.2.vectors <- function(x, y, paired = FALSE, na.rm = FALSE,
 		                            test.value = res.wilcox[["statistic"]], 
 		                            test.df = NA, p = res.wilcox[["p.value"]], 
 		                            stringsAsFactors = FALSE)
-		if (!(coin == FALSE) && !requireNamespace(coin)) {
+		if (!(coin == FALSE) && !requireNamespace("coin", quietly = TRUE)) {
 		  warning("package coin necessary if coin != FALSE.")
 		  coin <- FALSE
 		}

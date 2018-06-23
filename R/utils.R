@@ -57,7 +57,7 @@ print_legend <- function(x) {
   sig_symbols <- as.character(attr(x, "sig_symbols"))
   if(length(sig_symbols) > 0 & !all(sig_symbols == rep("", 4))) {
     sleg <- attr(stats::symnum(0, cutpoints = c(0, 0.001, 0.01, 0.05, 0.1, 1), 
-                               symbols = rev(c(" " , stringr::str_trim(sig_symbols)))), "legend")
+                               symbols = rev(c(" " , trimws(sig_symbols)))), "legend")
     width <- getOption("width")
     
     if(width < nchar(sleg)) {

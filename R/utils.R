@@ -1,4 +1,19 @@
 
+## paste function that can replace stringr::str_c and differs from the way 
+# paste handles NULL arguments as last arguments. 
+# It checks whether the first or last char of the string is equal to sep and 
+# removes it in this case.
+mypaste <- function(..., sep) {
+  tmp <- paste(..., sep = sep)
+  if (substr(tmp, nchar(tmp), nchar(tmp)) == sep) {
+    tmp <- substr(tmp, 1, nchar(tmp)-1)
+  }
+  if (substr(tmp, 1, 1) == sep) {
+    tmp <- substr(tmp, 2, nchar(tmp))
+  }
+  tmp
+}
+
 escape_vars <- function(names) {
   if (length(names) == 0)
     return(names)

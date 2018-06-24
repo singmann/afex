@@ -39,6 +39,18 @@ test_that("purely-within produces afex_aov objects without error", {
   expect_that(out1, is_a("afex_aov"))
 })
 
+test_that("within plus covariate produces afex_aov objects without error", {
+  data(obk.long, package = "afex")
+  out1 <- aov_car(value ~ gender + Error(id/(phase*hour)), data = obk.long, return = "afex_aov")
+  out2 <- aov_4(value ~ gender +  (phase*hour|id), data = obk.long, return = "afex_aov")
+  out3 <- aov_ez("id", "value", obk.long, within = c("phase", "hour"), 
+                 covariate = "gender", return = "afex_aov")
+  
+  expect_that(out1, is_equivalent_to(out2))
+  expect_that(out1, is_equivalent_to(out3))
+  expect_that(out1, is_a("afex_aov"))
+})
+
 
 test_that("afex_aov object contains the right things", {
   data(obk.long, package = "afex")

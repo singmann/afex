@@ -297,7 +297,8 @@ gm1 <- mixed(use ~ age + I(age^2) + urban + livch + (1 | district), method = "PB
 
 data("Machines", package = "MEMSS") 
 # simple model with random-slopes for repeated-measures factor
-m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines)
+m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines, 
+            set_data_arg = TRUE) ## necessary for it to work!
   
 library("effects")
 

@@ -7,8 +7,11 @@
                     
     Significant User Visible Changes and New Features
     
-    o   Smaller package footprint: The coin package (used in compare.2.vectors) 
-        was moved from Imports to Suggests.
+    o   Smaller package footprint: 
+        The stringr package is not imported any more, all calls to stringr 
+        functions were replaced with calls to base R functions.
+        The coin package (used in compare.2.vectors) was moved from Imports to 
+        Suggests.
     
     Bugfixes
 

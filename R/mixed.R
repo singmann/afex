@@ -211,8 +211,8 @@ mixed <- function(formula,
       }
     }
     if (!is.null(resetted)) 
-      message(str_c("Contrasts set to contr.sum for the following variables: ", 
-                    str_c(resetted, collapse=", ")))
+      message(paste0("Contrasts set to contr.sum for the following variables: ", 
+                    paste0(resetted, collapse=", ")))
   }
   method <- match.arg(method, c("KR", "S", "PB", "LRT", "nested-KR", "F"), 
                       several.ok=FALSE)
@@ -229,7 +229,7 @@ mixed <- function(formula,
   effect.order <- attr(terms(formula.f), "order")
   effect.order <- effect.order[!grepl("\\|", all.terms)]
   max.effect.order <- max(effect.order)
-  random <- str_c(str_c("(", all.terms[grepl("\\|", all.terms)], ")"), 
+  random <- paste0(paste0("(", all.terms[grepl("\\|", all.terms)], ")"), 
                   collapse = " + ")
   rh2 <- nobars(formula.f)
   rh2[[2]] <- NULL
@@ -240,12 +240,12 @@ mixed <- function(formula,
   # check for missing values in variables used:
   if (nrow(m.matrix) != nrow(data)) {
     data <- model.frame(
-      as.formula(str_c(vars.to.check[1], 
+      as.formula(paste0(vars.to.check[1], 
                        "~", 
-                       str_c(vars.to.check[-1], collapse = "+"))), 
+                       paste0(vars.to.check[-1], collapse = "+"))), 
       data = data)
     m.matrix <- model.matrix(rh2, data = data)
-    warning(str_c("Due to missing values, reduced number of observations to ", 
+    warning(paste0("Due to missing values, reduced number of observations to ", 
                   nrow(data)))
     if(set_data_arg) {
       warning("Due to missing values, set_data_arg set to FALSE.")
@@ -259,8 +259,8 @@ mixed <- function(formula,
     non.null <- c.ns[!abs(vapply(data[, c.ns, drop = FALSE], mean, 0)) < 
                        .Machine$double.eps ^ 0.5]
     if (length(non.null) > 0) 
-      message(str_c("Numerical variables NOT centered on 0: ", 
-                    str_c(non.null, collapse = ", "), 
+      message(paste0("Numerical variables NOT centered on 0: ", 
+                    paste0(non.null, collapse = ", "), 
                     "\nIf in interactions, interpretation of lower order", 
                     " (e.g., main) effects difficult."))
   }
@@ -281,7 +281,7 @@ mixed <- function(formula,
                              "return", "all_fit", "sig_symbols", "sig.symbols",
                              "set_data_arg")]
   mf[["formula"]] <- 
-    as.formula(str_c(dv,deparse(rh2, width.cutoff = 500L),"+",random))
+    as.formula(paste0(dv,deparse(rh2, width.cutoff = 500L),"+",random))
   if ("family" %in% names(mf)) {
     mf[[1]] <- as.name("glmer")
     use_reml <- FALSE
@@ -316,7 +316,7 @@ mixed <- function(formula,
   }
   ## do not calculate nested models for these methods:
   if (method[1] %in% c("KR", "S")) {
-    if (progress) cat(str_c("Fitting one lmer() model. "))
+    if (progress) cat("Fitting one lmer() model. ")
     full_model <- eval(mf)
     if (all_fit) {
       all_fits <- 
@@ -331,7 +331,7 @@ mixed <- function(formula,
     fits <- NULL
     tests <- NULL
     anova_tab_addition <- NULL
-    if (progress) cat(str_c("[DONE]\nCalculating p-values. "))
+    if (progress) cat("[DONE]\nCalculating p-values. ")
     if (method[1] == "KR") {
       #lmerTest_method <- if(method[1] == "KR") "Kenward-Roger" else "Satterthwaite"
       if (test_intercept) {
@@ -360,7 +360,7 @@ mixed <- function(formula,
       anova_table <- anova_table[, match(get, colnames(anova_table), nomatch = 0L)]
       colnames(anova_table) <- c("num Df", "den Df", "F", "Pr(>F)")
     }
-    if (progress) cat(str_c("[DONE]\n"))
+    if (progress) cat("[DONE]\n")
     if(set_data_arg) full_model@call[["data"]] <- mc[["data"]]
   } else { ## do calculate nested models for the methods below
     ## prepare (g)lmer formulas:
@@ -402,9 +402,9 @@ mixed <- function(formula,
       formulas <- vector("list", length(fixed.effects) + 1)
       formulas[[1]] <- mf[["formula"]]
       for (i in seq_along(fixed.effects)) {
-        tmp.columns <- str_c(deparse(-which(mapping == (i-1))), collapse = "")
+        tmp.columns <- paste0(deparse(-which(mapping == (i-1))), collapse = "")
         formulas[[i+1]] <- 
-          as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
+          as.formula(paste0(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
       }
       names(formulas) <- c("full_model", fixed.effects)
       if (!test_intercept && fixed.effects[1] == "(Intercept)") {
@@ -420,20 +420,20 @@ mixed <- function(formula,
       for (c in seq_len(max.effect.order)) {
         if (c == max.effect.order) next 
         tmp.columns <- 
-          str_c(deparse(-which(mapping %in% which(effect.order > c))), 
+          paste0(deparse(-which(mapping %in% which(effect.order > c))), 
                 collapse = "")
         full_model.formulas[[c]] <- 
-          as.formula(str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
+          as.formula(paste0(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
       }
       for (c in seq_along(fixed.effects)) {
         order.c <- effect.order[c]
         tmp.columns <- 
-          str_c(deparse(-which(mapping == (c) | mapping %in% 
+          paste0(deparse(-which(mapping == (c) | mapping %in% 
                                  if (order.c == max.effect.order) -1 else 
                                    which(effect.order > order.c))), 
                 collapse = "")
         submodel.formulas[[c]] <- as.formula(
-          str_c(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
+          paste0(dv, "~ 0 + m.matrix[,", tmp.columns, "] +", random))
       }
       formulas <- c(full_model.formulas, submodel.formulas)
     } else stop('Only type 3 and type 2 tests implemented.')
@@ -441,7 +441,7 @@ mixed <- function(formula,
     # single core
     if (is.null(cl)) {
       if (progress) 
-        cat(str_c("Fitting ", length(formulas), " (g)lmer() models:\n["))
+        cat(paste0("Fitting ", length(formulas), " (g)lmer() models:\n["))
       fits <- vector("list", length(formulas))
       if (all_fit) all_fits <- vector("list", length(formulas))
       for (i in seq_along(formulas)) {
@@ -573,7 +573,7 @@ mixed <- function(formula,
     #browser()
     if (method[1] == "nested-KR") {
       if (progress) 
-        cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
+        cat(paste0("Obtaining ", length(fixed.effects), " p-values:\n["))
       tests <- vector("list", length(fixed.effects))
       for (c in seq_along(fixed.effects)) {
         if (type == 3 | type == "III") 
@@ -598,7 +598,7 @@ mixed <- function(formula,
       anova_tab_addition <- NULL
     } else if (method[1] == "PB") {
       if (progress) 
-        cat(str_c("Obtaining ", length(fixed.effects), " p-values:\n["))
+        cat(paste0("Obtaining ", length(fixed.effects), " p-values:\n["))
       tests <- vector("list", length(fixed.effects))
       for (c in seq_along(fixed.effects)) {
         if (type == 3 | type == "III") 
@@ -624,7 +624,7 @@ mixed <- function(formula,
       LRT <- vapply(tests, 
                     function(x) unlist(x[["test"]][1,]), 
                     unlist(tests[[1]][["test"]][1,]))
-      row.names(LRT) <- str_c(row.names(LRT), ".LRT")
+      row.names(LRT) <- paste0(row.names(LRT), ".LRT")
       anova_table <- cbind(anova_table, t(LRT))
       rownames(anova_table) <- fixed.effects
       anova_table <- 
@@ -694,11 +694,11 @@ mixed <- function(formula,
 
 ## expand random effects sructure
 expand_re_fun <- function(all.terms, data) {
-    random_parts <- str_c(all.terms[grepl("\\|", all.terms)])
+    random_parts <- paste0(all.terms[grepl("\\|", all.terms)])
     which_random_double_bars <- grepl("\\|\\|", random_parts)
     random_units <- sub("^.+\\|\\s+", "", random_parts)
     tmp_random <- lapply(sub("\\|.+$", "", random_parts), 
-                         function(x) as.formula(str_c("~", x)))
+                         function(x) as.formula(paste0("~", x)))
     
     tmp_model.matrix <- vector("list", length(random_parts))
     re_contains_intercept <- rep(FALSE, length(random_parts))
@@ -714,22 +714,22 @@ expand_re_fun <- function(all.terms, data) {
       }
       if (ncol(tmp_model.matrix[[i]]) > 0) {
         colnames(tmp_model.matrix[[i]]) <- 
-          str_c("re", i, ".", 
+          paste0("re", i, ".", 
                 gsub(":", "_by_", colnames(tmp_model.matrix[[i]])))
         new_random[i] <- 
-          str_c("(", as.numeric(re_contains_intercept[i]), "+", 
-                str_c(colnames(tmp_model.matrix[[i]]), collapse = "+"), 
+          paste0("(", as.numeric(re_contains_intercept[i]), "+", 
+                paste0(colnames(tmp_model.matrix[[i]]), collapse = "+"), 
                 if (which_random_double_bars[i]) "||" else "|", 
                 random_units[i], ")")
       } else {
-        new_random[i] <- str_c("(", 
+        new_random[i] <- paste0("(", 
                                as.numeric(re_contains_intercept[i]), 
                                if (which_random_double_bars[i]) "||" else "|", 
                                random_units[i], ")")
       }
     }
     data <- cbind(data, as.data.frame(do.call(cbind, tmp_model.matrix)))
-    random <- str_c(new_random, collapse = "+")
+    random <- paste0(new_random, collapse = "+")
     return(list(data = data,
                 random = random))
 }

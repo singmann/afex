@@ -5,7 +5,7 @@ Depends: R (>= 3.1.0), lme4 (>= 1.1-8), emmeans
 Suggests: coin, xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown, R.rsp,
          lattice, latticeExtra, multcomp, testthat, mlmRev, dplyr, tidyr,
          dfoptim, Matrix, psych, ggplot2, MEMSS, effects, carData
-Imports: pbkrtest (>= 0.4-1), lmerTest, car, reshape2, stats, methods
+Imports: pbkrtest (>= 0.4-1), lmerTest (>= 3.0-0), car, reshape2, stats, methods
 Description: Convenience functions for analyzing factorial experiments using
          ANOVA or mixed models. aov_ez(), aov_car(), and aov_4() allow
          specification of between, within (i.e., repeated-measures), or mixed

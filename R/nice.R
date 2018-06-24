@@ -50,7 +50,15 @@ nice <- function(object, ...) UseMethod("nice", object)
 #' @rdname nice
 #' @method nice afex_aov
 #' @export
-nice.afex_aov <- function(object, es = attr(object$anova_table, "es"), observed = attr(object$anova_table, "observed"), correction = attr(object$anova_table, "correction"), MSE = NULL, intercept = NULL, p_adjust_method = attr(object$anova_table, "p_adjust_method"), sig_symbols = attr(object$anova_table, "sig_symbols"), ...) { 
+nice.afex_aov <- function(object, es = attr(object$anova_table, "es"), 
+                          observed = attr(object$anova_table, "observed"), 
+                          correction = attr(object$anova_table, "correction"), 
+                          MSE = NULL, 
+                          intercept = NULL, 
+                          p_adjust_method = 
+                            attr(object$anova_table, "p_adjust_method"), 
+                          sig_symbols = attr(object$anova_table, "sig_symbols"), 
+                          ...) { 
   # if(is.null(es)) { # Defaults to afex_options("es") because of default set in anova.afex_aov
   #   es <- c("pes", "ges")[c("pes", "ges") %in% colnames(object$anova_table)]
   # }
@@ -69,14 +77,26 @@ nice.afex_aov <- function(object, es = attr(object$anova_table, "es"), observed 
     warn_deprecated_arg("p.adjust.method", "p_adjust_method")
     p_adjust_method <- dots$p.adjust.method
   }
-  anova_table <- as.data.frame(anova(object, es = es, observed = observed, correction = correction, MSE = MSE, intercept = intercept, p_adjust_method = p_adjust_method))
-  nice.anova(anova_table, MSE = MSE, intercept = intercept, sig_symbols = sig_symbols)
+  anova_table <- as.data.frame(anova(object, 
+                                     es = es, 
+                                     observed = observed, 
+                                     correction = correction, 
+                                     MSE = MSE, 
+                                     intercept = intercept, 
+                                     p_adjust_method = p_adjust_method))
+  nice.anova(anova_table, MSE = MSE, intercept = intercept, 
+             sig_symbols = sig_symbols)
 }
 
 #' @rdname nice
 #' @method nice anova
 #' @export
-nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = attr(object, "sig_symbols"), sig.symbols, ...) {
+nice.anova <- function(object, 
+                       MSE = NULL, 
+                       intercept = NULL, 
+                       sig_symbols = attr(object, "sig_symbols"), 
+                       sig.symbols, 
+                       ...) {
   dots <- list(...)
   if(is.null(MSE)) { # Defaults to TRUE because of default set in anova.afex_aov
     MSE <- "MSE" %in% colnames(object)
@@ -94,24 +114,46 @@ nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = attr(
   
   
   # internal functions:
-  is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+  is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  
+    abs(x - round(x)) < tol
   make.fs <- function(anova, symbols) {
-    ifelse(anova[["Pr(>F)"]] < 0.001, str_c(formatC(anova[["F"]], digits = 2, format = "f"), symbols[4]), 
-           ifelse(anova[["Pr(>F)"]] < 0.01, str_c(formatC(anova[["F"]], digits = 2, format = "f"), symbols[3]), 
-                  ifelse(anova[["Pr(>F)"]] < 0.05, str_c(formatC(anova[["F"]], digits = 2, format = "f"), symbols[2]), 
-                         ifelse(anova[["Pr(>F)"]] < 0.1, str_c(formatC(anova[["F"]], digits = 2, format = "f"), symbols[1]), formatC(anova[["F"]], digits = 2, format = "f")))))
+    ifelse(anova[["Pr(>F)"]] < 0.001, paste0(formatC(
+      anova[["F"]], digits = 2, format = "f"), symbols[4]), 
+           ifelse(anova[["Pr(>F)"]] < 0.01, paste0(formatC(
+             anova[["F"]], digits = 2, format = "f"), symbols[3]), 
+                  ifelse(anova[["Pr(>F)"]] < 0.05, paste0(formatC(
+                    anova[["F"]], digits = 2, format = "f"), symbols[2]), 
+                         ifelse(anova[["Pr(>F)"]] < 0.1, paste0(formatC(
+                           anova[["F"]], digits = 2, format = "f"), symbols[1]), 
+                           formatC(anova[["F"]], digits = 2, format = "f")))))
   }
   anova_table <- object
-  anova_table[,"df"] <- paste(ifelse(is.wholenumber(anova_table[,"num Df"]), anova_table[,"num Df"], formatC(anova_table[,"num Df"], digits = 2, format = "f")),  ifelse(is.wholenumber(anova_table[,"den Df"]),anova_table[,"den Df"], formatC(anova_table[,"den Df"], digits = 2, format = "f")), sep = ", ")
+  anova_table[,"df"] <- paste(ifelse(is.wholenumber(anova_table[,"num Df"]), 
+                                     anova_table[,"num Df"], 
+                                     formatC(anova_table[,"num Df"], 
+                                             digits = 2, format = "f")),  
+                              ifelse(is.wholenumber(anova_table[,"den Df"]), 
+                                     anova_table[,"den Df"], 
+                                     formatC(anova_table[,"den Df"], 
+                                             digits = 2, format = "f")), 
+                              sep = ", ")
   symbols.use <-  c(" +", " *", " **", " ***")
   symbols.use[seq_along(sig_symbols)] <- sig_symbols
-  df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"df"], stringsAsFactors = FALSE)
-  if (MSE) df.out <- cbind(df.out, data.frame(MSE = formatC(anova_table[,"MSE"], digits = 2, format = "f"), stringsAsFactors = FALSE))  
-  df.out <- cbind(df.out, data.frame(F = make.fs(anova_table, symbols.use), stringsAsFactors = FALSE))
+  df.out <- data.frame(Effect = row.names(anova_table), 
+                       df = anova_table[,"df"], 
+                       stringsAsFactors = FALSE)
+  if (MSE) df.out <- cbind(df.out, 
+                           data.frame(MSE = formatC(anova_table[,"MSE"], 
+                                                    digits = 2, format = "f"), 
+                                      stringsAsFactors = FALSE))  
+  df.out <- cbind(df.out, data.frame(F = make.fs(anova_table, symbols.use), 
+                                     stringsAsFactors = FALSE))
   if (!is.null(anova_table$ges)) df.out$ges <- round_ps(anova_table$ges)
   if (!is.null(anova_table$pes)) df.out$pes <- round_ps(anova_table$pes)
   df.out$p.value  <-  round_ps(anova_table[,"Pr(>F)"])
-  if (!intercept) if (df.out[1,1] == "(Intercept)")  df.out <- df.out[-1,, drop = FALSE]
+  if (!intercept) if (df.out[1,1] == "(Intercept)")  {
+    df.out <- df.out[-1,, drop = FALSE]
+  }
   rownames(df.out) <- NULL
   attr(df.out, "heading") <- attr(object, "heading")
   attr(df.out, "p_adjust_method") <- attr(object, "p_adjust_method")
@@ -125,18 +167,25 @@ nice.anova <- function(object, MSE = NULL, intercept = NULL, sig_symbols = attr(
 
 make.stat <- function(anova, stat, symbols) {
   out <- ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.001, 
-         str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[4]), 
+         paste0(formatC(anova[[stat]], digits = 2, format = "f"), symbols[4]), 
          ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.01, 
-                str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[3]), 
+                paste0(formatC(anova[[stat]], digits = 2, format = "f"), 
+                       symbols[3]), 
                 ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.05, 
-                       str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[2]), 
+                       paste0(formatC(anova[[stat]], digits = 2, format = "f"), 
+                              symbols[2]), 
                        ifelse(anova[[paste0("Pr(>", stat,")")]] < 0.1, 
-                              str_c(formatC(anova[[stat]], digits = 2, format = "f"), symbols[1]), 
-                              formatC(anova[[stat]], digits = 2, format = "f")))))
-  out[is.na(anova[[paste0("Pr(>", stat,")")]])] <- formatC(anova[[stat]][is.na(anova[[paste0("Pr(>", stat,")")]])], digits = 2, format = "f")
+                              paste0(formatC(anova[[stat]], digits = 2, 
+                                             format = "f"), symbols[1]), 
+                              formatC(anova[[stat]], digits = 2, 
+                                      format = "f")))))
+  out[is.na(anova[[paste0("Pr(>", stat,")")]])] <- formatC(
+    anova[[stat]][is.na(anova[[paste0("Pr(>", stat,")")]])], digits = 2, 
+    format = "f")
   out
 }
-is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  
+  abs(x - round(x)) < tol
 
 
 #' @rdname nice
@@ -158,7 +207,15 @@ nice.mixed <- function(object, sig_symbols = attr(object$anova_table, "sig_symbo
     df.out <- object[[1]]
     warning("mixed object was created with old version of afex, table not nicely formatted.")
   } else if (attr(object, "method") %in% c("KR", "S", "nested-KR") ) {
-    anova_table[,"df"] <- paste(ifelse(is.wholenumber(anova_table[,"num Df"]), round(anova_table[,"num Df"]), formatC(anova_table[,"num Df"], digits = 2, format = "f")),  ifelse(is.wholenumber(anova_table[,"den Df"]), round(anova_table[,"den Df"]), formatC(anova_table[,"den Df"], digits = 2, format = "f")), sep = ", ")
+    anova_table[,"df"] <- paste(ifelse(is.wholenumber(anova_table[,"num Df"]), 
+                                       round(anova_table[,"num Df"]), 
+                                       formatC(anova_table[,"num Df"], 
+                                               digits = 2, format = "f")),  
+                                ifelse(is.wholenumber(anova_table[,"den Df"]), 
+                                       round(anova_table[,"den Df"]), 
+                                       formatC(anova_table[,"den Df"], 
+                                               digits = 2, format = "f")), 
+                                sep = ", ")
     if ("F.scaling" %in% anova_table) {
       df.out <- data.frame(
       Effect = row.names(anova_table), 
@@ -171,13 +228,25 @@ nice.mixed <- function(object, sig_symbols = attr(object$anova_table, "sig_symbo
       df = anova_table[,"df"], 
       stringsAsFactors = FALSE, check.names = FALSE) 
     }
-    df.out <- cbind(df.out, data.frame(F = make.stat(anova_table, stat = "F", symbols.use), stringsAsFactors = FALSE))
+    df.out <- cbind(df.out, data.frame(
+      F = make.stat(anova_table, stat = "F", symbols.use), 
+      stringsAsFactors = FALSE))
     df.out$p.value  <-  round_ps(anova_table[,"Pr(>F)"])
   } else if (attr(object, "method") == "PB") {
     anova_table[,"Pr(>Chisq)"] <- anova_table[,"Pr(>PB)"]
-    df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"Chi Df"], Chisq = make.stat(anova_table, stat = "Chisq", symbols.use), p.value = round_ps(anova_table[,"Pr(>Chisq)"]), stringsAsFactors = FALSE, check.names = FALSE)
+    df.out <- data.frame(Effect = row.names(anova_table), 
+                         df = anova_table[,"Chi Df"], 
+                         Chisq = make.stat(anova_table, stat = "Chisq", 
+                                           symbols.use), 
+                         p.value = round_ps(anova_table[,"Pr(>Chisq)"]), 
+                         stringsAsFactors = FALSE, check.names = FALSE)
   } else if (attr(object, "method") == "LRT") {
-    df.out <- data.frame(Effect = row.names(anova_table), df = anova_table[,"Chi Df"], Chisq = make.stat(anova_table, stat = "Chisq", symbols.use), p.value = round_ps(anova_table[,"Pr(>Chisq)"]), stringsAsFactors = FALSE, check.names = FALSE)
+    df.out <- data.frame(Effect = row.names(anova_table), 
+                         df = anova_table[,"Chi Df"], 
+                         Chisq = make.stat(anova_table, stat = "Chisq", 
+                                           symbols.use), 
+                         p.value = round_ps(anova_table[,"Pr(>Chisq)"]), 
+                         stringsAsFactors = FALSE, check.names = FALSE)
   } else stop("method of mixed object not supported.")
   rownames(df.out) <- NULL
   attr(df.out, "heading") <- attr(anova_table, "heading")
@@ -196,7 +265,8 @@ print.nice_table <- function(x, ...) {
   }
   print.data.frame(x)
   if(!is.null(attr(x, "sig_symbols"))) print_legend(x)
-  if(!is.null(correction_method <- attr(x, "correction")) && correction_method != "none") {
+  if(!is.null(correction_method <- attr(x, "correction")) && 
+     correction_method != "none") {
     cat("\nSphericity correction method:", correction_method, "\n")
   }
   invisible(x)

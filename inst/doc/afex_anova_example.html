@@ -12,7 +12,7 @@
 
 <meta name="author" content="Henrik Singmann" />
 
-<meta name="date" content="2018-04-03" />
+<meta name="date" content="2018-06-24" />
 
 <title>ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)</h1>
 <h4 class="author"><em>Henrik Singmann</em></h4>
-<h4 class="date"><em>2018-04-03</em></h4>
+<h4 class="date"><em>2018-06-24</em></h4>
 
 
 <div id="TOC">
@@ -262,7 +262,7 @@ How valid is the conclusion/How likely is it that the person fell into a swimmin
 <p>Alternatively, the <code>anova</code> method for <code>afex_aov</code> objects returns a <code>data.frame</code> of class <code>anova</code> that can be passed to, for example, <code>xtable</code> for nice formatting:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(xtable::<span class="kw">xtable</span>(<span class="kw">anova</span>(a1), <span class="dt">digits =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">2</span>, <span class="dv">5</span>), <span class="dv">3</span>, <span class="dv">4</span>)), <span class="dt">type =</span> <span class="st">&quot;html&quot;</span>)</code></pre></div>
 <!-- html table generated in R 3.4.4 by xtable 1.8-2 package -->
-<!-- Tue Apr  3 10:51:08 2018 -->
+<!-- Sun Jun 24 16:57:40 2018 -->
 <table border="1">
 <tr>
 <th>
@@ -487,12 +487,12 @@ instruction:inference:plausibility
 ## 
 ## Linear Hypotheses:
 ##              Estimate Std. Error t value Pr(&gt;|t|)    
-## MP - MT == 0   10.831      4.612   2.349 0.068876 .  
-## MP - AC == 0   18.100      4.612   3.925 0.000826 ***
+## MP - MT == 0   10.831      4.612   2.349 0.068970 .  
+## MP - AC == 0   18.100      4.612   3.925 0.000806 ***
 ## MP - DA == 0    4.556      4.612   0.988 0.325273    
-## MT - AC == 0    7.269      4.612   1.576 0.281751    
+## MT - AC == 0    7.269      4.612   1.576 0.281756    
 ## MT - DA == 0   -6.275      4.612  -1.361 0.296932    
-## AC - DA == 0  -13.544      4.612  -2.937 0.017582 *  
+## AC - DA == 0  -13.544      4.612  -2.937 0.017639 *  
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## (Adjusted p values reported -- free method)</code></pre>
@@ -745,8 +745,8 @@ instruction:inference:plausibility
 ## Linear Hypotheses:
 ##             Estimate Std. Error t value Pr(&gt;|t|)    
 ## diff_1 == 0    4.175      8.500   0.491 0.623874    
-## diff_2 == 0   34.925      8.500   4.109 0.000222 ***
-## diff_3 == 0  -23.600      8.500  -2.777 0.017346 *  
+## diff_2 == 0   34.925      8.500   4.109 0.000212 ***
+## diff_3 == 0  -23.600      8.500  -2.777 0.017403 *  
 ## diff_4 == 0   -8.100      8.500  -0.953 0.564739    
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1

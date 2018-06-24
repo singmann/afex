@@ -9,9 +9,7 @@ lmerTest_anova <- function(object, ...) {
     pkg_version <- "2.0-37.9005"
     if(!inherits(object, "lmerMod")) return(anova(object, ...)) # non-lmer objects
     if(requireNamespace("lmerTest", quietly=TRUE) && packageVersion("lmerTest") < pkg_version) {
-        if(inherits(object, "merModLmerTest"))
-            return(lmerTest::anova(object, ...))  else # lmerTest object
-                return(lmerTest::anova(as(object, "merModLmerTest"), ...)) # lme4 object
+        stop("Newer version of lmerTest is required.")
     }
     if(requireNamespace("lmerTest", quietly=TRUE) && packageVersion("lmerTest") >= pkg_version) {
         if(inherits(object, "lmerModLmerTest"))
@@ -28,9 +26,7 @@ lmerTest_summary <- function(object, ...) {
     pkg_version <- "2.0-37.9005"
     if(!inherits(object, "lmerMod")) return(summary(object, ...)) # non-lmer objects
     if(requireNamespace("lmerTest", quietly=TRUE) && packageVersion("lmerTest") < pkg_version) {
-        if(inherits(object, "merModLmerTest"))
-            return(lmerTest::summary(object, ...))  else # lmerTest object
-                return(lmerTest::summary(as(object, "merModLmerTest"), ...)) # lme4 object
+        stop("Newer version of lmerTest is required.")
     }
     if(requireNamespace("lmerTest", quietly=TRUE) && packageVersion("lmerTest") >= pkg_version) {
         if(inherits(object, "lmerModLmerTest"))

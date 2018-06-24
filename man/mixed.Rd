@@ -231,6 +231,7 @@ stopCluster(cl)
 ###################################################
 ## Replicating Maxwell & Delaney (2004) Examples ##
 ###################################################
+\dontrun{
 
 ### replicate results from Table 15.4 (Maxwell & Delaney, 2004, p. 789)
 data(md_15.1)
@@ -301,6 +302,7 @@ md_16.4b$cog <- scale(md_16.4b$cog, scale=FALSE)
 
 # parameters are again almost perfectly recovered:
 summary(mixed4_orig)
+}
 
 ###########################
 ## Full Analysis Example ##

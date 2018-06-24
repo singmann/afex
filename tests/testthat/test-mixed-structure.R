@@ -237,9 +237,9 @@ test_that("mixed: expand_re argument (longer)", {
 
 test_that("mixed: return=data, expand_re argument, and allFit", {
   #if (packageVersion("testthat") >= "0.9") {
-  #testthat::skip_on_cran()
   #testthat::skip_on_travis()
   testthat::skip_if_not_installed("optimx")
+  testthat::skip_on_cran()
   require(optimx)
   data("ks2013.3")
   ks2013.3_tmp <- ks2013.3
@@ -267,6 +267,7 @@ test_that("mixed with all_fit = TRUE", {
   testthat::skip_if_not_installed("optimx")
   testthat::skip_if_not_installed("MEMSS")
   testthat::skip_if_not_installed("dfoptim")
+  testthat::skip_on_cran()
   require(optimx)
   data("Machines", package = "MEMSS") 
   aop <- afex_options()
@@ -307,6 +308,7 @@ test_that("mixed: return=data works", {
 test_that("mixed with all available methods", {
   data("sk2011.2") # see example("mixed")
   testthat::skip_on_travis()
+  testthat::skip_on_cran()
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
   for (i in c(2, 3)) {
     sk2_aff_kr <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
@@ -350,6 +352,7 @@ test_that("mixed with all available methods", {
 
 test_that("mixed all_fit = TRUE works with old methods", {
   data("sk2011.2") # see example("mixed")
+  testthat::skip_on_cran()
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
   sk2_aff_b <- mixed(response ~ instruction+(inference*type||id), sk2_aff,
                expand_re = TRUE, all_fit = TRUE, method = "nested-KR", 
@@ -369,6 +372,7 @@ test_that("mixed all_fit = TRUE works with old methods", {
 
 test_that("mixed all_fit = TRUE works with new (KR) methods", {
   data("sk2011.2") # see example("mixed")
+  testthat::skip_on_cran()
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
   sk2_aff_b <- mixed(response ~ instruction+(inference*type||id), sk2_aff,
                expand_re = TRUE, all_fit = TRUE, method = "KR",

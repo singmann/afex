@@ -131,7 +131,7 @@ emm_options(graphics.engine = "lattice")
 emmip(a1, gender ~ hour | treatment+phase)
 emm_options(graphics.engine = "ggplot") # reset options 
 
-# 2. obtain reference grid object (default is uses univariate model):
+# 2. obtain reference grid object (default uses univariate model):
 r1 <- emmeans(a1, ~treatment +phase)
 r1
 

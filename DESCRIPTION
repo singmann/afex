@@ -21,6 +21,18 @@ BugReports: https://github.com/singmann/afex/issues
 License: GPL (>=2)
 Encoding: UTF-8
 VignetteBuilder: knitr, R.rsp
+Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"),
+          email="singmann+afex@gmail.com", comment=c(ORCID="0000-0002-4842-3657")),
+         person(given="Ben", family="Bolker", role=c("aut")), 
+         person(given="Jake",family="Westfall", role=c("aut")), 
+         person(given="Frederik", family="Aust", role=c("aut"), 
+          comment = c(ORCID = "0000-0003-4900-788X")),
+         person(given="Søren", family="Højsgaard", role=c("ctb")),
+         person(given="John", family="Fox", role=c("ctb")), 
+         person(given="Michael A.", family="Lawrence", role=c("ctb")), 
+         person(given="Ulf", family="Mertens", role=c("ctb")), 
+         person(given="Jonathon", family="Love", role=c("ctb")), 
+         person(given="Russell", family="Lenth", role=c("ctb")), 
+         person(given="Rune", family="Haubo Bojesen Christensen", role=c("ctb")))
 Version: 0.22-0
-Date: 2018-08-09
 RoxygenNote: 6.1.0

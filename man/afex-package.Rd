@@ -4,22 +4,15 @@
 \name{afex-package}
 \alias{afex}
 \alias{afex-package}
-\title{\packageTitle{afex}}
+\title{\packageTitle{afex}
+
+Maintainer: \packageMaintainer{afex}}
 \description{
 \packageDescription{afex}
 }
 \details{
 The DESCRIPTION file:
-\tabular{ll}{
-Package: \tab afex\cr
-Type: \tab Package\cr
-Version: \tab 0.22-0\cr
-Date: \tab 2018-08-09\cr
-Depends: \tab R (>= 3.1.0), lme4 (>= 1.1-8), emmeans (>= 1.1.2)\cr
-Encoding: \tab UTF-8\cr
-License: \tab GPL (>=2)\cr
-URL: \tab http://afex.singmann.science/, https://github.com/singmann/afex\cr
-}
+\packageDESCRIPTION{afex}
 }
 \seealso{
 Useful links:
@@ -31,7 +24,24 @@ Useful links:
 
 }
 \author{
-\packageAuthor{afex}
+\strong{Maintainer}: Henrik Singmann \email{singmann+afex@gmail.com} (0000-0002-4842-3657)
 
-Maintainer: \packageMaintainer{afex}
+Authors:
+\itemize{
+  \item Ben Bolker
+  \item Jake Westfall
+  \item Frederik Aust (0000-0003-4900-788X)
+}
+
+Other contributors:
+\itemize{
+  \item Søren Højsgaard [contributor]
+  \item John Fox [contributor]
+  \item Michael A. Lawrence [contributor]
+  \item Ulf Mertens [contributor]
+  \item Jonathon Love [contributor]
+  \item Russell Lenth [contributor]
+  \item Rune Haubo Bojesen Christensen [contributor]
+}
+
 }

@@ -165,6 +165,7 @@ summary(m2)$varcor
 # summary(lmer(score ~ Machine + (Machine||Worker), data=Machines))$varcor
 
 # follow-up tests
+library("emmeans")  # package emmeans needs to be attached for follow-up tests.
 (emm1 <- emmeans(m1, "Machine"))
 pairs(emm1, adjust = "holm") # all pairwise comparisons
 con1 <- list(
@@ -340,7 +341,8 @@ sk_m2 <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_a
                expand_re = TRUE)
 sk_m2
 
-## mixed objects can be passed to emmeans directly:
+## mixed objects can be passed to emmeans
+library("emmeans")  # however, package emmeans needs to be attached first
 
 # recreates basically Figure 4 (S&K, 2011, upper panel)
 # only the 4th and 6th x-axis position are flipped
@@ -456,7 +458,7 @@ Effect("Machine", m1$full_model) # not correct:
 # 59.65000 52.35556 60.32222 
 
 # compare:
-emmeans(m1, "Machine")
+emmeans::emmeans(m1, "Machine")
  # Machine   emmean       SE  df asymp.LCL asymp.UCL
  # A       52.35556 1.680711 Inf  49.06142  55.64969
  # B       60.32222 3.528546 Inf  53.40640  67.23804

@@ -116,6 +116,8 @@ data(obk.long, package = "afex")
 a1 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
         within = c("phase", "hour"), observed = "gender")
 
+library("emmeans")  # package emmeans needs to be attached for follow-up tests.
+
 # 1b. plot data (per default with ggplot2):
 emmip(a1, gender ~ hour | treatment+phase)
 

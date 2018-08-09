@@ -868,9 +868,9 @@ anova.mixed <- function(object,
 
 
 ## support for emmeans for mixed objects:
-#' @importFrom emmeans recover_data emm_basis
+## @importFrom emmeans recover_data emm_basis
 ## @method recover_data mixed
-#' @export
+## @export
 recover_data.mixed <- function(object, ...) {
   full_model_name <- names(object)[[2]]
   if (inherits(object[[full_model_name]], "merMod") | 
@@ -886,12 +886,12 @@ recover_data.mixed <- function(object, ...) {
   if (is_lmerTest_class(obj_use)) {
     class(obj_use) <- "lmerMod"
   }
-  recover_data(obj_use, ...)
+  emmeans::recover_data(obj_use, ...)
 }
 
 
 ## @method lsm_basis mixed 
-#' @export
+## @export
 emm_basis.mixed <- function(object, trms, xlev, grid, ...) {
   full_model_name <- names(object)[[2]]
   if (inherits(object[[full_model_name]], "merMod") | 
@@ -906,6 +906,6 @@ emm_basis.mixed <- function(object, trms, xlev, grid, ...) {
   if (is_lmerTest_class(obj_use)) {
     class(obj_use) <- "lmerMod"
   }
-  emm_basis(obj_use, trms, xlev, grid, ...)
+  emmeans::emm_basis(obj_use, trms, xlev, grid, ...)
 }
 

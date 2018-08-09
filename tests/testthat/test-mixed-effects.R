@@ -8,12 +8,13 @@ test_that("mixed works with effects", {
   m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines, 
             set_data_arg = TRUE, progress = FALSE)
   
-  testthat::skip_if_not_installed("effects") 
+  testthat::skip_if_not_installed("effects")
+  testthat::skip_if_not_installed("emmeans") 
   library("effects")
   
   set_default_contrasts()
 
-  em1 <- emmeans(m1, "Machine")
+  em1 <- emmeans::emmeans(m1, "Machine")
   ef1 <- Effect("Machine", m1$full_model) #
   
   expect_false(any(

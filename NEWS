@@ -1,4 +1,24 @@
                     *************************
+                    ** afex VERSION 0.22-x **
+                    *************************
+                    
+                    Changes in afex Version 0.22-x
+                    Released August 2018
+                    
+    Significant User Visible Changes and New Features
+    
+    o   emmeans was moved to suggests and needs to be either attached explicitly 
+        before passing objects to emmeans or called with ::
+        Option 1: emmeans::emmeans() 
+        Option 2: library("emmeans")
+    
+    Bugfixes
+
+    o   Error in ANOVA examples using emmeans corrected, see:
+        https://stats.stackexchange.com/q/360900/442
+
+
+                    *************************
                     ** afex VERSION 0.21-x **
                     *************************
                     

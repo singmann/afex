@@ -62,8 +62,9 @@ sk2_den$type2 <- factor(sk2_den$inference:sk2_den$type, levels = c("MT:prologica
 a2_b <- aov_ez("id", "response", sk2_den, 
        between = "instruction", within = c("type2"))
 
-lsmip(a1_b,instruction~type2, ylim = c(0, 100))
-lsmip(a2_b,instruction~type2, ylim = c(0, 100))
-
+if (requireNamespace("emmeans")) {
+  emmeans::emmip(a1_b,instruction~type2, ylim = c(0, 100))
+  emmeans::emmip(a2_b,instruction~type2, ylim = c(0, 100))
+}
 }
 \keyword{dataset}

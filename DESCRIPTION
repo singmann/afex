@@ -1,8 +1,8 @@
 Package: afex
 Type: Package
 Title: Analysis of Factorial Experiments
-Depends: R (>= 3.1.0), lme4 (>= 1.1-8), emmeans (>= 1.1.2)
-Suggests: coin, xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown, R.rsp,
+Depends: R (>= 3.1.0), lme4 (>= 1.1-8)
+Suggests: emmeans (>= 1.1.2), coin, xtable, parallel, plyr, optimx, nloptr, knitr, rmarkdown, R.rsp,
          lattice, latticeExtra, multcomp, testthat, mlmRev, dplyr, tidyr, dfoptim,
          Matrix, psych, ggplot2, MEMSS, effects, carData
 Imports: pbkrtest (>= 0.4-1), lmerTest (>= 3.0-0), car, reshape2, stats, methods
@@ -34,5 +34,5 @@ Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"),
          person(given="Jonathon", family="Love", role=c("ctb")), 
          person(given="Russell", family="Lenth", role=c("ctb")), 
          person(given="Rune", family="Haubo Bojesen Christensen", role=c("ctb")))
-Version: 0.22-0
+Version: 0.22-1
 RoxygenNote: 6.1.0

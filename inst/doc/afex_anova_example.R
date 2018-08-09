@@ -2,8 +2,9 @@
 options(width = 90)
 
 ## ----message=FALSE, warning=FALSE-------------------------------------------------------
-require(afex) # needed for ANOVA, emmeans is loaded automatically.
-require(multcomp) # for advanced control for multiple testing/Type 1 errors.
+library("afex") # needed for ANOVA.
+library("emmeans") # emmeans is needed for follow-up tests (and not anymore loaded automatically).
+library("multcomp") # for advanced control for multiple testing/Type 1 errors.
 
 ## ---------------------------------------------------------------------------------------
 data(sk2011.1)

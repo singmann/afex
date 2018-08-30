@@ -260,7 +260,7 @@ example):
  Starting with \pkg{afex} version 0.22, \pkg{emmeans} is \emph{not}
  loaded/attached automatically when loading \pkg{afex}. Therefore,
  \pkg{emmeans} now needs to be loaded by the user via
- \code{library("emmeans")} or \code{require("emmeans)}.
+ \code{library("emmeans")} or \code{require("emmeans")}.
 }  
 
 \subsection{Methods for \code{afex_aov} Objects}{ A full overview over the

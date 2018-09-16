@@ -101,8 +101,11 @@
 #'   will be replaced. \code{sig_symbols = ""} will display the stars but not
 #'   the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols. The
 #'   default is given by \code{afex_options("sig_symbols")}.
-#' @param ... further arguments (such as \code{weights}/\code{family}) passed to
-#'   \code{\link{lmer}}/\code{\link{glmer}}, such as \code{control}.
+#' @param ... further arguments (such as \code{weights}, \code{family}, or
+#'   \code{control}) passed to \code{\link{lmer}}/\code{\link{glmer}}. Note that
+#'   additional data (e.g., \code{weights}) need to be passed fully and not only
+#'   by name (e.g., \code{weights = df$weights} and not \code{weights =
+#'   weights}).
 #'
 #'
 #' @return An object of class \code{"mixed"} (i.e., a list) with the following

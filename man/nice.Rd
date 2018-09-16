@@ -53,7 +53,7 @@ A \code{data.frame} of class \code{nice_table} with the ANOVA table consisting o
 \code{ges} contains the generalized eta-squared effect size measure (Bakeman, 2005), \code{pes} contains partial eta-squared (if requested).
 }
 \description{
-This generic function produces a nice ANOVA table for printin for objects of class. \code{nice_anova} takes an object from \code{\link[car]{Anova}} possible created by the convenience functions \code{\link{aov_ez}} or \code{\link{aov_car}}. When within-subject factors are present, either sphericity corrected or uncorrected degrees of freedom can be reported.
+This generic function produces a nice ANOVA table for printing for objects of class. \code{nice_anova} takes an object from \code{\link[car]{Anova}} possible created by the convenience functions \code{\link{aov_ez}} or \code{\link{aov_car}}. When within-subject factors are present, either sphericity corrected or uncorrected degrees of freedom can be reported.
 }
 \details{
 The returned \code{data.frame} is print-ready when adding to a document with proper methods. Either directly via \pkg{knitr} or similar approaches such as via packages \pkg{ascii} or \pkg{xtable} (nowadays \pkg{knitr} is probably the best approach, see \href{http://yihui.name/knitr/}{here}). \pkg{ascii} provides conversion to \href{http://www.methods.co.nz/asciidoc/}{AsciiDoc} and \href{http://orgmode.org/}{org-mode} (see \code{\link[ascii]{ascii}} and \code{\link[ascii]{print-ascii}}). \pkg{xtable} converts a \code{data.frame} into LaTeX code with many possible options (e.g., allowing for \code{"longtable"} or \code{"sidewaystable"}), see \code{\link[xtable]{xtable}} and \code{\link[xtable]{print.xtable}}. See Examples.

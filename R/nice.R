@@ -1,6 +1,6 @@
 #' Make nice ANOVA table for printing.
 #'
-#' This generic function produces a nice ANOVA table for printin for objects of class. \code{nice_anova} takes an object from \code{\link[car]{Anova}} possible created by the convenience functions \code{\link{aov_ez}} or \code{\link{aov_car}}. When within-subject factors are present, either sphericity corrected or uncorrected degrees of freedom can be reported.
+#' This generic function produces a nice ANOVA table for printing for objects of class. \code{nice_anova} takes an object from \code{\link[car]{Anova}} possible created by the convenience functions \code{\link{aov_ez}} or \code{\link{aov_car}}. When within-subject factors are present, either sphericity corrected or uncorrected degrees of freedom can be reported.
 #' 
 #'
 #' @param object,x An object of class \code{"afex_aov"} (see \code{\link{aov_car}}) or of class \code{"mixed"} (see \code{\link{mixed}}) as returned from the \pkg{afex} functions. Alternatively, an object of class \code{"Anova.mlm"} or \code{"anova"} as returned from \code{\link[car]{Anova}}.

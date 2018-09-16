@@ -15,9 +15,7 @@ get_plot_var <- function(x) {
 }
 
 get_emmeans <- function(object, x, trace) {
-  if (!requireNamespace("emmeans", quietly = TRUE)) {
-    stop("package emmeans is required.")
-  }
+
   return(emmeans::emmeans(object, spec = c(get_plot_var(x),
                                            get_plot_var(trace))))
 }
@@ -84,24 +82,55 @@ afex_plot.afex_aov <- function(object,
                                alpha_data = 1,
                                jitter_x = 0,
                                jitter_y = 0,
+                               args_emmeans = list(),
                                ...) {
+  if (!requireNamespace("emmeans", quietly = TRUE)) {
+    stop("package emmeans is required.")
+  }
+  all_vars <- c(get_plot_var(x), get_plot_var(trace))
   
-  emms <- as.data.frame(get_emmeans(object = object,
-                                    x = x,
-                                    trace = trace))
+  emms <- as.data.frame(do.call(emmeans::emmeans, 
+                                args = c(object = list(object), 
+                                         specs = list(all_vars), 
+                                         args_emmeans)))
+  
   x <- get_plot_var(x)
   emms$x <- interaction(emms[x], sep = "\n")
   colnames(emms)[colnames(emms) == "emmean"] <- "y"
+  emms$all_vars <- interaction(emms[all_vars], sep = ".")
   
   data <- object$data$long
-  data$x <- interaction(data[x], sep = "\n")
   colnames(data)[colnames(data) == attr(object, "dv")] <- "y"
-  
-  #str(object, 1)
+  data <- aggregate(data$y, by = data[c(all_vars,attr(object, "id"))], 
+                    FUN = mean, drop = FALSE)
+  data$y <- data$x
+  data$x <- interaction(data[x], sep = "\n")
+  data$all_vars <- interaction(data[all_vars], sep = ".")
   
   plot_error <- TRUE
   if (error[1] == "model") {
     emms$error <- emms$SE
+  } else if (error[1] == "SE") {
+    tmp <- tapply(data$y, INDEX = list(data$all_vars), 
+                  FUN = function(x) sd(x)/sqrt(length(x)))
+    stopifnot(emms$all_vars == names(tmp))
+    emms$error <- tmp
+  } else if (error[1] %in% c("CMO")) {
+    indiv_means <- tapply(data$y, INDEX = data[attr(object, "id")], FUN = mean)
+    within_vars <- all_vars[all_vars %in% names(attr(object, "within"))]
+    within_fac <- interaction(data[within_vars], sep = ".")
+    J <- length(levels(within_fac))
+    ## Cosineau & O'Brien (2014), Equation 2:
+    new_y <- data$y - 
+      indiv_means[as.character(data[,attr(object, "id")])] +
+      mean(data$y)
+    ## Cosineau & O'Brien (2014), Equation 4:
+    y_bar <- tapply(new_y, INDEX = within_fac, FUN = mean)
+    new_z <- sqrt(J / (J-1)) * (new_y - y_bar[within_fac]) + y_bar[within_fac]
+    tmp <- tapply(new_z, INDEX = list(data$all_vars), 
+                  FUN = function(x) sd(x)/sqrt(length(x)))
+    stopifnot(emms$all_vars == names(tmp))
+    emms$error <- tmp
   } else if (is.null(error[1])) {
     plot_error <- FALSE  
   }

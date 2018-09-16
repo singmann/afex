@@ -10,5 +10,16 @@ afex_plot(a1, ~phase*hour, ~treatment,
   ggplot2::theme_light()
 
 
+afex_plot(a1, ~phase, ~hour, 
+          alpha_data = 0.5, jitter_y = 0.3, dodge = 0.75) +
+  ggplot2::theme_light()
 
-afex_plot(a1, ~phase*hour, ~treatment, error_width = 0.5)
+afex_plot(a1, ~phase, ~hour, error = "SE", 
+          alpha_data = 0.5, jitter_y = 0.3, dodge = 0.75) +
+  ggplot2::theme_light()
+
+afex_plot(a1, ~phase, ~hour, error = "CMO", 
+          alpha_data = 0.5, jitter_y = 0.3, dodge = 0.75) +
+  ggplot2::theme_light()
+
+afex_plot(a1, ~phase*hour, error_width = 0.5)

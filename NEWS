@@ -3,9 +3,15 @@
                     *************************
                     
                     Changes in afex Version 0.22-x
-                    Released August 2018
+                    Released September 2018
                     
     Significant User Visible Changes and New Features
+    
+    o   New functions for plotting results (means, error bars, and raw data) 
+        using ggplot2:
+        afex_plot(): generic for afex objects
+        afex_interaction_plot(): workhorse that does plotting.
+        For ANOVAs, several different standard errors are possible.
     
     o   emmeans was moved to suggests and needs to be either attached explicitly 
         before passing objects to emmeans or called with ::

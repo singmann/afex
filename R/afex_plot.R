@@ -7,12 +7,13 @@
 #'   are extremely flexible and allow customization of almost any characteristic
 #'   of the plot.
 #'   
-#'   \code{afex_plot} is the most user friendly function that does data 
-#'   preparation and plotting, but also allows to only return the prepared data 
-#'   (\code{return = "data"}).
+#'   \code{afex_plot} is the user friendly function that does data preparation
+#'   and plotting. It also allows to only return the prepared data (\code{return
+#'   = "data"}).
 #'   
-#'   \code{afex_interaction_plot} does the plotting when a \code{trace} factor 
-#'   is present and takes the prepared data.
+#'   \code{interaction_plot} does the plotting when a \code{trace} factor is
+#'   present. \code{oneway_plot} does the plotting when a \code{trace} factor is
+#'   absent.
 #'   
 #' @param object object of class \code{afex_aov} as returned from 
 #'   \code{\link{aov_car}} and related functions.
@@ -20,10 +21,17 @@
 #'   factor names of the predictors displayed on the x-axis.
 #' @param trace A \code{character} vector or one-sided \code{formula} specifying
 #'   the factor names of the predictors connected by the same line. Argument 
-#'   \code{mapping_trace} specifies further mappings for these factors.
+#'   \code{mapping} specifies further mappings for these factors. Optional.
 #' @param panels A \code{character} vector or one-sided \code{formula} 
 #'   specifying the factor names of the predictors shown in different panels. 
 #'   Optional.
+#' @param mapping A \code{character} vector specifying which aesthetic mappings 
+#'   should be applied to either the \code{trace} factors (if \code{trace} is 
+#'   specified) or the \code{x} factors. Useful options are any combination of 
+#'   \code{"shape"}, \code{"color"}, and \code{"linetype"} or also \code{"fill"}
+#'   (see examples). The default (i.e., missing) uses \code{c("shape",
+#'   "lineytpe")} if \code{trace} is specified, otherwise \code{""} (i.e., no
+#'   additional aesthetic).
 #' @param error A scalar \code{character} specifying which type of standard 
 #'   error should be plotted. Default is \code{"model"}, which plots model-based
 #'   standard errors. Further options are: \code{"none"} (or \code{NULL}),
@@ -31,25 +39,25 @@
 #'   \code{"between-SE"}. See details.
 #' @param error_exp Numeric expansion factor for standard error. Default is 
 #'   \code{1} which plots \code{+/- 1} standard error. \code{qnorm(0.975)} or 
-#'   \code{1.96} plots 95\% confidence intervals.
+#'   \code{1.96} plots 95\% confidence intervals based on the normal
+#'   distribution.
 #' @param error_arg A \code{list} of further arguments passed to 
 #'   \code{\link[ggplot2]{geom_errorbar}}, which draws the errorsbars. Default 
 #'   is \code{list(width = 0)} which suppresses the vertical bars at the end of 
 #'   the error bar.
 #' @param data_plot \code{logical}. Should raw data be plotted in the 
 #'   background? Default is \code{TRUE}.
+#' @param data_geom Geom \code{function} used for plotting data in background. 
+#'   The default (missing) uses \code{\link[ggplot2]{geom_point}} if \code{trace}
+#'   is specified, otherwise \code{\link[ggbeeswarm]{geom_beeswarm}}. See
+#'   examples.
+#' @param data_alpha \code{alpha} value passed to \code{data_geom}.
 #' @param data_arg A \code{list} of further arguments passed to 
-#'   \code{\link[ggplot2]{geom_point}}, which draws the raw data points in the 
-#'   background. Default is \code{list(color = "grey", alpha = 0.5)}.
-#' @param data_jitter_x,data_jitter_y Amount of jitter on the x- or y-axis added
-#'   to the data points in the background. Default is 0.
-#' @param mapping_trace A \code{character} vector specifying which aesthetic 
-#'   mappings should be applied to the \code{trace} factors. Default is 
-#'   \code{c("shape", "linetype")}. A further possibility is \code{"color"}. Any
-#'   combination of these three is possible.
+#'   \code{data_geom}. Default is \code{list(color = "darkgrey")}.
 #' @param point_arg,line_arg A \code{list} of further arguments passed to 
 #'   \code{\link[ggplot2]{geom_point}} or \code{\link[ggplot2]{geom_line}} which
 #'   draw the points and lines in the foreground. Default is \code{list()}.
+#'   \code{line_arg} is only used if \code{trace} is specified.
 #' @param emmeans_arg A \code{list} of further arguments passed to 
 #'   \code{\link[emmeans]{emmeans}}. Of particular importance for ANOVAs is 
 #'   \code{model}, see \code{\link{afex_aov-methods}}.
@@ -66,18 +74,26 @@
 #' @param means,data \code{data.frame}s used for plotting. Need to contain 
 #'   columns \code{y}, \code{x}, \code{trace}, and \code{error} (only in 
 #'   \code{means}).
-#' @param error_plot \code{logical}. Should error bars be plotted? Only relevant
-#'   in \code{afex_interaction_plot}. Use \code{error = "none"} otherwise.
+#' @param error_plot \code{logical}. Should error bars be plotted? Only used in
+#'   plotting functions. Use \code{error = "none"} otherwise.
 #' @param ... currently ignored.
 #' 
-#' @details Error bars provide a grahical representation of the variability of 
-#'   the estimated means and should be routinely added to results figures. 
-#'   However, there exist several possibilities which particular measure of 
-#'   variability to use. Because of this, any figure depicting error bars should
-#'   be accompanied by a note detailing which measure the error bars shows. The 
-#'   present functions allow plotting of different types of standard errors (if 
-#'   \code{error_exp = 1}) or confidence intervals (e.g., 95\% confidence 
-#'   intervals based on the normal distribution if \code{error_exp = 1.96}).
+#' @details \code{afex_plot} obtains the estimated marginal means via
+#'   \code{\link[emmeans]{emmeans}} and aggregates the raw data to the same
+#'   level. It then calculates the desired standard error (see below) and passes
+#'   the prepared data to one of the two plotting functions:
+#'   \code{interaction_plot} when \code{trace} is specified and
+#'   \code{oneway_plot} otherwise.
+#' 
+#'   \subsection{Error Bars}{Error bars provide a grahical representation of the
+#'   variability of the estimated means and should be routinely added to results
+#'   figures. However, there exist several possibilities which particular
+#'   measure of variability to use. Because of this, any figure depicting error
+#'   bars should be accompanied by a note detailing which measure the error bars
+#'   shows. The present functions allow plotting of different types of standard
+#'   errors (if \code{error_exp = 1}) or confidence intervals (e.g., 95\%
+#'   confidence intervals based on the normal distribution if \code{error_exp =
+#'   1.96}).
 #'   
 #'   A further complication is that readers routinely misinterpret confidence 
 #'   intervals. The most common error is to assume that non-overlapping error 
@@ -121,8 +137,8 @@
 #'     \item \emph{p} < .01 when the two CIs do not overlap, that is, when
 #'     proportion overlap is about 0 or there is a positive gap.
 #'   }   
-#'   
-#'   \subsection{Implemented Approaches}{
+#'   }
+#'   \subsection{Implemented Standard Errors}{
 #'   The following lists the implemented approaches to calculate standard
 #'   errors (SEs). These can be used to construe confidence intervals via the
 #'   \code{error_exp} argument.
@@ -188,14 +204,14 @@ afex_plot.afex_aov <- function(object,
                                x,
                                trace,
                                panels,
+                               mapping,
                                error = "model",
                                error_exp = 1, 
                                error_arg = list(width = 0),
                                data_plot = TRUE,
-                               data_arg = list(color = "grey", alpha = 0.5),
-                               data_jitter_x = 0,
-                               data_jitter_y = 0,
-                               mapping_trace = c("shape", "linetype"),
+                               data_geom,
+                               data_alpha = 0.5,
+                               data_arg = list(color = "darkgrey"),
                                point_arg = list(),
                                line_arg = list(),
                                emmeans_arg = list(),
@@ -314,23 +330,37 @@ afex_plot.afex_aov <- function(object,
     if (return == "data") {
       return(list(means = emms, data = data))
     } else if (return == "plot") {
-      return(afex_interaction_plot(means = emms, 
-                                   data = data,
-                                   error_plot = plot_error,
-                                   error_exp = error_exp, 
-                                   error_arg = error_arg, 
-                                   dodge = dodge, 
-                                   data_plot = data_plot,
-                                   data_arg = data_arg,
-                                   data_jitter_x = data_jitter_x,
-                                   data_jitter_y = data_jitter_y,
-                                   point_arg = point_arg,
-                                   line_arg = line_arg,
-                                   mapping_trace = mapping_trace
-                                   ))
+      return(interaction_plot(means = emms, 
+                              data = data,
+                              error_plot = plot_error,
+                              error_exp = error_exp, 
+                              error_arg = error_arg, 
+                              dodge = dodge, 
+                              data_plot = data_plot,
+                              data_geom = data_geom,
+                              data_alpha = data_alpha,
+                              data_arg = data_arg,
+                              point_arg = point_arg,
+                              line_arg = line_arg,
+                              mapping = mapping
+      ))
     }
   } else {
     trace <- NULL
+    
+    return(oneway_plot(means = emms, 
+                       data = data,
+                       error_plot = plot_error,
+                       error_exp = error_exp, 
+                       error_arg = error_arg, 
+                       data_plot = data_plot,
+                       data_geom = data_geom,
+                       data_alpha = data_alpha,
+                       data_arg = data_arg,
+                       point_arg = point_arg,
+                       line_arg = line_arg,
+                       mapping = mapping
+    ))
     stop("plot without trace factor not yet implemented!")
   }
 }
@@ -347,32 +377,34 @@ get_plot_var <- function(x) {
 
 get_se <- function(x, na.rm = FALSE) sd(x, na.rm = na.rm)/sqrt(length(x))
 
-if(getRversion() >= "2.15.1")  utils::globalVariables(c("error", "y"))
+if(getRversion() >= "2.15.1")  utils::globalVariables(c("error", "y", "x"))
 #' @rdname afex_plot
 #' @export
-afex_interaction_plot <- function(means, 
-                                  data, 
-                                  error_plot = TRUE,
-                                  error_exp = 1, 
-                                  error_arg = list(width = 0),
-                                  data_plot = TRUE,
-                                  data_arg = list(color = "grey", alpha = 0.5),
-                                  data_jitter_x = 0,
-                                  data_jitter_y = 0,
-                                  point_arg = list(),
-                                  line_arg = list(),
-                                  mapping_trace = c("shape", "linetype"),
-                                  dodge = 0.2) {
+interaction_plot <- function(means, 
+                             data, 
+                             mapping = c("shape", "lineytpe"), 
+                             error_plot = TRUE,
+                             error_exp = 1, 
+                             error_arg = list(width = 0),
+                             data_plot = TRUE,
+                             data_geom = ggplot2::geom_point,
+                             data_alpha = 0.5,
+                             data_arg = list(color = "darkgrey"),
+                             point_arg = list(),
+                             line_arg = list(),
+                             dodge = 0.2) {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("package ggplot2 is required.", call. = FALSE)
   }
-  if (length(mapping_trace) == 0) {
-    stop("mapping_trace cannot be empty. Use any of 'shape', 'color', 'linetype'.", 
+  if (missing(mapping)) {
+    mapping <- c('shape', 'linetype')
+  } else if (length(mapping) == 0) {
+    stop("mapping cannot be empty. Use any of 'shape', 'color', 'linetype'.", 
          call. = FALSE)
   }
   
-  tmp_list <- as.list(rep("trace", length(mapping_trace)))
-  names(tmp_list) <- mapping_trace
+  tmp_list <- as.list(rep("trace", length(mapping)))
+  names(tmp_list) <- mapping
   plot_out <- ggplot2::ggplot(data = means, 
                               mapping = do.call(
                                 what = ggplot2::aes_string, 
@@ -383,16 +415,22 @@ afex_interaction_plot <- function(means,
                                   tmp_list)))
   
   if (data_plot) {
-    plot_out <- plot_out + 
-      do.call(what = ggplot2::geom_point, 
+    if (missing(data_geom)) {
+      data_geom <- ggplot2::geom_point
+    }
+    data_arg$alpha <- data_alpha
+    if (!("position" %in% names(data_arg)) & 
+        ("position" %in% names(formals(data_geom)))) {
+      data_arg$position = ggplot2::position_dodge(width = dodge)
+    }
+    plot_out <- plot_out +
+      do.call(what = data_geom,
               args = c(
+                mapping = list(ggplot2::aes(group = interaction(x, trace))),
                 data = list(data),
-                position = list(ggplot2::position_jitterdodge(
-                  jitter.width = data_jitter_x, 
-                  jitter.height = data_jitter_y, 
-                  dodge.width = dodge)),
                 data_arg
-              ))
+              )
+      )
   }
   
   plot_out <- plot_out + 
@@ -439,8 +477,8 @@ afex_interaction_plot <- function(means,
   }
   if (!is.null(attr(means, "trace"))) {
     tmp_list <- rep(list(ggplot2::guide_legend(title = attr(means, "trace"))), 
-                    length(mapping_trace))
-    names(tmp_list) <- mapping_trace
+                    length(mapping))
+    names(tmp_list) <- mapping
     plot_out <- plot_out + 
       do.call(what = ggplot2::guides, 
               args = tmp_list)
@@ -451,3 +489,88 @@ afex_interaction_plot <- function(means,
 }
 
 
+##if(getRversion() >= "2.15.1")  utils::globalVariables(c("error", "y"))
+#' @rdname afex_plot
+#' @export
+oneway_plot <- function(means, 
+                        data, 
+                        mapping = "",
+                        error_plot = TRUE,
+                        error_exp = 1, 
+                        error_arg = list(width = 0),
+                        data_plot = TRUE,
+                        data_geom = ggbeeswarm::geom_beeswarm,
+                        data_alpha = 0.5,
+                        data_arg = list(color = "darkgrey"),
+                        point_arg = list(),
+                        line_arg = list()) {
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("package ggplot2 is required.", call. = FALSE)
+  }
+  
+  if (missing(mapping)) {
+    mapping <- ""
+  }
+  
+  tmp_list <- as.list(rep("x", length(mapping)))
+  names(tmp_list) <- mapping
+  
+  plot_out <- ggplot2::ggplot(data = means, 
+                              mapping = do.call(
+                                what = ggplot2::aes_string, 
+                                args = c(list(
+                                  y = "y", 
+                                  x = "x", 
+                                  group = "x"),
+                                  tmp_list)))
+  
+  
+ if (data_plot) {
+    if (missing(data_geom)) {
+      if (!requireNamespace("ggbeeswarm", quietly = TRUE)) {
+        stop("package ggbeeswarm is required.", call. = FALSE)
+      }
+      data_geom <- ggbeeswarm::geom_beeswarm
+    }
+    data_arg$alpha <- data_alpha
+    plot_out <- plot_out +
+      do.call(what = data_geom,
+              args = c(
+                data = list(data),
+                data_arg
+              )
+      )
+  }
+  
+  plot_out <- plot_out + 
+    do.call(what = ggplot2::geom_point, 
+            args = point_arg) 
+
+  if (error_plot) {
+    plot_out <- plot_out + 
+      do.call(what = ggplot2::geom_errorbar, 
+              args = c(
+                mapping = list(ggplot2::aes(
+                  ymin = y - error_exp*error,
+                  ymax = y + error_exp*error)),
+                error_arg
+              ))
+  }
+  
+  if (length(unique(means$panels)) > 1) {
+    plot_out <- plot_out + 
+      ggplot2::facet_wrap(facets = "panels")
+  }
+  
+  ## add labels
+  if (!is.null(attr(means, "dv"))) {
+    plot_out <- plot_out + 
+      ggplot2::ylab(attr(means, "dv"))
+  }
+  if (!is.null(attr(means, "x"))) {
+    plot_out <- plot_out + 
+      ggplot2::xlab(attr(means, "x"))
+  }
+  
+  return(plot_out)
+}

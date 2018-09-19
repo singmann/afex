@@ -3,23 +3,30 @@
 \name{afex_plot}
 \alias{afex_plot}
 \alias{afex_plot.afex_aov}
-\alias{afex_interaction_plot}
+\alias{interaction_plot}
+\alias{oneway_plot}
 \title{m-way Interaction Plot with Error Bars and Raw Data}
 \usage{
 afex_plot(object, ...)
 
-\method{afex_plot}{afex_aov}(object, x, trace, panels, error = "model",
-  error_exp = 1, error_arg = list(width = 0), data_plot = TRUE,
-  data_arg = list(color = "grey", alpha = 0.5), data_jitter_x = 0,
-  data_jitter_y = 0, mapping_trace = c("shape", "linetype"),
-  point_arg = list(), line_arg = list(), emmeans_arg = list(),
-  dodge = 0.2, return = "plot", new_levels = list(), ...)
+\method{afex_plot}{afex_aov}(object, x, trace, panels, mapping,
+  error = "model", error_exp = 1, error_arg = list(width = 0),
+  data_plot = TRUE, data_geom, data_alpha = 0.5,
+  data_arg = list(color = "darkgrey"), point_arg = list(),
+  line_arg = list(), emmeans_arg = list(), dodge = 0.2,
+  return = "plot", new_levels = list(), ...)
 
-afex_interaction_plot(means, data, error_plot = TRUE, error_exp = 1,
-  error_arg = list(width = 0), data_plot = TRUE,
-  data_arg = list(color = "grey", alpha = 0.5), data_jitter_x = 0,
-  data_jitter_y = 0, point_arg = list(), line_arg = list(),
-  mapping_trace = c("shape", "linetype"), dodge = 0.2)
+interaction_plot(means, data, mapping = c("shape", "lineytpe"),
+  error_plot = TRUE, error_exp = 1, error_arg = list(width = 0),
+  data_plot = TRUE, data_geom = ggplot2::geom_point,
+  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
+  point_arg = list(), line_arg = list(), dodge = 0.2)
+
+oneway_plot(means, data, mapping = "", error_plot = TRUE,
+  error_exp = 1, error_arg = list(width = 0), data_plot = TRUE,
+  data_geom = ggbeeswarm::geom_beeswarm, data_alpha = 0.5,
+  data_arg = list(color = "darkgrey"), point_arg = list(),
+  line_arg = list())
 }
 \arguments{
 \item{object}{object of class \code{afex_aov} as returned from 
@@ -32,11 +39,19 @@ factor names of the predictors displayed on the x-axis.}
 
 \item{trace}{A \code{character} vector or one-sided \code{formula} specifying
 the factor names of the predictors connected by the same line. Argument 
-\code{mapping_trace} specifies further mappings for these factors.}
+\code{mapping} specifies further mappings for these factors. Optional.}
 
 \item{panels}{A \code{character} vector or one-sided \code{formula} 
 specifying the factor names of the predictors shown in different panels. 
 Optional.}
+
+\item{mapping}{A \code{character} vector specifying which aesthetic mappings 
+should be applied to either the \code{trace} factors (if \code{trace} is 
+specified) or the \code{x} factors. Useful options are any combination of 
+\code{"shape"}, \code{"color"}, and \code{"linetype"} or also \code{"fill"}
+(see examples). The default (i.e., missing) uses \code{c("shape",
+"lineytpe")} if \code{trace} is specified, otherwise \code{""} (i.e., no
+additional aesthetic).}
 
 \item{error}{A scalar \code{character} specifying which type of standard 
 error should be plotted. Default is \code{"model"}, which plots model-based
@@ -46,7 +61,8 @@ standard errors. Further options are: \code{"none"} (or \code{NULL}),
 
 \item{error_exp}{Numeric expansion factor for standard error. Default is 
 \code{1} which plots \code{+/- 1} standard error. \code{qnorm(0.975)} or 
-\code{1.96} plots 95\% confidence intervals.}
+\code{1.96} plots 95\% confidence intervals based on the normal
+distribution.}
 
 \item{error_arg}{A \code{list} of further arguments passed to 
 \code{\link[ggplot2]{geom_errorbar}}, which draws the errorsbars. Default 
@@ -56,21 +72,20 @@ the error bar.}
 \item{data_plot}{\code{logical}. Should raw data be plotted in the 
 background? Default is \code{TRUE}.}
 
+\item{data_geom}{Geom \code{function} used for plotting data in background. 
+The default (missing) uses \code{\link[ggplot2]{geom_point}} if \code{trace}
+is specified, otherwise \code{\link[ggbeeswarm]{geom_beeswarm}}. See
+examples.}
+
+\item{data_alpha}{\code{alpha} value passed to \code{data_geom}.}
+
 \item{data_arg}{A \code{list} of further arguments passed to 
-\code{\link[ggplot2]{geom_point}}, which draws the raw data points in the 
-background. Default is \code{list(color = "grey", alpha = 0.5)}.}
-
-\item{data_jitter_x, data_jitter_y}{Amount of jitter on the x- or y-axis added
-to the data points in the background. Default is 0.}
-
-\item{mapping_trace}{A \code{character} vector specifying which aesthetic 
-mappings should be applied to the \code{trace} factors. Default is 
-\code{c("shape", "linetype")}. A further possibility is \code{"color"}. Any
-combination of these three is possible.}
+\code{data_geom}. Default is \code{list(color = "darkgrey")}.}
 
 \item{point_arg, line_arg}{A \code{list} of further arguments passed to 
 \code{\link[ggplot2]{geom_point}} or \code{\link[ggplot2]{geom_line}} which
-draw the points and lines in the foreground. Default is \code{list()}.}
+draw the points and lines in the foreground. Default is \code{list()}.
+\code{line_arg} is only used if \code{trace} is specified.}
 
 \item{emmeans_arg}{A \code{list} of further arguments passed to 
 \code{\link[emmeans]{emmeans}}. Of particular importance for ANOVAs is 
@@ -93,8 +108,8 @@ factors in the plot.}
 columns \code{y}, \code{x}, \code{trace}, and \code{error} (only in 
 \code{means}).}
 
-\item{error_plot}{\code{logical}. Should error bars be plotted? Only relevant
-in \code{afex_interaction_plot}. Use \code{error = "none"} otherwise.}
+\item{error_plot}{\code{logical}. Should error bars be plotted? Only used in
+plotting functions. Use \code{error = "none"} otherwise.}
 }
 \value{
 Returns a \pkg{ggplot2} plot (i.e., object of class \code{c("gg",
@@ -108,22 +123,31 @@ Plots results from factorial experiments. Estimated marginal
   are extremely flexible and allow customization of almost any characteristic
   of the plot.
   
-  \code{afex_plot} is the most user friendly function that does data 
-  preparation and plotting, but also allows to only return the prepared data 
-  (\code{return = "data"}).
+  \code{afex_plot} is the user friendly function that does data preparation
+  and plotting. It also allows to only return the prepared data (\code{return
+  = "data"}).
   
-  \code{afex_interaction_plot} does the plotting when a \code{trace} factor 
-  is present and takes the prepared data.
+  \code{interaction_plot} does the plotting when a \code{trace} factor is
+  present. \code{oneway_plot} does the plotting when a \code{trace} factor is
+  absent.
 }
 \details{
-Error bars provide a grahical representation of the variability of 
-  the estimated means and should be routinely added to results figures. 
-  However, there exist several possibilities which particular measure of 
-  variability to use. Because of this, any figure depicting error bars should
-  be accompanied by a note detailing which measure the error bars shows. The 
-  present functions allow plotting of different types of standard errors (if 
-  \code{error_exp = 1}) or confidence intervals (e.g., 95\% confidence 
-  intervals based on the normal distribution if \code{error_exp = 1.96}).
+\code{afex_plot} obtains the estimated marginal means via
+  \code{\link[emmeans]{emmeans}} and aggregates the raw data to the same
+  level. It then calculates the desired standard error (see below) and passes
+  the prepared data to one of the two plotting functions:
+  \code{interaction_plot} when \code{trace} is specified and
+  \code{oneway_plot} otherwise.
+
+  \subsection{Error Bars}{Error bars provide a grahical representation of the
+  variability of the estimated means and should be routinely added to results
+  figures. However, there exist several possibilities which particular
+  measure of variability to use. Because of this, any figure depicting error
+  bars should be accompanied by a note detailing which measure the error bars
+  shows. The present functions allow plotting of different types of standard
+  errors (if \code{error_exp = 1}) or confidence intervals (e.g., 95\%
+  confidence intervals based on the normal distribution if \code{error_exp =
+  1.96}).
   
   A further complication is that readers routinely misinterpret confidence 
   intervals. The most common error is to assume that non-overlapping error 
@@ -167,8 +191,8 @@ Error bars provide a grahical representation of the variability of
     \item \emph{p} < .01 when the two CIs do not overlap, that is, when
     proportion overlap is about 0 or there is a positive gap.
   }   
-  
-  \subsection{Implemented Approaches}{
+  }
+  \subsection{Implemented Standard Errors}{
   The following lists the implemented approaches to calculate standard
   errors (SEs). These can be used to construe confidence intervals via the
   \code{error_exp} argument.
@@ -201,17 +225,18 @@ Error bars provide a grahical representation of the variability of
 data(md_12.1)
 aw <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
 
-## basic functionality
-afex_plot(aw, x = ~angle, trace = ~noise)
+##---------------------------------------------------------------
+##                    Basic Interaction Plots                   -
+##---------------------------------------------------------------
+
+afex_plot(aw, x = "angle", trace = "noise") 
+# or: afex_plot(aw, x = ~angle, trace = ~noise)
 
 afex_plot(aw, x = "noise", trace = "angle")
 
-## adjust jitter on y-axis for raw data in background
-## use within-subject confidence intervals
-p1 <- afex_plot(aw, x = "noise", trace = "angle", 
-                error = "within-SE", error_exp = 1.96,
-                data_jitter_y = 5)
-p1
+### For within-subject designs, using within-subject CIs is probably better:
+(p1 <- afex_plot(aw, x = "noise", trace = "angle", 
+                 error = "within-SE", error_exp = 1.96))
 
 ## use different themes for nicer graphs:
 p1 + ggplot2::theme_classic()
@@ -220,7 +245,121 @@ p1 + ggplot2::theme_minimal()
 \dontrun{
 p1 + jtools::theme_apa()
 p1 + ggpubr::theme_pubr()
+
+### set theme globally for R session:
+ggplot2::theme_set(ggplot2::theme_light())
 }
+
+### There are several ways to deal with overlapping points in the background besides alpha
+
+# 1. using the default data geom and ggplot2::position_jitterdodge
+afex_plot(aw, x = "noise", trace = "angle", dodge = 0.2,
+          data_arg = list(
+            position = 
+              ggplot2::position_jitterdodge(
+                jitter.width = 0, 
+                jitter.height = 2, 
+                dodge.width = 0.2  ## needs to be same as dodge
+                ),
+            color = "darkgrey"))
+
+\dontrun{
+# 2. using ggbeeswarm::geom_beeswarm
+afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+          data_geom = ggbeeswarm::geom_beeswarm,
+          data_arg = list(
+            dodge.width = 0.5,  ## needs to be same as dodge
+            cex = 0.8,
+            color = "darkgrey"
+          ))
+}
+
+# 3. do not display points, but use a violinplot: ggplot2::geom_violin
+afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+          data_geom = ggplot2::geom_violin, 
+          data_arg = list(width = 0.5))
+
+# 4. violinplots with color: ggplot2::geom_violin
+afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5, 
+          mapping = c("linetype", "shape", "fill"),
+          data_geom = ggplot2::geom_violin, 
+          data_arg = list(width = 0.5))
+
+# 5. do not display points, but use a boxplot: ggplot2::geom_violin
+afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+          data_geom = ggplot2::geom_boxplot, 
+          data_arg = list(width = 0.3))
+          
+\dontrun{
+# 6. combine points with boxplot: ggpol::geom_boxjitter
+## currently requires attaching ggpol explicitly:
+library("ggpol")
+afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(width = 0.3))
+## hides error bars!
+
+# 7. nicer variant of ggpol::geom_boxjitter
+afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+          mapping = c("shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(
+            width = 0.3, 
+            jitter.width = 0,
+            jitter.height = 10,
+            outlier.intersect = TRUE),
+          point_arg = list(size = 2.5), 
+          error_arg = list(size = 1.5, width = 0))
+
+
+# 8. nicer variant of ggpol::geom_boxjitter without lines
+afex_plot(aw, x = "noise", trace = "angle", dodge = 0.7,
+          mapping = c("shape", "fill"),
+          data_geom = ggpol::geom_boxjitter, 
+          data_arg = list(
+            width = 0.5, 
+            jitter.width = 0,
+            jitter.height = 10,
+            outlier.intersect = TRUE),
+          point_arg = list(size = 2.5), 
+          line_arg = list(linetype = 0),
+          error_arg = list(size = 1.5, width = 0))
+}
+
+
+##---------------------------------------------------------------
+##                      Basic One-Way Plots                     -
+##---------------------------------------------------------------
+
+afex_plot(aw, x = "angle") ## default
+
+## with color we need larger points
+afex_plot(aw, x = "angle", mapping = "color", 
+          point_arg = list(size = 2.5), 
+          error_arg = list(size = 1.5, width = 0.05)) 
+
+\dontrun{
+library("ggpol") ## currently required for combination of boxplot and points
+afex_plot(aw, x = "angle", data_geom = ggpol::geom_boxjitter)
+
+## nicer with within-subject CIs:
+afex_plot(aw, x = "angle", data_geom = ggpol::geom_boxjitter, 
+          mapping = "fill", data_alpha = 0.7, 
+          data_arg = list(
+            width = 0.6, 
+            jitter.width = 0.07,
+            jitter.height = 10,
+            outlier.intersect = TRUE
+          ),
+          point_arg = list(size = 2.5), 
+          error_arg = list(size = 1.5, width = 0.05),
+          error = "within-SE", error_exp = 1.96)
+}
+
+
+##---------------------------------------------------------------
+##                      Other Basic Options                     -
+##---------------------------------------------------------------
 
 ## relabel factor levels via new_levels
 afex_plot(aw, x = "noise", trace = "angle", 
@@ -246,36 +385,58 @@ afex_plot(a1, ~hour, ~treatment, ~phase) +
 ## even better and different model-based standard errors
 afex_plot(a1, ~hour, ~treatment, ~phase, 
           dodge = 0.65, 
-          data_arg = list(alpha = 0.3, color = "darkgrey"),
-          data_jitter_y = 0.1, 
+          data_arg = list(
+            position = 
+              ggplot2::position_jitterdodge(
+                jitter.width = 0, 
+                jitter.height = 0.2, 
+                dodge.width = 0.65  ## needs to be same as dodge
+                ),
+            color = "darkgrey"),
           emmeans_arg = list(model = "multivariate")) +
   ggplot2::theme_light()
 
 # with color instead of linetype to separate trace factor
 afex_plot(a1, ~hour, ~treatment, ~phase, 
-          mapping_trace = c("shape", "color"),
+          mapping = c("shape", "color"),
           dodge = 0.65, 
-          data_arg = list(alpha = 0.5),
-          data_jitter_y = 0.1, 
+          data_arg = list(
+            position = 
+              ggplot2::position_jitterdodge(
+                jitter.width = 0, 
+                jitter.height = 0.2, 
+                dodge.width = 0.65  ## needs to be same as dodge
+                )),
           emmeans_arg = list(model = "multivariate")) +
   ggplot2::theme_light()
 
-
 # only color to separate trace factor
 afex_plot(a1, ~hour, ~treatment, ~phase, 
-          mapping_trace = c("color"), 
-          point_arg = list(shape = 15),
+          mapping = "color",
           dodge = 0.65, 
-          data_arg = list(alpha = 0.5, shape = 15),
-          data_jitter_y = 0.1, 
+          data_arg = list(
+            position = 
+              ggplot2::position_jitterdodge(
+                jitter.width = 0, 
+                jitter.height = 0.2, 
+                dodge.width = 0.65  ## needs to be same as dodge
+                )),
           emmeans_arg = list(model = "multivariate")) +
   ggplot2::theme_light()
 
 
 ## plot involving all 4 factors:
 afex_plot(a1, ~hour, ~treatment, ~gender+phase, 
-          emmeans_arg = list(model = "multivariate"), 
-          dodge = 0.6, data_arg = list(alpha = 0.4, color = "darkgrey")) +
+          dodge = 0.65, 
+          data_arg = list(
+            position = 
+              ggplot2::position_jitterdodge(
+                jitter.width = 0, 
+                jitter.height = 0.2, 
+                dodge.width = 0.65  ## needs to be same as dodge
+                ),
+            color = "darkgrey"),
+          emmeans_arg = list(model = "multivariate")) +
   ggplot2::theme_light()
 
 
@@ -316,7 +477,7 @@ Belia, S., Fidler, F., Williams, J., & Cumming, G. (2005).
   \emph{Psychological Methods}, 10(4), 389-396.
   https://doi.org/10.1037/1082-989X.10.4.389
   
-  Cousineau, D., & O’Brien, F. (2014). Error bars in within-subject designs:
+  Cousineau, D., & O'Brien, F. (2014). Error bars in within-subject designs:
   a comment on Baguley (2012). \emph{Behavior Research Methods}, 46(4),
   1149-1151. https://doi.org/10.3758/s13428-013-0441-z
   

@@ -277,6 +277,18 @@ afex_plot.afex_aov <- function(object,
     between_fac <- factor(rep("1", nrow(data)))
   }
   
+  if (error %in% c("model", "mean", "between") && 
+      all(c(x, trace) %in% within_vars)) {
+    warning("Panel(s) show within-subjects factors, but no within-subjects error bars.", call. = FALSE)
+  } else if (error %in% c("within", "CMO") && 
+      all(c(x, trace) %in% between_vars)) {
+    warning("Panel(s) show between-subjects factors, but within-subjects error bars.", call. = FALSE)
+  } else if (any(between_vars %in% c(x, trace)) && 
+             any(within_vars %in% c(x, trace)) && 
+             error != "none") {
+    warning("Panel(s) show a mixed within-between-design.\nError bars do not allow comparisons across all means.", call. = FALSE)
+  }
+  
   ## SE/CI calculation:
   if (error == "model") {
     emms$error <- emms$SE
@@ -375,7 +387,6 @@ afex_plot.afex_aov <- function(object,
                          data_alpha = data_alpha,
                          data_arg = data_arg,
                          point_arg = point_arg,
-                         line_arg = line_arg,
                          mapping = mapping
       ))
     }
@@ -524,7 +535,6 @@ oneway_plot <- function(means,
                         data_alpha = 0.5,
                         data_arg = list(color = "darkgrey"),
                         point_arg = list(),
-                        line_arg = list(),
                         col_x = "x",
                         col_y = "y",
                         col_panel = "panel",

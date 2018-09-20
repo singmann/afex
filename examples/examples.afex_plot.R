@@ -16,9 +16,7 @@ afex_plot(aw, x = "angle", trace = "noise")
 afex_plot(aw, x = "noise", trace = "angle")
 
 ### For within-subject designs, using within-subject CIs is better:
-
 afex_plot(aw, x = "angle", trace = "noise", error = "within") 
-
 (p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within"))
 
 ## use different themes for nicer graphs:

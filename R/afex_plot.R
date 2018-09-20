@@ -197,6 +197,41 @@
 afex_plot <- function(object, ...) UseMethod("afex_plot", object)
 
 
+
+get_emms <- function(object, 
+                     x,
+                     trace,
+                     panels,
+                     emmeans_arg, 
+                     new_levels) {
+  if (!requireNamespace("emmeans", quietly = TRUE)) {
+    stop("package emmeans is required.", call. = FALSE)
+  }
+  
+  all_vars <- c(x, trace, panels)
+  
+  emms <- as.data.frame(do.call(emmeans::emmeans, 
+                                args = c(object = list(object), 
+                                         specs = list(all_vars), 
+                                         emmeans_arg)))
+  for (i in seq_along(new_levels)) {
+    levels(emms[[names(new_levels)[i]]]) <- new_levels[[i]]
+  }
+  emms$x <- interaction(emms[x], sep = "\n")
+  colnames(emms)[colnames(emms) == "emmean"] <- "y"
+  attr(emms, "dv") <- attr(object, "dv")
+  attr(emms, "x") <- paste(x, sep = "\n")
+  if (length(panels) > 0) {
+    emms$panels <- interaction(emms[panels], sep = "\n")
+  } else {
+    emms$panels <- "1"
+  }
+  emms$all_vars <- interaction(emms[all_vars], sep = ".")
+  
+  return(emms)
+}
+
+
 # @method afex_plot afex_aov
 #' @rdname afex_plot
 #' @export
@@ -219,9 +254,6 @@ afex_plot.afex_aov <- function(object,
                                return = "plot",
                                new_levels = list(),
                                ...) {
-  if (!requireNamespace("emmeans", quietly = TRUE)) {
-    stop("package emmeans is required.", call. = FALSE)
-  }
   
   return <- match.arg(return, c("plot", "data"))
   error <- match.arg(error, c("none", 
@@ -229,27 +261,19 @@ afex_plot.afex_aov <- function(object,
                               "mean-SE", 
                               "within-SE", "CMO",
                               "between-SE"))
-  all_vars <- c(get_plot_var(x), get_plot_var(trace), get_plot_var(panels))
   
-  emms <- as.data.frame(do.call(emmeans::emmeans, 
-                                args = c(object = list(object), 
-                                         specs = list(all_vars), 
-                                         emmeans_arg)))
-  for (i in seq_along(new_levels)) {
-    levels(emms[[names(new_levels)[i]]]) <- new_levels[[i]]
-  }
+  
   x <- get_plot_var(x)
-  emms$x <- interaction(emms[x], sep = "\n")
-  colnames(emms)[colnames(emms) == "emmean"] <- "y"
-  attr(emms, "dv") <- attr(object, "dv")
-  attr(emms, "x") <- paste(x, sep = "\n")
-  if (!missing(panels)) {
-    emms$panels <- interaction(emms[get_plot_var(panels)], sep = "\n")
-  } else {
-    emms$panels <- "1"
-  }
-  emms$all_vars <- interaction(emms[all_vars], sep = ".")
+  trace <- get_plot_var(trace)
+  panels <- get_plot_var(panels)
+  all_vars <- c(x, trace, panels)
   
+  emms <- get_emms(object = object, 
+                   x = x,
+                   trace = trace,
+                   panels = panels,
+                   emmeans_arg = emmeans_arg, 
+                   new_levels = new_levels)
   
   ## prepare raw (i.e., participant by cell) data
   data <- object$data$long
@@ -321,8 +345,7 @@ afex_plot.afex_aov <- function(object,
     plot_error <- FALSE  
   }
   
-  if (!missing(trace)) {
-    trace <- get_plot_var(trace)
+  if (length(trace) > 0) {
     attr(emms, "trace") <- paste(trace, sep = "\n")
     emms$trace <- interaction(emms[trace], sep = "\n")
     data$trace <- interaction(data[trace], sep = "\n")
@@ -346,7 +369,6 @@ afex_plot.afex_aov <- function(object,
       ))
     }
   } else {
-    trace <- NULL
     
     return(oneway_plot(means = emms, 
                        data = data,

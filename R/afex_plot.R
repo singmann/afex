@@ -35,8 +35,13 @@
 #' @param error A scalar \code{character} vector specifying which type of
 #'   standard error should be plotted. Default is \code{"model"}, which plots
 #'   model-based standard errors. Further options are: \code{"none"} (or
-#'   \code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and 
-#'   \code{"between"}. See details.
+#'   \code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and
+#'   \code{"between"}. Currently ignored for the \code{mixed} method. See
+#'   details.
+#' @param random A \code{character} vector specifying over which variables the
+#'   raw data should be aggregated in case of \code{mixed} objects. The default
+#'   (missing) uses all random effects grouping factors which can lead to many
+#'   data points. See examples.
 #' @param error_ci Logical. Should error bars plot confidence intervals
 #'   (=\code{TRUE}, the default) or standard errors (=\code{FALSE})?
 #' @param error_level Numeric value between 0 and 1 determing the width of the
@@ -204,6 +209,119 @@
 #' @export
 afex_plot <- function(object, ...) UseMethod("afex_plot", object)
 
+
+# @method afex_plot afex_aov
+#' @rdname afex_plot
+#' @export
+afex_plot.mixed <- function(object, 
+                            x,
+                            trace,
+                            panel,
+                            mapping,
+                            random,
+                            error = "model",
+                            error_ci = TRUE,
+                            error_level = 0.95, 
+                            error_arg = list(width = 0),
+                            data_plot = TRUE,
+                            data_geom,
+                            data_alpha = 0.5,
+                            data_arg = list(color = "darkgrey"),
+                            point_arg = list(),
+                            line_arg = list(),
+                            emmeans_arg = list(),
+                            dodge = 0.2,
+                            return = "plot",
+                            new_levels = list(),
+                            ...) {
+  
+  return <- match.arg(return, c("plot", "data"))
+  error <- match.arg(error, c("none", 
+                              "model", 
+                              "mean", 
+                              "within", "CMO",
+                              "between"))
+  
+  x <- get_plot_var(x)
+  trace <- get_plot_var(trace)
+  panel <- get_plot_var(panel)
+  all_vars <- c(x, trace, panel)
+  
+  emms <- get_emms(object = object, 
+                   x = x,
+                   trace = trace,
+                   panel = panel,
+                   emmeans_arg = emmeans_arg, 
+                   new_levels = new_levels,
+                   level = error_level)
+  
+  data <- object$data
+  for (i in seq_along(new_levels)) {
+    levels(data[[names(new_levels)[i]]]) <- new_levels[[i]]
+  }
+  #data$y <- residuals(object$full_model)
+  #data$y <- predict(object$full_model)
+  #coef(object$full_model)
+  data$y <- data[,deparse(object$full_model@call[["formula"]][[2]])]
+  if (missing(random)) {
+    random <- names(lme4::ranef(object$full_model))
+    message("Aggregating data over: ", paste(random, collapse = ", "))
+  }
+  data <- aggregate(data$y, by = data[c(all_vars,random)], 
+                    FUN = mean, drop = TRUE)
+  data$y <- data$x
+  data$x <- interaction(data[x], sep = "\n")
+  data$all_vars <- interaction(data[all_vars], sep = ".")
+  
+  plot_error <- TRUE
+  ## for now, only model based error bars:
+  emms$error <- emms$SE
+  col_cis <- grep("CL", colnames(emms), value = TRUE)
+  col_cis <- col_cis[!(col_cis %in% all_vars)]
+  emms$lower <- emms[,col_cis[1]]
+  emms$upper <- emms[,col_cis[2]]
+  
+  if (length(trace) > 0) {
+    attr(emms, "trace") <- paste(trace, sep = "\n")
+    emms$trace <- interaction(emms[trace], sep = "\n")
+    data$trace <- interaction(data[trace], sep = "\n")
+    
+    if (return == "data") {
+      return(list(means = emms, data = data))
+    } else if (return == "plot") {
+      return(interaction_plot(means = emms, 
+                              data = data,
+                              error_plot = plot_error,
+                              error_arg = error_arg, 
+                              dodge = dodge, 
+                              data_plot = data_plot,
+                              data_geom = data_geom,
+                              data_alpha = data_alpha,
+                              data_arg = data_arg,
+                              point_arg = point_arg,
+                              line_arg = line_arg,
+                              mapping = mapping
+      ))
+    }
+  } else {
+    if (return == "data") {
+      return(list(means = emms, data = data))
+    } else if (return == "plot") {
+      return(oneway_plot(means = emms, 
+                         data = data,
+                         error_plot = plot_error,
+                         error_arg = error_arg, 
+                         data_plot = data_plot,
+                         data_geom = data_geom,
+                         data_alpha = data_alpha,
+                         data_arg = data_arg,
+                         point_arg = point_arg,
+                         mapping = mapping
+      ))
+    }
+  }
+
+}
 
 # @method afex_plot afex_aov
 #' @rdname afex_plot
@@ -427,7 +545,6 @@ interaction_plot <- function(means,
     stop("mapping cannot be empty. Possible values: 'shape', 'color', 'linetype'.", 
          call. = FALSE)
   }
-  
   tmp_list <- as.list(rep(col_trace, length(mapping)))
   names(tmp_list) <- mapping
   plot_out <- ggplot2::ggplot(data = means, 

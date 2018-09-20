@@ -251,3 +251,30 @@ cbind(
                      error = "within", return = "data")$means$error,
   between = afex_plot(a1, ~phase, ~treatment, 
                       error = "between", return = "data")$means$error)
+
+##################################################################
+##                         Mixed Models                         ##
+##################################################################
+
+data("Machines", package = "MEMSS") 
+m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines)
+
+afex_plot(m1, "Machine")
+
+pairs(emmeans::emmeans(m1, "Machine"))
+
+\dontrun{
+data("fhch2010") # load 
+fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
+### following model should take less than a minute to fit:
+mrt <- mixed(log_rt ~ task*stimulus*frequency + (stimulus*frequency||id)+
+               (task||item), fhch, method = "S", expand_re = TRUE)
+## way too many points in background:
+afex_plot(mrt, "stimulus", "frequency", "task") 
+
+## better to restrict plot of data to one random-effects grouping variable
+afex_plot(mrt, "stimulus", "frequency", "task", random = "id")
+afex_plot(mrt, "stimulus", "frequency", "task", random = "item")
+
+afex_plot(mrt, "frequency", "stimulus", "task", random = "id")
+}

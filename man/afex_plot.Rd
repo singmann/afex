@@ -2,12 +2,20 @@
 % Please edit documentation in R/afex_plot.R
 \name{afex_plot}
 \alias{afex_plot}
+\alias{afex_plot.mixed}
 \alias{afex_plot.afex_aov}
 \alias{interaction_plot}
 \alias{oneway_plot}
 \title{m-way Interaction Plot with Error Bars and Raw Data}
 \usage{
 afex_plot(object, ...)
+
+\method{afex_plot}{mixed}(object, x, trace, panel, mapping, random,
+  error = "model", error_ci = TRUE, error_level = 0.95,
+  error_arg = list(width = 0), data_plot = TRUE, data_geom,
+  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
+  point_arg = list(), line_arg = list(), emmeans_arg = list(),
+  dodge = 0.2, return = "plot", new_levels = list(), ...)
 
 \method{afex_plot}{afex_aov}(object, x, trace, panel, mapping,
   error = "model", error_ci = TRUE, error_level = 0.95,
@@ -56,11 +64,17 @@ specified) or the \code{x} factors. Useful options are any combination of
 "lineytpe")} if \code{trace} is specified, otherwise \code{""} (i.e., no
 additional aesthetic).}
 
+\item{random}{A \code{character} vector specifying over which variables the
+raw data should be aggregated in case of \code{mixed} objects. The default
+(missing) uses all random effects grouping factors which can lead to many
+data points. See examples.}
+
 \item{error}{A scalar \code{character} vector specifying which type of
 standard error should be plotted. Default is \code{"model"}, which plots
 model-based standard errors. Further options are: \code{"none"} (or
-\code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and 
-\code{"between"}. See details.}
+\code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and
+\code{"between"}. Currently ignored for the \code{mixed} method. See
+details.}
 
 \item{error_ci}{Logical. Should error bars plot confidence intervals
 (=\code{TRUE}, the default) or standard errors (=\code{FALSE})?}
@@ -249,9 +263,7 @@ afex_plot(aw, x = "angle", trace = "noise")
 afex_plot(aw, x = "noise", trace = "angle")
 
 ### For within-subject designs, using within-subject CIs is better:
-
 afex_plot(aw, x = "angle", trace = "noise", error = "within") 
-
 (p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within"))
 
 ## use different themes for nicer graphs:
@@ -486,6 +498,33 @@ cbind(
                      error = "within", return = "data")$means$error,
   between = afex_plot(a1, ~phase, ~treatment, 
                       error = "between", return = "data")$means$error)
+
+##################################################################
+##                         Mixed Models                         ##
+##################################################################
+
+data("Machines", package = "MEMSS") 
+m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines)
+
+afex_plot(m1, "Machine")
+
+pairs(emmeans::emmeans(m1, "Machine"))
+
+\dontrun{
+data("fhch2010") # load 
+fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
+### following model should take less than a minute to fit:
+mrt <- mixed(log_rt ~ task*stimulus*frequency + (stimulus*frequency||id)+
+               (task||item), fhch, method = "S", expand_re = TRUE)
+## way too many points in background:
+afex_plot(mrt, "stimulus", "frequency", "task") 
+
+## better to restrict plot of data to one random-effects grouping variable
+afex_plot(mrt, "stimulus", "frequency", "task", random = "id")
+afex_plot(mrt, "stimulus", "frequency", "task", random = "item")
+
+afex_plot(mrt, "frequency", "stimulus", "task", random = "id")
+}
 }
 \references{
 Belia, S., Fidler, F., Williams, J., & Cumming, G. (2005).

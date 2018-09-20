@@ -15,9 +15,11 @@ afex_plot(aw, x = "angle", trace = "noise")
 
 afex_plot(aw, x = "noise", trace = "angle")
 
-### For within-subject designs, using within-subject CIs is probably better:
-(p1 <- afex_plot(aw, x = "noise", trace = "angle", 
-                 error = "within-SE", error_exp = 1.96))
+### For within-subject designs, using within-subject CIs is better:
+
+afex_plot(aw, x = "angle", trace = "noise", error = "within") 
+
+(p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within"))
 
 ## use different themes for nicer graphs:
 p1 + ggplot2::theme_classic()
@@ -34,7 +36,7 @@ ggplot2::theme_set(ggplot2::theme_light())
 ### There are several ways to deal with overlapping points in the background besides alpha
 
 # 1. using the default data geom and ggplot2::position_jitterdodge
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.2,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.2,
           data_arg = list(
             position = 
               ggplot2::position_jitterdodge(
@@ -46,7 +48,7 @@ afex_plot(aw, x = "noise", trace = "angle", dodge = 0.2,
 
 \dontrun{
 # 2. using ggbeeswarm::geom_beeswarm
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggbeeswarm::geom_beeswarm,
           data_arg = list(
             dodge.width = 0.5,  ## needs to be same as dodge
@@ -56,18 +58,18 @@ afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
 }
 
 # 3. do not display points, but use a violinplot: ggplot2::geom_violin
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggplot2::geom_violin, 
           data_arg = list(width = 0.5))
 
 # 4. violinplots with color: ggplot2::geom_violin
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5, 
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5, 
           mapping = c("linetype", "shape", "fill"),
           data_geom = ggplot2::geom_violin, 
           data_arg = list(width = 0.5))
 
 # 5. do not display points, but use a boxplot: ggplot2::geom_violin
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggplot2::geom_boxplot, 
           data_arg = list(width = 0.3))
           
@@ -75,13 +77,13 @@ afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
 # 6. combine points with boxplot: ggpol::geom_boxjitter
 ## currently requires attaching ggpol explicitly:
 library("ggpol")
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(width = 0.3))
 ## hides error bars!
 
 # 7. nicer variant of ggpol::geom_boxjitter
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           mapping = c("shape", "fill"),
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(
@@ -94,7 +96,7 @@ afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
 
 
 # 8. nicer variant of ggpol::geom_boxjitter without lines
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.7,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
           mapping = c("shape", "fill"),
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(
@@ -112,19 +114,19 @@ afex_plot(aw, x = "noise", trace = "angle", dodge = 0.7,
 ##                      Basic One-Way Plots                     -
 ##---------------------------------------------------------------
 
-afex_plot(aw, x = "angle") ## default
+afex_plot(aw, x = "angle", error = "within") ## default
 
 ## with color we need larger points
-afex_plot(aw, x = "angle", mapping = "color", 
+afex_plot(aw, x = "angle", mapping = "color", error = "within", 
           point_arg = list(size = 2.5), 
           error_arg = list(size = 1.5, width = 0.05)) 
 
 \dontrun{
 library("ggpol") ## currently required for combination of boxplot and points
-afex_plot(aw, x = "angle", data_geom = ggpol::geom_boxjitter)
+afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter)
 
-## nicer with within-subject CIs:
-afex_plot(aw, x = "angle", data_geom = ggpol::geom_boxjitter, 
+## nicer
+afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter, 
           mapping = "fill", data_alpha = 0.7, 
           data_arg = list(
             width = 0.6, 
@@ -134,7 +136,7 @@ afex_plot(aw, x = "angle", data_geom = ggpol::geom_boxjitter,
           ),
           point_arg = list(size = 2.5), 
           error_arg = list(size = 1.5, width = 0.05),
-          error = "within-SE", error_exp = 1.96)
+          error_exp = 1.96)
 }
 
 
@@ -233,11 +235,11 @@ cbind(
                            emmeans_arg = list(model = "multivariate"),
                            error = "model", return = "data")$means$error,
   mean = afex_plot(a1, ~phase, ~hour, 
-                    error = "mean-SE", return = "data")$means$error,
+                    error = "mean", return = "data")$means$error,
   within = afex_plot(a1, ~phase, ~hour, 
-                     error = "within-SE", return = "data")$means$error,
+                     error = "within", return = "data")$means$error,
   between = afex_plot(a1, ~phase, ~hour, 
-                      error = "between-SE", return = "data")$means$error)
+                      error = "between", return = "data")$means$error)
 ## mixed design
 cbind(
   afex_plot(a1, ~phase, ~treatment, 
@@ -246,8 +248,8 @@ cbind(
                            emmeans_arg = list(model = "multivariate"),
                            error = "model", return = "data")$means$error,
   mean = afex_plot(a1, ~phase, ~treatment, 
-                    error = "mean-SE", return = "data")$means$error,
+                    error = "mean", return = "data")$means$error,
   within = afex_plot(a1, ~phase, ~treatment, 
-                     error = "within-SE", return = "data")$means$error,
+                     error = "within", return = "data")$means$error,
   between = afex_plot(a1, ~phase, ~treatment, 
-                      error = "between-SE", return = "data")$means$error)
+                      error = "between", return = "data")$means$error)

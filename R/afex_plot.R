@@ -22,7 +22,7 @@
 #' @param trace A \code{character} vector or one-sided \code{formula} specifying
 #'   the factor names of the predictors connected by the same line. Argument 
 #'   \code{mapping} specifies further mappings for these factors. Optional.
-#' @param panels A \code{character} vector or one-sided \code{formula} 
+#' @param panel A \code{character} vector or one-sided \code{formula} 
 #'   specifying the factor names of the predictors shown in different panels. 
 #'   Optional.
 #' @param mapping A \code{character} vector specifying which aesthetic mappings 
@@ -32,15 +32,16 @@
 #'   (see examples). The default (i.e., missing) uses \code{c("shape",
 #'   "lineytpe")} if \code{trace} is specified, otherwise \code{""} (i.e., no
 #'   additional aesthetic).
-#' @param error A scalar \code{character} specifying which type of standard 
-#'   error should be plotted. Default is \code{"model"}, which plots model-based
-#'   standard errors. Further options are: \code{"none"} (or \code{NULL}),
-#'   \code{"mean-SE"}, \code{"within-SE"} (or \code{"CMO"}), and 
-#'   \code{"between-SE"}. See details.
-#' @param error_exp Numeric expansion factor for standard error. Default is 
-#'   \code{1} which plots \code{+/- 1} standard error. \code{qnorm(0.975)} or 
-#'   \code{1.96} plots 95\% confidence intervals based on the normal
-#'   distribution.
+#' @param error A scalar \code{character} vector specifying which type of
+#'   standard error should be plotted. Default is \code{"model"}, which plots
+#'   model-based standard errors. Further options are: \code{"none"} (or
+#'   \code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and 
+#'   \code{"between"}. See details.
+#' @param error_ci Logical. Should error bars plot confidence intervals
+#'   (=\code{TRUE}, the default) or standard errors (=\code{FALSE})?
+#' @param error_level Numeric value between 0 and 1 determing the width of the
+#'   confidence interval. Default is .95 corresponding to a 95\% confidence
+#'   interval.
 #' @param error_arg A \code{list} of further arguments passed to 
 #'   \code{\link[ggplot2]{geom_errorbar}}, which draws the errorsbars. Default 
 #'   is \code{list(width = 0)} which suppresses the vertical bars at the end of 
@@ -71,29 +72,34 @@
 #' @param new_levels A \code{list} of new factor levels that should be used in 
 #'   the plot. The name of each list entry needs to correspond to one of the 
 #'   factors in the plot.
-#' @param means,data \code{data.frame}s used for plotting. Need to contain 
-#'   columns \code{y}, \code{x}, \code{trace}, and \code{error} (only in 
-#'   \code{means}).
-#' @param error_plot \code{logical}. Should error bars be plotted? Only used in
-#'   plotting functions. Use \code{error = "none"} otherwise.
+#' @param means,data \code{data.frame}s used for plotting. 
+#' @param col_y,col_x,col_trace,col_panel A scalar \code{character} string 
+#'   specifying the name of the corresponding column containing the information
+#'   used for plotting. Each column needs to exist in both the \code{means} and
+#'   the \code{data} \code{data.frame}.
+#'@param col_lower,col_upper A scalar \code{character} string specifying the 
+#'  name of the columns containing lower and upper bounds for the error bars. 
+#'  These columns need to exist in \code{means}.
+#' @param error_plot \code{logical}. Should error bars be plotted? Only used in 
+#'   plotting functions. To suppress plotting of error bars use \code{error =
+#'   "none"} in \code{afex_plot}.
 #' @param ... currently ignored.
 #' 
-#' @details \code{afex_plot} obtains the estimated marginal means via
-#'   \code{\link[emmeans]{emmeans}} and aggregates the raw data to the same
-#'   level. It then calculates the desired standard error (see below) and passes
-#'   the prepared data to one of the two plotting functions:
-#'   \code{interaction_plot} when \code{trace} is specified and
+#' @details \code{afex_plot} obtains the estimated marginal means via 
+#'   \code{\link[emmeans]{emmeans}} and aggregates the raw data to the same 
+#'   level. It then calculates the desired confidence interval or standard error
+#'   (see below) and passes the prepared data to one of the two plotting
+#'   functions: \code{interaction_plot} when \code{trace} is specified and 
 #'   \code{oneway_plot} otherwise.
 #' 
 #'   \subsection{Error Bars}{Error bars provide a grahical representation of the
 #'   variability of the estimated means and should be routinely added to results
-#'   figures. However, there exist several possibilities which particular
-#'   measure of variability to use. Because of this, any figure depicting error
+#'   figures. However, there exist several possibilities which particular 
+#'   measure of variability to use. Because of this, any figure depicting error 
 #'   bars should be accompanied by a note detailing which measure the error bars
-#'   shows. The present functions allow plotting of different types of standard
-#'   errors (if \code{error_exp = 1}) or confidence intervals (e.g., 95\%
-#'   confidence intervals based on the normal distribution if \code{error_exp =
-#'   1.96}).
+#'   shows. The present functions allow plotting of different types of
+#'   confidence intervals (if \code{error_ci = TRUE}, the default) or standard 
+#'   errors (if \code{error_ci = FALSE}).
 #'   
 #'   A further complication is that readers routinely misinterpret confidence 
 #'   intervals. The most common error is to assume that non-overlapping error 
@@ -105,17 +111,17 @@
 #'   overlap by as much as 50\% still correspond to \emph{p} < .05. Error bars 
 #'   that are just touching roughly correspond to \emph{p} = .01.
 #'   
-#'   In the case of repeated-measures designs the usual standard errors or 
-#'   confidence intervals (i.e., model-based standard errors or standard errors 
-#'   of the mean) cannot be used to gauge significant differences as this 
-#'   requires knowledge about the correlation between measures. One popular 
-#'   alternative in the psychological literature are intervals based on 
-#'   within-subject standard errors/confidence intervals (e.g., Cousineau & 
-#'   O'Brien, 2014). These attempt to control for the correlation across 
-#'   individuals and thereby allow judging differences between repeated-measures
-#'   condition. As a downside, when using within-subject intervals no
-#'   comparisons across between-subject conditions or with respect to a
-#'   fixed-value are possible anymore.
+#'   In the case of repeated-measures designs the usual confidence intervals or
+#'   standard errors (i.e., model-based confidence intervals or intervals based
+#'   on the standard error of the mean) cannot be used to gauge significant
+#'   differences as this requires knowledge about the correlation between
+#'   measures. One popular alternative in the psychological literature are
+#'   intervals based on within-subject standard errors/confidence intervals
+#'   (e.g., Cousineau & O'Brien, 2014). These attempt to control for the
+#'   correlation across individuals and thereby allow judging differences
+#'   between repeated-measures condition. As a downside, when using
+#'   within-subject intervals no comparisons across between-subject conditions
+#'   or with respect to a fixed-value are possible anymore.
 #'   
 #'   In the case of a mixed-design, no single type of error bar is possible that
 #'   allows comparison across all conditions. Therefore, special care is
@@ -126,37 +132,39 @@
 #'   variants for between-subject comparisons), and groups are approximately 
 #'   equal in size and variance:
 #'   \itemize{
-#'     \item  \emph{p} < .05 when the gap between standard error (SE) bars is at
-#'     least about the size of the average SE, that is, when the proportion gap
-#'     is about 1 or greater.
-#'     \item \emph{p} < .01 when the proportion gap between SE bars is about 2
-#'     or more.
 #'     \item  \emph{p} < .05 when the overlap of the 95\% confidence intervals
 #'     (CIs) is no more than about half the average margin of error, that is,
 #'     when proportion overlap is about .50 or less.
 #'     \item \emph{p} < .01 when the two CIs do not overlap, that is, when
 #'     proportion overlap is about 0 or there is a positive gap.
+#'     \item  \emph{p} < .05 when the gap between standard error (SE) bars is at
+#'     least about the size of the average SE, that is, when the proportion gap
+#'     is about 1 or greater.
+#'     \item \emph{p} < .01 when the proportion gap between SE bars is about 2
+#'     or more.
 #'   }   
 #'   }
-#'   \subsection{Implemented Standard Errors}{
-#'   The following lists the implemented approaches to calculate standard
-#'   errors (SEs). These can be used to construe confidence intervals via the
-#'   \code{error_exp} argument.
+#'   \subsection{Implemented Standard Errors}{The following lists the 
+#'   implemented approaches to calculate confidence intervals (CIs) and standard
+#'   errors (SEs). CIs are based on the SEs using the \emph{t}-distribution with
+#'   degrees of freedom based on the cell or group size.
 #'   \describe{
-#'     \item{\code{"model"}}{Uses the model-based SEs. For ANOVAs, the variant
-#'     based on the \code{lm} or \code{mlm} model (i.e., \code{emmeans_arg =
-#'     list(model = "multivariate")}) seems generally preferrable.}
-#'     \item{\code{"mean-SE"}}{Calculates the standard error of the mean for
+#'     \item{\code{"model"}}{Uses model-based CIs and SEs. For ANOVAs, the
+#'     variant based on the \code{lm} or \code{mlm} model (i.e.,
+#'     \code{emmeans_arg = list(model = "multivariate")}) seems generally
+#'     preferrable.}
+#'     \item{\code{"mean"}}{Calculates the standard error of the mean for
 #'     each cell ignoring any repeated-measures factors.}
-#'     \item{\code{"within-SE"} or \code{"CMO"}}{Calculates within-subject SEs using the
-#'     Cosineau-Morey-O'Brien (Cousineau & O'Brien, 2014) method. This method
-#'     is based on a double normalization of the data. SEs are then calculated
-#'     independently for each cell (i.e., if the desired output contains
-#'     between-subject factors, SEs are calculated for each cell including the
-#'     between-subject factors).}
-#'     \item{\code{"between-SE"}}{First aggregates the data per participant and
-#'     then calculates the SEs for each between-subject condition. Results in
-#'     one SE for all conditions in purely within-subjects designs.}
+#'     \item{\code{"within-SE"} or \code{"CMO"}}{Calculates within-subject SEs
+#'     using the Cosineau-Morey-O'Brien (Cousineau & O'Brien, 2014) method. This
+#'     method is based on a double normalization of the data. SEs and CIs are
+#'     then calculated independently for each cell (i.e., if the desired output
+#'     contains between-subject factors, SEs are calculated for each cell
+#'     including the between-subject factors).}
+#'     \item{\code{"between-SE"}}{First aggregates the data per participant and 
+#'     then calculates the SEs for each between-subject condition. Results in 
+#'     one SE and \emph{t}-qutnile for all conditions in purely within-subjects
+#'     designs.}
 #'     \item{\code{"none"} or \code{NULL}}{Suppresses calculation of SEs and
 #'     plots no error bars.}
 #'   }
@@ -189,47 +197,12 @@
 #'   https://doi.org/10.1198/000313001317097960
 #'   
 #'   
-#' @importFrom stats aggregate sd
+#' @importFrom stats aggregate sd qt
 #' 
 #' @example examples/examples.afex_plot.R
 #'   
 #' @export
 afex_plot <- function(object, ...) UseMethod("afex_plot", object)
-
-
-
-get_emms <- function(object, 
-                     x,
-                     trace,
-                     panels,
-                     emmeans_arg, 
-                     new_levels) {
-  if (!requireNamespace("emmeans", quietly = TRUE)) {
-    stop("package emmeans is required.", call. = FALSE)
-  }
-  
-  all_vars <- c(x, trace, panels)
-  
-  emms <- as.data.frame(do.call(emmeans::emmeans, 
-                                args = c(object = list(object), 
-                                         specs = list(all_vars), 
-                                         emmeans_arg)))
-  for (i in seq_along(new_levels)) {
-    levels(emms[[names(new_levels)[i]]]) <- new_levels[[i]]
-  }
-  emms$x <- interaction(emms[x], sep = "\n")
-  colnames(emms)[colnames(emms) == "emmean"] <- "y"
-  attr(emms, "dv") <- attr(object, "dv")
-  attr(emms, "x") <- paste(x, sep = "\n")
-  if (length(panels) > 0) {
-    emms$panels <- interaction(emms[panels], sep = "\n")
-  } else {
-    emms$panels <- "1"
-  }
-  emms$all_vars <- interaction(emms[all_vars], sep = ".")
-  
-  return(emms)
-}
 
 
 # @method afex_plot afex_aov
@@ -238,10 +211,11 @@ get_emms <- function(object,
 afex_plot.afex_aov <- function(object, 
                                x,
                                trace,
-                               panels,
+                               panel,
                                mapping,
                                error = "model",
-                               error_exp = 1, 
+                               error_ci = TRUE,
+                               error_level = 0.95, 
                                error_arg = list(width = 0),
                                data_plot = TRUE,
                                data_geom,
@@ -258,22 +232,22 @@ afex_plot.afex_aov <- function(object,
   return <- match.arg(return, c("plot", "data"))
   error <- match.arg(error, c("none", 
                               "model", 
-                              "mean-SE", 
-                              "within-SE", "CMO",
-                              "between-SE"))
-  
+                              "mean", 
+                              "within", "CMO",
+                              "between"))
   
   x <- get_plot_var(x)
   trace <- get_plot_var(trace)
-  panels <- get_plot_var(panels)
-  all_vars <- c(x, trace, panels)
+  panel <- get_plot_var(panel)
+  all_vars <- c(x, trace, panel)
   
   emms <- get_emms(object = object, 
                    x = x,
                    trace = trace,
-                   panels = panels,
+                   panel = panel,
                    emmeans_arg = emmeans_arg, 
-                   new_levels = new_levels)
+                   new_levels = new_levels,
+                   level = error_level)
   
   ## prepare raw (i.e., participant by cell) data
   data <- object$data$long
@@ -303,14 +277,19 @@ afex_plot.afex_aov <- function(object,
     between_fac <- factor(rep("1", nrow(data)))
   }
   
-  ## SE calculation:
-  if (error[1] == "model") {
+  ## SE/CI calculation:
+  if (error == "model") {
     emms$error <- emms$SE
-  } else if (error[1] == "mean-SE") {
-    tmp <- tapply(data$y, INDEX = list(data$all_vars), FUN = get_se)
-    stopifnot(emms$all_vars == names(tmp))
-    emms$error <- tmp
-  } else if (error[1] %in% c("CMO", "within-SE")) {
+    emms$lower <- emms$lower.CL
+    emms$upper <- emms$upper.CL
+  } else if (error == "mean") {
+    ses <- tapply(data$y, INDEX = list(data$all_vars), FUN = se)
+    sizes <- tapply(data$y, INDEX = list(data$all_vars), FUN = length)
+    stopifnot(emms$all_vars == names(ses))
+    emms$error <- ses
+    emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
+    emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
+  } else if (error %in% c("CMO", "within")) {
     if (length(within_vars) == 0) {
       stop("within-subject SE only possible if within-subject factors present.", 
            call. = FALSE)
@@ -324,25 +303,41 @@ afex_plot.afex_aov <- function(object,
     ## Cosineau & O'Brien (2014), Equation 4:
     y_bar <- tapply(new_y, INDEX = within_fac, FUN = mean)
     new_z <- sqrt(J / (J-1)) * (new_y - y_bar[within_fac]) + y_bar[within_fac]
-    tmp <- tapply(new_z, INDEX = list(data$all_vars), FUN = get_se)
-    stopifnot(emms$all_vars == names(tmp))
-    emms$error <- tmp
-  } else if (error[1] == "between-SE") {
+    ses <- tapply(new_z, INDEX = list(data$all_vars), FUN = se)
+    sizes <- tapply(new_z, INDEX = list(data$all_vars), FUN = length)
+    stopifnot(emms$all_vars == names(ses))
+    emms$error <- ses
+    emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
+    emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
+  } else if (error == "between") {
     indiv_means <- aggregate(data$y, 
                              by = list(
                                data[,attr(object, "id")],
                                between_fac), 
                              FUN = mean)
-    tmp <- tapply(indiv_means$x, INDEX = indiv_means[["Group.2"]], FUN = get_se)
+    ses <- tapply(indiv_means$x, INDEX = indiv_means[["Group.2"]], FUN = se)
+    sizes <- tapply(indiv_means$x, INDEX = indiv_means[["Group.2"]], FUN = length)
     
     if (length(between_vars) == 0) {
-      emms$error <- tmp  
+      emms$error <- ses  
+      emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
+      emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
     } else {
       emm_between <- interaction(emms[between_vars], sep = ".")
-      emms$error <- tmp[emm_between]
+      emms$error <- ses[emm_between]
+      emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes[emm_between] - 1) * emms$error
+      emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes[emm_between] - 1) * emms$error
     }
-  } else if (error[1] == "none") {
+  } else if (error == "none") {
+    emms$error <- NA_real_
+    emms$lower <- NA_real_
+    emms$upper <- NA_real_
     plot_error <- FALSE  
+  }
+  
+  if (!error_ci) {
+    emms$lower <- emms$y - emms$error
+    emms$upper <- emms$y + emms$error
   }
   
   if (length(trace) > 0) {
@@ -356,7 +351,6 @@ afex_plot.afex_aov <- function(object,
       return(interaction_plot(means = emms, 
                               data = data,
                               error_plot = plot_error,
-                              error_exp = error_exp, 
                               error_arg = error_arg, 
                               dodge = dodge, 
                               data_plot = data_plot,
@@ -369,44 +363,36 @@ afex_plot.afex_aov <- function(object,
       ))
     }
   } else {
-    
-    return(oneway_plot(means = emms, 
-                       data = data,
-                       error_plot = plot_error,
-                       error_exp = error_exp, 
-                       error_arg = error_arg, 
-                       data_plot = data_plot,
-                       data_geom = data_geom,
-                       data_alpha = data_alpha,
-                       data_arg = data_arg,
-                       point_arg = point_arg,
-                       line_arg = line_arg,
-                       mapping = mapping
-    ))
-    stop("plot without trace factor not yet implemented!")
+    if (return == "data") {
+      return(list(means = emms, data = data))
+    } else if (return == "plot") {
+      return(oneway_plot(means = emms, 
+                         data = data,
+                         error_plot = plot_error,
+                         error_arg = error_arg, 
+                         data_plot = data_plot,
+                         data_geom = data_geom,
+                         data_alpha = data_alpha,
+                         data_arg = data_arg,
+                         point_arg = point_arg,
+                         line_arg = line_arg,
+                         mapping = mapping
+      ))
+    }
   }
 }
 
 
-get_plot_var <- function(x) {
-  if (missing(x)) return()
-  if (inherits(x, "formula")) {
-    return(all.vars(x[[2]]))
-  } else {
-    return(x)
-  }
-}
 
-get_se <- function(x, na.rm = FALSE) sd(x, na.rm = na.rm)/sqrt(length(x))
 
-if(getRversion() >= "2.15.1")  utils::globalVariables(c("error", "y", "x"))
+
+###if(getRversion() >= "2.15.1")  utils::globalVariables(c("error", "y", "x"))
 #' @rdname afex_plot
 #' @export
 interaction_plot <- function(means, 
                              data, 
                              mapping = c("shape", "lineytpe"), 
                              error_plot = TRUE,
-                             error_exp = 1, 
                              error_arg = list(width = 0),
                              data_plot = TRUE,
                              data_geom = ggplot2::geom_point,
@@ -414,26 +400,32 @@ interaction_plot <- function(means,
                              data_arg = list(color = "darkgrey"),
                              point_arg = list(),
                              line_arg = list(),
-                             dodge = 0.2) {
+                             dodge = 0.2, 
+                             col_x = "x",
+                             col_y = "y",
+                             col_trace = "trace",
+                             col_panel = "panel",
+                             col_lower = "lower",
+                             col_upper = "upper") {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("package ggplot2 is required.", call. = FALSE)
   }
   if (missing(mapping)) {
     mapping <- c('shape', 'linetype')
   } else if (length(mapping) == 0) {
-    stop("mapping cannot be empty. Use any of 'shape', 'color', 'linetype'.", 
+    stop("mapping cannot be empty. Possible values: 'shape', 'color', 'linetype'.", 
          call. = FALSE)
   }
   
-  tmp_list <- as.list(rep("trace", length(mapping)))
+  tmp_list <- as.list(rep(col_trace, length(mapping)))
   names(tmp_list) <- mapping
   plot_out <- ggplot2::ggplot(data = means, 
                               mapping = do.call(
                                 what = ggplot2::aes_string, 
                                 args = c(list(
-                                  y = "y", 
-                                  x = "x", 
-                                  group = "trace"),
+                                  y = col_y, 
+                                  x = col_x, 
+                                  group = col_trace),
                                   tmp_list)))
   
   if (data_plot) {
@@ -448,7 +440,15 @@ interaction_plot <- function(means,
     plot_out <- plot_out +
       do.call(what = data_geom,
               args = c(
-                mapping = list(ggplot2::aes(group = interaction(x, trace))),
+                #mapping = list(ggplot2::aes(group = interaction(x, trace))),
+                mapping = 
+                  list(
+                    ggplot2::aes_string(
+                      group = 
+                        paste0("interaction(", 
+                               paste0(c(col_x, col_trace), collapse =  ", "), 
+                               ")")
+                    )),
                 data = list(data),
                 data_arg
               )
@@ -475,17 +475,17 @@ interaction_plot <- function(means,
     plot_out <- plot_out + 
       do.call(what = ggplot2::geom_errorbar, 
               args = c(
-                mapping = list(ggplot2::aes(
-                  ymin = y - error_exp*error,
-                  ymax = y + error_exp*error)),
+                mapping = list(ggplot2::aes_string(
+                  ymin = col_lower,
+                  ymax = col_upper)),
                 position = list(ggplot2::position_dodge(width = dodge)),
                 error_arg
               ))
   }
   
-  if (length(unique(means$panels)) > 1) {
+  if (length(unique(means$panel)) > 1) {
     plot_out <- plot_out + 
-      ggplot2::facet_wrap(facets = "panels")
+      ggplot2::facet_wrap(facets = "panel")
   }
   
   ## add labels
@@ -518,14 +518,18 @@ oneway_plot <- function(means,
                         data, 
                         mapping = "",
                         error_plot = TRUE,
-                        error_exp = 1, 
                         error_arg = list(width = 0),
                         data_plot = TRUE,
                         data_geom = ggbeeswarm::geom_beeswarm,
                         data_alpha = 0.5,
                         data_arg = list(color = "darkgrey"),
                         point_arg = list(),
-                        line_arg = list()) {
+                        line_arg = list(),
+                        col_x = "x",
+                        col_y = "y",
+                        col_panel = "panel",
+                        col_lower = "lower",
+                        col_upper = "upper") {
   if (!requireNamespace("ggplot2", quietly = TRUE)) {
     stop("package ggplot2 is required.", call. = FALSE)
   }
@@ -534,16 +538,16 @@ oneway_plot <- function(means,
     mapping <- ""
   }
   
-  tmp_list <- as.list(rep("x", length(mapping)))
+  tmp_list <- as.list(rep(col_x, length(mapping)))
   names(tmp_list) <- mapping
   
   plot_out <- ggplot2::ggplot(data = means, 
                               mapping = do.call(
                                 what = ggplot2::aes_string, 
                                 args = c(list(
-                                  y = "y", 
-                                  x = "x", 
-                                  group = "x"),
+                                  y = col_y, 
+                                  x = col_x, 
+                                  group = col_x),
                                   tmp_list)))
   
   
@@ -572,16 +576,16 @@ oneway_plot <- function(means,
     plot_out <- plot_out + 
       do.call(what = ggplot2::geom_errorbar, 
               args = c(
-                mapping = list(ggplot2::aes(
-                  ymin = y - error_exp*error,
-                  ymax = y + error_exp*error)),
+                mapping = list(ggplot2::aes_string(
+                  ymin = col_lower,
+                  ymax = col_upper)),
                 error_arg
               ))
   }
   
-  if (length(unique(means$panels)) > 1) {
+  if (length(unique(means$panel)) > 1) {
     plot_out <- plot_out + 
-      ggplot2::facet_wrap(facets = "panels")
+      ggplot2::facet_wrap(facets = "panel")
   }
   
   ## add labels

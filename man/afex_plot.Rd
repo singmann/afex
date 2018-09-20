@@ -9,24 +9,27 @@
 \usage{
 afex_plot(object, ...)
 
-\method{afex_plot}{afex_aov}(object, x, trace, panels, mapping,
-  error = "model", error_exp = 1, error_arg = list(width = 0),
-  data_plot = TRUE, data_geom, data_alpha = 0.5,
-  data_arg = list(color = "darkgrey"), point_arg = list(),
-  line_arg = list(), emmeans_arg = list(), dodge = 0.2,
-  return = "plot", new_levels = list(), ...)
+\method{afex_plot}{afex_aov}(object, x, trace, panel, mapping,
+  error = "model", error_ci = TRUE, error_level = 0.95,
+  error_arg = list(width = 0), data_plot = TRUE, data_geom,
+  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
+  point_arg = list(), line_arg = list(), emmeans_arg = list(),
+  dodge = 0.2, return = "plot", new_levels = list(), ...)
 
 interaction_plot(means, data, mapping = c("shape", "lineytpe"),
-  error_plot = TRUE, error_exp = 1, error_arg = list(width = 0),
-  data_plot = TRUE, data_geom = ggplot2::geom_point,
-  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
-  point_arg = list(), line_arg = list(), dodge = 0.2)
+  error_plot = TRUE, error_arg = list(width = 0), data_plot = TRUE,
+  data_geom = ggplot2::geom_point, data_alpha = 0.5,
+  data_arg = list(color = "darkgrey"), point_arg = list(),
+  line_arg = list(), dodge = 0.2, col_x = "x", col_y = "y",
+  col_trace = "trace", col_panel = "panel", col_lower = "lower",
+  col_upper = "upper")
 
 oneway_plot(means, data, mapping = "", error_plot = TRUE,
-  error_exp = 1, error_arg = list(width = 0), data_plot = TRUE,
+  error_arg = list(width = 0), data_plot = TRUE,
   data_geom = ggbeeswarm::geom_beeswarm, data_alpha = 0.5,
   data_arg = list(color = "darkgrey"), point_arg = list(),
-  line_arg = list())
+  line_arg = list(), col_x = "x", col_y = "y", col_panel = "panel",
+  col_lower = "lower", col_upper = "upper")
 }
 \arguments{
 \item{object}{object of class \code{afex_aov} as returned from 
@@ -41,7 +44,7 @@ factor names of the predictors displayed on the x-axis.}
 the factor names of the predictors connected by the same line. Argument 
 \code{mapping} specifies further mappings for these factors. Optional.}
 
-\item{panels}{A \code{character} vector or one-sided \code{formula} 
+\item{panel}{A \code{character} vector or one-sided \code{formula} 
 specifying the factor names of the predictors shown in different panels. 
 Optional.}
 
@@ -53,16 +56,18 @@ specified) or the \code{x} factors. Useful options are any combination of
 "lineytpe")} if \code{trace} is specified, otherwise \code{""} (i.e., no
 additional aesthetic).}
 
-\item{error}{A scalar \code{character} specifying which type of standard 
-error should be plotted. Default is \code{"model"}, which plots model-based
-standard errors. Further options are: \code{"none"} (or \code{NULL}),
-\code{"mean-SE"}, \code{"within-SE"} (or \code{"CMO"}), and 
-\code{"between-SE"}. See details.}
+\item{error}{A scalar \code{character} vector specifying which type of
+standard error should be plotted. Default is \code{"model"}, which plots
+model-based standard errors. Further options are: \code{"none"} (or
+\code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and 
+\code{"between"}. See details.}
 
-\item{error_exp}{Numeric expansion factor for standard error. Default is 
-\code{1} which plots \code{+/- 1} standard error. \code{qnorm(0.975)} or 
-\code{1.96} plots 95\% confidence intervals based on the normal
-distribution.}
+\item{error_ci}{Logical. Should error bars plot confidence intervals
+(=\code{TRUE}, the default) or standard errors (=\code{FALSE})?}
+
+\item{error_level}{Numeric value between 0 and 1 determing the width of the
+confidence interval. Default is .95 corresponding to a 95\% confidence
+interval.}
 
 \item{error_arg}{A \code{list} of further arguments passed to 
 \code{\link[ggplot2]{geom_errorbar}}, which draws the errorsbars. Default 
@@ -104,12 +109,20 @@ for the foreground, \code{data} contains the raw data in the background.}
 the plot. The name of each list entry needs to correspond to one of the 
 factors in the plot.}
 
-\item{means, data}{\code{data.frame}s used for plotting. Need to contain 
-columns \code{y}, \code{x}, \code{trace}, and \code{error} (only in 
-\code{means}).}
+\item{means, data}{\code{data.frame}s used for plotting.}
 
-\item{error_plot}{\code{logical}. Should error bars be plotted? Only used in
-plotting functions. Use \code{error = "none"} otherwise.}
+\item{error_plot}{\code{logical}. Should error bars be plotted? Only used in 
+plotting functions. To suppress plotting of error bars use \code{error =
+"none"} in \code{afex_plot}.}
+
+\item{col_y, col_x, col_trace, col_panel}{A scalar \code{character} string 
+specifying the name of the corresponding column containing the information
+used for plotting. Each column needs to exist in both the \code{means} and
+the \code{data} \code{data.frame}.}
+
+\item{col_lower, col_upper}{A scalar \code{character} string specifying the 
+name of the columns containing lower and upper bounds for the error bars. 
+These columns need to exist in \code{means}.}
 }
 \value{
 Returns a \pkg{ggplot2} plot (i.e., object of class \code{c("gg",
@@ -132,22 +145,21 @@ Plots results from factorial experiments. Estimated marginal
   absent.
 }
 \details{
-\code{afex_plot} obtains the estimated marginal means via
-  \code{\link[emmeans]{emmeans}} and aggregates the raw data to the same
-  level. It then calculates the desired standard error (see below) and passes
-  the prepared data to one of the two plotting functions:
-  \code{interaction_plot} when \code{trace} is specified and
+\code{afex_plot} obtains the estimated marginal means via 
+  \code{\link[emmeans]{emmeans}} and aggregates the raw data to the same 
+  level. It then calculates the desired confidence interval or standard error
+  (see below) and passes the prepared data to one of the two plotting
+  functions: \code{interaction_plot} when \code{trace} is specified and 
   \code{oneway_plot} otherwise.
 
   \subsection{Error Bars}{Error bars provide a grahical representation of the
   variability of the estimated means and should be routinely added to results
-  figures. However, there exist several possibilities which particular
-  measure of variability to use. Because of this, any figure depicting error
+  figures. However, there exist several possibilities which particular 
+  measure of variability to use. Because of this, any figure depicting error 
   bars should be accompanied by a note detailing which measure the error bars
-  shows. The present functions allow plotting of different types of standard
-  errors (if \code{error_exp = 1}) or confidence intervals (e.g., 95\%
-  confidence intervals based on the normal distribution if \code{error_exp =
-  1.96}).
+  shows. The present functions allow plotting of different types of
+  confidence intervals (if \code{error_ci = TRUE}, the default) or standard 
+  errors (if \code{error_ci = FALSE}).
   
   A further complication is that readers routinely misinterpret confidence 
   intervals. The most common error is to assume that non-overlapping error 
@@ -159,17 +171,17 @@ Plots results from factorial experiments. Estimated marginal
   overlap by as much as 50\% still correspond to \emph{p} < .05. Error bars 
   that are just touching roughly correspond to \emph{p} = .01.
   
-  In the case of repeated-measures designs the usual standard errors or 
-  confidence intervals (i.e., model-based standard errors or standard errors 
-  of the mean) cannot be used to gauge significant differences as this 
-  requires knowledge about the correlation between measures. One popular 
-  alternative in the psychological literature are intervals based on 
-  within-subject standard errors/confidence intervals (e.g., Cousineau & 
-  O'Brien, 2014). These attempt to control for the correlation across 
-  individuals and thereby allow judging differences between repeated-measures
-  condition. As a downside, when using within-subject intervals no
-  comparisons across between-subject conditions or with respect to a
-  fixed-value are possible anymore.
+  In the case of repeated-measures designs the usual confidence intervals or
+  standard errors (i.e., model-based confidence intervals or intervals based
+  on the standard error of the mean) cannot be used to gauge significant
+  differences as this requires knowledge about the correlation between
+  measures. One popular alternative in the psychological literature are
+  intervals based on within-subject standard errors/confidence intervals
+  (e.g., Cousineau & O'Brien, 2014). These attempt to control for the
+  correlation across individuals and thereby allow judging differences
+  between repeated-measures condition. As a downside, when using
+  within-subject intervals no comparisons across between-subject conditions
+  or with respect to a fixed-value are possible anymore.
   
   In the case of a mixed-design, no single type of error bar is possible that
   allows comparison across all conditions. Therefore, special care is
@@ -180,37 +192,39 @@ Plots results from factorial experiments. Estimated marginal
   variants for between-subject comparisons), and groups are approximately 
   equal in size and variance:
   \itemize{
-    \item  \emph{p} < .05 when the gap between standard error (SE) bars is at
-    least about the size of the average SE, that is, when the proportion gap
-    is about 1 or greater.
-    \item \emph{p} < .01 when the proportion gap between SE bars is about 2
-    or more.
     \item  \emph{p} < .05 when the overlap of the 95\% confidence intervals
     (CIs) is no more than about half the average margin of error, that is,
     when proportion overlap is about .50 or less.
     \item \emph{p} < .01 when the two CIs do not overlap, that is, when
     proportion overlap is about 0 or there is a positive gap.
+    \item  \emph{p} < .05 when the gap between standard error (SE) bars is at
+    least about the size of the average SE, that is, when the proportion gap
+    is about 1 or greater.
+    \item \emph{p} < .01 when the proportion gap between SE bars is about 2
+    or more.
   }   
   }
-  \subsection{Implemented Standard Errors}{
-  The following lists the implemented approaches to calculate standard
-  errors (SEs). These can be used to construe confidence intervals via the
-  \code{error_exp} argument.
+  \subsection{Implemented Standard Errors}{The following lists the 
+  implemented approaches to calculate confidence intervals (CIs) and standard
+  errors (SEs). CIs are based on the SEs using the \emph{t}-distribution with
+  degrees of freedom based on the cell or group size.
   \describe{
-    \item{\code{"model"}}{Uses the model-based SEs. For ANOVAs, the variant
-    based on the \code{lm} or \code{mlm} model (i.e., \code{emmeans_arg =
-    list(model = "multivariate")}) seems generally preferrable.}
-    \item{\code{"mean-SE"}}{Calculates the standard error of the mean for
+    \item{\code{"model"}}{Uses model-based CIs and SEs. For ANOVAs, the
+    variant based on the \code{lm} or \code{mlm} model (i.e.,
+    \code{emmeans_arg = list(model = "multivariate")}) seems generally
+    preferrable.}
+    \item{\code{"mean"}}{Calculates the standard error of the mean for
     each cell ignoring any repeated-measures factors.}
-    \item{\code{"within-SE"} or \code{"CMO"}}{Calculates within-subject SEs using the
-    Cosineau-Morey-O'Brien (Cousineau & O'Brien, 2014) method. This method
-    is based on a double normalization of the data. SEs are then calculated
-    independently for each cell (i.e., if the desired output contains
-    between-subject factors, SEs are calculated for each cell including the
-    between-subject factors).}
-    \item{\code{"between-SE"}}{First aggregates the data per participant and
-    then calculates the SEs for each between-subject condition. Results in
-    one SE for all conditions in purely within-subjects designs.}
+    \item{\code{"within-SE"} or \code{"CMO"}}{Calculates within-subject SEs
+    using the Cosineau-Morey-O'Brien (Cousineau & O'Brien, 2014) method. This
+    method is based on a double normalization of the data. SEs and CIs are
+    then calculated independently for each cell (i.e., if the desired output
+    contains between-subject factors, SEs are calculated for each cell
+    including the between-subject factors).}
+    \item{\code{"between-SE"}}{First aggregates the data per participant and 
+    then calculates the SEs for each between-subject condition. Results in 
+    one SE and \emph{t}-qutnile for all conditions in purely within-subjects
+    designs.}
     \item{\code{"none"} or \code{NULL}}{Suppresses calculation of SEs and
     plots no error bars.}
   }
@@ -234,9 +248,11 @@ afex_plot(aw, x = "angle", trace = "noise")
 
 afex_plot(aw, x = "noise", trace = "angle")
 
-### For within-subject designs, using within-subject CIs is probably better:
-(p1 <- afex_plot(aw, x = "noise", trace = "angle", 
-                 error = "within-SE", error_exp = 1.96))
+### For within-subject designs, using within-subject CIs is better:
+
+afex_plot(aw, x = "angle", trace = "noise", error = "within") 
+
+(p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within"))
 
 ## use different themes for nicer graphs:
 p1 + ggplot2::theme_classic()
@@ -253,7 +269,7 @@ ggplot2::theme_set(ggplot2::theme_light())
 ### There are several ways to deal with overlapping points in the background besides alpha
 
 # 1. using the default data geom and ggplot2::position_jitterdodge
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.2,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.2,
           data_arg = list(
             position = 
               ggplot2::position_jitterdodge(
@@ -265,7 +281,7 @@ afex_plot(aw, x = "noise", trace = "angle", dodge = 0.2,
 
 \dontrun{
 # 2. using ggbeeswarm::geom_beeswarm
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggbeeswarm::geom_beeswarm,
           data_arg = list(
             dodge.width = 0.5,  ## needs to be same as dodge
@@ -275,18 +291,18 @@ afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
 }
 
 # 3. do not display points, but use a violinplot: ggplot2::geom_violin
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggplot2::geom_violin, 
           data_arg = list(width = 0.5))
 
 # 4. violinplots with color: ggplot2::geom_violin
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5, 
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5, 
           mapping = c("linetype", "shape", "fill"),
           data_geom = ggplot2::geom_violin, 
           data_arg = list(width = 0.5))
 
 # 5. do not display points, but use a boxplot: ggplot2::geom_violin
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggplot2::geom_boxplot, 
           data_arg = list(width = 0.3))
           
@@ -294,13 +310,13 @@ afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
 # 6. combine points with boxplot: ggpol::geom_boxjitter
 ## currently requires attaching ggpol explicitly:
 library("ggpol")
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(width = 0.3))
 ## hides error bars!
 
 # 7. nicer variant of ggpol::geom_boxjitter
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           mapping = c("shape", "fill"),
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(
@@ -313,7 +329,7 @@ afex_plot(aw, x = "noise", trace = "angle", dodge = 0.5,
 
 
 # 8. nicer variant of ggpol::geom_boxjitter without lines
-afex_plot(aw, x = "noise", trace = "angle", dodge = 0.7,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
           mapping = c("shape", "fill"),
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(
@@ -331,19 +347,19 @@ afex_plot(aw, x = "noise", trace = "angle", dodge = 0.7,
 ##                      Basic One-Way Plots                     -
 ##---------------------------------------------------------------
 
-afex_plot(aw, x = "angle") ## default
+afex_plot(aw, x = "angle", error = "within") ## default
 
 ## with color we need larger points
-afex_plot(aw, x = "angle", mapping = "color", 
+afex_plot(aw, x = "angle", mapping = "color", error = "within", 
           point_arg = list(size = 2.5), 
           error_arg = list(size = 1.5, width = 0.05)) 
 
 \dontrun{
 library("ggpol") ## currently required for combination of boxplot and points
-afex_plot(aw, x = "angle", data_geom = ggpol::geom_boxjitter)
+afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter)
 
-## nicer with within-subject CIs:
-afex_plot(aw, x = "angle", data_geom = ggpol::geom_boxjitter, 
+## nicer
+afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter, 
           mapping = "fill", data_alpha = 0.7, 
           data_arg = list(
             width = 0.6, 
@@ -353,7 +369,7 @@ afex_plot(aw, x = "angle", data_geom = ggpol::geom_boxjitter,
           ),
           point_arg = list(size = 2.5), 
           error_arg = list(size = 1.5, width = 0.05),
-          error = "within-SE", error_exp = 1.96)
+          error_exp = 1.96)
 }
 
 
@@ -452,11 +468,11 @@ cbind(
                            emmeans_arg = list(model = "multivariate"),
                            error = "model", return = "data")$means$error,
   mean = afex_plot(a1, ~phase, ~hour, 
-                    error = "mean-SE", return = "data")$means$error,
+                    error = "mean", return = "data")$means$error,
   within = afex_plot(a1, ~phase, ~hour, 
-                     error = "within-SE", return = "data")$means$error,
+                     error = "within", return = "data")$means$error,
   between = afex_plot(a1, ~phase, ~hour, 
-                      error = "between-SE", return = "data")$means$error)
+                      error = "between", return = "data")$means$error)
 ## mixed design
 cbind(
   afex_plot(a1, ~phase, ~treatment, 
@@ -465,11 +481,11 @@ cbind(
                            emmeans_arg = list(model = "multivariate"),
                            error = "model", return = "data")$means$error,
   mean = afex_plot(a1, ~phase, ~treatment, 
-                    error = "mean-SE", return = "data")$means$error,
+                    error = "mean", return = "data")$means$error,
   within = afex_plot(a1, ~phase, ~treatment, 
-                     error = "within-SE", return = "data")$means$error,
+                     error = "within", return = "data")$means$error,
   between = afex_plot(a1, ~phase, ~treatment, 
-                      error = "between-SE", return = "data")$means$error)
+                      error = "between", return = "data")$means$error)
 }
 \references{
 Belia, S., Fidler, F., Williams, J., & Cumming, G. (2005).

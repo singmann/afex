@@ -44,3 +44,72 @@ get_plot_var <- function(x) {
   }
 }
 
+get_data_based_cis <- function(emms, data, error, 
+                               id, ## colname holding the id/grouping variable 
+                               within_vars, within_fac,
+                               between_vars, between_fac,
+                               error_level, error_ci) {
+  ## SE/CI calculation:
+  if (error == "model") {
+    emms$error <- emms$SE
+    emms$lower <- emms$lower.CL
+    emms$upper <- emms$upper.CL
+  } else if (error == "mean") {
+    ses <- tapply(data$y, INDEX = list(data$all_vars), FUN = se)
+    sizes <- tapply(data$y, INDEX = list(data$all_vars), FUN = length)
+    stopifnot(emms$all_vars == names(ses))
+    emms$error <- ses
+    emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
+    emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
+  } else if (error %in% c("CMO", "within")) {
+    if (length(within_vars) == 0) {
+      stop("within-subject SE only possible if within-subject factors present.", 
+           call. = FALSE)
+    }
+    indiv_means <- tapply(data$y, INDEX = data[id], FUN = mean)
+    J <- length(levels(within_fac))
+    ## Cosineau & O'Brien (2014), Equation 2:
+    new_y <- data$y - 
+      indiv_means[as.character(data[,id])] +
+      mean(data$y)
+    ## Cosineau & O'Brien (2014), Equation 4:
+    y_bar <- tapply(new_y, INDEX = within_fac, FUN = mean)
+    new_z <- sqrt(J / (J-1)) * (new_y - y_bar[within_fac]) + y_bar[within_fac]
+    ses <- tapply(new_z, INDEX = list(data$all_vars), FUN = se)
+    sizes <- tapply(new_z, INDEX = list(data$all_vars), FUN = length)
+    stopifnot(emms$all_vars == names(ses))
+    emms$error <- ses
+    emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
+    emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
+  } else if (error == "between") {
+    indiv_means <- aggregate(data$y, 
+                             by = list(
+                               data[,id],
+                               between_fac), 
+                             FUN = mean)
+    ses <- tapply(indiv_means$x, INDEX = indiv_means[["Group.2"]], FUN = se)
+    sizes <- tapply(indiv_means$x, INDEX = indiv_means[["Group.2"]], FUN = length)
+    
+    if (length(between_vars) == 0) {
+      emms$error <- ses  
+      emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
+      emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
+    } else {
+      emm_between <- interaction(emms[between_vars], sep = ".")
+      emms$error <- ses[emm_between]
+      emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes[emm_between] - 1) * emms$error
+      emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes[emm_between] - 1) * emms$error
+    }
+  } else if (error == "none") {
+    emms$error <- NA_real_
+    emms$lower <- NA_real_
+    emms$upper <- NA_real_
+    plot_error <- FALSE  
+  }
+  
+  if (!error_ci) {
+    emms$lower <- emms$y - emms$error
+    emms$upper <- emms$y + emms$error
+  }
+  return(emms)
+}

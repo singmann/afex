@@ -379,7 +379,7 @@ afex_plot.afex_aov <- function(object,
   data$x <- interaction(data[x], sep = "\n")
   data$all_vars <- interaction(data[all_vars], sep = ".")
   
-  ### prepare variables for SE calculation
+  ### prepare variables for SE/CI calculation
   plot_error <- TRUE
   within_vars <- all_vars[all_vars %in% names(attr(object, "within"))]
   if (length(within_vars) > 0) {
@@ -387,7 +387,6 @@ afex_plot.afex_aov <- function(object,
   } else {
     within_fac <- factor(rep("1", nrow(data)))
   }
-  
   between_vars <- all_vars[all_vars %in% names(attr(object, "between"))]
   if (length(between_vars) > 0) {
     between_fac <- interaction(data[between_vars], sep = ".")
@@ -395,80 +394,33 @@ afex_plot.afex_aov <- function(object,
     between_fac <- factor(rep("1", nrow(data)))
   }
   
+  ### check if error bars are consistent with panel(s) and warn otherwise
   if (error %in% c("model", "mean", "between") && 
       all(c(x, trace) %in% within_vars)) {
-    warning("Panel(s) show within-subjects factors, but no within-subjects error bars.", call. = FALSE)
+    warning("Panel(s) show within-subjects factors, ", 
+            "but no within-subjects error bars.", call. = FALSE)
   } else if (error %in% c("within", "CMO") && 
-      all(c(x, trace) %in% between_vars)) {
-    warning("Panel(s) show between-subjects factors, but within-subjects error bars.", call. = FALSE)
+             all(c(x, trace) %in% between_vars)) {
+    warning("Panel(s) show between-subjects factors, ", 
+            "but within-subjects error bars.", call. = FALSE)
   } else if (any(between_vars %in% c(x, trace)) && 
              any(within_vars %in% c(x, trace)) && 
              error != "none") {
-    warning("Panel(s) show a mixed within-between-design.\nError bars do not allow comparisons across all means.", call. = FALSE)
+    warning("Panel(s) show a mixed within-between-design.\n",
+            "Error bars do not allow comparisons across all means.", 
+            call. = FALSE)
   }
   
-  ## SE/CI calculation:
-  if (error == "model") {
-    emms$error <- emms$SE
-    emms$lower <- emms$lower.CL
-    emms$upper <- emms$upper.CL
-  } else if (error == "mean") {
-    ses <- tapply(data$y, INDEX = list(data$all_vars), FUN = se)
-    sizes <- tapply(data$y, INDEX = list(data$all_vars), FUN = length)
-    stopifnot(emms$all_vars == names(ses))
-    emms$error <- ses
-    emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
-    emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
-  } else if (error %in% c("CMO", "within")) {
-    if (length(within_vars) == 0) {
-      stop("within-subject SE only possible if within-subject factors present.", 
-           call. = FALSE)
-    }
-    indiv_means <- tapply(data$y, INDEX = data[attr(object, "id")], FUN = mean)
-    J <- length(levels(within_fac))
-    ## Cosineau & O'Brien (2014), Equation 2:
-    new_y <- data$y - 
-      indiv_means[as.character(data[,attr(object, "id")])] +
-      mean(data$y)
-    ## Cosineau & O'Brien (2014), Equation 4:
-    y_bar <- tapply(new_y, INDEX = within_fac, FUN = mean)
-    new_z <- sqrt(J / (J-1)) * (new_y - y_bar[within_fac]) + y_bar[within_fac]
-    ses <- tapply(new_z, INDEX = list(data$all_vars), FUN = se)
-    sizes <- tapply(new_z, INDEX = list(data$all_vars), FUN = length)
-    stopifnot(emms$all_vars == names(ses))
-    emms$error <- ses
-    emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
-    emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
-  } else if (error == "between") {
-    indiv_means <- aggregate(data$y, 
-                             by = list(
-                               data[,attr(object, "id")],
-                               between_fac), 
-                             FUN = mean)
-    ses <- tapply(indiv_means$x, INDEX = indiv_means[["Group.2"]], FUN = se)
-    sizes <- tapply(indiv_means$x, INDEX = indiv_means[["Group.2"]], FUN = length)
-    
-    if (length(between_vars) == 0) {
-      emms$error <- ses  
-      emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
-      emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
-    } else {
-      emm_between <- interaction(emms[between_vars], sep = ".")
-      emms$error <- ses[emm_between]
-      emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes[emm_between] - 1) * emms$error
-      emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes[emm_between] - 1) * emms$error
-    }
-  } else if (error == "none") {
-    emms$error <- NA_real_
-    emms$lower <- NA_real_
-    emms$upper <- NA_real_
-    plot_error <- FALSE  
-  }
-  
-  if (!error_ci) {
-    emms$lower <- emms$y - emms$error
-    emms$upper <- emms$y + emms$error
-  }
+  emms <- get_data_based_cis(emms = emms, 
+                             data = data, 
+                             error = error, 
+                             id = attr(object, "id"), ## colname holding the id/grouping variable 
+                             within_vars = within_vars, 
+                             within_fac = within_fac,
+                             between_vars = between_vars, 
+                             between_fac = between_fac,
+                             error_level = error_level, 
+                             error_ci = error_ci)
   
   if (length(trace) > 0) {
     attr(emms, "trace") <- paste(trace, sep = "\n")

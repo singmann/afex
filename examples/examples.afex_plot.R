@@ -315,3 +315,16 @@ cowplot::plot_grid(p_comb, legend,
                    ncol = 1, 
                    rel_heights = c(1, 0.1))
 }
+
+##----------------------------------------------------------------
+##                    Support for lme4::lmer                     -
+##----------------------------------------------------------------
+
+Oats <- nlme::Oats
+## afex_plot does currently not support implicit nesting: (1|Block/Variety)
+## Instead, we need to create the factor explicitly
+Oats$VarBlock <- Oats$Variety:Oats$Block
+Oats.lmer <- lmer(yield ~ Variety * factor(nitro) + (1|VarBlock) + (1|Block),
+                        data = Oats)
+afex_plot(Oats.lmer, "nitro", "Variety")
+afex_plot(Oats.lmer, "nitro", panel = "Variety")

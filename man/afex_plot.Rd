@@ -4,6 +4,7 @@
 \alias{afex_plot}
 \alias{afex_plot.afex_aov}
 \alias{afex_plot.mixed}
+\alias{afex_plot.merMod}
 \alias{interaction_plot}
 \alias{oneway_plot}
 \title{m-way Plot with Error Bars and Raw Data}
@@ -18,6 +19,13 @@ afex_plot(object, ...)
   dodge = 0.2, return = "plot", new_levels = list(), ...)
 
 \method{afex_plot}{mixed}(object, x, trace, panel, mapping, random,
+  error = "model", error_ci = TRUE, error_level = 0.95,
+  error_arg = list(width = 0), data_plot = TRUE, data_geom,
+  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
+  point_arg = list(), line_arg = list(), emmeans_arg = list(),
+  dodge = 0.2, return = "plot", new_levels = list(), ...)
+
+\method{afex_plot}{merMod}(object, x, trace, panel, mapping, random,
   error = "model", error_ci = TRUE, error_level = 0.95,
   error_arg = list(width = 0), data_plot = TRUE, data_geom,
   data_alpha = 0.5, data_arg = list(color = "darkgrey"),
@@ -590,6 +598,19 @@ cowplot::plot_grid(p_comb, legend,
                    ncol = 1, 
                    rel_heights = c(1, 0.1))
 }
+
+##----------------------------------------------------------------
+##                    Support for lme4::lmer                     -
+##----------------------------------------------------------------
+
+Oats <- nlme::Oats
+## afex_plot does currently not support implicit nesting: (1|Block/Variety)
+## Instead, we need to create the factor explicitly
+Oats$VarBlock <- Oats$Variety:Oats$Block
+Oats.lmer <- lmer(yield ~ Variety * factor(nitro) + (1|VarBlock) + (1|Block),
+                        data = Oats)
+afex_plot(Oats.lmer, "nitro", "Variety")
+afex_plot(Oats.lmer, "nitro", panel = "Variety")
 }
 \references{
 Belia, S., Fidler, F., Williams, J., & Cumming, G. (2005).

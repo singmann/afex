@@ -15,7 +15,7 @@
 #'   present. \code{oneway_plot} does the plotting when a \code{trace} factor is
 #'   absent.
 #'   
-#' @param object \code{afex_aov} or \code{mixed} object.
+#' @param object \code{afex_aov}, \code{mixed}, or \code{merMod} object.
 #' @param x A \code{character} vector or one-sided \code{formula} specifying the
 #'   factor names of the predictors displayed on the x-axis. Argument
 #'   \code{mapping} specifies further mappings for these factors if \code{trace}
@@ -444,6 +444,146 @@ afex_plot.mixed <- function(object,
   
   if (length(random) == 1) {
     all_within <- lapply(lme4::findbars(object$call), all.vars)
+    all_within <- 
+      unique(unlist(
+        all_within[vapply(all_within, function(x) random %in% x, NA)]
+      ))
+    all_within <- all_within[all_within != random]
+    within_vars <- all_vars[all_vars %in% all_within]
+    between_vars <- all_vars[!(all_vars %in% within_vars)]
+  }
+  
+  
+  ### prepare variables for SE/CI calculation
+  tmp <- get_data_based_cis(emms = emms, 
+                            data = data, 
+                            error = error, 
+                            id = "afex_id", ## colname holding the id/grouping variable 
+                            all_vars = all_vars,
+                            within_vars = within_vars, 
+                            between_vars = between_vars, 
+                            error_level = error_level, 
+                            error_ci = error_ci)
+  emms <- tmp$emms
+  plot_error <- tmp$plot_error
+  
+  if (length(trace) > 0) {
+    attr(emms, "trace") <- paste(trace, sep = "\n")
+    emms$trace <- interaction(emms[trace], sep = "\n")
+    data$trace <- interaction(data[trace], sep = "\n")
+    
+    if (return == "data") {
+      return(list(means = emms, data = data))
+    } else if (return == "plot") {
+      return(interaction_plot(means = emms, 
+                              data = data,
+                              error_plot = plot_error,
+                              error_arg = error_arg, 
+                              dodge = dodge, 
+                              data_plot = data_plot,
+                              data_geom = data_geom,
+                              data_alpha = data_alpha,
+                              data_arg = data_arg,
+                              point_arg = point_arg,
+                              line_arg = line_arg,
+                              mapping = mapping
+      ))
+    }
+  } else {
+    if (return == "data") {
+      return(list(means = emms, data = data))
+    } else if (return == "plot") {
+      return(oneway_plot(means = emms, 
+                         data = data,
+                         error_plot = plot_error,
+                         error_arg = error_arg, 
+                         data_plot = data_plot,
+                         data_geom = data_geom,
+                         data_alpha = data_alpha,
+                         data_arg = data_arg,
+                         point_arg = point_arg,
+                         mapping = mapping
+      ))
+    }
+  }
+
+}
+
+
+
+#' @rdname afex_plot
+#' @export
+afex_plot.merMod <- function(object, 
+                            x,
+                            trace,
+                            panel,
+                            mapping,
+                            random,
+                            error = "model",
+                            error_ci = TRUE,
+                            error_level = 0.95, 
+                            error_arg = list(width = 0),
+                            data_plot = TRUE,
+                            data_geom,
+                            data_alpha = 0.5,
+                            data_arg = list(color = "darkgrey"),
+                            point_arg = list(),
+                            line_arg = list(),
+                            emmeans_arg = list(),
+                            dodge = 0.2,
+                            return = "plot",
+                            new_levels = list(),
+                            ...) {
+  
+  return <- match.arg(return, c("plot", "data"))
+  error <- match.arg(error, c("none", 
+                              "model", 
+                              "mean", 
+                              "within", "CMO",
+                              "between"))
+  
+  x <- get_plot_var(x)
+  trace <- get_plot_var(trace)
+  panel <- get_plot_var(panel)
+  all_vars <- c(x, trace, panel)
+  
+  data <- emmeans::recover_data(object = object, 
+                                trms = terms(object, fixed.only = FALSE))
+  for (i in seq_along(new_levels)) {
+    levels(data[[names(new_levels)[i]]]) <- new_levels[[i]]
+  }
+  #data$y <- residuals(object$full_model)
+  #data$y <- predict(object$full_model)
+  #coef(object$full_model)
+  data$y <- data[,deparse(object@call[["formula"]][[2]])]
+  if (missing(random)) {
+    random <- unique(names(lme4::ranef(object)))
+    message("Aggregating data over: ", paste(random, collapse = ", "))
+  }
+  data <- aggregate(data$y, by = data[c(all_vars,random)], 
+                    FUN = mean, drop = TRUE)
+  data$y <- data$x
+  data$x <- interaction(data[x], sep = "\n")
+  data$all_vars <- interaction(data[all_vars], sep = ".")
+  data$afex_id <- interaction(data[random], sep = ".")
+  
+  if (!(error %in% c("none" ,"model", "mean")) & 
+      (length(random) > 1)) {
+    stop("When aggregating over multiple random effects,\n",
+         '       error has to be in: c("model", "mean", "none")',
+         call. = FALSE)
+  } 
+  
+  emms <- get_emms(object = object, 
+                   x = x,
+                   trace = trace,
+                   panel = panel,
+                   emmeans_arg = emmeans_arg, 
+                   new_levels = new_levels,
+                   level = error_level)
+  
+  if (length(random) == 1) {
+    all_within <- lapply(lme4::findbars(object@call), all.vars)
     all_within <- 
       unique(unlist(
         all_within[vapply(all_within, function(x) random %in% x, NA)]

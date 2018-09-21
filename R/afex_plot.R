@@ -1,11 +1,11 @@
-#' m-way Interaction Plot with Error Bars and Raw Data
+#' m-way Plot with Error Bars and Raw Data
 #' 
 #' @description Plots results from factorial experiments. Estimated marginal 
 #'   means and error bars are plotted in the foreground, raw data is plotted in 
 #'   the background. Error bars can be based on different standard errors (e.g.,
-#'   model-based, within-subjects, between-subjects). Functions described here 
-#'   are extremely flexible and allow customization of almost any characteristic
-#'   of the plot.
+#'   model-based, within-subjects, between-subjects). Functions described here
+#'   return a \pkg{ggplot2} plot object, thus allowing further customization of
+#'   the plot.
 #'   
 #'   \code{afex_plot} is the user friendly function that does data preparation
 #'   and plotting. It also allows to only return the prepared data (\code{return
@@ -15,33 +15,33 @@
 #'   present. \code{oneway_plot} does the plotting when a \code{trace} factor is
 #'   absent.
 #'   
-#' @param object object of class \code{afex_aov} as returned from 
-#'   \code{\link{aov_car}} and related functions.
+#' @param object \code{afex_aov} or \code{mixed} object.
 #' @param x A \code{character} vector or one-sided \code{formula} specifying the
-#'   factor names of the predictors displayed on the x-axis.
-#' @param trace A \code{character} vector or one-sided \code{formula} specifying
-#'   the factor names of the predictors connected by the same line. Argument 
-#'   \code{mapping} specifies further mappings for these factors. Optional.
-#' @param panel A \code{character} vector or one-sided \code{formula} 
-#'   specifying the factor names of the predictors shown in different panels. 
-#'   Optional.
+#'   factor names of the predictors displayed on the x-axis. Argument
+#'   \code{mapping} specifies further mappings for these factors if \code{trace}
+#'   is missing.
+#' @param trace An optional \code{character} vector or one-sided \code{formula}
+#'   specifying the factor names of the predictors connected by the same line.
+#'   Argument \code{mapping} specifies further mappings for these factors.
+#' @param panel An optional \code{character} vector or one-sided \code{formula} 
+#'   specifying the factor names of the predictors shown in different panels.
 #' @param mapping A \code{character} vector specifying which aesthetic mappings 
 #'   should be applied to either the \code{trace} factors (if \code{trace} is 
 #'   specified) or the \code{x} factors. Useful options are any combination of 
-#'   \code{"shape"}, \code{"color"}, and \code{"linetype"} or also \code{"fill"}
-#'   (see examples). The default (i.e., missing) uses \code{c("shape",
-#'   "lineytpe")} if \code{trace} is specified, otherwise \code{""} (i.e., no
+#'   \code{"shape"}, \code{"color"}, \code{"linetype"}, or also \code{"fill"} 
+#'   (see examples). The default (i.e., missing) uses \code{c("shape", 
+#'   "lineytpe")} if \code{trace} is specified and \code{""} otherwise (i.e., no
 #'   additional aesthetic).
-#' @param error A scalar \code{character} vector specifying which type of
-#'   standard error should be plotted. Default is \code{"model"}, which plots
-#'   model-based standard errors. Further options are: \code{"none"} (or
-#'   \code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and
-#'   \code{"between"}. Currently ignored for the \code{mixed} method. See
-#'   details.
-#' @param random A \code{character} vector specifying over which variables the
-#'   raw data should be aggregated in case of \code{mixed} objects. The default
-#'   (missing) uses all random effects grouping factors which can lead to many
-#'   data points. See examples.
+#' @param error A scalar \code{character} vector specifying on which standard 
+#'   error the error bars should be based. Default is \code{"model"}, which
+#'   plots model-based standard errors. Further options are: \code{"none"} (or 
+#'   \code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and 
+#'   \code{"between"}. See details.
+#' @param random A \code{character} vector specifying over which variables the 
+#'   raw data should be aggregated in case of \code{mixed} objects. The default 
+#'   (missing) uses all random effects grouping factors which can lead to many 
+#'   data points. \code{error = "within"} or \code{error = "between"} require
+#'   that \code{random} is of length 1. See examples.
 #' @param error_ci Logical. Should error bars plot confidence intervals
 #'   (=\code{TRUE}, the default) or standard errors (=\code{FALSE})?
 #' @param error_level Numeric value between 0 and 1 determing the width of the
@@ -54,12 +54,16 @@
 #' @param data_plot \code{logical}. Should raw data be plotted in the 
 #'   background? Default is \code{TRUE}.
 #' @param data_geom Geom \code{function} used for plotting data in background. 
-#'   The default (missing) uses \code{\link[ggplot2]{geom_point}} if \code{trace}
-#'   is specified, otherwise \code{\link[ggbeeswarm]{geom_beeswarm}}. See
-#'   examples.
-#' @param data_alpha \code{alpha} value passed to \code{data_geom}.
+#'   The default (missing) uses \code{\link[ggplot2]{geom_point}} if 
+#'   \code{trace} is specified, otherwise 
+#'   \code{\link[ggbeeswarm]{geom_beeswarm}}. See examples fo further options.
+#' @param data_alpha numeric \code{alpha} value between 0 and 1 passed to 
+#'   \code{data_geom}. Default is \code{0.5} which correspond to semitransparent
+#'   data points in the background such that overlapping data points are plotted
+#'   darker.
 #' @param data_arg A \code{list} of further arguments passed to 
-#'   \code{data_geom}. Default is \code{list(color = "darkgrey")}.
+#'   \code{data_geom}. Default is \code{list(color = "darkgrey")}, which plots
+#'   points in the background in grey.
 #' @param point_arg,line_arg A \code{list} of further arguments passed to 
 #'   \code{\link[ggplot2]{geom_point}} or \code{\link[ggplot2]{geom_line}} which
 #'   draw the points and lines in the foreground. Default is \code{list()}.
@@ -77,7 +81,8 @@
 #' @param new_levels A \code{list} of new factor levels that should be used in 
 #'   the plot. The name of each list entry needs to correspond to one of the 
 #'   factors in the plot.
-#' @param means,data \code{data.frame}s used for plotting. 
+#' @param means,data \code{data.frame}s used for plotting of the plotting
+#'   functions.
 #' @param col_y,col_x,col_trace,col_panel A scalar \code{character} string 
 #'   specifying the name of the corresponding column containing the information
 #'   used for plotting. Each column needs to exist in both the \code{means} and
@@ -110,32 +115,42 @@
 #'   intervals. The most common error is to assume that non-overlapping error 
 #'   bars indicate a significant difference (e.g., Belia et al., 2005). This is 
 #'   rarely the case (see e.g., Cumming & Finch, 2005; Knol et al., 2011; 
-#'   Schenker & Gentleman, 2005). For example, in a fully between-subject design
-#'   in which the error bars depict 95% confidence intervals and groups are of 
+#'   Schenker & Gentleman, 2005). For example, in a fully between-subjects design
+#'   in which the error bars depict 95\% confidence intervals and groups are of 
 #'   approximately equal size and have equal variance, even error bars that 
 #'   overlap by as much as 50\% still correspond to \emph{p} < .05. Error bars 
 #'   that are just touching roughly correspond to \emph{p} = .01.
 #'   
-#'   In the case of repeated-measures designs the usual confidence intervals or
-#'   standard errors (i.e., model-based confidence intervals or intervals based
-#'   on the standard error of the mean) cannot be used to gauge significant
-#'   differences as this requires knowledge about the correlation between
-#'   measures. One popular alternative in the psychological literature are
-#'   intervals based on within-subject standard errors/confidence intervals
-#'   (e.g., Cousineau & O'Brien, 2014). These attempt to control for the
-#'   correlation across individuals and thereby allow judging differences
-#'   between repeated-measures condition. As a downside, when using
-#'   within-subject intervals no comparisons across between-subject conditions
+#'   In the case of designs involving repeated-measures factors the usual
+#'   confidence intervals or standard errors (i.e., model-based confidence
+#'   intervals or intervals based on the standard error of the mean) cannot be
+#'   used to gauge significant differences as this requires knowledge about the
+#'   correlation between measures. One popular alternative in the psychological
+#'   literature are intervals based on within-subject standard errors/confidence
+#'   intervals (e.g., Cousineau & O'Brien, 2014). These attempt to control for
+#'   the correlation across individuals and thereby allow judging differences 
+#'   between repeated-measures condition. As a downside, when using 
+#'   within-subject intervals no comparisons across between-subject conditions 
 #'   or with respect to a fixed-value are possible anymore.
 #'   
 #'   In the case of a mixed-design, no single type of error bar is possible that
-#'   allows comparison across all conditions. Therefore, special care is
-#'   necessary in such cases.
+#'   allows comparison across all conditions. Likewise, for mixed models
+#'   involving multiple \emph{crossed} random effects, no single set of error
+#'   bars (or even data aggregation) adequately represent the true varibility in
+#'   the data and adequately allows for "inference by eye". Therefore, special
+#'   care is necessary in such cases. One possiblity is to avoid error bars
+#'   altogether and plot only the raw data in the background \code{error =
+#'   "none"}. This still provides a visual impression of the variability in the
+#'   point estimate, but does not lend as easily to incorrect inferences.
+#'   Another possibility is to use the model-based standard error and note in
+#'   the figure caption that it does not permit comparisons across
+#'   repeated-measures factors.
 #'   
 #'   The following "rules of eye" (Cumming and Finch, 2005) hold, when permitted
 #'   by design (i.e., within-subject bars for within-subject comparisons; other 
 #'   variants for between-subject comparisons), and groups are approximately 
-#'   equal in size and variance:
+#'   equal in size and variance. Note that for more complex designs often
+#'   analyzed with mixed models, these rules of thumbs may be highly misleading.
 #'   \itemize{
 #'     \item  \emph{p} < .05 when the overlap of the 95\% confidence intervals
 #'     (CIs) is no more than about half the average margin of error, that is,
@@ -152,7 +167,15 @@
 #'   \subsection{Implemented Standard Errors}{The following lists the 
 #'   implemented approaches to calculate confidence intervals (CIs) and standard
 #'   errors (SEs). CIs are based on the SEs using the \emph{t}-distribution with
-#'   degrees of freedom based on the cell or group size.
+#'   degrees of freedom based on the cell or group size. For ANOVA models,
+#'   \code{afex_plot} attempts to warn in case the chosen approach is misleading
+#'   given with the design (e.g., model-based error bars for purely
+#'   within-subjects plots). For \code{mixed} models, no such warnings are
+#'   produced, but users should be aware that all options beside \code{"model"}
+#'   are not actually appropriate and have only heuristic value. But then again,
+#'   \code{"model"} based error bars do not permit comparisons for factors
+#'   varying within one of the random-effects grouping factors (i.e., factors
+#'   for which random-slopes should be estimated).
 #'   \describe{
 #'     \item{\code{"model"}}{Uses model-based CIs and SEs. For ANOVAs, the
 #'     variant based on the \code{lm} or \code{mlm} model (i.e.,
@@ -173,10 +196,15 @@
 #'     \item{\code{"none"} or \code{NULL}}{Suppresses calculation of SEs and
 #'     plots no error bars.}
 #'   }
+#'   For \code{mixed} models, the within-subjects factors are relative to the
+#'   chosen \code{random} effects grouping factor. They are automatically
+#'   detected based on the random-slopes of the random-effects grouping factor
+#'   in \code{random}. All other factors are treated as between-subjects
+#'   factors.
 #'   }
 #'   
 #' @return Returns a \pkg{ggplot2} plot (i.e., object of class \code{c("gg",
-#'   "ggplot")}) unless \code{return = "data"}.
+#'   "ggplot")}) unless \code{return = "data"}. 
 #' 
 #' @references Belia, S., Fidler, F., Williams, J., & Cumming, G. (2005).
 #'   Researchers Misunderstand Confidence Intervals and Standard Error Bars.
@@ -209,119 +237,6 @@
 #' @export
 afex_plot <- function(object, ...) UseMethod("afex_plot", object)
 
-
-# @method afex_plot afex_aov
-#' @rdname afex_plot
-#' @export
-afex_plot.mixed <- function(object, 
-                            x,
-                            trace,
-                            panel,
-                            mapping,
-                            random,
-                            error = "model",
-                            error_ci = TRUE,
-                            error_level = 0.95, 
-                            error_arg = list(width = 0),
-                            data_plot = TRUE,
-                            data_geom,
-                            data_alpha = 0.5,
-                            data_arg = list(color = "darkgrey"),
-                            point_arg = list(),
-                            line_arg = list(),
-                            emmeans_arg = list(),
-                            dodge = 0.2,
-                            return = "plot",
-                            new_levels = list(),
-                            ...) {
-  
-  return <- match.arg(return, c("plot", "data"))
-  error <- match.arg(error, c("none", 
-                              "model", 
-                              "mean", 
-                              "within", "CMO",
-                              "between"))
-  
-  x <- get_plot_var(x)
-  trace <- get_plot_var(trace)
-  panel <- get_plot_var(panel)
-  all_vars <- c(x, trace, panel)
-  
-  emms <- get_emms(object = object, 
-                   x = x,
-                   trace = trace,
-                   panel = panel,
-                   emmeans_arg = emmeans_arg, 
-                   new_levels = new_levels,
-                   level = error_level)
-  
-  data <- object$data
-  for (i in seq_along(new_levels)) {
-    levels(data[[names(new_levels)[i]]]) <- new_levels[[i]]
-  }
-  #data$y <- residuals(object$full_model)
-  #data$y <- predict(object$full_model)
-  #coef(object$full_model)
-  data$y <- data[,deparse(object$full_model@call[["formula"]][[2]])]
-  if (missing(random)) {
-    random <- names(lme4::ranef(object$full_model))
-    message("Aggregating data over: ", paste(random, collapse = ", "))
-  }
-  data <- aggregate(data$y, by = data[c(all_vars,random)], 
-                    FUN = mean, drop = TRUE)
-  data$y <- data$x
-  data$x <- interaction(data[x], sep = "\n")
-  data$all_vars <- interaction(data[all_vars], sep = ".")
-  
-  plot_error <- TRUE
-  ## for now, only model based error bars:
-  emms$error <- emms$SE
-  col_cis <- grep("CL", colnames(emms), value = TRUE)
-  col_cis <- col_cis[!(col_cis %in% all_vars)]
-  emms$lower <- emms[,col_cis[1]]
-  emms$upper <- emms[,col_cis[2]]
-  
-  if (length(trace) > 0) {
-    attr(emms, "trace") <- paste(trace, sep = "\n")
-    emms$trace <- interaction(emms[trace], sep = "\n")
-    data$trace <- interaction(data[trace], sep = "\n")
-    
-    if (return == "data") {
-      return(list(means = emms, data = data))
-    } else if (return == "plot") {
-      return(interaction_plot(means = emms, 
-                              data = data,
-                              error_plot = plot_error,
-                              error_arg = error_arg, 
-                              dodge = dodge, 
-                              data_plot = data_plot,
-                              data_geom = data_geom,
-                              data_alpha = data_alpha,
-                              data_arg = data_arg,
-                              point_arg = point_arg,
-                              line_arg = line_arg,
-                              mapping = mapping
-      ))
-    }
-  } else {
-    if (return == "data") {
-      return(list(means = emms, data = data))
-    } else if (return == "plot") {
-      return(oneway_plot(means = emms, 
-                         data = data,
-                         error_plot = plot_error,
-                         error_arg = error_arg, 
-                         data_plot = data_plot,
-                         data_geom = data_geom,
-                         data_alpha = data_alpha,
-                         data_arg = data_arg,
-                         point_arg = point_arg,
-                         mapping = mapping
-      ))
-    }
-  }
-
-}
 
 # @method afex_plot afex_aov
 #' @rdname afex_plot
@@ -380,19 +295,8 @@ afex_plot.afex_aov <- function(object,
   data$all_vars <- interaction(data[all_vars], sep = ".")
   
   ### prepare variables for SE/CI calculation
-  plot_error <- TRUE
   within_vars <- all_vars[all_vars %in% names(attr(object, "within"))]
-  if (length(within_vars) > 0) {
-    within_fac <- interaction(data[within_vars], sep = ".")
-  } else {
-    within_fac <- factor(rep("1", nrow(data)))
-  }
   between_vars <- all_vars[all_vars %in% names(attr(object, "between"))]
-  if (length(between_vars) > 0) {
-    between_fac <- interaction(data[between_vars], sep = ".")
-  } else {
-    between_fac <- factor(rep("1", nrow(data)))
-  }
   
   ### check if error bars are consistent with panel(s) and warn otherwise
   if (error %in% c("model", "mean", "between") && 
@@ -411,16 +315,18 @@ afex_plot.afex_aov <- function(object,
             call. = FALSE)
   }
   
-  emms <- get_data_based_cis(emms = emms, 
-                             data = data, 
-                             error = error, 
-                             id = attr(object, "id"), ## colname holding the id/grouping variable 
-                             within_vars = within_vars, 
-                             within_fac = within_fac,
-                             between_vars = between_vars, 
-                             between_fac = between_fac,
-                             error_level = error_level, 
-                             error_ci = error_ci)
+  tmp <- get_data_based_cis(emms = emms, 
+                            data = data, 
+                            error = error, 
+                            id = attr(object, "id"), ## colname holding the id/grouping variable 
+                            all_vars = all_vars,
+                            within_vars = within_vars, 
+                            between_vars = between_vars, 
+                            error_level = error_level, 
+                            error_ci = error_ci)
+  emms <- tmp$emms
+  plot_error <- tmp$plot_error
+
   
   if (length(trace) > 0) {
     attr(emms, "trace") <- paste(trace, sep = "\n")
@@ -465,6 +371,143 @@ afex_plot.afex_aov <- function(object,
 
 
 
+# @method afex_plot afex_aov
+#' @rdname afex_plot
+#' @export
+afex_plot.mixed <- function(object, 
+                            x,
+                            trace,
+                            panel,
+                            mapping,
+                            random,
+                            error = "model",
+                            error_ci = TRUE,
+                            error_level = 0.95, 
+                            error_arg = list(width = 0),
+                            data_plot = TRUE,
+                            data_geom,
+                            data_alpha = 0.5,
+                            data_arg = list(color = "darkgrey"),
+                            point_arg = list(),
+                            line_arg = list(),
+                            emmeans_arg = list(),
+                            dodge = 0.2,
+                            return = "plot",
+                            new_levels = list(),
+                            ...) {
+  
+  return <- match.arg(return, c("plot", "data"))
+  error <- match.arg(error, c("none", 
+                              "model", 
+                              "mean", 
+                              "within", "CMO",
+                              "between"))
+  
+  x <- get_plot_var(x)
+  trace <- get_plot_var(trace)
+  panel <- get_plot_var(panel)
+  all_vars <- c(x, trace, panel)
+  
+  data <- object$data
+  for (i in seq_along(new_levels)) {
+    levels(data[[names(new_levels)[i]]]) <- new_levels[[i]]
+  }
+  #data$y <- residuals(object$full_model)
+  #data$y <- predict(object$full_model)
+  #coef(object$full_model)
+  data$y <- data[,deparse(object$full_model@call[["formula"]][[2]])]
+  if (missing(random)) {
+    random <- unique(names(lme4::ranef(object$full_model)))
+    message("Aggregating data over: ", paste(random, collapse = ", "))
+  }
+  data <- aggregate(data$y, by = data[c(all_vars,random)], 
+                    FUN = mean, drop = TRUE)
+  data$y <- data$x
+  data$x <- interaction(data[x], sep = "\n")
+  data$all_vars <- interaction(data[all_vars], sep = ".")
+  data$afex_id <- interaction(data[random], sep = ".")
+  
+  if (!(error %in% c("none" ,"model", "mean")) & 
+      (length(random) > 1)) {
+    stop("When aggregating over multiple random effects,\n",
+         '       error has to be in: c("model", "mean", "none")',
+         call. = FALSE)
+  } 
+  
+  emms <- get_emms(object = object, 
+                   x = x,
+                   trace = trace,
+                   panel = panel,
+                   emmeans_arg = emmeans_arg, 
+                   new_levels = new_levels,
+                   level = error_level)
+  
+  if (length(random) == 1) {
+    all_within <- lapply(lme4::findbars(object$call), all.vars)
+    all_within <- 
+      unique(unlist(
+        all_within[vapply(all_within, function(x) random %in% x, NA)]
+      ))
+    all_within <- all_within[all_within != random]
+    within_vars <- all_vars[all_vars %in% all_within]
+    between_vars <- all_vars[!(all_vars %in% within_vars)]
+  }
+  
+  
+  ### prepare variables for SE/CI calculation
+  tmp <- get_data_based_cis(emms = emms, 
+                            data = data, 
+                            error = error, 
+                            id = "afex_id", ## colname holding the id/grouping variable 
+                            all_vars = all_vars,
+                            within_vars = within_vars, 
+                            between_vars = between_vars, 
+                            error_level = error_level, 
+                            error_ci = error_ci)
+  emms <- tmp$emms
+  plot_error <- tmp$plot_error
+  
+  if (length(trace) > 0) {
+    attr(emms, "trace") <- paste(trace, sep = "\n")
+    emms$trace <- interaction(emms[trace], sep = "\n")
+    data$trace <- interaction(data[trace], sep = "\n")
+    
+    if (return == "data") {
+      return(list(means = emms, data = data))
+    } else if (return == "plot") {
+      return(interaction_plot(means = emms, 
+                              data = data,
+                              error_plot = plot_error,
+                              error_arg = error_arg, 
+                              dodge = dodge, 
+                              data_plot = data_plot,
+                              data_geom = data_geom,
+                              data_alpha = data_alpha,
+                              data_arg = data_arg,
+                              point_arg = point_arg,
+                              line_arg = line_arg,
+                              mapping = mapping
+      ))
+    }
+  } else {
+    if (return == "data") {
+      return(list(means = emms, data = data))
+    } else if (return == "plot") {
+      return(oneway_plot(means = emms, 
+                         data = data,
+                         error_plot = plot_error,
+                         error_arg = error_arg, 
+                         data_plot = data_plot,
+                         data_geom = data_geom,
+                         data_alpha = data_alpha,
+                         data_arg = data_arg,
+                         point_arg = point_arg,
+                         mapping = mapping
+      ))
+    }
+  }
+
+}
 
 
 ###if(getRversion() >= "2.15.1")  utils::globalVariables(c("error", "y", "x"))
@@ -591,7 +634,6 @@ interaction_plot <- function(means,
 }
 
 
-##if(getRversion() >= "2.15.1")  utils::globalVariables(c("error", "y"))
 #' @rdname afex_plot
 #' @export
 oneway_plot <- function(means, 

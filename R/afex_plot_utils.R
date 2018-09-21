@@ -46,14 +46,21 @@ get_plot_var <- function(x) {
 
 get_data_based_cis <- function(emms, data, error, 
                                id, ## colname holding the id/grouping variable 
-                               within_vars, within_fac,
-                               between_vars, between_fac,
+                               all_vars,
+                               within_vars, 
+                               between_vars,
                                error_level, error_ci) {
+  
+  plot_error <- TRUE
   ## SE/CI calculation:
   if (error == "model") {
     emms$error <- emms$SE
-    emms$lower <- emms$lower.CL
-    emms$upper <- emms$upper.CL
+    # emms$lower <- emms$lower.CL
+    # emms$upper <- emms$upper.CL
+    col_cis <- grep("CL", colnames(emms), value = TRUE)
+    col_cis <- col_cis[!(col_cis %in% all_vars)]
+    emms$lower <- emms[,col_cis[1]]
+    emms$upper <- emms[,col_cis[2]]
   } else if (error == "mean") {
     ses <- tapply(data$y, INDEX = list(data$all_vars), FUN = se)
     sizes <- tapply(data$y, INDEX = list(data$all_vars), FUN = length)
@@ -66,6 +73,7 @@ get_data_based_cis <- function(emms, data, error,
       stop("within-subject SE only possible if within-subject factors present.", 
            call. = FALSE)
     }
+    within_fac <- interaction(data[within_vars], sep = ".")
     indiv_means <- tapply(data$y, INDEX = data[id], FUN = mean)
     J <- length(levels(within_fac))
     ## Cosineau & O'Brien (2014), Equation 2:
@@ -82,6 +90,11 @@ get_data_based_cis <- function(emms, data, error,
     emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
     emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
   } else if (error == "between") {
+    if (length(between_vars) > 0) {
+      between_fac <- interaction(data[between_vars], sep = ".")
+    } else {
+      between_fac <- factor(rep("1", nrow(data)))
+    }
     indiv_means <- aggregate(data$y, 
                              by = list(
                                data[,id],
@@ -104,12 +117,13 @@ get_data_based_cis <- function(emms, data, error,
     emms$error <- NA_real_
     emms$lower <- NA_real_
     emms$upper <- NA_real_
-    plot_error <- FALSE  
+    plot_error <- FALSE
   }
   
   if (!error_ci) {
     emms$lower <- emms$y - emms$error
     emms$upper <- emms$y + emms$error
   }
-  return(emms)
+
+  return(list(emms = emms, plot_error = plot_error))
 }

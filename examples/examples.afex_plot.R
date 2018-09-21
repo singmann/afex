@@ -1,3 +1,4 @@
+# note: use library("ggplot") to avoid "ggplot2::" in the following
 
 ##################################################################
 ##                2-factor Within-Subject Design                ##
@@ -274,7 +275,43 @@ afex_plot(mrt, "stimulus", "frequency", "task")
 
 ## better to restrict plot of data to one random-effects grouping variable
 afex_plot(mrt, "stimulus", "frequency", "task", random = "id")
-afex_plot(mrt, "stimulus", "frequency", "task", random = "item")
+## when plotting data from a single random effect, different error bars are possible:
+afex_plot(mrt, "stimulus", "frequency", "task", random = "id", error = "within")
+afex_plot(mrt, "stimulus", "frequency", "task", random = "id", error = "mean")
 
-afex_plot(mrt, "frequency", "stimulus", "task", random = "id")
+## compare visual impression with:
+pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
+
+## same logic also possible for other random-effects grouping factor
+afex_plot(mrt, "stimulus", "frequency", "task", random = "item")
+afex_plot(mrt, "stimulus", "frequency", "task", random = "item", error = "within")
+afex_plot(mrt, "stimulus", "frequency", "task", random = "item", error = "mean")
+
+### compare distribution of individual data for different random effects:
+## requires package cowplot
+p_id <- afex_plot(mrt, "stimulus", "frequency", "task", random = "id", 
+                  error = "within", dodge = 0.7,
+                  data_geom = ggplot2::geom_violin, 
+                  mapping = c("shape", "fill"),
+                  data_arg = list(width = 0.7)) +
+  ggplot2::scale_shape_manual(values = c(4, 17)) +
+  ggplot2::labs(title = "ID")
+
+p_item <- afex_plot(mrt, "stimulus", "frequency", "task", random = "item", 
+          error = "within", dodge = 0.7,
+          data_geom = ggplot2::geom_violin, 
+          mapping = c("shape", "fill"),
+          data_arg = list(width = 0.7)) +
+  ggplot2::scale_shape_manual(values = c(4, 17)) +
+  ggplot2::labs(title = "Item")
+
+### see: https://cran.r-project.org/package=cowplot/vignettes/shared_legends.html
+p_comb <- cowplot::plot_grid(
+  p_id + ggplot2::theme_light() + ggplot2::theme(legend.position="none"),
+  p_item + ggplot2::theme_light() + ggplot2::theme(legend.position="none")
+  )
+legend <- cowplot::get_legend(p_id + ggplot2::theme(legend.position="bottom"))
+cowplot::plot_grid(p_comb, legend, 
+                   ncol = 1, 
+                   rel_heights = c(1, 0.1))
 }

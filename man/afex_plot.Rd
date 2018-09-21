@@ -2,22 +2,22 @@
 % Please edit documentation in R/afex_plot.R
 \name{afex_plot}
 \alias{afex_plot}
-\alias{afex_plot.mixed}
 \alias{afex_plot.afex_aov}
+\alias{afex_plot.mixed}
 \alias{interaction_plot}
 \alias{oneway_plot}
-\title{m-way Interaction Plot with Error Bars and Raw Data}
+\title{m-way Plot with Error Bars and Raw Data}
 \usage{
 afex_plot(object, ...)
 
-\method{afex_plot}{mixed}(object, x, trace, panel, mapping, random,
+\method{afex_plot}{afex_aov}(object, x, trace, panel, mapping,
   error = "model", error_ci = TRUE, error_level = 0.95,
   error_arg = list(width = 0), data_plot = TRUE, data_geom,
   data_alpha = 0.5, data_arg = list(color = "darkgrey"),
   point_arg = list(), line_arg = list(), emmeans_arg = list(),
   dodge = 0.2, return = "plot", new_levels = list(), ...)
 
-\method{afex_plot}{afex_aov}(object, x, trace, panel, mapping,
+\method{afex_plot}{mixed}(object, x, trace, panel, mapping, random,
   error = "model", error_ci = TRUE, error_level = 0.95,
   error_arg = list(width = 0), data_plot = TRUE, data_geom,
   data_alpha = 0.5, data_arg = list(color = "darkgrey"),
@@ -40,41 +40,35 @@ oneway_plot(means, data, mapping = "", error_plot = TRUE,
   col_lower = "lower", col_upper = "upper")
 }
 \arguments{
-\item{object}{object of class \code{afex_aov} as returned from 
-\code{\link{aov_car}} and related functions.}
+\item{object}{\code{afex_aov} or \code{mixed} object.}
 
 \item{...}{currently ignored.}
 
 \item{x}{A \code{character} vector or one-sided \code{formula} specifying the
-factor names of the predictors displayed on the x-axis.}
+factor names of the predictors displayed on the x-axis. Argument
+\code{mapping} specifies further mappings for these factors if \code{trace}
+is missing.}
 
-\item{trace}{A \code{character} vector or one-sided \code{formula} specifying
-the factor names of the predictors connected by the same line. Argument 
-\code{mapping} specifies further mappings for these factors. Optional.}
+\item{trace}{An optional \code{character} vector or one-sided \code{formula}
+specifying the factor names of the predictors connected by the same line.
+Argument \code{mapping} specifies further mappings for these factors.}
 
-\item{panel}{A \code{character} vector or one-sided \code{formula} 
-specifying the factor names of the predictors shown in different panels. 
-Optional.}
+\item{panel}{An optional \code{character} vector or one-sided \code{formula} 
+specifying the factor names of the predictors shown in different panels.}
 
 \item{mapping}{A \code{character} vector specifying which aesthetic mappings 
 should be applied to either the \code{trace} factors (if \code{trace} is 
 specified) or the \code{x} factors. Useful options are any combination of 
-\code{"shape"}, \code{"color"}, and \code{"linetype"} or also \code{"fill"}
-(see examples). The default (i.e., missing) uses \code{c("shape",
-"lineytpe")} if \code{trace} is specified, otherwise \code{""} (i.e., no
+\code{"shape"}, \code{"color"}, \code{"linetype"}, or also \code{"fill"} 
+(see examples). The default (i.e., missing) uses \code{c("shape", 
+"lineytpe")} if \code{trace} is specified and \code{""} otherwise (i.e., no
 additional aesthetic).}
 
-\item{random}{A \code{character} vector specifying over which variables the
-raw data should be aggregated in case of \code{mixed} objects. The default
-(missing) uses all random effects grouping factors which can lead to many
-data points. See examples.}
-
-\item{error}{A scalar \code{character} vector specifying which type of
-standard error should be plotted. Default is \code{"model"}, which plots
-model-based standard errors. Further options are: \code{"none"} (or
-\code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and
-\code{"between"}. Currently ignored for the \code{mixed} method. See
-details.}
+\item{error}{A scalar \code{character} vector specifying on which standard 
+error the error bars should be based. Default is \code{"model"}, which
+plots model-based standard errors. Further options are: \code{"none"} (or 
+\code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and 
+\code{"between"}. See details.}
 
 \item{error_ci}{Logical. Should error bars plot confidence intervals
 (=\code{TRUE}, the default) or standard errors (=\code{FALSE})?}
@@ -92,14 +86,18 @@ the error bar.}
 background? Default is \code{TRUE}.}
 
 \item{data_geom}{Geom \code{function} used for plotting data in background. 
-The default (missing) uses \code{\link[ggplot2]{geom_point}} if \code{trace}
-is specified, otherwise \code{\link[ggbeeswarm]{geom_beeswarm}}. See
-examples.}
+The default (missing) uses \code{\link[ggplot2]{geom_point}} if 
+\code{trace} is specified, otherwise 
+\code{\link[ggbeeswarm]{geom_beeswarm}}. See examples fo further options.}
 
-\item{data_alpha}{\code{alpha} value passed to \code{data_geom}.}
+\item{data_alpha}{numeric \code{alpha} value between 0 and 1 passed to 
+\code{data_geom}. Default is \code{0.5} which correspond to semitransparent
+data points in the background such that overlapping data points are plotted
+darker.}
 
 \item{data_arg}{A \code{list} of further arguments passed to 
-\code{data_geom}. Default is \code{list(color = "darkgrey")}.}
+\code{data_geom}. Default is \code{list(color = "darkgrey")}, which plots
+points in the background in grey.}
 
 \item{point_arg, line_arg}{A \code{list} of further arguments passed to 
 \code{\link[ggplot2]{geom_point}} or \code{\link[ggplot2]{geom_line}} which
@@ -123,7 +121,14 @@ for the foreground, \code{data} contains the raw data in the background.}
 the plot. The name of each list entry needs to correspond to one of the 
 factors in the plot.}
 
-\item{means, data}{\code{data.frame}s used for plotting.}
+\item{random}{A \code{character} vector specifying over which variables the 
+raw data should be aggregated in case of \code{mixed} objects. The default 
+(missing) uses all random effects grouping factors which can lead to many 
+data points. \code{error = "within"} or \code{error = "between"} require
+that \code{random} is of length 1. See examples.}
+
+\item{means, data}{\code{data.frame}s used for plotting of the plotting
+functions.}
 
 \item{error_plot}{\code{logical}. Should error bars be plotted? Only used in 
 plotting functions. To suppress plotting of error bars use \code{error =
@@ -146,9 +151,9 @@ Returns a \pkg{ggplot2} plot (i.e., object of class \code{c("gg",
 Plots results from factorial experiments. Estimated marginal 
   means and error bars are plotted in the foreground, raw data is plotted in 
   the background. Error bars can be based on different standard errors (e.g.,
-  model-based, within-subjects, between-subjects). Functions described here 
-  are extremely flexible and allow customization of almost any characteristic
-  of the plot.
+  model-based, within-subjects, between-subjects). Functions described here
+  return a \pkg{ggplot2} plot object, thus allowing further customization of
+  the plot.
   
   \code{afex_plot} is the user friendly function that does data preparation
   and plotting. It also allows to only return the prepared data (\code{return
@@ -179,32 +184,42 @@ Plots results from factorial experiments. Estimated marginal
   intervals. The most common error is to assume that non-overlapping error 
   bars indicate a significant difference (e.g., Belia et al., 2005). This is 
   rarely the case (see e.g., Cumming & Finch, 2005; Knol et al., 2011; 
-  Schenker & Gentleman, 2005). For example, in a fully between-subject design
-  in which the error bars depict 95% confidence intervals and groups are of 
+  Schenker & Gentleman, 2005). For example, in a fully between-subjects design
+  in which the error bars depict 95\% confidence intervals and groups are of 
   approximately equal size and have equal variance, even error bars that 
   overlap by as much as 50\% still correspond to \emph{p} < .05. Error bars 
   that are just touching roughly correspond to \emph{p} = .01.
   
-  In the case of repeated-measures designs the usual confidence intervals or
-  standard errors (i.e., model-based confidence intervals or intervals based
-  on the standard error of the mean) cannot be used to gauge significant
-  differences as this requires knowledge about the correlation between
-  measures. One popular alternative in the psychological literature are
-  intervals based on within-subject standard errors/confidence intervals
-  (e.g., Cousineau & O'Brien, 2014). These attempt to control for the
-  correlation across individuals and thereby allow judging differences
-  between repeated-measures condition. As a downside, when using
-  within-subject intervals no comparisons across between-subject conditions
+  In the case of designs involving repeated-measures factors the usual
+  confidence intervals or standard errors (i.e., model-based confidence
+  intervals or intervals based on the standard error of the mean) cannot be
+  used to gauge significant differences as this requires knowledge about the
+  correlation between measures. One popular alternative in the psychological
+  literature are intervals based on within-subject standard errors/confidence
+  intervals (e.g., Cousineau & O'Brien, 2014). These attempt to control for
+  the correlation across individuals and thereby allow judging differences 
+  between repeated-measures condition. As a downside, when using 
+  within-subject intervals no comparisons across between-subject conditions 
   or with respect to a fixed-value are possible anymore.
   
   In the case of a mixed-design, no single type of error bar is possible that
-  allows comparison across all conditions. Therefore, special care is
-  necessary in such cases.
+  allows comparison across all conditions. Likewise, for mixed models
+  involving multiple \emph{crossed} random effects, no single set of error
+  bars (or even data aggregation) adequately represent the true varibility in
+  the data and adequately allows for "inference by eye". Therefore, special
+  care is necessary in such cases. One possiblity is to avoid error bars
+  altogether and plot only the raw data in the background \code{error =
+  "none"}. This still provides a visual impression of the variability in the
+  point estimate, but does not lend as easily to incorrect inferences.
+  Another possibility is to use the model-based standard error and note in
+  the figure caption that it does not permit comparisons across
+  repeated-measures factors.
   
   The following "rules of eye" (Cumming and Finch, 2005) hold, when permitted
   by design (i.e., within-subject bars for within-subject comparisons; other 
   variants for between-subject comparisons), and groups are approximately 
-  equal in size and variance:
+  equal in size and variance. Note that for more complex designs often
+  analyzed with mixed models, these rules of thumbs may be highly misleading.
   \itemize{
     \item  \emph{p} < .05 when the overlap of the 95\% confidence intervals
     (CIs) is no more than about half the average margin of error, that is,
@@ -221,7 +236,15 @@ Plots results from factorial experiments. Estimated marginal
   \subsection{Implemented Standard Errors}{The following lists the 
   implemented approaches to calculate confidence intervals (CIs) and standard
   errors (SEs). CIs are based on the SEs using the \emph{t}-distribution with
-  degrees of freedom based on the cell or group size.
+  degrees of freedom based on the cell or group size. For ANOVA models,
+  \code{afex_plot} attempts to warn in case the chosen approach is misleading
+  given with the design (e.g., model-based error bars for purely
+  within-subjects plots). For \code{mixed} models, no such warnings are
+  produced, but users should be aware that all options beside \code{"model"}
+  are not actually appropriate and have only heuristic value. But then again,
+  \code{"model"} based error bars do not permit comparisons for factors
+  varying within one of the random-effects grouping factors (i.e., factors
+  for which random-slopes should be estimated).
   \describe{
     \item{\code{"model"}}{Uses model-based CIs and SEs. For ANOVAs, the
     variant based on the \code{lm} or \code{mlm} model (i.e.,
@@ -242,9 +265,15 @@ Plots results from factorial experiments. Estimated marginal
     \item{\code{"none"} or \code{NULL}}{Suppresses calculation of SEs and
     plots no error bars.}
   }
+  For \code{mixed} models, the within-subjects factors are relative to the
+  chosen \code{random} effects grouping factor. They are automatically
+  detected based on the random-slopes of the random-effects grouping factor
+  in \code{random}. All other factors are treated as between-subjects
+  factors.
   }
 }
 \examples{
+# note: use library("ggplot") to avoid "ggplot2::" in the following
 
 ##################################################################
 ##                2-factor Within-Subject Design                ##
@@ -521,9 +550,45 @@ afex_plot(mrt, "stimulus", "frequency", "task")
 
 ## better to restrict plot of data to one random-effects grouping variable
 afex_plot(mrt, "stimulus", "frequency", "task", random = "id")
-afex_plot(mrt, "stimulus", "frequency", "task", random = "item")
+## when plotting data from a single random effect, different error bars are possible:
+afex_plot(mrt, "stimulus", "frequency", "task", random = "id", error = "within")
+afex_plot(mrt, "stimulus", "frequency", "task", random = "id", error = "mean")
 
-afex_plot(mrt, "frequency", "stimulus", "task", random = "id")
+## compare visual impression with:
+pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
+
+## same logic also possible for other random-effects grouping factor
+afex_plot(mrt, "stimulus", "frequency", "task", random = "item")
+afex_plot(mrt, "stimulus", "frequency", "task", random = "item", error = "within")
+afex_plot(mrt, "stimulus", "frequency", "task", random = "item", error = "mean")
+
+### compare distribution of individual data for different random effects:
+## requires package cowplot
+p_id <- afex_plot(mrt, "stimulus", "frequency", "task", random = "id", 
+                  error = "within", dodge = 0.7,
+                  data_geom = ggplot2::geom_violin, 
+                  mapping = c("shape", "fill"),
+                  data_arg = list(width = 0.7)) +
+  ggplot2::scale_shape_manual(values = c(4, 17)) +
+  ggplot2::labs(title = "ID")
+
+p_item <- afex_plot(mrt, "stimulus", "frequency", "task", random = "item", 
+          error = "within", dodge = 0.7,
+          data_geom = ggplot2::geom_violin, 
+          mapping = c("shape", "fill"),
+          data_arg = list(width = 0.7)) +
+  ggplot2::scale_shape_manual(values = c(4, 17)) +
+  ggplot2::labs(title = "Item")
+
+### see: https://cran.r-project.org/package=cowplot/vignettes/shared_legends.html
+p_comb <- cowplot::plot_grid(
+  p_id + ggplot2::theme_light() + ggplot2::theme(legend.position="none"),
+  p_item + ggplot2::theme_light() + ggplot2::theme(legend.position="none")
+  )
+legend <- cowplot::get_legend(p_id + ggplot2::theme(legend.position="bottom"))
+cowplot::plot_grid(p_comb, legend, 
+                   ncol = 1, 
+                   rel_heights = c(1, 0.1))
 }
 }
 \references{

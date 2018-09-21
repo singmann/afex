@@ -422,7 +422,7 @@ afex_plot(a1, ~hour, ~treatment, ~phase,
                 ),
             color = "darkgrey"),
           emmeans_arg = list(model = "multivariate")) +
-  ggplot2::theme_light()
+  ggplot2::theme_classic()
 
 # with color instead of linetype to separate trace factor
 afex_plot(a1, ~hour, ~treatment, ~phase, 
@@ -450,7 +450,7 @@ afex_plot(a1, ~hour, ~treatment, ~phase,
                 dodge.width = 0.65  ## needs to be same as dodge
                 )),
           emmeans_arg = list(model = "multivariate")) +
-  ggplot2::theme_light()
+  ggplot2::theme_classic()
 
 
 ## plot involving all 4 factors:
@@ -465,7 +465,7 @@ afex_plot(a1, ~hour, ~treatment, ~gender+phase,
                 ),
             color = "darkgrey"),
           emmeans_arg = list(model = "multivariate")) +
-  ggplot2::theme_light()
+  ggplot2::theme_classic()
 
 
 ##---------------------------------------------------------------

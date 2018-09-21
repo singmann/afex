@@ -136,6 +136,7 @@ An object of class \code{"mixed"} (i.e., a list) with the following
     obtaining the p-values.
   \item \code{data} The data used for estimation (i.e., after excluding 
     missing rows and applying expand_re if requested).
+  \item \code{call} The matched call.
 }
 
 It also has the following attributes, \code{"type"} and \code{"method"}. And

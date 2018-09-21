@@ -131,6 +131,7 @@
 #'     obtaining the p-values.
 #'   \item \code{data} The data used for estimation (i.e., after excluding 
 #'     missing rows and applying expand_re if requested).
+#'   \item \code{call} The matched call.
 #' }
 #' 
 #' It also has the following attributes, \code{"type"} and \code{"method"}. And
@@ -929,7 +930,8 @@ mixed <- function(formula,
     full_model = full_model, 
     restricted_models = fits, 
     tests = tests,
-    data = data) #, type = type, method = method[[1]]
+    data = data,
+    call = mc) #, type = type, method = method[[1]]
   class(list.out) <- "mixed"
   attr(list.out, "type") <- type
   attr(list.out, "method") <- method

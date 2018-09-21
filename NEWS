@@ -17,6 +17,8 @@
         before passing objects to emmeans or called with ::
         Option 1: emmeans::emmeans() 
         Option 2: library("emmeans")
+        
+    o added call slot to mixed objects holding the matched call.
     
     Bugfixes
 

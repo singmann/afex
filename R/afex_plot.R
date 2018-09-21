@@ -72,7 +72,7 @@
 #'   \code{\link[emmeans]{emmeans}}. Of particular importance for ANOVAs is 
 #'   \code{model}, see \code{\link{afex_aov-methods}}.
 #' @param dodge Numerical amount of dodging of factor-levels on x-axis. Default 
-#'   is \code{0.2}.
+#'   is \code{0.5}.
 #' @param return A scalar \code{character} specifying what should be returned. 
 #'   The default \code{"plot"} returns the \pkg{ggplot2} plot. The other option 
 #'   \code{"data"} returns a list with two \code{data.frame}s containing the 
@@ -257,7 +257,7 @@ afex_plot.afex_aov <- function(object,
                                point_arg = list(),
                                line_arg = list(),
                                emmeans_arg = list(),
-                               dodge = 0.2,
+                               dodge = 0.5,
                                return = "plot",
                                new_levels = list(),
                                ...) {
@@ -391,7 +391,7 @@ afex_plot.mixed <- function(object,
                             point_arg = list(),
                             line_arg = list(),
                             emmeans_arg = list(),
-                            dodge = 0.2,
+                            dodge = 0.5,
                             return = "plot",
                             new_levels = list(),
                             ...) {
@@ -530,7 +530,7 @@ afex_plot.merMod <- function(object,
                             point_arg = list(),
                             line_arg = list(),
                             emmeans_arg = list(),
-                            dodge = 0.2,
+                            dodge = 0.5,
                             return = "plot",
                             new_levels = list(),
                             ...) {
@@ -664,7 +664,7 @@ interaction_plot <- function(means,
                              data_arg = list(color = "darkgrey"),
                              point_arg = list(),
                              line_arg = list(),
-                             dodge = 0.2, 
+                             dodge = 0.5, 
                              col_x = "x",
                              col_y = "y",
                              col_trace = "trace",

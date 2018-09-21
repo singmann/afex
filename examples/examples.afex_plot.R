@@ -35,13 +35,13 @@ ggplot2::theme_set(ggplot2::theme_light())
 ### There are several ways to deal with overlapping points in the background besides alpha
 
 # 1. using the default data geom and ggplot2::position_jitterdodge
-afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.2,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
           data_arg = list(
             position = 
               ggplot2::position_jitterdodge(
                 jitter.width = 0, 
                 jitter.height = 2, 
-                dodge.width = 0.2  ## needs to be same as dodge
+                dodge.width = 0.3  ## needs to be same as dodge
                 ),
             color = "darkgrey"))
 
@@ -57,18 +57,18 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
 }
 
 # 3. do not display points, but use a violinplot: ggplot2::geom_violin
-afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           data_geom = ggplot2::geom_violin, 
           data_arg = list(width = 0.5))
 
 # 4. violinplots with color: ggplot2::geom_violin
-afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5, 
+afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           mapping = c("linetype", "shape", "fill"),
           data_geom = ggplot2::geom_violin, 
           data_arg = list(width = 0.5))
 
 # 5. do not display points, but use a boxplot: ggplot2::geom_violin
-afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           data_geom = ggplot2::geom_boxplot, 
           data_arg = list(width = 0.3))
           
@@ -76,13 +76,13 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
 # 6. combine points with boxplot: ggpol::geom_boxjitter
 ## currently requires attaching ggpol explicitly:
 library("ggpol")
-afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(width = 0.3))
 ## hides error bars!
 
 # 7. nicer variant of ggpol::geom_boxjitter
-afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           mapping = c("shape", "fill"),
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(
@@ -147,6 +147,9 @@ afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter,
 afex_plot(aw, x = "noise", trace = "angle", 
           new_levels = list(angle = c("0", "4", "8"),
                             noise = c("Absent", "Present")))
+
+## for plots with few factor levels, smaller dodge might be better:
+afex_plot(aw, x = "angle", trace = "noise", dodge = 0.25) 
 
 #################################################################
 ##                    4-factor Mixed Design                    ##

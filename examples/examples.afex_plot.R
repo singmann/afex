@@ -260,9 +260,19 @@ cbind(
 data("Machines", package = "MEMSS") 
 m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines)
 
+pairs(emmeans::emmeans(m1, "Machine"))
+# contrast   estimate       SE df t.ratio p.value
+# A - B     -7.966667 2.420850  5  -3.291  0.0481
+# A - C    -13.916667 1.540100  5  -9.036  0.0007
+# B - C     -5.950000 2.446475  5  -2.432  0.1253
+
+## Default (i.e., model-based) error bars suggest no difference between Machines.
+## This contrasts with pairwise comparisons above.
 afex_plot(m1, "Machine")
 
-pairs(emmeans::emmeans(m1, "Machine"))
+## Impression from within-subject error bars is more in line with pattern of differences.
+afex_plot(m1, "Machine", error = "within")
+
 
 \dontrun{
 data("fhch2010") # load 
@@ -270,6 +280,7 @@ fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
 ### following model should take less than a minute to fit:
 mrt <- mixed(log_rt ~ task*stimulus*frequency + (stimulus*frequency||id)+
                (task||item), fhch, method = "S", expand_re = TRUE)
+
 ## way too many points in background:
 afex_plot(mrt, "stimulus", "frequency", "task") 
 
@@ -284,7 +295,9 @@ pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
 
 ## same logic also possible for other random-effects grouping factor
 afex_plot(mrt, "stimulus", "frequency", "task", random = "item")
+## within-item error bars are misleading here. task is sole within-items factor.
 afex_plot(mrt, "stimulus", "frequency", "task", random = "item", error = "within")
+## CIs based on stanard error of mean look small, but not unreasonable given results.
 afex_plot(mrt, "stimulus", "frequency", "task", random = "item", error = "mean")
 
 ### compare distribution of individual data for different random effects:

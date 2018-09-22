@@ -503,7 +503,7 @@ afex_plot(a1, ~hour, ~treatment, ~gender+phase,
                 ),
             color = "darkgrey"),
           emmeans_arg = list(model = "multivariate")) +
-  ggplot2::theme_classic()
+  ggplot2::theme_bw()
 
 
 ##---------------------------------------------------------------

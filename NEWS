@@ -8,21 +8,25 @@
     Significant User Visible Changes and New Features
     
     o   New functions for plotting results (means, error bars, and raw data) 
-        using ggplot2:
-        afex_plot(): generic for afex and lme4::merMod objects
-        interaction_plot(): workhorse producing interaction plot
-        oneway_plot(): workhorse producing interaction plot
-        Error bars based on a variety of different standard errors (e.g., 
-        model-based, within-subjects) are possible.
+        using ggplot2, afex_plot(), generic function for afex and lme4::merMod 
+        objects. Furthermore added two more functions:
+        - interaction_plot(): workhorse producing interaction plot
+        - oneway_plot(): workhorse producing oneway plot
+        Error bars can bedisplay confidence intervals (the default) or standard
+        errors and can be calculated using a variety of different standard 
+        errors (e.g., model-based, within-subjects).
+
+    o   Added vignette introducing afex_plot().
         
-    o   Updated ANOVA vignette to use afex_plot.
+    o   Updated ANOVA vignette to use afex_plot() and the multivariate for 
+        follow-up test.
     
-    o   emmeans was moved to suggests and needs to be either attached explicitly 
-        before passing objects to emmeans or called with ::
+    o   Package emmeans was moved to suggests and needs to be either attached 
+        explicitly or called with ::
         Option 1: emmeans::emmeans() 
-        Option 2: library("emmeans")
+        Option 2: library("emmeans") and then just emmeans()
         
-    o added call slot to mixed objects holding the matched call.
+    o   Added call slot to mixed objects holding the matched call.
     
     Bugfixes
 

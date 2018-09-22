@@ -547,7 +547,7 @@ afex_plot.merMod <- function(object,
   
   
   if (missing(random)) {
-    random <- unique(names(lme4::ranef(object$full_model)))
+    random <- unique(names(lme4::ranef(object)))
     message("Aggregating data over: ", paste(random, collapse = ", "))
   }
   ## prepare raw (i.e., participant by cell) data

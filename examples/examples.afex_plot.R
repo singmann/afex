@@ -40,7 +40,7 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
             position = 
               ggplot2::position_jitterdodge(
                 jitter.width = 0, 
-                jitter.height = 2, 
+                jitter.height = 5, 
                 dodge.width = 0.3  ## needs to be same as dodge
                 ),
             color = "darkgrey"))
@@ -52,8 +52,7 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_arg = list(
             dodge.width = 0.5,  ## needs to be same as dodge
             cex = 0.8,
-            color = "darkgrey"
-          ))
+            color = "darkgrey"))
 }
 
 # 3. do not display points, but use a violinplot: ggplot2::geom_violin
@@ -67,7 +66,7 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within",
           data_geom = ggplot2::geom_violin, 
           data_arg = list(width = 0.5))
 
-# 5. do not display points, but use a boxplot: ggplot2::geom_violin
+# 5. do not display points, but use a boxplot: ggplot2::geom_boxplot
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           data_geom = ggplot2::geom_boxplot, 
           data_arg = list(width = 0.3))
@@ -134,8 +133,7 @@ afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter,
             outlier.intersect = TRUE
           ),
           point_arg = list(size = 2.5), 
-          error_arg = list(size = 1.5, width = 0.05),
-          error_exp = 1.96)
+          error_arg = list(size = 1.5, width = 0.05))
 }
 
 

@@ -863,6 +863,12 @@ oneway_plot <- function(means,
   if (!is.null(attr(means, "x"))) {
     plot_out <- plot_out + 
       ggplot2::xlab(attr(means, "x"))
+    tmp_list <- rep(list(ggplot2::guide_legend(title = attr(means, "x"))), 
+                    length(mapping))
+    names(tmp_list) <- mapping
+    plot_out <- plot_out + 
+      do.call(what = ggplot2::guides, 
+              args = tmp_list)
   }
   
   return(plot_out)

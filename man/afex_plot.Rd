@@ -69,7 +69,7 @@ should be applied to either the \code{trace} factors (if \code{trace} is
 specified) or the \code{x} factors. Useful options are any combination of 
 \code{"shape"}, \code{"color"}, \code{"linetype"}, or also \code{"fill"} 
 (see examples). The default (i.e., missing) uses \code{c("shape", 
-"lineytpe")} if \code{trace} is specified and \code{""} otherwise (i.e., no
+"linetype")} if \code{trace} is specified and \code{""} otherwise (i.e., no
 additional aesthetic).}
 
 \item{error}{A scalar \code{character} vector specifying on which standard 

@@ -283,16 +283,13 @@ afex_plot.afex_aov <- function(object,
                    level = error_level)
   
   ## prepare raw (i.e., participant by cell) data
-  data <- object$data$long
-  for (i in seq_along(new_levels)) {
-    levels(data[[names(new_levels)[i]]]) <- new_levels[[i]]
-  }
-  colnames(data)[colnames(data) == attr(object, "dv")] <- "y"
-  data <- aggregate(data$y, by = data[c(all_vars,attr(object, "id"))], 
-                    FUN = mean, drop = TRUE)
-  data$y <- data$x
-  data$x <- interaction(data[x], sep = "\n")
-  data$all_vars <- interaction(data[all_vars], sep = ".")
+  data <- prep_data(object$data$long, 
+                    x = x,
+                    trace = trace,
+                    panel = panel,
+                    new_levels = new_levels,
+                    dv_col = attr(object, "dv"),
+                    id = attr(object, "id"))
   
   ### prepare variables for SE/CI calculation
   within_vars <- all_vars[all_vars %in% names(attr(object, "within"))]
@@ -414,23 +411,18 @@ afex_plot.mixed <- function(object,
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
   
-  data <- object$data
-  for (i in seq_along(new_levels)) {
-    levels(data[[names(new_levels)[i]]]) <- new_levels[[i]]
-  }
-  #data$y <- residuals(object$full_model)
-  #data$y <- predict(object$full_model)
-  #coef(object$full_model)
-  data$y <- data[,deparse(object$full_model@call[["formula"]][[2]])]
   if (missing(random)) {
     random <- unique(names(lme4::ranef(object$full_model)))
     message("Aggregating data over: ", paste(random, collapse = ", "))
   }
-  data <- aggregate(data$y, by = data[c(all_vars,random)], 
-                    FUN = mean, drop = TRUE)
-  data$y <- data$x
-  data$x <- interaction(data[x], sep = "\n")
-  data$all_vars <- interaction(data[all_vars], sep = ".")
+  ## prepare raw (i.e., participant by cell) data
+  data <- prep_data(object$data, 
+                    x = x,
+                    trace = trace,
+                    panel = panel,
+                    new_levels = new_levels,
+                    dv_col = deparse(object$full_model@call[["formula"]][[2]]),
+                    id = random)
   data$afex_id <- interaction(data[random], sep = ".")
   
   if (!(error %in% c("none" ,"model", "mean")) & 
@@ -553,24 +545,23 @@ afex_plot.merMod <- function(object,
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
   
-  data <- emmeans::recover_data(object = object, 
-                                trms = terms(object, fixed.only = FALSE))
-  for (i in seq_along(new_levels)) {
-    levels(data[[names(new_levels)[i]]]) <- new_levels[[i]]
-  }
-  #data$y <- residuals(object$full_model)
-  #data$y <- predict(object$full_model)
-  #coef(object$full_model)
-  data$y <- data[,deparse(object@call[["formula"]][[2]])]
+  
   if (missing(random)) {
-    random <- unique(names(lme4::ranef(object)))
+    random <- unique(names(lme4::ranef(object$full_model)))
     message("Aggregating data over: ", paste(random, collapse = ", "))
   }
-  data <- aggregate(data$y, by = data[c(all_vars,random)], 
-                    FUN = mean, drop = TRUE)
-  data$y <- data$x
-  data$x <- interaction(data[x], sep = "\n")
-  data$all_vars <- interaction(data[all_vars], sep = ".")
+  ## prepare raw (i.e., participant by cell) data
+  data <- prep_data(
+    data = emmeans::recover_data(
+      object = object, 
+      trms = terms(object, fixed.only = FALSE)
+      ), 
+    x = x,
+    trace = trace,
+    panel = panel,
+    new_levels = new_levels,
+    dv_col = deparse(object@call[["formula"]][[2]]),
+    id = random)
   data$afex_id <- interaction(data[random], sep = ".")
   
   if (!(error %in% c("none" ,"model", "mean")) & 

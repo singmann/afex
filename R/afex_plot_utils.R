@@ -35,6 +35,30 @@ get_emms <- function(object,
   return(emms)
 }
 
+prep_data <- function(data, 
+                      x,
+                      trace,
+                      panel, 
+                      new_levels,
+                      dv_col, id) {
+  all_vars <- c(x, trace, panel)
+  for (i in seq_along(new_levels)) {
+    levels(data[[names(new_levels)[i]]]) <- new_levels[[i]]
+  }
+  colnames(data)[colnames(data) == dv_col] <- "y"
+  data <- aggregate(data$y, by = data[c(all_vars,id)], 
+                    FUN = mean, drop = TRUE)
+  data$y <- data$x
+  data$x <- interaction(data[x], sep = "\n")
+  if (length(panel) > 0) {
+    data$panel <- interaction(data[panel], sep = "\n")
+  } else {
+    data$panel <- "1"
+  }
+  data$all_vars <- interaction(data[all_vars], sep = ".")
+  return(data)
+}
+
 get_plot_var <- function(x) {
   if (missing(x)) return()
   if (inherits(x, "formula")) {

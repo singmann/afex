@@ -302,16 +302,22 @@ afex_plot.afex_aov <- function(object,
   if (error %in% c("model", "mean", "between") && 
       all(c(x, trace) %in% within_vars)) {
     warning("Panel(s) show within-subjects factors, ", 
-            "but no within-subjects error bars.", call. = FALSE)
+            "but not within-subjects error bars.\n", 
+            'For within-subjects error bars use: error = "within"', 
+            call. = FALSE)
   } else if (error %in% c("within", "CMO") && 
              all(c(x, trace) %in% between_vars)) {
     warning("Panel(s) show between-subjects factors, ", 
-            "but within-subjects error bars.", call. = FALSE)
+            "but within-subjects error bars.\n", 
+            'For between-subjects error bars use e.g.,: ',
+            'error = "model" or error = "mean"',
+            call. = FALSE)
   } else if (any(between_vars %in% c(x, trace)) && 
              any(within_vars %in% c(x, trace)) && 
              error != "none") {
     warning("Panel(s) show a mixed within-between-design.\n",
-            "Error bars do not allow comparisons across all means.", 
+            "Error bars do not allow comparisons across all means.\n", 
+            'Suppress error bars with: error = "none"',
             call. = FALSE)
   }
   

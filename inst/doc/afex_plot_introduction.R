@@ -195,6 +195,19 @@ plot_grid(
             random = "item", dodge = 0.8,
             data_geom = geom_boxplot, 
             data_arg = list(width = 0.5),
-            error_arg = list(size = 1.5, width = 0))
+            error_arg = list(size = 1.5, width = 0, linetype = 1))
+)
+
+## ---------------------------------------------------------------------------------------
+pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
+
+## ----fig.width=7, fig.height=3.5, dpi = 300---------------------------------------------
+plot_grid( 
+  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
+            random = "id", error = "within"),
+  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
+            random = "item", dodge = 0.8, error = "within",
+            data_geom = geom_violin, 
+            data_arg = list(width = 0.5))
 )
 

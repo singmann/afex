@@ -23,7 +23,7 @@ options(width = 90)
 - Linear mixed models estimated with `mixed()` (i.e., objects of class `"mixed"`)
 - Linear mixed models estimated with `lme4::lmer` (i.e., objects of class `"merMod"`)
 
-This document provides an overview of the plots possible with `afex_plot()`. It does so mostly using the `afex_plot()` examples, see `?afex_plot`. We begin by loading `afex` and [`ggplot2`](https://ggplot2.tidyverse.org/) which is the package `afex_plot()` uses for plotting. Loading `ggplot2` explicitly is not strictly necessarry, but makes the following code nicer. Otherwise, we would need to prepend each call to a function from `ggplot2` needed for cutsomization with `ggplot2::` (as is done in the examples in `?afex_plot`). 
+This document provides an overview of the plots possible with `afex_plot()`. It does so mostly using the `afex_plot()` examples, see `?afex_plot`. We begin by loading `afex` and [`ggplot2`](https://ggplot2.tidyverse.org/) which is the package `afex_plot()` uses for plotting. Loading `ggplot2` explicitly is not strictly necessary, but makes the following code nicer. Otherwise, we would need to prepend each call to a function from `ggplot2` needed for customization with `ggplot2::` (as is done in the examples in `?afex_plot`). 
 
 We also load the [`cowplot`](https://cran.r-project.org/package=cowplot) package ([introduction](https://cran.r-project.org/package=cowplot/vignettes/introduction.html))  which makes combining plots (with functions `plot_grid()` and `legend()`) very easy. However, loading `cowplot` sets a different theme for `ggplot2` plots than the default grey one. Although I am not a big fan of the default theme with its grey background, we reset the theme globally using `theme_set(theme_grey())` to start with the default behavior if `cowplot` it not attached. Note that `cowplot` also has the cool `draw_plot()` function which allows embedding plots within other plots. 
 
@@ -31,8 +31,8 @@ We furthermore will need the following packages, however, we will not attach the
 
 - [`jtools`](https://cran.r-project.org/package=jtools) for `theme_apa()`
 - [`ggpubr`](https://cran.r-project.org/package=jtools) for `theme_pubr()`
-- [`ggbeeswarm`](https://cran.r-project.org/package=ggbeeswarm) for producing beeswarm plots with `geom_beeswarm`
-- [`ggpol`](https://cran.r-project.org/package=ggpol) for producing combined boxplots and jitter plots using `geom_boxjitter()`
+- [`ggbeeswarm`](https://cran.r-project.org/package=ggbeeswarm) for producing bee swarm plots with `geom_beeswarm`
+- [`ggpol`](https://cran.r-project.org/package=ggpol) for producing combined box plots and jitter plots using `geom_boxjitter()`
 
 
 ```{r message=FALSE, warning=FALSE}
@@ -97,7 +97,7 @@ plot_grid(
 
 The first row, panels A to C, shows themes coming with `ggplot2` and the second row, panels D to F, shows themes from additional packages. In my opinion all of these plots are an improvement above the default grey theme. For the themes coming with `ggplot2`, I really like that those shown here have a reference grid in the background. This often makes it easier to judge the actual values the shown data points have. I know that many people find this distracting, so many of the contributed themes do not have this grid. One thing I really like about the last two themes is that they per default use larger font sizes for the axes labels. One way to achieve something similar for most themes is to change `base_size`.
 
-One general criticism I have with the current plots is that they show too many values on the y-axis. In the following I plot one more variant of this plot in which we change this to three values on the y-axis. We also increase the axes labels and remove the vertical gridlines.
+One general criticism I have with the current plots is that they show too many values on the y-axis. In the following I plot one more variant of this plot in which we change this to three values on the y-axis. We also increase the axes labels and remove the vertical grid lines.
 
 ```{r fig.width=3.5, fig.height=3, dpi = 300, out.width='50%'}
 p_an + 
@@ -136,14 +136,14 @@ ggsave("my_plot.pdf", device = "pdf",
 
 ## Data in the Background
 
-`afex_plot()` per default plots the raw data in the background. It does so using an [alpha blending](https://en.wikipedia.org/wiki/Alpha_compositing#Alpha_blending) of `0.5`. Thus, overlapping points appear darker. Examples of this can be seen in the previous graphs where some data points in the backgrdound appear clearly darker than others. The darker points indicate values for which several data points lie exactly on top of each other.
+`afex_plot()` per default plots the raw data in the background. It does so using an [alpha blending](https://en.wikipedia.org/wiki/Alpha_compositing#Alpha_blending) of `0.5`. Thus, overlapping points appear darker. Examples of this can be seen in the previous graphs where some data points in the background appear clearly darker than others. The darker points indicate values for which several data points lie exactly on top of each other.
 
 `afex_plot()` provides the possibility to change or alter the graphical primitive, called `geom` in `ggplot2` parlance, used for plotting the points in the background. This offers a vast array of options for handling overlapping points or, more generally, how to display the raw data in the background. I show some of these examples in the following. 
 
 The first two variants display only points, whereas the remaining ones use different visualizations of the raw data. Note that depending on the specific variant we change a few further plot options to obtain a visually pleasing result. For example, the `dodge` argument controls the spread of points belonging to different levels of the `trace` factor at each x-axis position. 
 
 1. Add jitter on the y-axis to points which avoids perfect overlap.
-2. Display points using a beeswarm plot, which displaces overlapping points on the x-axis: `ggbeeswarm::geom_beeswarm`
+2. Display points using a bee swarm plot, which displaces overlapping points on the x-axis: `ggbeeswarm::geom_beeswarm`
 3. Violin plot: `geom_violin`
 4. Box plot: `geom_boxplot`
 5. Combine box plot with jittered points: `ggpol::geom_boxjitter`
@@ -219,7 +219,7 @@ plot_grid(p2, p3, p4, p5, ncol = 2, labels = 2:5)
 
 ## One-way Plots Without Trace Factor
 
-If `afex_plot` is called without a trace factor, a one-way plot is created. We can customize this plot in very much the same way. Per default a one-way plot contains a legend if `mapping` is not empty (i.e., `""`). We show this legend for the left plot, but sppress it for the right one.
+If `afex_plot` is called without a trace factor, a one-way plot is created. We can customize this plot in very much the same way. Per default a one-way plot contains a legend if `mapping` is not empty (i.e., `""`). We show this legend for the left plot, but suppress it for the right one.
 
 ```{r fig.width=7, fig.height=3.5, dpi = 300, message=FALSE}
 po1 <- afex_plot(aw, x = "angle", mapping = "color", error = "within", 
@@ -241,7 +241,7 @@ po2 <- afex_plot(aw, x = "angle", error = "within",
 plot_grid(po1, po2) 
 ```
 
-One-way plots can also be plit across different panels by specifying a `panel` factor:
+One-way plots can also be split across different panels by specifying a `panel` factor:
 
 ```{r fig.width=7, fig.height=3.5, dpi = 300, message=FALSE}
 afex_plot(aw, x = "angle", panel = "noise", error = "within",
@@ -302,7 +302,7 @@ For mixed models, one important decision is the random-effects grouping factor(s
 afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task") 
 ```
 
-In the present case, a message informs us that the data is aggregted over both random-effects grouping factors. However, this leads to way too many data points in the background. Let us compare this plot with plots in which we use each of the two random-effects grouping factors in turn.
+In the present case, a message informs us that the data is aggregated over both random-effects grouping factors. However, this leads to way too many data points in the background. Let us compare this plot with plots in which we use each of the two random-effects grouping factors in turn.
 
 ```{r fig.width=7, fig.height=3.5, dpi = 300}
 plot_grid( 
@@ -314,7 +314,11 @@ plot_grid(
 )
 ```
 
-The by-id plot looks useable. However, the by-item plot has still way too many data-points to be informative. Some other ways of displaying the raw data, such as violin plots or boxplots, seems preferrable for it. Let's compare those in the next plot.
+The by-id plot looks usable. However, the by-item plot has still way too many data-points to be informative. Some other ways of displaying the raw data, such as violin plots or box plots, seems preferable for it. 
+
+## Ways of Plotting Data in the Background
+
+We compare violin plots or box plots for the by-item data in the next plot. For the box plot, we increase the width of the error bars and use a consistent line type to distinguish them more easily from the graphical elements of the box plot. We could probably further improve these plots by, for example, adding colors or using some of the other customizations discussed above for the ANOVA example.
 
 ```{r fig.width=7, fig.height=3.5, dpi = 300}
 plot_grid( 
@@ -326,9 +330,36 @@ plot_grid(
             random = "item", dodge = 0.8,
             data_geom = geom_boxplot, 
             data_arg = list(width = 0.5),
-            error_arg = list(size = 1.5, width = 0))
+            error_arg = list(size = 1.5, width = 0, linetype = 1))
 )
 ```
+
+## Error Bars for Mixed Models
+
+The default error bars for `afex_plot()` are based on the statistical model (i.e., the mixed model in the present case). These error bars can only be used to judge whether or not two means differ from each other, if the corresponding factor (or factors) are independent samples factors (i.e., not repeated-measures factors for any of the random-effects grouping factors). Of course, in addition to this the requirement of approximately equal sample size and variance also needs to hold. In the present case, all of the factors are repeated-measures factors with respect to one of the random-effects grouping factors. Consequently, the default error bars cannot be used for "inference by eye" for any of the factors.
+
+This is also easy to see when looking at all pairwise comparisons between means for each of the panels/tasks. This shows that for the `naming` task all comparisons are significant. In visual contrast with that, the two error bars for the `low` versus `high` `word`s are overlapping very strongly. 
+
+```{r}
+pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
+```
+
+An alternative in the present situation would be using within-subjects error bars and aggregating the data by-id (i.e., `error = "within"`), as done in the left panel below. This is somewhat appropriate here as the factors within each panel are all within-subject factors. In contrast, using by-item within-subjects error bars, as done in the right panel below, seems not appropriate as the only within-item factor, `task`, is spread across panels. Unfortunately, it is not immediately clear if these error bars allow one to correctly detect, which means do not differ from each other. 
+
+```{r fig.width=7, fig.height=3.5, dpi = 300}
+plot_grid( 
+  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
+            random = "id", error = "within"),
+  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
+            random = "item", dodge = 0.8, error = "within",
+            data_geom = geom_violin, 
+            data_arg = list(width = 0.5))
+)
+```
+
+In sum, using error bars for performing "inference by eye" - that is, using overlap or non-overlap of error bars to judge which means differ or do not differ from each other - is highly problematic for mixed models, due to the potentially complex dependency structures between the means. It would be best to avoid comparisons between means altogether. Instead, it is perhaps a good idea to plot the model-based error bars (which is the default) and use them for their intended purpose; judging which values of the estimated means are likely given what we have learned from the model (however, note that one cannot interpret a 95% confidence interval as having a 95% probability of containing the population mean).
+
+The help page `?afex_plot` contains further information and references on how to interpret confidence intervals and other error bars.
 
 
 # References 

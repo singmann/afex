@@ -4,7 +4,7 @@ load_all()
 
 options(error = NULL)
 devtools::test()
-devtools::build()
+devtools::build() # R CMD build afex --compact-vignettes="gs+qpdf"
 document()
 
 test_package("afex", filter = "aov")

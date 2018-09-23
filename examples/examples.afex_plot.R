@@ -21,19 +21,17 @@ afex_plot(aw, x = "angle", trace = "noise", error = "within")
 (p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within"))
 
 ## use different themes for nicer graphs:
-p1 + ggplot2::theme_classic()
+p1 + ggplot2::theme_bw()
+\dontrun{
 p1 + ggplot2::theme_light()
 p1 + ggplot2::theme_minimal()
-\dontrun{
 p1 + jtools::theme_apa()
 p1 + ggpubr::theme_pubr()
 
 ### set theme globally for R session:
-ggplot2::theme_set(ggplot2::theme_light())
-}
+ggplot2::theme_set(ggplot2::theme_bw())
 
 ### There are several ways to deal with overlapping points in the background besides alpha
-
 # 1. using the default data geom and ggplot2::position_jitterdodge
 afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
           data_arg = list(
@@ -45,7 +43,6 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                 ),
             color = "darkgrey"))
 
-\dontrun{
 # 2. using ggbeeswarm::geom_beeswarm
 afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggbeeswarm::geom_beeswarm,
@@ -53,7 +50,6 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
             dodge.width = 0.5,  ## needs to be same as dodge
             cex = 0.8,
             color = "darkgrey"))
-}
 
 # 3. do not display points, but use a violinplot: ggplot2::geom_violin
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
@@ -71,10 +67,7 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within",
           data_geom = ggplot2::geom_boxplot, 
           data_arg = list(width = 0.3))
           
-\dontrun{
 # 6. combine points with boxplot: ggpol::geom_boxjitter
-## currently requires attaching ggpol explicitly:
-library("ggpol")
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(width = 0.3))
@@ -91,7 +84,6 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within",
             outlier.intersect = TRUE),
           point_arg = list(size = 2.5), 
           error_arg = list(size = 1.5, width = 0))
-
 
 # 8. nicer variant of ggpol::geom_boxjitter without lines
 afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
@@ -114,12 +106,12 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
 
 afex_plot(aw, x = "angle", error = "within") ## default
 
+\dontrun{
 ## with color we need larger points
 afex_plot(aw, x = "angle", mapping = "color", error = "within", 
           point_arg = list(size = 2.5), 
           error_arg = list(size = 1.5, width = 0.05)) 
 
-\dontrun{
 library("ggpol") ## currently required for combination of boxplot and points
 afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter)
 
@@ -134,8 +126,6 @@ afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter,
           ),
           point_arg = list(size = 2.5), 
           error_arg = list(size = 1.5, width = 0.05))
-}
-
 
 ##---------------------------------------------------------------
 ##                      Other Basic Options                     -
@@ -257,6 +247,7 @@ cbind(
                      error = "within", return = "data")$means$error,
   between = afex_plot(a1, ~phase, ~treatment, 
                       error = "between", return = "data")$means$error)
+}
 
 ##################################################################
 ##                         Mixed Models                         ##
@@ -332,7 +323,6 @@ legend <- cowplot::get_legend(p_id + ggplot2::theme(legend.position="bottom"))
 cowplot::plot_grid(p_comb, legend, 
                    ncol = 1, 
                    rel_heights = c(1, 0.1))
-}
 
 ##----------------------------------------------------------------
 ##                    Support for lme4::lmer                     -
@@ -346,3 +336,5 @@ Oats.lmer <- lmer(yield ~ Variety * factor(nitro) + (1|VarBlock) + (1|Block),
                         data = Oats)
 afex_plot(Oats.lmer, "nitro", "Variety")
 afex_plot(Oats.lmer, "nitro", panel = "Variety")
+
+}

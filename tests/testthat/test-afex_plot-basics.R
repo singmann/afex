@@ -97,3 +97,83 @@ test_that("lme4::merMod plots are produced", {
   expect_is(afex_plot(Oats.lmer, "nitro", panel = "Variety", 
                       random = "VarBlock"), "ggplot")
 })
+
+test_that("afex_plot works with various geoms (from examples)", {
+  testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_if_not_installed("ggpol")
+  testthat::skip_if_not_installed("ggbeeswarm")
+  data(md_12.1)
+  aw <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
+  p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
+                  data_arg = list(
+                    position = 
+                      ggplot2::position_jitterdodge(
+                        jitter.width = 0, 
+                        jitter.height = 5, 
+                        dodge.width = 0.3  ## needs to be same as dodge
+                      ),
+                    color = "darkgrey"))
+  expect_is(p1, "ggplot")
+  
+  # 2. using ggbeeswarm::geom_beeswarm
+  p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+                  data_geom = ggbeeswarm::geom_beeswarm,
+                  data_arg = list(
+                    dodge.width = 0.5,  ## needs to be same as dodge
+                    cex = 0.8,
+                    color = "darkgrey"))
+  expect_is(p2, "ggplot")
+  
+  # 3. do not display points, but use a violinplot: ggplot2::geom_violin
+  p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+                  data_geom = ggplot2::geom_violin, 
+                  data_arg = list(width = 0.5))
+  expect_is(p3, "ggplot")
+  
+  # 4. violinplots with color: ggplot2::geom_violin
+  p4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+                  mapping = c("linetype", "shape", "fill"),
+                  data_geom = ggplot2::geom_violin, 
+                  data_arg = list(width = 0.5))
+  expect_is(p4, "ggplot")
+  
+  # 5. do not display points, but use a boxplot: ggplot2::geom_boxplot
+  p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+                  data_geom = ggplot2::geom_boxplot, 
+                  data_arg = list(width = 0.3))
+  expect_is(p5, "ggplot")
+  
+  # 6. combine points with boxplot: ggpol::geom_boxjitter
+  p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+                  data_geom = ggpol::geom_boxjitter, 
+                  data_arg = list(width = 0.3))
+  ## hides error bars!
+  expect_is(p6, "ggplot")
+  
+  # 7. nicer variant of ggpol::geom_boxjitter
+  p7 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+                  mapping = c("shape", "fill"),
+                  data_geom = ggpol::geom_boxjitter, 
+                  data_arg = list(
+                    width = 0.3, 
+                    jitter.width = 0,
+                    jitter.height = 10,
+                    outlier.intersect = TRUE),
+                  point_arg = list(size = 2.5), 
+                  error_arg = list(size = 1.5, width = 0))
+  expect_is(p7, "ggplot")
+  
+  # 8. nicer variant of ggpol::geom_boxjitter without lines
+  p8 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
+                  mapping = c("shape", "fill"),
+                  data_geom = ggpol::geom_boxjitter, 
+                  data_arg = list(
+                    width = 0.5, 
+                    jitter.width = 0,
+                    jitter.height = 10,
+                    outlier.intersect = TRUE),
+                  point_arg = list(size = 2.5), 
+                  line_arg = list(linetype = 0),
+                  error_arg = list(size = 1.5, width = 0))
+  expect_is(p8, "ggplot")
+})

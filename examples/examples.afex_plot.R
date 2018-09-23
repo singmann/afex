@@ -146,6 +146,10 @@ afex_plot(aw, x = "noise", trace = "angle",
           new_levels = list(angle = c("0", "4", "8"),
                             noise = c("Absent", "Present")))
 
+## Change title of legend
+afex_plot(aw, x = "noise", trace = "angle", 
+          legend_title = "Noise Condition")
+
 ## for plots with few factor levels, smaller dodge might be better:
 afex_plot(aw, x = "angle", trace = "noise", dodge = 0.25) 
 

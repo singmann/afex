@@ -17,12 +17,11 @@
 #'   
 #' @param object \code{afex_aov}, \code{mixed}, or \code{merMod} object.
 #' @param x A \code{character} vector or one-sided \code{formula} specifying the
-#'   factor names of the predictors displayed on the x-axis. Argument
-#'   \code{mapping} specifies further mappings for these factors if \code{trace}
-#'   is missing.
+#'   factor names of the predictors displayed on the x-axis. \code{mapping}
+#'   specifies further mappings for these factors if \code{trace} is missing.
 #' @param trace An optional \code{character} vector or one-sided \code{formula}
 #'   specifying the factor names of the predictors connected by the same line.
-#'   Argument \code{mapping} specifies further mappings for these factors.
+#'   \code{mapping} specifies further mappings for these factors.
 #' @param panel An optional \code{character} vector or one-sided \code{formula} 
 #'   specifying the factor names of the predictors shown in different panels.
 #' @param mapping A \code{character} vector specifying which aesthetic mappings 
@@ -78,9 +77,11 @@
 #'   \code{"data"} returns a list with two \code{data.frame}s containing the 
 #'   data used for plotting: \code{means} contains the means and standard errors
 #'   for the foreground, \code{data} contains the raw data in the background.
-#' @param new_levels A \code{list} of new factor levels that should be used in 
+#' @param factor_levels A \code{list} of new factor levels that should be used in 
 #'   the plot. The name of each list entry needs to correspond to one of the 
-#'   factors in the plot.
+#'   factors in the plot. 
+#' @param legend_title A scalar \code{character} vector with a new title for the
+#'   legend.
 #' @param means,data \code{data.frame}s used for plotting of the plotting
 #'   functions.
 #' @param col_y,col_x,col_trace,col_panel A scalar \code{character} string 
@@ -126,12 +127,12 @@
 #'   intervals or intervals based on the standard error of the mean) cannot be
 #'   used to gauge significant differences as this requires knowledge about the
 #'   correlation between measures. One popular alternative in the psychological
-#'   literature are intervals based on within-subject standard errors/confidence
-#'   intervals (e.g., Cousineau & O'Brien, 2014). These attempt to control for
-#'   the correlation across individuals and thereby allow judging differences 
-#'   between repeated-measures condition. As a downside, when using 
-#'   within-subject intervals no comparisons across between-subject conditions 
-#'   or with respect to a fixed-value are possible anymore.
+#'   literature are intervals based on within-subjects standard
+#'   errors/confidence intervals (e.g., Cousineau & O'Brien, 2014). These
+#'   attempt to control for the correlation across individuals and thereby allow
+#'   judging differences between repeated-measures condition. As a downside,
+#'   when using within-subjects intervals no comparisons across between-subjects
+#'   conditions or with respect to a fixed-value are possible anymore.
 #'   
 #'   In the case of a mixed-design, no single type of error bar is possible that
 #'   allows comparison across all conditions. Likewise, for mixed models
@@ -139,18 +140,20 @@
 #'   bars (or even data aggregation) adequately represent the true varibility in
 #'   the data and adequately allows for "inference by eye". Therefore, special
 #'   care is necessary in such cases. One possiblity is to avoid error bars
-#'   altogether and plot only the raw data in the background \code{error =
-#'   "none"}. This still provides a visual impression of the variability in the
-#'   point estimate, but does not lend as easily to incorrect inferences.
-#'   Another possibility is to use the model-based standard error and note in
-#'   the figure caption that it does not permit comparisons across
-#'   repeated-measures factors.
+#'   altogether and plot only the raw data in the background (with \code{error =
+#'   "none"}). The raw data in the background still provides a visual impression
+#'   of the variability in the data and the precision of the mean estimate, but
+#'   does not as easily suggest an incorrect inferences. Another possibility is
+#'   to use the model-based standard error and note in the figure caption that
+#'   it does not permit comparisons across repeated-measures factors.
 #'   
 #'   The following "rules of eye" (Cumming and Finch, 2005) hold, when permitted
-#'   by design (i.e., within-subject bars for within-subject comparisons; other 
-#'   variants for between-subject comparisons), and groups are approximately 
-#'   equal in size and variance. Note that for more complex designs often
-#'   analyzed with mixed models, these rules of thumbs may be highly misleading.
+#'   by design (i.e., within-subjects bars for within-subjects comparisons;
+#'   other variants for between-subjects comparisons), and groups are
+#'   approximately equal in size and variance. Note that for more complex
+#'   designs ususally analyzed with mixed models, such as designs involving
+#'   complicated dependencies across data points, these rules of thumbs may be
+#'   highly misleading.
 #'   \itemize{
 #'     \item  \emph{p} < .05 when the overlap of the 95\% confidence intervals
 #'     (CIs) is no more than about half the average margin of error, that is,
@@ -169,7 +172,7 @@
 #'   errors (SEs). CIs are based on the SEs using the \emph{t}-distribution with
 #'   degrees of freedom based on the cell or group size. For ANOVA models,
 #'   \code{afex_plot} attempts to warn in case the chosen approach is misleading
-#'   given with the design (e.g., model-based error bars for purely
+#'   given the design (e.g., model-based error bars for purely
 #'   within-subjects plots). For \code{mixed} models, no such warnings are
 #'   produced, but users should be aware that all options beside \code{"model"}
 #'   are not actually appropriate and have only heuristic value. But then again,
@@ -183,24 +186,24 @@
 #'     preferrable.}
 #'     \item{\code{"mean"}}{Calculates the standard error of the mean for
 #'     each cell ignoring any repeated-measures factors.}
-#'     \item{\code{"within-SE"} or \code{"CMO"}}{Calculates within-subject SEs
+#'     \item{\code{"within"} or \code{"CMO"}}{Calculates within-subjects SEs
 #'     using the Cosineau-Morey-O'Brien (Cousineau & O'Brien, 2014) method. This
 #'     method is based on a double normalization of the data. SEs and CIs are
 #'     then calculated independently for each cell (i.e., if the desired output
-#'     contains between-subject factors, SEs are calculated for each cell
-#'     including the between-subject factors).}
-#'     \item{\code{"between-SE"}}{First aggregates the data per participant and 
-#'     then calculates the SEs for each between-subject condition. Results in 
-#'     one SE and \emph{t}-qutnile for all conditions in purely within-subjects
+#'     contains between-subjects factors, SEs are calculated for each cell
+#'     including the between-subjects factors).}
+#'     \item{\code{"between"}}{First aggregates the data per participant and 
+#'     then calculates the SEs for each between-subjects condition. Results in 
+#'     one SE and \emph{t}-quantile for all conditions in purely within-subjects
 #'     designs.}
 #'     \item{\code{"none"} or \code{NULL}}{Suppresses calculation of SEs and
 #'     plots no error bars.}
 #'   }
-#'   For \code{mixed} models, the within-subjects factors are relative to the
-#'   chosen \code{random} effects grouping factor. They are automatically
-#'   detected based on the random-slopes of the random-effects grouping factor
-#'   in \code{random}. All other factors are treated as between-subjects
-#'   factors.
+#'   For \code{mixed} models, the within-subjects/repeated-measures factors are
+#'   relative to the chosen \code{random} effects grouping factor. They are
+#'   automatically detected based on the random-slopes of the random-effects
+#'   grouping factor in \code{random}. All other factors are treated as
+#'   independent-samples or between-subjects factors.
 #'   }
 #'   
 #' @return Returns a \pkg{ggplot2} plot (i.e., object of class \code{c("gg",
@@ -259,7 +262,8 @@ afex_plot.afex_aov <- function(object,
                                emmeans_arg = list(),
                                dodge = 0.5,
                                return = "plot",
-                               new_levels = list(),
+                               factor_levels = list(),
+                               legend_title,
                                ...) {
   
   return <- match.arg(return, c("plot", "data"))
@@ -279,7 +283,7 @@ afex_plot.afex_aov <- function(object,
                    trace = trace,
                    panel = panel,
                    emmeans_arg = emmeans_arg, 
-                   new_levels = new_levels,
+                   factor_levels = factor_levels,
                    level = error_level)
   
   ## prepare raw (i.e., participant by cell) data
@@ -287,7 +291,7 @@ afex_plot.afex_aov <- function(object,
                     x = x,
                     trace = trace,
                     panel = panel,
-                    new_levels = new_levels,
+                    factor_levels = factor_levels,
                     dv_col = attr(object, "dv"),
                     id = attr(object, "id"))
   
@@ -328,48 +332,26 @@ afex_plot.afex_aov <- function(object,
                             error_level = error_level, 
                             error_ci = error_ci)
   emms <- tmp$emms
-  plot_error <- tmp$plot_error
-
+  error_plot <- tmp$error_plot
   
-  if (length(trace) > 0) {
-    attr(emms, "trace") <- paste(trace, sep = "\n")
-    emms$trace <- interaction(emms[trace], sep = "\n")
-    data$trace <- interaction(data[trace], sep = "\n")
-    
-    if (return == "data") {
-      return(list(means = emms, data = data))
-    } else if (return == "plot") {
-      return(interaction_plot(means = emms, 
-                              data = data,
-                              error_plot = plot_error,
-                              error_arg = error_arg, 
-                              dodge = dodge, 
-                              data_plot = data_plot,
-                              data_geom = data_geom,
-                              data_alpha = data_alpha,
-                              data_arg = data_arg,
-                              point_arg = point_arg,
-                              line_arg = line_arg,
-                              mapping = mapping
-      ))
-    }
-  } else {
-    if (return == "data") {
-      return(list(means = emms, data = data))
-    } else if (return == "plot") {
-      return(oneway_plot(means = emms, 
-                         data = data,
-                         error_plot = plot_error,
-                         error_arg = error_arg, 
-                         data_plot = data_plot,
-                         data_geom = data_geom,
-                         data_alpha = data_alpha,
-                         data_arg = data_arg,
-                         point_arg = point_arg,
-                         mapping = mapping
-      ))
-    }
-  }
+  return(afex_plot_internal(x = x,
+                            trace = trace,
+                            panel = panel,
+                            means = emms, 
+                            data = data,
+                            error_plot = error_plot,
+                            error_arg = error_arg, 
+                            dodge = dodge, 
+                            data_plot = data_plot,
+                            data_geom = data_geom,
+                            data_alpha = data_alpha,
+                            data_arg = data_arg,
+                            point_arg = point_arg,
+                            line_arg = line_arg,
+                            mapping = mapping,
+                            legend_title =  legend_title,
+                            return = return
+  ))
 }
 
 
@@ -396,7 +378,8 @@ afex_plot.mixed <- function(object,
                             emmeans_arg = list(),
                             dodge = 0.5,
                             return = "plot",
-                            new_levels = list(),
+                            factor_levels = list(),
+                            legend_title,
                             ...) {
   
   return <- match.arg(return, c("plot", "data"))
@@ -420,7 +403,7 @@ afex_plot.mixed <- function(object,
                     x = x,
                     trace = trace,
                     panel = panel,
-                    new_levels = new_levels,
+                    factor_levels = factor_levels,
                     dv_col = deparse(object$full_model@call[["formula"]][[2]]),
                     id = random)
   data$afex_id <- interaction(data[random], sep = ".")
@@ -437,7 +420,7 @@ afex_plot.mixed <- function(object,
                    trace = trace,
                    panel = panel,
                    emmeans_arg = emmeans_arg, 
-                   new_levels = new_levels,
+                   factor_levels = factor_levels,
                    level = error_level)
   
   if (length(random) == 1) {
@@ -463,48 +446,26 @@ afex_plot.mixed <- function(object,
                             error_level = error_level, 
                             error_ci = error_ci)
   emms <- tmp$emms
-  plot_error <- tmp$plot_error
+  error_plot <- tmp$error_plot
   
-  if (length(trace) > 0) {
-    attr(emms, "trace") <- paste(trace, sep = "\n")
-    emms$trace <- interaction(emms[trace], sep = "\n")
-    data$trace <- interaction(data[trace], sep = "\n")
-    
-    if (return == "data") {
-      return(list(means = emms, data = data))
-    } else if (return == "plot") {
-      return(interaction_plot(means = emms, 
-                              data = data,
-                              error_plot = plot_error,
-                              error_arg = error_arg, 
-                              dodge = dodge, 
-                              data_plot = data_plot,
-                              data_geom = data_geom,
-                              data_alpha = data_alpha,
-                              data_arg = data_arg,
-                              point_arg = point_arg,
-                              line_arg = line_arg,
-                              mapping = mapping
-      ))
-    }
-  } else {
-    if (return == "data") {
-      return(list(means = emms, data = data))
-    } else if (return == "plot") {
-      return(oneway_plot(means = emms, 
-                         data = data,
-                         error_plot = plot_error,
-                         error_arg = error_arg, 
-                         data_plot = data_plot,
-                         data_geom = data_geom,
-                         data_alpha = data_alpha,
-                         data_arg = data_arg,
-                         point_arg = point_arg,
-                         mapping = mapping
-      ))
-    }
-  }
-
+  return(afex_plot_internal(x = x,
+                            trace = trace,
+                            panel = panel,
+                            means = emms, 
+                            data = data,
+                            error_plot = error_plot,
+                            error_arg = error_arg, 
+                            dodge = dodge, 
+                            data_plot = data_plot,
+                            data_geom = data_geom,
+                            data_alpha = data_alpha,
+                            data_arg = data_arg,
+                            point_arg = point_arg,
+                            line_arg = line_arg,
+                            mapping = mapping,
+                            legend_title =  legend_title,
+                            return = return
+  ))
 }
 
 
@@ -530,7 +491,8 @@ afex_plot.merMod <- function(object,
                             emmeans_arg = list(),
                             dodge = 0.5,
                             return = "plot",
-                            new_levels = list(),
+                            factor_levels = list(),
+                            legend_title,
                             ...) {
   
   return <- match.arg(return, c("plot", "data"))
@@ -559,7 +521,7 @@ afex_plot.merMod <- function(object,
     x = x,
     trace = trace,
     panel = panel,
-    new_levels = new_levels,
+    factor_levels = factor_levels,
     dv_col = deparse(object@call[["formula"]][[2]]),
     id = random)
   data$afex_id <- interaction(data[random], sep = ".")
@@ -576,7 +538,7 @@ afex_plot.merMod <- function(object,
                    trace = trace,
                    panel = panel,
                    emmeans_arg = emmeans_arg, 
-                   new_levels = new_levels,
+                   factor_levels = factor_levels,
                    level = error_level)
   
   if (length(random) == 1) {
@@ -602,48 +564,26 @@ afex_plot.merMod <- function(object,
                             error_level = error_level, 
                             error_ci = error_ci)
   emms <- tmp$emms
-  plot_error <- tmp$plot_error
+  error_plot <- tmp$error_plot
   
-  if (length(trace) > 0) {
-    attr(emms, "trace") <- paste(trace, sep = "\n")
-    emms$trace <- interaction(emms[trace], sep = "\n")
-    data$trace <- interaction(data[trace], sep = "\n")
-    
-    if (return == "data") {
-      return(list(means = emms, data = data))
-    } else if (return == "plot") {
-      return(interaction_plot(means = emms, 
-                              data = data,
-                              error_plot = plot_error,
-                              error_arg = error_arg, 
-                              dodge = dodge, 
-                              data_plot = data_plot,
-                              data_geom = data_geom,
-                              data_alpha = data_alpha,
-                              data_arg = data_arg,
-                              point_arg = point_arg,
-                              line_arg = line_arg,
-                              mapping = mapping
-      ))
-    }
-  } else {
-    if (return == "data") {
-      return(list(means = emms, data = data))
-    } else if (return == "plot") {
-      return(oneway_plot(means = emms, 
-                         data = data,
-                         error_plot = plot_error,
-                         error_arg = error_arg, 
-                         data_plot = data_plot,
-                         data_geom = data_geom,
-                         data_alpha = data_alpha,
-                         data_arg = data_arg,
-                         point_arg = point_arg,
-                         mapping = mapping
-      ))
-    }
-  }
-
+  return(afex_plot_internal(x = x,
+                            trace = trace,
+                            panel = panel,
+                            means = emms, 
+                            data = data,
+                            error_plot = error_plot,
+                            error_arg = error_arg, 
+                            dodge = dodge, 
+                            data_plot = data_plot,
+                            data_geom = data_geom,
+                            data_alpha = data_alpha,
+                            data_arg = data_arg,
+                            point_arg = point_arg,
+                            line_arg = line_arg,
+                            mapping = mapping,
+                            legend_title =  legend_title,
+                            return = return
+  ))
 }
 
 
@@ -662,6 +602,7 @@ interaction_plot <- function(means,
                              point_arg = list(),
                              line_arg = list(),
                              dodge = 0.5, 
+                             legend_title,
                              col_x = "x",
                              col_y = "y",
                              col_trace = "trace",
@@ -757,8 +698,8 @@ interaction_plot <- function(means,
     plot_out <- plot_out + 
       ggplot2::xlab(attr(means, "x"))
   }
-  if (!is.null(attr(means, "trace"))) {
-    tmp_list <- rep(list(ggplot2::guide_legend(title = attr(means, "trace"))), 
+  if (!missing(legend_title)) {
+    tmp_list <- rep(list(ggplot2::guide_legend(title = legend_title)), 
                     length(mapping))
     names(tmp_list) <- mapping
     plot_out <- plot_out + 
@@ -783,6 +724,7 @@ oneway_plot <- function(means,
                         data_alpha = 0.5,
                         data_arg = list(color = "darkgrey"),
                         point_arg = list(),
+                        legend_title,
                         col_x = "x",
                         col_y = "y",
                         col_panel = "panel",
@@ -854,7 +796,9 @@ oneway_plot <- function(means,
   if (!is.null(attr(means, "x"))) {
     plot_out <- plot_out + 
       ggplot2::xlab(attr(means, "x"))
-    tmp_list <- rep(list(ggplot2::guide_legend(title = attr(means, "x"))), 
+  }
+  if (!missing(legend_title)) {
+    tmp_list <- rep(list(ggplot2::guide_legend(title = legend_title)), 
                     length(mapping))
     names(tmp_list) <- mapping
     plot_out <- plot_out + 

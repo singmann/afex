@@ -1,4 +1,68 @@
 
+afex_plot_internal <- function(x,
+                               trace,
+                               panel,
+                               means, 
+                               data,
+                               error_plot,
+                               error_arg, 
+                               dodge, 
+                               data_plot,
+                               data_geom,
+                               data_alpha,
+                               data_arg,
+                               point_arg,
+                               line_arg,
+                               mapping,
+                               legend_title,
+                               return) {
+  
+  if (length(trace) > 0) {
+    means$trace <- interaction(means[trace], sep = "\n")
+    data$trace <- interaction(data[trace], sep = "\n")
+    
+    if (return == "data") {
+      return(list(means = means, data = data))
+    } else if (return == "plot") {
+      return(interaction_plot(means = means, 
+                              data = data,
+                              error_plot = error_plot,
+                              error_arg = error_arg, 
+                              dodge = dodge, 
+                              data_plot = data_plot,
+                              data_geom = data_geom,
+                              data_alpha = data_alpha,
+                              data_arg = data_arg,
+                              point_arg = point_arg,
+                              line_arg = line_arg,
+                              mapping = mapping,
+                              legend_title =  if (missing(legend_title)) 
+                                paste(trace, sep = "\n") else
+                                  legend_title
+      ))
+    }
+  } else {
+    if (return == "data") {
+      return(list(means = means, data = data))
+    } else if (return == "plot") {
+      return(oneway_plot(means = means, 
+                         data = data,
+                         error_plot = error_plot,
+                         error_arg = error_arg, 
+                         data_plot = data_plot,
+                         data_geom = data_geom,
+                         data_alpha = data_alpha,
+                         data_arg = data_arg,
+                         point_arg = point_arg,
+                         mapping = mapping,
+                         legend_title = if (missing(legend_title)) 
+                           paste(x, sep = "\n") else
+                             legend_title
+      ))
+    }
+  }
+}
+
 se <- function(x, na.rm = FALSE) sd(x, na.rm = na.rm)/sqrt(length(x))
 
 get_emms <- function(object, 
@@ -6,7 +70,7 @@ get_emms <- function(object,
                      trace,
                      panel,
                      emmeans_arg, 
-                     new_levels, 
+                     factor_levels, 
                      level) {
   if (!requireNamespace("emmeans", quietly = TRUE)) {
     stop("package emmeans is required.", call. = FALSE)
@@ -18,8 +82,8 @@ get_emms <- function(object,
                                 args = c(object = list(object), 
                                          specs = list(all_vars), 
                                          emmeans_arg)))
-  for (i in seq_along(new_levels)) {
-    levels(emms[[names(new_levels)[i]]]) <- new_levels[[i]]
+  for (i in seq_along(factor_levels)) {
+    levels(emms[[names(factor_levels)[i]]]) <- factor_levels[[i]]
   }
   emms$x <- interaction(emms[x], sep = "\n")
   colnames(emms)[colnames(emms) == "emmean"] <- "y"
@@ -39,11 +103,11 @@ prep_data <- function(data,
                       x,
                       trace,
                       panel, 
-                      new_levels,
+                      factor_levels,
                       dv_col, id) {
   all_vars <- c(x, trace, panel)
-  for (i in seq_along(new_levels)) {
-    levels(data[[names(new_levels)[i]]]) <- new_levels[[i]]
+  for (i in seq_along(factor_levels)) {
+    levels(data[[names(factor_levels)[i]]]) <- factor_levels[[i]]
   }
   colnames(data)[colnames(data) == dv_col] <- "y"
   data <- aggregate(data$y, by = data[c(all_vars,id)], 
@@ -75,7 +139,7 @@ get_data_based_cis <- function(emms, data, error,
                                between_vars,
                                error_level, error_ci) {
   
-  plot_error <- TRUE
+  error_plot <- TRUE
   ## SE/CI calculation:
   if (error == "model") {
     emms$error <- emms$SE
@@ -141,7 +205,7 @@ get_data_based_cis <- function(emms, data, error,
     emms$error <- NA_real_
     emms$lower <- NA_real_
     emms$upper <- NA_real_
-    plot_error <- FALSE
+    error_plot <- FALSE
   }
   
   if (!error_ci) {
@@ -149,5 +213,5 @@ get_data_based_cis <- function(emms, data, error,
     emms$upper <- emms$y + emms$error
   }
 
-  return(list(emms = emms, plot_error = plot_error))
+  return(list(emms = emms, error_plot = error_plot))
 }

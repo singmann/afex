@@ -16,35 +16,38 @@ afex_plot(object, ...)
   error_arg = list(width = 0), data_plot = TRUE, data_geom,
   data_alpha = 0.5, data_arg = list(color = "darkgrey"),
   point_arg = list(), line_arg = list(), emmeans_arg = list(),
-  dodge = 0.5, return = "plot", new_levels = list(), ...)
+  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
+  ...)
 
 \method{afex_plot}{mixed}(object, x, trace, panel, mapping, random,
   error = "model", error_ci = TRUE, error_level = 0.95,
   error_arg = list(width = 0), data_plot = TRUE, data_geom,
   data_alpha = 0.5, data_arg = list(color = "darkgrey"),
   point_arg = list(), line_arg = list(), emmeans_arg = list(),
-  dodge = 0.5, return = "plot", new_levels = list(), ...)
+  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
+  ...)
 
 \method{afex_plot}{merMod}(object, x, trace, panel, mapping, random,
   error = "model", error_ci = TRUE, error_level = 0.95,
   error_arg = list(width = 0), data_plot = TRUE, data_geom,
   data_alpha = 0.5, data_arg = list(color = "darkgrey"),
   point_arg = list(), line_arg = list(), emmeans_arg = list(),
-  dodge = 0.5, return = "plot", new_levels = list(), ...)
+  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
+  ...)
 
 interaction_plot(means, data, mapping = c("shape", "lineytpe"),
   error_plot = TRUE, error_arg = list(width = 0), data_plot = TRUE,
   data_geom = ggplot2::geom_point, data_alpha = 0.5,
   data_arg = list(color = "darkgrey"), point_arg = list(),
-  line_arg = list(), dodge = 0.5, col_x = "x", col_y = "y",
-  col_trace = "trace", col_panel = "panel", col_lower = "lower",
-  col_upper = "upper")
+  line_arg = list(), dodge = 0.5, legend_title, col_x = "x",
+  col_y = "y", col_trace = "trace", col_panel = "panel",
+  col_lower = "lower", col_upper = "upper")
 
 oneway_plot(means, data, mapping = "", error_plot = TRUE,
   error_arg = list(width = 0), data_plot = TRUE,
   data_geom = ggbeeswarm::geom_beeswarm, data_alpha = 0.5,
   data_arg = list(color = "darkgrey"), point_arg = list(),
-  col_x = "x", col_y = "y", col_panel = "panel",
+  legend_title, col_x = "x", col_y = "y", col_panel = "panel",
   col_lower = "lower", col_upper = "upper")
 }
 \arguments{
@@ -53,13 +56,12 @@ oneway_plot(means, data, mapping = "", error_plot = TRUE,
 \item{...}{currently ignored.}
 
 \item{x}{A \code{character} vector or one-sided \code{formula} specifying the
-factor names of the predictors displayed on the x-axis. Argument
-\code{mapping} specifies further mappings for these factors if \code{trace}
-is missing.}
+factor names of the predictors displayed on the x-axis. \code{mapping}
+specifies further mappings for these factors if \code{trace} is missing.}
 
 \item{trace}{An optional \code{character} vector or one-sided \code{formula}
 specifying the factor names of the predictors connected by the same line.
-Argument \code{mapping} specifies further mappings for these factors.}
+\code{mapping} specifies further mappings for these factors.}
 
 \item{panel}{An optional \code{character} vector or one-sided \code{formula} 
 specifying the factor names of the predictors shown in different panels.}
@@ -125,9 +127,12 @@ The default \code{"plot"} returns the \pkg{ggplot2} plot. The other option
 data used for plotting: \code{means} contains the means and standard errors
 for the foreground, \code{data} contains the raw data in the background.}
 
-\item{new_levels}{A \code{list} of new factor levels that should be used in 
+\item{factor_levels}{A \code{list} of new factor levels that should be used in 
 the plot. The name of each list entry needs to correspond to one of the 
 factors in the plot.}
+
+\item{legend_title}{A scalar \code{character} vector with a new title for the
+legend.}
 
 \item{random}{A \code{character} vector specifying over which variables the 
 raw data should be aggregated in case of \code{mixed} objects. The default 
@@ -203,12 +208,12 @@ Plots results from factorial experiments. Estimated marginal
   intervals or intervals based on the standard error of the mean) cannot be
   used to gauge significant differences as this requires knowledge about the
   correlation between measures. One popular alternative in the psychological
-  literature are intervals based on within-subject standard errors/confidence
-  intervals (e.g., Cousineau & O'Brien, 2014). These attempt to control for
-  the correlation across individuals and thereby allow judging differences 
-  between repeated-measures condition. As a downside, when using 
-  within-subject intervals no comparisons across between-subject conditions 
-  or with respect to a fixed-value are possible anymore.
+  literature are intervals based on within-subjects standard
+  errors/confidence intervals (e.g., Cousineau & O'Brien, 2014). These
+  attempt to control for the correlation across individuals and thereby allow
+  judging differences between repeated-measures condition. As a downside,
+  when using within-subjects intervals no comparisons across between-subjects
+  conditions or with respect to a fixed-value are possible anymore.
   
   In the case of a mixed-design, no single type of error bar is possible that
   allows comparison across all conditions. Likewise, for mixed models
@@ -216,18 +221,20 @@ Plots results from factorial experiments. Estimated marginal
   bars (or even data aggregation) adequately represent the true varibility in
   the data and adequately allows for "inference by eye". Therefore, special
   care is necessary in such cases. One possiblity is to avoid error bars
-  altogether and plot only the raw data in the background \code{error =
-  "none"}. This still provides a visual impression of the variability in the
-  point estimate, but does not lend as easily to incorrect inferences.
-  Another possibility is to use the model-based standard error and note in
-  the figure caption that it does not permit comparisons across
-  repeated-measures factors.
+  altogether and plot only the raw data in the background (with \code{error =
+  "none"}). The raw data in the background still provides a visual impression
+  of the variability in the data and the precision of the mean estimate, but
+  does not as easily suggest an incorrect inferences. Another possibility is
+  to use the model-based standard error and note in the figure caption that
+  it does not permit comparisons across repeated-measures factors.
   
   The following "rules of eye" (Cumming and Finch, 2005) hold, when permitted
-  by design (i.e., within-subject bars for within-subject comparisons; other 
-  variants for between-subject comparisons), and groups are approximately 
-  equal in size and variance. Note that for more complex designs often
-  analyzed with mixed models, these rules of thumbs may be highly misleading.
+  by design (i.e., within-subjects bars for within-subjects comparisons;
+  other variants for between-subjects comparisons), and groups are
+  approximately equal in size and variance. Note that for more complex
+  designs ususally analyzed with mixed models, such as designs involving
+  complicated dependencies across data points, these rules of thumbs may be
+  highly misleading.
   \itemize{
     \item  \emph{p} < .05 when the overlap of the 95\% confidence intervals
     (CIs) is no more than about half the average margin of error, that is,
@@ -246,7 +253,7 @@ Plots results from factorial experiments. Estimated marginal
   errors (SEs). CIs are based on the SEs using the \emph{t}-distribution with
   degrees of freedom based on the cell or group size. For ANOVA models,
   \code{afex_plot} attempts to warn in case the chosen approach is misleading
-  given with the design (e.g., model-based error bars for purely
+  given the design (e.g., model-based error bars for purely
   within-subjects plots). For \code{mixed} models, no such warnings are
   produced, but users should be aware that all options beside \code{"model"}
   are not actually appropriate and have only heuristic value. But then again,
@@ -260,24 +267,24 @@ Plots results from factorial experiments. Estimated marginal
     preferrable.}
     \item{\code{"mean"}}{Calculates the standard error of the mean for
     each cell ignoring any repeated-measures factors.}
-    \item{\code{"within-SE"} or \code{"CMO"}}{Calculates within-subject SEs
+    \item{\code{"within"} or \code{"CMO"}}{Calculates within-subjects SEs
     using the Cosineau-Morey-O'Brien (Cousineau & O'Brien, 2014) method. This
     method is based on a double normalization of the data. SEs and CIs are
     then calculated independently for each cell (i.e., if the desired output
-    contains between-subject factors, SEs are calculated for each cell
-    including the between-subject factors).}
-    \item{\code{"between-SE"}}{First aggregates the data per participant and 
-    then calculates the SEs for each between-subject condition. Results in 
-    one SE and \emph{t}-qutnile for all conditions in purely within-subjects
+    contains between-subjects factors, SEs are calculated for each cell
+    including the between-subjects factors).}
+    \item{\code{"between"}}{First aggregates the data per participant and 
+    then calculates the SEs for each between-subjects condition. Results in 
+    one SE and \emph{t}-quantile for all conditions in purely within-subjects
     designs.}
     \item{\code{"none"} or \code{NULL}}{Suppresses calculation of SEs and
     plots no error bars.}
   }
-  For \code{mixed} models, the within-subjects factors are relative to the
-  chosen \code{random} effects grouping factor. They are automatically
-  detected based on the random-slopes of the random-effects grouping factor
-  in \code{random}. All other factors are treated as between-subjects
-  factors.
+  For \code{mixed} models, the within-subjects/repeated-measures factors are
+  relative to the chosen \code{random} effects grouping factor. They are
+  automatically detected based on the random-slopes of the random-effects
+  grouping factor in \code{random}. All other factors are treated as
+  independent-samples or between-subjects factors.
   }
 }
 \examples{
@@ -428,6 +435,10 @@ afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter,
 afex_plot(aw, x = "noise", trace = "angle", 
           new_levels = list(angle = c("0", "4", "8"),
                             noise = c("Absent", "Present")))
+
+## Change title of legend
+afex_plot(aw, x = "noise", trace = "angle", 
+          legend_title = "Noise Condition")
 
 ## for plots with few factor levels, smaller dodge might be better:
 afex_plot(aw, x = "angle", trace = "noise", dodge = 0.25) 

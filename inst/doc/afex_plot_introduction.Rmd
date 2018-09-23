@@ -67,17 +67,15 @@ Comparing both plots, my impression is that the plot with `angle` on the `x`-axi
 
 ## Exploring Graphical Options and Themes
 
-We now produce a new variant of the left plot using more appropriate error bars and change several other graphical details which make the plot publication ready. We use the ability of `afex_plot()` to rename the factor levels (for technical reasons the ANOVA functions in `afex` transform all factor levels to proper `R` variable names using `make.names()` which changed the labels from e.g., `4` to `X4`). We change the labels on the `x` and `y` axis, as well as the title of the legend. For the latter we use `guides()`. Note that we need to change the legend title simultaneously for all values given in the `mapping` argument of `afex_plot()`, which defaults to `c("shape", "linetype")` if `trace` is given. 
+We now produce a new variant of the left plot using more appropriate error bars and change several other graphical details which make the plot publication ready. We use the ability of `afex_plot()` to rename the factor levels (for technical reasons the ANOVA functions in `afex` transform all factor levels to proper `R` variable names using `make.names()` which changed the labels from e.g., `4` to `X4`) and the title of the legend. We also change the labels on the `x` and `y` axis. 
 
 
 ```{r}
-legend_title <- "Noise"
 p_an <- afex_plot(aw, x = "angle", trace = "noise", error = "within",
                   new_levels = list(angle = c("0°", "4°", "8°"),
-                                    noise = c("Absent", "Present"))) +
-  labs(y = "RTs (in ms)", x = "Angle (in degrees)") +
-  guides(shape = guide_legend(title=legend_title), 
-         linetype = guide_legend(title=legend_title))
+                                    noise = c("Absent", "Present")), 
+                  legend_title = "Noise") +
+  labs(y = "RTs (in ms)", x = "Angle (in degrees)")
 ```
 
 

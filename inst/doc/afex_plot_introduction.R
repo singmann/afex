@@ -17,13 +17,11 @@ p_na <- afex_plot(aw, x = "noise", trace = "angle")
 plot_grid(p_an, p_na)  ## try adding: labels = "AUTO"
 
 ## ---------------------------------------------------------------------------------------
-legend_title <- "Noise"
 p_an <- afex_plot(aw, x = "angle", trace = "noise", error = "within",
-                  new_levels = list(angle = c("0°", "4°", "8°"),
-                                    noise = c("Absent", "Present"))) +
-  labs(y = "RTs (in ms)", x = "Angle (in degrees)") +
-  guides(shape = guide_legend(title=legend_title), 
-         linetype = guide_legend(title=legend_title))
+                  new_levels = list(angle = c("0Â°", "4Â°", "8Â°"),
+                                    noise = c("Absent", "Present")), 
+                  legend_title = "Noise") +
+  labs(y = "RTs (in ms)", x = "Angle (in degrees)")
 
 ## ----fig.width=8.5, fig.height=6, dpi = 300---------------------------------------------
 plot_grid(

@@ -73,7 +73,7 @@ We now produce a new variant of the left plot using more appropriate error bars 
 
 ```{r}
 p_an <- afex_plot(aw, x = "angle", trace = "noise", error = "within",
-                  new_levels = list(angle = c("0°", "4°", "8°"),
+                  factor_levels = list(angle = c("0°", "4°", "8°"),
                                     noise = c("Absent", "Present")), 
                   legend_title = "Noise") +
   labs(y = "RTs (in ms)", x = "Angle (in degrees)")

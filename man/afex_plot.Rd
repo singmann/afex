@@ -421,10 +421,10 @@ afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter,
 ##                      Other Basic Options                     -
 ##---------------------------------------------------------------
 
-## relabel factor levels via new_levels
+## relabel factor levels via factor_levels
 afex_plot(aw, x = "noise", trace = "angle", 
-          new_levels = list(angle = c("0", "4", "8"),
-                            noise = c("Absent", "Present")))
+          factor_levels = list(angle = c("0°", "4°", "8°"),
+                               noise = c("Absent", "Present")))
 
 ## Change title of legend
 afex_plot(aw, x = "noise", trace = "angle", 

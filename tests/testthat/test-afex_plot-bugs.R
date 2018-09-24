@@ -177,19 +177,3 @@ test_that("afex_plot works with various geoms (from examples)", {
                   error_arg = list(size = 1.5, width = 0))
   expect_is(p8, "ggplot")
 })
-
-test_that("relabeling of factors and legend works", {
-  data(md_12.1)
-  aw <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
-  ## relabel factor levels via new_levels
-  p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
-                  factor_levels = list(angle = c("0", "4", "8"),
-                                       noise = c("Absent", "Present")))
-  expect_equal(levels(p1$data$noise), c("Absent", "Present"))
-  expect_equal(levels(p1$data$angle), c("0", "4", "8"))
-
-  p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
-                  legend_title = "Noise Condition")
-  expect_equal(p2$guides$shape$title, "Noise Condition")
-  expect_equal(p2$guides$linetype$title, "Noise Condition")
-})

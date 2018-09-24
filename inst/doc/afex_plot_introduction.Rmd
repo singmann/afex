@@ -14,6 +14,7 @@ vignette: >
 
 ```{r set-options, echo=FALSE, cache=FALSE}
 options(width = 90)
+knitr::opts_chunk$set(dpi=100)
 ```
 
 
@@ -72,7 +73,7 @@ We now produce a new variant of the left plot using more appropriate error bars 
 
 ```{r}
 p_an <- afex_plot(aw, x = "angle", trace = "noise", error = "within",
-                  new_levels = list(angle = c("0°", "4°", "8°"),
+                  factor_levels = list(angle = c("0°", "4°", "8°"),
                                     noise = c("Absent", "Present")), 
                   legend_title = "Noise") +
   labs(y = "RTs (in ms)", x = "Angle (in degrees)")
@@ -81,7 +82,7 @@ p_an <- afex_plot(aw, x = "angle", trace = "noise", error = "within",
 
 As said above, I am not a big fan of the default grey theme of `ggplot2` plots. Consequently, we compare a number of different themes for this plot in the following. For all but `ggpubr::theme_pubr()`, we also move the legend to the bottom as this better allows the plot to cover only a single column in a two-column layout. `ggpubr::theme_pubr()` automatically plots the legend on top.
 
-```{r fig.width=8.5, fig.height=6, dpi = 300}
+```{r fig.width=8.5, fig.height=6, dpi = 150}
 plot_grid(
   p_an + theme_bw() + theme(legend.position="bottom"),
   p_an + theme_light() + theme(legend.position="bottom"),
@@ -97,7 +98,7 @@ The first row, panels A to C, shows themes coming with `ggplot2` and the second 
 
 One general criticism I have with the current plots is that they show too many values on the y-axis. In the following I plot one more variant of this plot in which we change this to three values on the y-axis. We also increase the axes labels and remove the vertical grid lines.
 
-```{r fig.width=3.5, fig.height=3, dpi = 300, out.width='50%'}
+```{r fig.width=3.5, fig.height=3, dpi = 150, out.width='50%'}
 p_an + 
   scale_y_continuous(breaks=seq(400, 900, length.out = 3)) +
   theme_bw(base_size = 15) + 
@@ -147,7 +148,7 @@ The first two variants display only points, whereas the remaining ones use diffe
 5. Combine box plot with jittered points: `ggpol::geom_boxjitter`
 
 
-```{r fig.width=8.5, fig.height=12, dpi = 300}
+```{r fig.width=8.5, fig.height=12, dpi = 150}
 p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                 data_arg = list(
                   position = 
@@ -186,7 +187,7 @@ plot_grid(p1, p2, p3, p4, p5, ncol = 2, labels = 1:5)
 So far, all plots were shown in black and white only. However, it is easy to include color. We do so for plots 2 to 5 from above. To achieve this, we have to change the value of the `mapping` argument. 
 
 
-```{r fig.width=8.5, fig.height=8, dpi = 300}
+```{r fig.width=8.5, fig.height=8, dpi = 150}
 p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                 mapping = c("shape", "color"),
                 data_geom = ggbeeswarm::geom_beeswarm,
@@ -219,7 +220,7 @@ plot_grid(p2, p3, p4, p5, ncol = 2, labels = 2:5)
 
 If `afex_plot` is called without a trace factor, a one-way plot is created. We can customize this plot in very much the same way. Per default a one-way plot contains a legend if `mapping` is not empty (i.e., `""`). We show this legend for the left plot, but suppress it for the right one.
 
-```{r fig.width=7, fig.height=3.5, dpi = 300, message=FALSE}
+```{r fig.width=7, fig.height=3.5, message=FALSE}
 po1 <- afex_plot(aw, x = "angle", mapping = "color", error = "within", 
                  data_arg = list(),
                  point_arg = list(size = 2.5), 
@@ -241,7 +242,7 @@ plot_grid(po1, po2)
 
 One-way plots can also be split across different panels by specifying a `panel` factor:
 
-```{r fig.width=7, fig.height=3.5, dpi = 300, message=FALSE}
+```{r fig.width=7, fig.height=3.5, message=FALSE}
 afex_plot(aw, x = "angle", panel = "noise", error = "within",
           data_geom = ggpol::geom_boxjitter,
           mapping = "fill", data_alpha = 0.7,
@@ -296,13 +297,13 @@ mrt
 
 For mixed models, one important decision is the random-effects grouping factor(s) based on which the raw data plotted in the background is aggregated. This decision is necessary, because without such a factor, there would only be one observation for each cell of the design (unless the full design is considered). In the default setting, with `random` missing, the combination of all random-effects grouping factor is used.
 
-```{r fig.width=7, fig.height=3.5, dpi = 300}
+```{r fig.width=7, fig.height=3.5}
 afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task") 
 ```
 
 In the present case, a message informs us that the data is aggregated over both random-effects grouping factors. However, this leads to way too many data points in the background. Let us compare this plot with plots in which we use each of the two random-effects grouping factors in turn.
 
-```{r fig.width=7, fig.height=3.5, dpi = 300}
+```{r fig.width=7, fig.height=3.5}
 plot_grid( 
   afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
             random = "id"), 
@@ -318,7 +319,7 @@ The by-id plot looks usable. However, the by-item plot has still way too many da
 
 We compare violin plots or box plots for the by-item data in the next plot. For the box plot, we increase the width of the error bars and use a consistent line type to distinguish them more easily from the graphical elements of the box plot. We could probably further improve these plots by, for example, adding colors or using some of the other customizations discussed above for the ANOVA example.
 
-```{r fig.width=7, fig.height=3.5, dpi = 300}
+```{r fig.width=7, fig.height=3.5}
 plot_grid( 
   afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
             random = "item", dodge = 0.8,
@@ -344,7 +345,7 @@ pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
 
 An alternative in the present situation would be using within-subjects error bars and aggregating the data by-id (i.e., `error = "within"`), as done in the left panel below. This is somewhat appropriate here as the factors within each panel are all within-subject factors. In contrast, using by-item within-subjects error bars, as done in the right panel below, seems not appropriate as the only within-item factor, `task`, is spread across panels. Unfortunately, it is not immediately clear if these error bars allow one to correctly detect, which means do not differ from each other. 
 
-```{r fig.width=7, fig.height=3.5, dpi = 300}
+```{r fig.width=7, fig.height=3.5}
 plot_grid( 
   afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
             random = "id", error = "within"),

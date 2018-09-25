@@ -295,7 +295,7 @@ mrt
 
 ## Which Data to Plot in the Background
 
-For mixed models, one important decision is the random-effects grouping factor(s) based on which the raw data plotted in the background is aggregated. This decision is necessary, because without such a factor, there would only be one observation for each cell of the design (unless the full design is considered). In the default setting, with `random` missing, the combination of all random-effects grouping factor is used.
+For mixed models, one important decision is the random-effects grouping factor(s) based on which the raw data plotted in the background is aggregated. This decision is necessary, because without such a factor, there would only be one observation for each cell of the design (unless the full design is considered). In the default setting, with `id` missing, the combination of all random-effects grouping factor is used.
 
 ```{r fig.width=7, fig.height=3.5}
 afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task") 
@@ -306,9 +306,9 @@ In the present case, a message informs us that the data is aggregated over both 
 ```{r fig.width=7, fig.height=3.5}
 plot_grid( 
   afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            random = "id"), 
+            id = "id"), 
   afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            random = "item"), 
+            id = "item"), 
   labels = c("ID", "Item") 
 )
 ```
@@ -322,11 +322,11 @@ We compare violin plots or box plots for the by-item data in the next plot. For 
 ```{r fig.width=7, fig.height=3.5}
 plot_grid( 
   afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            random = "item", dodge = 0.8,
+            id = "item", dodge = 0.8,
             data_geom = geom_violin, 
             data_arg = list(width = 0.5)), 
   afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            random = "item", dodge = 0.8,
+            id = "item", dodge = 0.8,
             data_geom = geom_boxplot, 
             data_arg = list(width = 0.5),
             error_arg = list(size = 1.5, width = 0, linetype = 1))
@@ -348,9 +348,9 @@ An alternative in the present situation would be using within-subjects error bar
 ```{r fig.width=7, fig.height=3.5}
 plot_grid( 
   afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            random = "id", error = "within"),
+            id = "id", error = "within"),
   afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            random = "item", dodge = 0.8, error = "within",
+            id = "item", dodge = 0.8, error = "within",
             data_geom = geom_violin, 
             data_arg = list(width = 0.5))
 )

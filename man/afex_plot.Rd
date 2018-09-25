@@ -5,6 +5,7 @@
 \alias{afex_plot.afex_aov}
 \alias{afex_plot.mixed}
 \alias{afex_plot.merMod}
+\alias{afex_plot.default}
 \alias{interaction_plot}
 \alias{oneway_plot}
 \title{m-way Plot with Error Bars and Raw Data}
@@ -19,7 +20,7 @@ afex_plot(object, ...)
   dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
   ...)
 
-\method{afex_plot}{mixed}(object, x, trace, panel, mapping, random,
+\method{afex_plot}{mixed}(object, x, trace, panel, mapping, id,
   error = "model", error_ci = TRUE, error_level = 0.95,
   error_arg = list(width = 0), data_plot = TRUE, data_geom,
   data_alpha = 0.5, data_arg = list(color = "darkgrey"),
@@ -27,10 +28,18 @@ afex_plot(object, ...)
   dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
   ...)
 
-\method{afex_plot}{merMod}(object, x, trace, panel, mapping, random,
+\method{afex_plot}{merMod}(object, x, trace, panel, mapping, id,
   error = "model", error_ci = TRUE, error_level = 0.95,
   error_arg = list(width = 0), data_plot = TRUE, data_geom,
   data_alpha = 0.5, data_arg = list(color = "darkgrey"),
+  point_arg = list(), line_arg = list(), emmeans_arg = list(),
+  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
+  ...)
+
+\method{afex_plot}{default}(object, x, trace, panel, mapping, id, dv, data,
+  within_vars, between_vars, error = "model", error_ci = TRUE,
+  error_level = 0.95, error_arg = list(width = 0), data_plot = TRUE,
+  data_geom, data_alpha = 0.5, data_arg = list(color = "darkgrey"),
   point_arg = list(), line_arg = list(), emmeans_arg = list(),
   dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
   ...)
@@ -134,13 +143,35 @@ factors in the plot.}
 \item{legend_title}{A scalar \code{character} vector with a new title for the
 legend.}
 
-\item{random}{A \code{character} vector specifying over which variables the 
-raw data should be aggregated in case of \code{mixed} objects. The default 
-(missing) uses all random effects grouping factors which can lead to many 
-data points. \code{error = "within"} or \code{error = "between"} require
-that \code{random} is of length 1. See examples.}
+\item{id}{An optional \code{character} vector specifying over which variables
+the raw data should be aggregated. Only relevant for \code{mixed}, 
+\code{merMod}, and \code{default} method. The default (missing) uses all 
+random effects grouping factors (for \code{mixed} and \code{merMod} method)
+or assumes all data points are independent. This can lead to many data
+points. \code{error = "within"} or \code{error = "between"} require that
+\code{id} is of length 1. See examples.}
 
-\item{means, data}{\code{data.frame}s used for plotting of the plotting
+\item{dv}{An optional scalar \code{character} vector giving the name of the
+column containing the dependent variable for the \code{afex_plot.default}
+method. If missing, the function attempts to take it from the \code{call}
+slot of \code{object}.}
+
+\item{data}{For the \code{afex_plot.default} method, an optional
+\code{data.frame} containing the raw data used for fitting the model and
+which will be used as basis for the data points in the background. If
+missing, it will be attempted to obtain it from the model via
+\code{\link[emmeans]{recover_data}}. For the plotting functions, a
+\code{data.frame} with the data that has to be passed and contains the
+background data points.}
+
+\item{within_vars, between_vars}{For the \code{afex_plot.default} method, an
+optional \code{character} vector specifying which variables should be
+treated as within-subjects (or repeated-measures) factors and which as
+between-subjects (or independen-sampels) factors. If one of the two
+arguments is given, all other factors are assumed to fall into the other
+category.}
+
+\item{means}{\code{data.frame}s used for plotting of the plotting
 functions.}
 
 \item{error_plot}{\code{logical}. Should error bars be plotted? Only used in 
@@ -281,9 +312,9 @@ Plots results from factorial experiments. Estimated marginal
     plots no error bars.}
   }
   For \code{mixed} models, the within-subjects/repeated-measures factors are
-  relative to the chosen \code{random} effects grouping factor. They are
+  relative to the chosen \code{id} effects grouping factor. They are
   automatically detected based on the random-slopes of the random-effects
-  grouping factor in \code{random}. All other factors are treated as
+  grouping factor in \code{id}. All other factors are treated as
   independent-samples or between-subjects factors.
   }
 }
@@ -571,24 +602,24 @@ mrt <- mixed(log_rt ~ task*stimulus*frequency + (stimulus*frequency||id)+
 afex_plot(mrt, "stimulus", "frequency", "task") 
 
 ## better to restrict plot of data to one random-effects grouping variable
-afex_plot(mrt, "stimulus", "frequency", "task", random = "id")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "id")
 ## when plotting data from a single random effect, different error bars are possible:
-afex_plot(mrt, "stimulus", "frequency", "task", random = "id", error = "within")
-afex_plot(mrt, "stimulus", "frequency", "task", random = "id", error = "mean")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "id", error = "within")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "id", error = "mean")
 
 ## compare visual impression with:
 pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
 
 ## same logic also possible for other random-effects grouping factor
-afex_plot(mrt, "stimulus", "frequency", "task", random = "item")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "item")
 ## within-item error bars are misleading here. task is sole within-items factor.
-afex_plot(mrt, "stimulus", "frequency", "task", random = "item", error = "within")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "item", error = "within")
 ## CIs based on stanard error of mean look small, but not unreasonable given results.
-afex_plot(mrt, "stimulus", "frequency", "task", random = "item", error = "mean")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "item", error = "mean")
 
 ### compare distribution of individual data for different random effects:
 ## requires package cowplot
-p_id <- afex_plot(mrt, "stimulus", "frequency", "task", random = "id", 
+p_id <- afex_plot(mrt, "stimulus", "frequency", "task", id = "id", 
                   error = "within", dodge = 0.7,
                   data_geom = ggplot2::geom_violin, 
                   mapping = c("shape", "fill"),
@@ -596,7 +627,7 @@ p_id <- afex_plot(mrt, "stimulus", "frequency", "task", random = "id",
   ggplot2::scale_shape_manual(values = c(4, 17)) +
   ggplot2::labs(title = "ID")
 
-p_item <- afex_plot(mrt, "stimulus", "frequency", "task", random = "item", 
+p_item <- afex_plot(mrt, "stimulus", "frequency", "task", id = "item", 
           error = "within", dodge = 0.7,
           data_geom = ggplot2::geom_violin, 
           mapping = c("shape", "fill"),
@@ -627,6 +658,54 @@ Oats.lmer <- lmer(yield ~ Variety * factor(nitro) + (1|VarBlock) + (1|Block),
 afex_plot(Oats.lmer, "nitro", "Variety")
 afex_plot(Oats.lmer, "nitro", panel = "Variety")
 
+##################################################################
+##     Default Method works for Models Supported by emmeans     ##
+##################################################################
+
+## lm
+warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
+afex_plot(warp.lm, "tension")
+afex_plot(warp.lm, "tension", "wool")
+
+## poisson glm
+ins <- data.frame(
+    n = c(500, 1200, 100, 400, 500, 300),
+    size = factor(rep(1:3,2), labels = c("S","M","L")),
+    age = factor(rep(1:2, each = 3)),
+    claims = c(42, 37, 1, 101, 73, 14))
+ins.glm <- glm(claims ~ size + age + offset(log(n)), 
+               data = ins, family = "poisson")
+afex_plot(ins.glm, "size", "age")
+
+## binomial glm adapted from ?predict.glm
+ldose <- factor(rep(0:5, 2))
+numdead <- c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16)
+sex <- factor(rep(c("M", "F"), c(6, 6)))
+SF <- numdead/20  ## dv should be a vector, no matrix
+budworm.lg <- glm(SF ~ sex*ldose, family = binomial, 
+                  weights = rep(20, length(numdead)))
+afex_plot(budworm.lg, "ldose")
+afex_plot(budworm.lg, "ldose", "sex") ## data point is hidden behind mean!
+afex_plot(budworm.lg, "ldose", "sex", 
+          data_arg = list(size = 4, color = "red"))
+
+## nlme mixed model
+data(Oats, package = "nlme")
+Oats$nitro <- factor(Oats$nitro)
+oats.1 <- nlme::lme(yield ~ nitro * Variety, 
+                    random = ~ 1 | Block / Variety,
+                    data = Oats)
+afex_plot(oats.1, "nitro", "Variety", data = Oats)
+afex_plot(oats.1, "nitro", "Variety", data = Oats, id = "Block")
+afex_plot(oats.1, "nitro", data = Oats)
+afex_plot(oats.1, "nitro", data = Oats, id = c("Block", "Variety"))
+afex_plot(oats.1, "nitro", data = Oats, id = "Block")
+
+
+### MASS (from: ?effects::Effect), not yet working
+# mod.wvs <- MASS::polr(poverty ~ gender + religion + degree + country*poly(age,3),
+#                     data=carData::WVS)
+# afex_plot(mod.wvs, "country", c("poverty"), data=carData::WVS)
 }
 }
 \references{

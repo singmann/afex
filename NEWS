@@ -1,4 +1,24 @@
                     *************************
+                    ** afex VERSION 0.23-x **
+                    *************************
+                    
+                    Changes in afex Version 0.23-x
+                    Released September 2018
+                    
+    Significant User Visible Changes and New Features
+    
+    o   Added afex_plot.default() method which works with a wide variety of 
+        fitted objects. See ?afex_plot examples.
+        
+    o   In afex_plot(), renamed 'random'
+    
+    Bugfixes
+
+    o   Corrected bug in afex_plot() vignette and examples. Correct argument
+        name is factor_levels.
+
+
+                    *************************
                     ** afex VERSION 0.22-x **
                     *************************
                     
@@ -12,7 +32,7 @@
         objects. Furthermore added two more functions:
         - interaction_plot(): workhorse producing interaction plot
         - oneway_plot(): workhorse producing oneway plot
-        Error bars can bedisplay confidence intervals (the default) or standard
+        Error bars can display confidence intervals (the default) or standard
         errors and can be calculated using a variety of different standard 
         errors (e.g., model-based, within-subjects).
 

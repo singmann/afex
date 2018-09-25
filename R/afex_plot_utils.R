@@ -81,12 +81,14 @@ get_emms <- function(object,
   emms <- as.data.frame(do.call(emmeans::emmeans, 
                                 args = c(object = list(object), 
                                          specs = list(all_vars), 
+                                         type = list("response"),
                                          emmeans_arg)))
   for (i in seq_along(factor_levels)) {
     levels(emms[[names(factor_levels)[i]]]) <- factor_levels[[i]]
   }
   emms$x <- interaction(emms[x], sep = "\n")
-  colnames(emms)[colnames(emms) == "emmean"] <- "y"
+  #col_y <- colnames(emms)[which(colnames(emms) == "SE")-1]
+  colnames(emms)[which(colnames(emms) == "SE")-1] <- "y"
   attr(emms, "dv") <- attr(object, "dv")
   attr(emms, "x") <- paste(x, sep = "\n")
   if (length(panel) > 0) {

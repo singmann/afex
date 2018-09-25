@@ -36,11 +36,17 @@
 #'   plots model-based standard errors. Further options are: \code{"none"} (or 
 #'   \code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and 
 #'   \code{"between"}. See details.
-#' @param random A \code{character} vector specifying over which variables the 
-#'   raw data should be aggregated in case of \code{mixed} objects. The default 
-#'   (missing) uses all random effects grouping factors which can lead to many 
-#'   data points. \code{error = "within"} or \code{error = "between"} require
-#'   that \code{random} is of length 1. See examples.
+#' @param id An optional \code{character} vector specifying over which variables
+#'   the raw data should be aggregated. Only relevant for \code{mixed}, 
+#'   \code{merMod}, and \code{default} method. The default (missing) uses all 
+#'   random effects grouping factors (for \code{mixed} and \code{merMod} method)
+#'   or assumes all data points are independent. This can lead to many data
+#'   points. \code{error = "within"} or \code{error = "between"} require that
+#'   \code{id} is of length 1. See examples.
+#' @param dv An optional scalar \code{character} vector giving the name of the
+#'   column containing the dependent variable for the \code{afex_plot.default}
+#'   method. If missing, the function attempts to take it from the \code{call}
+#'   slot of \code{object}.
 #' @param error_ci Logical. Should error bars plot confidence intervals
 #'   (=\code{TRUE}, the default) or standard errors (=\code{FALSE})?
 #' @param error_level Numeric value between 0 and 1 determing the width of the
@@ -82,7 +88,20 @@
 #'   factors in the plot. 
 #' @param legend_title A scalar \code{character} vector with a new title for the
 #'   legend.
-#' @param means,data \code{data.frame}s used for plotting of the plotting
+#' @param data For the \code{afex_plot.default} method, an optional
+#'   \code{data.frame} containing the raw data used for fitting the model and
+#'   which will be used as basis for the data points in the background. If
+#'   missing, it will be attempted to obtain it from the model via
+#'   \code{\link[emmeans]{recover_data}}. For the plotting functions, a
+#'   \code{data.frame} with the data that has to be passed and contains the
+#'   background data points.
+#' @param within_vars,between_vars For the \code{afex_plot.default} method, an
+#'   optional \code{character} vector specifying which variables should be
+#'   treated as within-subjects (or repeated-measures) factors and which as
+#'   between-subjects (or independen-sampels) factors. If one of the two
+#'   arguments is given, all other factors are assumed to fall into the other
+#'   category.
+#' @param means \code{data.frame}s used for plotting of the plotting
 #'   functions.
 #' @param col_y,col_x,col_trace,col_panel A scalar \code{character} string 
 #'   specifying the name of the corresponding column containing the information
@@ -200,9 +219,9 @@
 #'     plots no error bars.}
 #'   }
 #'   For \code{mixed} models, the within-subjects/repeated-measures factors are
-#'   relative to the chosen \code{random} effects grouping factor. They are
+#'   relative to the chosen \code{id} effects grouping factor. They are
 #'   automatically detected based on the random-slopes of the random-effects
-#'   grouping factor in \code{random}. All other factors are treated as
+#'   grouping factor in \code{id}. All other factors are treated as
 #'   independent-samples or between-subjects factors.
 #'   }
 #'   
@@ -364,7 +383,7 @@ afex_plot.mixed <- function(object,
                             trace,
                             panel,
                             mapping,
-                            random,
+                            id,
                             error = "model",
                             error_ci = TRUE,
                             error_level = 0.95, 
@@ -394,9 +413,9 @@ afex_plot.mixed <- function(object,
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
   
-  if (missing(random)) {
-    random <- unique(names(lme4::ranef(object$full_model)))
-    message("Aggregating data over: ", paste(random, collapse = ", "))
+  if (missing(id)) {
+    id <- unique(names(lme4::ranef(object$full_model)))
+    message("Aggregating data over: ", paste(id, collapse = ", "))
   }
   ## prepare raw (i.e., participant by cell) data
   data <- prep_data(object$data, 
@@ -405,11 +424,11 @@ afex_plot.mixed <- function(object,
                     panel = panel,
                     factor_levels = factor_levels,
                     dv_col = deparse(object$full_model@call[["formula"]][[2]]),
-                    id = random)
-  data$afex_id <- interaction(data[random], sep = ".")
+                    id = id)
+  data$afex_id <- interaction(data[id], sep = ".")
   
   if (!(error %in% c("none" ,"model", "mean")) & 
-      (length(random) > 1)) {
+      (length(id) > 1)) {
     stop("When aggregating over multiple random effects,\n",
          '       error has to be in: c("model", "mean", "none")',
          call. = FALSE)
@@ -423,13 +442,13 @@ afex_plot.mixed <- function(object,
                    factor_levels = factor_levels,
                    level = error_level)
   
-  if (length(random) == 1) {
+  if (length(id) == 1) {
     all_within <- lapply(lme4::findbars(object$call), all.vars)
     all_within <- 
       unique(unlist(
-        all_within[vapply(all_within, function(x) random %in% x, NA)]
+        all_within[vapply(all_within, function(x) id %in% x, NA)]
       ))
-    all_within <- all_within[all_within != random]
+    all_within <- all_within[all_within != id]
     within_vars <- all_vars[all_vars %in% all_within]
     between_vars <- all_vars[!(all_vars %in% within_vars)]
   }
@@ -477,7 +496,7 @@ afex_plot.merMod <- function(object,
                             trace,
                             panel,
                             mapping,
-                            random,
+                            id,
                             error = "model",
                             error_ci = TRUE,
                             error_level = 0.95, 
@@ -508,9 +527,9 @@ afex_plot.merMod <- function(object,
   all_vars <- c(x, trace, panel)
   
   
-  if (missing(random)) {
-    random <- unique(names(lme4::ranef(object)))
-    message("Aggregating data over: ", paste(random, collapse = ", "))
+  if (missing(id)) {
+    id <- unique(names(lme4::ranef(object)))
+    message("Aggregating data over: ", paste(id, collapse = ", "))
   }
   ## prepare raw (i.e., participant by cell) data
   data <- prep_data(
@@ -523,11 +542,11 @@ afex_plot.merMod <- function(object,
     panel = panel,
     factor_levels = factor_levels,
     dv_col = deparse(object@call[["formula"]][[2]]),
-    id = random)
-  data$afex_id <- interaction(data[random], sep = ".")
+    id = id)
+  data$afex_id <- interaction(data[id], sep = ".")
   
   if (!(error %in% c("none" ,"model", "mean")) & 
-      (length(random) > 1)) {
+      (length(id) > 1)) {
     stop("When aggregating over multiple random effects,\n",
          '       error has to be in: c("model", "mean", "none")',
          call. = FALSE)
@@ -541,17 +560,141 @@ afex_plot.merMod <- function(object,
                    factor_levels = factor_levels,
                    level = error_level)
   
-  if (length(random) == 1) {
+  if (length(id) == 1) {
     all_within <- lapply(lme4::findbars(object@call), all.vars)
     all_within <- 
       unique(unlist(
-        all_within[vapply(all_within, function(x) random %in% x, NA)]
+        all_within[vapply(all_within, function(x) id %in% x, NA)]
       ))
-    all_within <- all_within[all_within != random]
+    all_within <- all_within[all_within != id]
     within_vars <- all_vars[all_vars %in% all_within]
     between_vars <- all_vars[!(all_vars %in% within_vars)]
   }
   
+  
+  ### prepare variables for SE/CI calculation
+  tmp <- get_data_based_cis(emms = emms, 
+                            data = data, 
+                            error = error, 
+                            id = "afex_id", ## colname holding the id/grouping variable 
+                            all_vars = all_vars,
+                            within_vars = within_vars, 
+                            between_vars = between_vars, 
+                            error_level = error_level, 
+                            error_ci = error_ci)
+  emms <- tmp$emms
+  error_plot <- tmp$error_plot
+  
+  return(afex_plot_internal(x = x,
+                            trace = trace,
+                            panel = panel,
+                            means = emms, 
+                            data = data,
+                            error_plot = error_plot,
+                            error_arg = error_arg, 
+                            dodge = dodge, 
+                            data_plot = data_plot,
+                            data_geom = data_geom,
+                            data_alpha = data_alpha,
+                            data_arg = data_arg,
+                            point_arg = point_arg,
+                            line_arg = line_arg,
+                            mapping = mapping,
+                            legend_title =  legend_title,
+                            return = return
+  ))
+}
+
+#' @rdname afex_plot
+#' @export
+afex_plot.default <- function(object, 
+                              x,
+                              trace,
+                              panel,
+                              mapping,
+                              id,
+                              dv,
+                              data,
+                              within_vars,
+                              between_vars,
+                              error = "model",
+                              error_ci = TRUE,
+                              error_level = 0.95, 
+                              error_arg = list(width = 0),
+                              data_plot = TRUE,
+                              data_geom,
+                              data_alpha = 0.5,
+                              data_arg = list(color = "darkgrey"),
+                              point_arg = list(),
+                              line_arg = list(),
+                              emmeans_arg = list(),
+                              dodge = 0.5,
+                              return = "plot",
+                              factor_levels = list(),
+                              legend_title,
+                              ...) {
+  
+  return <- match.arg(return, c("plot", "data"))
+  error <- match.arg(error, c("none", 
+                              "model", 
+                              "mean", 
+                              "within", "CMO",
+                              "between"))
+  
+  x <- get_plot_var(x)
+  trace <- get_plot_var(trace)
+  panel <- get_plot_var(panel)
+  all_vars <- c(x, trace, panel)
+  
+  if (missing(dv)) {
+    formula_name <- names(object$call)[2]
+    message("dv column detected: ", deparse(object$call[[formula_name]][[2]]))
+    dv <- deparse(object$call[[formula_name]][[2]])
+  }
+  ## prepare raw (i.e., participant by cell) data if missing
+  if (missing(data)) {
+    data <- emmeans::recover_data(
+      object = object, 
+      trms = terms(object)
+    )
+  }
+  if (missing(id)) {
+    message("No id column passed. ", 
+            "Assuming all rows are independent samples.")
+    data$id <- factor(seq_len(nrow(data)))
+    id <- "id"
+  }
+  data <- prep_data(
+    data = data, 
+    x = x,
+    trace = trace,
+    panel = panel,
+    factor_levels = factor_levels,
+    dv_col = dv,
+    id = id)
+  data$afex_id <- interaction(data[id], sep = ".")
+  
+  if (!(error %in% c("none" ,"model", "mean")) & 
+      (length(id) > 1)) {
+    stop("When aggregating over multiple ids,\n",
+         '       error has to be in: c("model", "mean", "none")',
+         call. = FALSE)
+  } 
+  
+  emms <- get_emms(object = object, 
+                   x = x,
+                   trace = trace,
+                   panel = panel,
+                   emmeans_arg = emmeans_arg, 
+                   factor_levels = factor_levels,
+                   level = error_level)
+  
+  if (missing(within_vars) & !missing(between_vars)) {
+    within_vars <- all_vars[!(all_vars %in% within_vars)]
+  }
+  if (!missing(within_vars) & missing(between_vars)) {
+    between_vars <- all_vars[!(all_vars %in% between_vars)]
+  }
   
   ### prepare variables for SE/CI calculation
   tmp <- get_data_based_cis(emms = emms, 

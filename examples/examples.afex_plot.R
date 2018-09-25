@@ -281,24 +281,24 @@ mrt <- mixed(log_rt ~ task*stimulus*frequency + (stimulus*frequency||id)+
 afex_plot(mrt, "stimulus", "frequency", "task") 
 
 ## better to restrict plot of data to one random-effects grouping variable
-afex_plot(mrt, "stimulus", "frequency", "task", random = "id")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "id")
 ## when plotting data from a single random effect, different error bars are possible:
-afex_plot(mrt, "stimulus", "frequency", "task", random = "id", error = "within")
-afex_plot(mrt, "stimulus", "frequency", "task", random = "id", error = "mean")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "id", error = "within")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "id", error = "mean")
 
 ## compare visual impression with:
 pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
 
 ## same logic also possible for other random-effects grouping factor
-afex_plot(mrt, "stimulus", "frequency", "task", random = "item")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "item")
 ## within-item error bars are misleading here. task is sole within-items factor.
-afex_plot(mrt, "stimulus", "frequency", "task", random = "item", error = "within")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "item", error = "within")
 ## CIs based on stanard error of mean look small, but not unreasonable given results.
-afex_plot(mrt, "stimulus", "frequency", "task", random = "item", error = "mean")
+afex_plot(mrt, "stimulus", "frequency", "task", id = "item", error = "mean")
 
 ### compare distribution of individual data for different random effects:
 ## requires package cowplot
-p_id <- afex_plot(mrt, "stimulus", "frequency", "task", random = "id", 
+p_id <- afex_plot(mrt, "stimulus", "frequency", "task", id = "id", 
                   error = "within", dodge = 0.7,
                   data_geom = ggplot2::geom_violin, 
                   mapping = c("shape", "fill"),
@@ -306,7 +306,7 @@ p_id <- afex_plot(mrt, "stimulus", "frequency", "task", random = "id",
   ggplot2::scale_shape_manual(values = c(4, 17)) +
   ggplot2::labs(title = "ID")
 
-p_item <- afex_plot(mrt, "stimulus", "frequency", "task", random = "item", 
+p_item <- afex_plot(mrt, "stimulus", "frequency", "task", id = "item", 
           error = "within", dodge = 0.7,
           data_geom = ggplot2::geom_violin, 
           mapping = c("shape", "fill"),
@@ -337,4 +337,52 @@ Oats.lmer <- lmer(yield ~ Variety * factor(nitro) + (1|VarBlock) + (1|Block),
 afex_plot(Oats.lmer, "nitro", "Variety")
 afex_plot(Oats.lmer, "nitro", panel = "Variety")
 
+##################################################################
+##     Default Method works for Models Supported by emmeans     ##
+##################################################################
+
+## lm
+warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
+afex_plot(warp.lm, "tension")
+afex_plot(warp.lm, "tension", "wool")
+
+## poisson glm
+ins <- data.frame(
+    n = c(500, 1200, 100, 400, 500, 300),
+    size = factor(rep(1:3,2), labels = c("S","M","L")),
+    age = factor(rep(1:2, each = 3)),
+    claims = c(42, 37, 1, 101, 73, 14))
+ins.glm <- glm(claims ~ size + age + offset(log(n)), 
+               data = ins, family = "poisson")
+afex_plot(ins.glm, "size", "age")
+
+## binomial glm adapted from ?predict.glm
+ldose <- factor(rep(0:5, 2))
+numdead <- c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16)
+sex <- factor(rep(c("M", "F"), c(6, 6)))
+SF <- numdead/20  ## dv should be a vector, no matrix
+budworm.lg <- glm(SF ~ sex*ldose, family = binomial, 
+                  weights = rep(20, length(numdead)))
+afex_plot(budworm.lg, "ldose")
+afex_plot(budworm.lg, "ldose", "sex") ## data point is hidden behind mean!
+afex_plot(budworm.lg, "ldose", "sex", 
+          data_arg = list(size = 4, color = "red"))
+
+## nlme mixed model
+data(Oats, package = "nlme")
+Oats$nitro <- factor(Oats$nitro)
+oats.1 <- nlme::lme(yield ~ nitro * Variety, 
+                    random = ~ 1 | Block / Variety,
+                    data = Oats)
+afex_plot(oats.1, "nitro", "Variety", data = Oats)
+afex_plot(oats.1, "nitro", "Variety", data = Oats, id = "Block")
+afex_plot(oats.1, "nitro", data = Oats)
+afex_plot(oats.1, "nitro", data = Oats, id = c("Block", "Variety"))
+afex_plot(oats.1, "nitro", data = Oats, id = "Block")
+
+
+### MASS (from: ?effects::Effect), not yet working
+# mod.wvs <- MASS::polr(poverty ~ gender + religion + degree + country*poly(age,3),
+#                     data=carData::WVS)
+# afex_plot(mod.wvs, "country", c("poverty"), data=carData::WVS)
 }

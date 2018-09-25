@@ -291,6 +291,11 @@ afex_plot.afex_aov <- function(object,
                               "mean", 
                               "within", "CMO",
                               "between"))
+  dots <- list(...)
+  if (length(dots) > 0) {
+    warning("Additional arguments ignored: ", 
+            paste(names(dots), collapse = ", "), call. = FALSE)
+  }
   
   x <- get_plot_var(x)
   trace <- get_plot_var(trace)
@@ -407,6 +412,11 @@ afex_plot.mixed <- function(object,
                               "mean", 
                               "within", "CMO",
                               "between"))
+  dots <- list(...)
+  if (length(dots) > 0) {
+    warning("Additional arguments ignored: ", 
+            paste(names(dots), collapse = ", "), call. = FALSE)
+  }
   
   x <- get_plot_var(x)
   trace <- get_plot_var(trace)
@@ -520,6 +530,11 @@ afex_plot.merMod <- function(object,
                               "mean", 
                               "within", "CMO",
                               "between"))
+  dots <- list(...)
+  if (length(dots) > 0) {
+    warning("Additional arguments ignored: ", 
+            paste(names(dots), collapse = ", "), call. = FALSE)
+  }
   
   x <- get_plot_var(x)
   trace <- get_plot_var(trace)
@@ -640,6 +655,11 @@ afex_plot.default <- function(object,
                               "mean", 
                               "within", "CMO",
                               "between"))
+  dots <- list(...)
+  if (length(dots) > 0) {
+    warning("Additional arguments ignored: ", 
+            paste(names(dots), collapse = ", "), call. = FALSE)
+  }
   
   x <- get_plot_var(x)
   trace <- get_plot_var(trace)

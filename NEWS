@@ -10,7 +10,7 @@
     o   Added afex_plot.default() method which works with a wide variety of 
         fitted objects. See ?afex_plot examples.
         
-    o   In afex_plot(), renamed 'random'
+    o   In afex_plot(), renamed 'random' argument to 'id' argument.
     
     Bugfixes
 

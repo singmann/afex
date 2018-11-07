@@ -65,3 +65,27 @@ test_that("lmer_alt works with NA in independent variables", {
   sk_m1 <- suppressWarnings(lmer_alt(response ~ instruction*inference*type+(inference*type||id), sk2_aff, expand_re = TRUE))
   expect_true(inherits(sk_m1, "merModLmerTest") || inherits(sk_m1, "lmerModLmerTest"))
 })
+
+test_that("lmer_alt works with custom contrasts", {
+  ## see: https://afex.singmann.science/forums/topic/trouble-with-ordered-contrasts-and-lmer_alt
+  Subj <- rep(1:10, each = 10)
+  Item <- rep(1:10, times = 10)
+  IV1 <- rep(1:5, times = 20)
+  DV <- rnorm(100)
+  
+  data <- as.data.frame(cbind(Subj, Item, IV1, DV))
+  
+  data$Subj <- as.factor(data$Subj)
+  data$Item <- as.factor(data$Item)
+  data$IV1 <- as.factor(data$IV1)
+  
+  
+  contrasts(data$IV1) <- MASS::contr.sdif(5)
+  
+  mafex <- lmer_alt(DV ~ IV1 + (1 + IV1||Subj) + (1|Item), data = data)
+  expect_is(mafex, "merMod")
+  expect_identical(colnames(ranef(mafex)$Subj), 
+                   c("(Intercept)", "re1.IV12.1", "re1.IV13.2", "re1.IV14.3", 
+                     "re1.IV15.4"))
+})
+

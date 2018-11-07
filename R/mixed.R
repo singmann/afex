@@ -965,11 +965,12 @@ expand_re_fun <- function(all.terms, data) {
       if (colnames(tmp_model.matrix[[i]])[1] == "(Intercept)") {
         tmp_model.matrix[[i]] <- tmp_model.matrix[[i]][,-1, drop = FALSE]
         re_contains_intercept[i] <- TRUE
-      }
+      } 
       if (ncol(tmp_model.matrix[[i]]) > 0) {
         colnames(tmp_model.matrix[[i]]) <- 
           paste0("re", i, ".", 
                 gsub(":", "_by_", colnames(tmp_model.matrix[[i]])))
+        colnames(tmp_model.matrix[[i]]) <- make.names(colnames(tmp_model.matrix[[i]]))
         new_random[i] <- 
           paste0("(", as.numeric(re_contains_intercept[i]), "+", 
                 paste0(colnames(tmp_model.matrix[[i]]), collapse = "+"), 

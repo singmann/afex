@@ -101,7 +101,7 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
 
 
 ##---------------------------------------------------------------
-##                      Basic One-Way Plots                     -
+##                        One-Way Plots                         -
 ##---------------------------------------------------------------
 
 afex_plot(aw, x = "angle", error = "within") ## default
@@ -112,7 +112,6 @@ afex_plot(aw, x = "angle", mapping = "color", error = "within",
           point_arg = list(size = 2.5), 
           error_arg = list(size = 1.5, width = 0.05)) 
 
-library("ggpol") ## currently required for combination of boxplot and points
 afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter)
 
 ## nicer
@@ -126,6 +125,36 @@ afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter,
           ),
           point_arg = list(size = 2.5), 
           error_arg = list(size = 1.5, width = 0.05))
+
+## we can add a line connecting the means using geom_point(aes(group = 1)):
+afex_plot(aw, x = "angle", error = "within") +
+  ggplot2::geom_line(ggplot2::aes(group = 1))
+
+## One-way plots also supports panels:
+afex_plot(aw, x = "angle", panel = "noise", error = "within")
+
+## And panels with lines:
+afex_plot(aw, x = "angle", panel = "noise", error = "within") +
+  ggplot2::geom_line(ggplot2::aes(group = 1))
+
+
+## For more complicated plots it is easier to attach ggplot2:
+library("ggplot2")
+
+## We can hide geoms by plotting them in transparent color and add them
+## afterward to use a mapping not directly supported. 
+## For example, the next plot adds a line to a one-way plot with panels, but 
+## with all geoms in the foreground having a color conditional on the panel.
+
+afex_plot(aw, x = "angle", panel = "noise", error = "within", 
+          point_arg = list(color = "transparent"), 
+          error_arg = list(color = "transparent")) +
+  geom_point(aes(color = panel)) +
+  geom_linerange(aes(color = panel, ymin = lower, ymax = upper)) + 
+  geom_line(aes(group = 1, color = panel)) +
+  guides(color = guide_legend(title = "NOISE"))
+## Note that we need to use guides explicitly, otherwise the legend title would 
+## be "panel". legend_title does not work in this case.
 
 ##---------------------------------------------------------------
 ##                      Other Basic Options                     -

@@ -311,16 +311,16 @@ test_that("mixed with all available methods", {
   testthat::skip_on_cran()
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
   for (i in c(2, 3)) {
-    sk2_aff_kr <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+    sk2_aff_kr <- mixed(response ~ instruction*type+(inference||id), sk2_aff,
                         expand_re = TRUE, all_fit = FALSE, method = "KR", 
                         progress=FALSE, type = i)
-    sk2_aff_s <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+    sk2_aff_s <- mixed(response ~ instruction*type+(inference||id), sk2_aff,
                        expand_re = TRUE, all_fit = FALSE, method = "S", 
                        progress=FALSE, type = i)
-    sk2_aff_nkr <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+    sk2_aff_nkr <- mixed(response ~ instruction*type+(inference||id), sk2_aff,
                          progress = FALSE, type = i,
                          expand_re = TRUE, all_fit = FALSE, method = "nested-KR")
-    sk2_aff_lrt <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
+    sk2_aff_lrt <- mixed(response ~ instruction*type+(inference||id), sk2_aff,
                          progress = FALSE, type = i,
                          expand_re = TRUE, all_fit = FALSE, method = "LRT")
     sk2_aff_pb <- mixed(response ~ instruction*type+(inference||id), sk2_aff,

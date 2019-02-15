@@ -409,9 +409,4 @@ afex_plot(oats.1, "nitro", data = Oats)
 afex_plot(oats.1, "nitro", data = Oats, id = c("Block", "Variety"))
 afex_plot(oats.1, "nitro", data = Oats, id = "Block")
 
-
-### MASS (from: ?effects::Effect), not yet working
-# mod.wvs <- MASS::polr(poverty ~ gender + religion + degree + country*poly(age,3),
-#                     data=carData::WVS)
-# afex_plot(mod.wvs, "country", c("poverty"), data=carData::WVS)
 }

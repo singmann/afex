@@ -6,6 +6,7 @@ show_toc: true
 output:
   knitr:::html_vignette:
     toc: yes
+    dev: 'svg'
 vignette: >
   %\VignetteIndexEntry{afex_plot: Supported Models}
   %\VignetteEngine{knitr::rmarkdown}
@@ -14,7 +15,10 @@ vignette: >
 
 ```{r set-options, echo=FALSE, cache=FALSE}
 options(width = 90)
-knitr::opts_chunk$set(dpi=100)
+#knitr::opts_chunk$set(dpi=100)
+knitr::knit_hooks$set(document = function(x){
+  gsub("```\n*```r*\n*", "", x)
+})
 ```
 
 # Introduction
@@ -37,20 +41,34 @@ theme_set(theme_bw(base_size = 10) +
                   panel.grid.minor.x = element_blank()))
 ```
 
+Importantly, we also set the contrasts for the current `R` session to sum-to-zero contrasts. For models that include interactions with categorical variables this generally produces estimates that are easier to interpret.
+
+```{r}
+set_sum_contrasts()
+```
+
+
 Please note, the best way to export a figure is via `ggsave()` or a similar function call. For Word and similar documents `png` is a good format, for `LaTeX` and similar documents, `pdf` is a good format.
 
 # Base R stats models: lm, glm
 
-`afex_plot` should generally support models implemeneted via the `stats` package such as `lm` models.
+`afex_plot()` generally supports models implemeneted via the `stats` package. Here I show the main model functions that work with independent samples. These models can be passed to `afex_plot` without specifying additional arguments.
 
-```{r fig.width=7, fig.height=4, dpi = 150}
+Most importantly, `lm` models work directly. For those we use the `warpbreaks` data.
+
+```{r}
 warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
+```
+
+Note that `afex_plot` produces several messages that are shown here as comments below the corresponding calls. Important is maybe that `afex_plot` assumes all observations (i.e., rows) are independent. This is of course the case here. In addition, for the first plot we are informed that the presence of an interaction may lead to a misleading impression if only a lower-order effect (here a main effect) is shown. This message is produced by  `emmeans` and passed through.
+
+```{r fig.width=7, fig.height=3}
 p1 <- afex_plot(warp.lm, "tension")
 p2 <- afex_plot(warp.lm, "tension", "wool")
 plot_grid(p1, p2)
 ```
 
-And also suppurts `glm` models. Here we first show a poisson GLM.
+`glm` models also work without further setting. Here we first use a poisson GLM for which we need to generate the data.
 
 ```{r}
 ins <- data.frame(
@@ -58,12 +76,17 @@ ins <- data.frame(
     size = factor(rep(1:3,2), labels = c("S","M","L")),
     age = factor(rep(1:2, each = 3)),
     claims = c(42, 37, 1, 101, 73, 14))
+```
+
+We can then fit the data and pass the model object as is.
+
+```{r fig.width=3, fig.height=3}
 ins.glm <- glm(claims ~ size + age + offset(log(n)), 
                data = ins, family = "poisson")
 afex_plot(ins.glm, "size", "age")
 ```
 
-But also binomial GLMs.
+`afex_plot` also works  with binomial GLMs for which we also first need to generate some data which we will then fit.
 
 ```{r}
 ## binomial glm adapted from ?predict.glm
@@ -73,14 +96,125 @@ sex <- factor(rep(c("M", "F"), c(6, 6)))
 SF <- numdead/20  ## dv should be a vector, no matrix
 budworm.lg <- glm(SF ~ sex*ldose, family = binomial, 
                   weights = rep(20, length(numdead)))
-afex_plot(budworm.lg, "ldose")
-afex_plot(budworm.lg, "ldose", "sex") ## data point is hidden behind mean!
-afex_plot(budworm.lg, "ldose", "sex", 
+```
+
+For this model, we will produce three plots we can then compare. The first only shows the main effect of one variable (`ldose`). The other show the interaction of the two variables. Because for binomial GLMs we then only have one data point (with several observations), the individual data points and mean cannot be distinguished. This is made clear in the ther two (panels B and C).
+
+```{r fig.width=8, fig.height=3}
+a <- afex_plot(budworm.lg, "ldose")
+b <- afex_plot(budworm.lg, "ldose", "sex") ## data point is hidden behind mean!
+c <- afex_plot(budworm.lg, "ldose", "sex", 
           data_arg = list(size = 4, color = "red"))
+plot_grid(a, b, c, labels = "AUTO", nrow = 1)
 ```
 
 
-# References 
+# nlme mixed model
+
+Hot to use `afex_plot` for mixed models fitted with `afex::mixed` (or [`lme4`](https://cran.r-project.org/package=lme4) directly) is shown in the [other vignette](afex_plot_introduction.html). However, we can also use `afex_plot` for mixed models fitted with the older `nlme` package. For this, however we need to pass the data used for fitting via the `data` argument. 
+
+
+We can change on which of the two nested factors the individual data points in the background are based via the `id` argument. This is shown below. 
+
+```{r fig.width=8, fig.height=6}
+## nlme mixed model
+data(Oats, package = "nlme")
+Oats$nitro <- factor(Oats$nitro)
+oats.1 <- nlme::lme(yield ~ nitro * Variety, 
+                    random = ~ 1 | Block / Variety,
+                    data = Oats)
+plot_grid(
+  afex_plot(oats.1, "nitro", "Variety", data = Oats), # A
+  afex_plot(oats.1, "nitro", "Variety", data = Oats), # B
+  afex_plot(oats.1, "nitro", "Variety", data = Oats, id = "Block"), # C
+  afex_plot(oats.1, "nitro", data = Oats), # D
+  afex_plot(oats.1, "nitro", data = Oats, id = c("Block", "Variety")), # E
+  afex_plot(oats.1, "nitro", data = Oats, id = "Block"), # F
+  labels = "AUTO"
+)
+```
+
+
+# glmmTMB
+
+Support for [`glmmTMB`](https://cran.r-project.org/package=glmmTMB) is also provided. Here we use an example data set for which we model zero-inflation as well as overdispersion. The latter is achieved with a variant of the negative binomial distribution.
+
+```{r}
+library("glmmTMB")
+tmb <- glmmTMB(count~spp * mined + (1|site), 
+              ziformula = ~spp * mined, 
+              family=nbinom2, Salamanders)
+
+```
+
+`afex_plot` does not automatically detect the random-effect for `site`. This means that per default all `r nrow(Salamanders)` data points are shown. When plotting only one variable, in which the default `data_geom` is `ggbeeswarm::geom_beeswarm`, this can lead to rather ugly plots due to the zero inflation. This is shon in panel A below. In panel B, we address this by changing the geom to a violin plot. In panel C, we address this by aggregating the data within site, but still use the beeswarm plot. Note that for panel C it is necessary to pass the data via the `data` argument as otherwise `site` cannot be found for aggregation.
+
+```{r fig.width=8, fig.height=3}
+plot_grid(
+  afex_plot(tmb, "spp"),
+  afex_plot(tmb, "spp", data_geom = geom_violin),
+  afex_plot(tmb, "spp", id = "site", data = Salamanders), 
+  labels = "AUTO", nrow = 1
+)
+```
+
+When plotting both variables, the problem is somewhat hidden, because instead of beeswarm plots, semi-transparency (i.e., `alpha` < 1) is used to show overlapping points. In panel B we again make this clearer but this time by adding jitter (on both the y- and x-axis) and increasing the degree of semi-transparancy (i.e., decreasing alpha). 
+
+```{r fig.width=7, fig.height=3}
+a <- afex_plot(tmb, "spp", "mined")
+b <- afex_plot(tmb, "spp", "mined", data_alpha = 0.3,
+          data_arg = list(
+            position = 
+              ggplot2::position_jitterdodge(
+                jitter.width = 0.2, 
+                jitter.height = 0.5, 
+                dodge.width = 0.5  ## needs to be same as dodge
+                ),
+            color = "darkgrey"))
+plot_grid(a, b, labels = "AUTO")
+```
+
+For the final plot we also plot the interaction, but this time aggregate the individual-data within site. This allows us again to use a beeswarm plot (after decreasing the width of the "bees") and produces a relatively clear result.
+
+```{r fig.width=4.5, fig.height=3}
+afex_plot(tmb, "spp", "mined", id = "site", data = Salamanders, 
+          data_geom = ggbeeswarm::geom_beeswarm, 
+          data_arg = list(dodge.width = 0.5, cex = 0.4,
+                          color = "darkgrey")
+          )
+```
+
+# GLMMadaptive
+
+We can fit the same data discussed
+
+```{r}
+library("GLMMadaptive")
+
+gm1 <- mixed_model(count~spp * mined, random = ~ 1 | site, data = Salamanders,
+                   family = zi.poisson(), zi_fixed = ~ mined)
+
+zi.poisson()$linkinv(as.data.frame(summary(emmeans::emmeans(gm1, "spp")))$emmean)
+
+as.data.frame(summary(emmeans::emmeans(gm1, "spp")))$emmean
+
+afex_plot(gm1, "spp", data = Salamanders)
+```
+
+
+# Not Yet Supported
+
+Some models are unfortunately not yet supported. For example the new and cool looking `GLMMadaptive`. The following unfortunately does not produce a reasonable plot. Hopefully in the future.
+
+```{r fig.width=4, fig.height=3, eval = FALSE}
+library("GLMMadaptive")
+data(Salamanders, package = "glmmTMB")
+gm1 <- mixed_model(count~spp * mined, random = ~ 1 | site, data = Salamanders,
+                   family = zi.poisson(), zi_fixed = ~ mined)
+
+afex_plot(gm1, "spp", data = Salamanders)
+```
+
 
 
 

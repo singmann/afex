@@ -46,7 +46,7 @@
 #' @param dv An optional scalar \code{character} vector giving the name of the
 #'   column containing the dependent variable for the \code{afex_plot.default}
 #'   method. If missing, the function attempts to take it from the \code{call}
-#'   slot of \code{object}.
+#'   slot of \code{object}. This is also used as y-axis label.
 #' @param error_ci Logical. Should error bars plot confidence intervals
 #'   (=\code{TRUE}, the default) or standard errors (=\code{FALSE})?
 #' @param error_level Numeric value between 0 and 1 determing the width of the
@@ -708,6 +708,7 @@ afex_plot.default <- function(object,
                    emmeans_arg = emmeans_arg, 
                    factor_levels = factor_levels,
                    level = error_level)
+  attr(emms, "dv") <- dv
   
   if (missing(within_vars) & !missing(between_vars)) {
     within_vars <- all_vars[!(all_vars %in% within_vars)]

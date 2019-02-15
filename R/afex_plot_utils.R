@@ -112,6 +112,10 @@ prep_data <- function(data,
     levels(data[[names(factor_levels)[i]]]) <- factor_levels[[i]]
   }
   colnames(data)[colnames(data) == dv_col] <- "y"
+  if (!is.numeric(data$y)) {
+    message("transforming dv to numerical scale")
+    data$y <- as.numeric(data$y)
+  }
   data <- aggregate(data$y, by = data[c(all_vars,id)], 
                     FUN = mean, drop = TRUE)
   data$y <- data$x

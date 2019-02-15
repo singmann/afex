@@ -1,0 +1,87 @@
+---
+title: "afex_plot: Supported Models"
+author: "Henrik Singmann"
+date: "`r Sys.Date()`"
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{afex_plot: Supported Models}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8} 
+---
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 90)
+knitr::opts_chunk$set(dpi=100)
+```
+
+# Introduction
+
+`afex_plot()` visualizes results from factorial experiments and, more generally, data set with interactions of categorical/factor variables. It does so by combining estimated marginal means and uncertainties associated with these means in the foreground with a depiction of the raw data in the background. If models include continuous covariates, other approaches are recommended (e.g., such as implemented in package [`effects`](https://cran.r-project.org/package=effects) or by using the possibility of `afex_plot` [to return the data and build the plot on ones own](https://github.com/singmann/afex/issues/65)).
+
+This document provides an overview of the different models supported by `afex_plot()` in addition to the `afex` objects (i.e., `afex_aov` and `mixed`). In general, these are models which are supported by the [`emmeans`](https://cran.r-project.org/package=emmeans) package as the `afex_plot.default()` method uses `emmeans` to get the estimated marginal means. `afex_plot.default()` then guesses whether there are repeated measures or all samples are independent. Based on this guess (which can be changed via the `id` argument) data in the background is plotted. Calculation of error bars can also be based on this guess (but the default is to plot the model based error bars obtained from `emmeans`).
+
+For a generally introduction to the functionality of `afex_plot` see: [`afex_plot`: Publication Ready Plots for Experimental Designs](afex_plot_introduction.html)
+
+Throughout the document, we will need `afex` as well as `ggplot2`. In addition, we load [`cowplot`](https://cran.r-project.org/package=cowplot) for function `plot_grid()` (which allows to easily combine multiple `ggplot2` plots). In addition, we will set a somewhat nicer `ggplot2` theme.
+
+```{r message=FALSE, warning=FALSE}
+library("afex")     
+library("ggplot2")  
+library("cowplot")
+theme_set(theme_bw(base_size = 10) + 
+            theme(legend.position="bottom", 
+                  panel.grid.major.x = element_blank(),
+                  panel.grid.minor.x = element_blank()))
+```
+
+Please note, the best way to export a figure is via `ggsave()` or a similar function call. For Word and similar documents `png` is a good format, for `LaTeX` and similar documents, `pdf` is a good format.
+
+# Base R stats models: lm, glm
+
+`afex_plot` should generally support models implemeneted via the `stats` package such as `lm` models.
+
+```{r fig.width=7, fig.height=4, dpi = 150}
+warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
+p1 <- afex_plot(warp.lm, "tension")
+p2 <- afex_plot(warp.lm, "tension", "wool")
+plot_grid(p1, p2)
+```
+
+And also suppurts `glm` models. Here we first show a poisson GLM.
+
+```{r}
+ins <- data.frame(
+    n = c(500, 1200, 100, 400, 500, 300),
+    size = factor(rep(1:3,2), labels = c("S","M","L")),
+    age = factor(rep(1:2, each = 3)),
+    claims = c(42, 37, 1, 101, 73, 14))
+ins.glm <- glm(claims ~ size + age + offset(log(n)), 
+               data = ins, family = "poisson")
+afex_plot(ins.glm, "size", "age")
+```
+
+But also binomial GLMs.
+
+```{r}
+## binomial glm adapted from ?predict.glm
+ldose <- factor(rep(0:5, 2))
+numdead <- c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16)
+sex <- factor(rep(c("M", "F"), c(6, 6)))
+SF <- numdead/20  ## dv should be a vector, no matrix
+budworm.lg <- glm(SF ~ sex*ldose, family = binomial, 
+                  weights = rep(20, length(numdead)))
+afex_plot(budworm.lg, "ldose")
+afex_plot(budworm.lg, "ldose", "sex") ## data point is hidden behind mean!
+afex_plot(budworm.lg, "ldose", "sex", 
+          data_arg = list(size = 4, color = "red"))
+```
+
+
+# References 
+
+
+
+

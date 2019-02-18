@@ -56,7 +56,7 @@ Needs packages \pkg{nloptr}, \pkg{optimx}, and \code{dfoptim} to try out all opt
 \code{nmkbw} is a simple wrapper function for fitting models with the corresponding optimizer. It needs to be exported for \code{lme4}, but should not be called directly by the user.
 }
 \note{
-code taken from \url{https://github.com/lme4/lme4/blob/master/inst/utils/allFit.R}
+Very similar to the function of the same name that is part of \pkg{lme4}. The present function will be removed eventually in favor of the \pkg{lme4} function.
 }
 \examples{
 

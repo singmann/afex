@@ -139,12 +139,27 @@ plot_grid(
 
 Support for [`glmmTMB`](https://cran.r-project.org/package=glmmTMB) is also provided. Here we use an example data set for which we model zero-inflation as well as overdispersion. The latter is achieved with a variant of the negative binomial distribution.
 
-```{r}
+```{r, eval=FALSE}
 library("glmmTMB")
 tmb <- glmmTMB(count~spp * mined + (1|site), 
               ziformula = ~spp * mined, 
               family=nbinom2, Salamanders)
 
+```
+
+```{r, eval=FALSE, include=FALSE}
+library("glmmTMB")
+set_sum_contrasts()
+tmb <- glmmTMB(count~spp * mined + (1|site), 
+              ziformula = ~spp * mined, 
+              family=nbinom2, Salamanders)
+save(tmb, file = "inst/extdata/tmb_example_fit.rda", compress = "xz")
+```
+
+```{r, echo=FALSE, include=FALSE}
+library("glmmTMB")
+data(Salamanders, package = "glmmTMB")
+load(system.file("extdata/", "tmb_example_fit.rda", package = "afex"))
 ```
 
 `afex_plot` does not automatically detect the random-effect for `site`. This means that per default all `r nrow(Salamanders)` data points are shown. When plotting only one variable, in which the default `data_geom` is `ggbeeswarm::geom_beeswarm`, this can lead to rather ugly plots due to the zero inflation. This is shon in panel A below. In panel B, we address this by changing the geom to a violin plot. In panel C, we address this by aggregating the data within site, but still use the beeswarm plot. Note that for panel C it is necessary to pass the data via the `data` argument as otherwise `site` cannot be found for aggregation.
@@ -190,26 +205,30 @@ afex_plot(tmb, "spp", "mined", id = "site", data = Salamanders,
 
 ```{r, eval=FALSE}
 library("rstanarm") ## requires resetting the ggplot2 theme
+theme_set(theme_bw(base_size = 10) + 
+            theme(legend.position="bottom", 
+                  panel.grid.major.x = element_blank(),
+                  panel.grid.minor.x = element_blank()))
 cbpp <- lme4::cbpp 
 cbpp$prob <- with(cbpp, incidence / size)
-example_model <- rstanarm::stan_glmer(prob ~ size + period + (1|herd),
-    data = cbpp, family = binomial, weight = size,
-    chains = 2, cores = 1, seed = 12345, iter = 500)
+example_model <- stan_glmer(prob ~ size + period + (1|herd),
+                            data = cbpp, family = binomial, weight = size,
+                            chains = 2, cores = 1, seed = 12345, iter = 500)
 ```
 
 We can directly pass this model to `afex_plot`. However, we also see quite some zeros leading to a not super nice plot. It looks a bit better using a violin plot for the raw data.
 
 ```{r, eval=FALSE}
 b1 <- afex_plot(example_model, "period")
-# dv column detected: prob
-# No id column passed. Assuming all rows are independent samples.
+## dv column detected: prob
+## No id column passed. Assuming all rows are independent samples.
 b2 <- afex_plot(example_model, "period", data_geom = geom_violin)
-# dv column detected: prob
-# No id column passed. Assuming all rows are independent samples.
+## dv column detected: prob
+## No id column passed. Assuming all rows are independent samples.
 plot_grid(b1, b2, labels = "AUTO")
 ```
 
-```{r fig.width=7, fig.height=3}
+```{r fig.width=6, fig.height=3, echo=FALSE}
 load(system.file("extdata/", "plots_rstanarm.rda", package = "afex"))
 plot_grid(b1, b2, labels = "AUTO")
 ```
@@ -218,28 +237,33 @@ We can of course also fit a model assuming a normal distribution using `rstanarm
 
 ```{r, eval=FALSE}
 data("Machines", package = "MEMSS") 
-mm <- rstanarm::stan_lmer(score ~ Machine + (Machine|Worker), data=Machines,
-                          chains = 2, cores = 1, seed = 12345, iter = 500)
+mm <- stan_lmer(score ~ Machine + (Machine|Worker), data=Machines,
+                chains = 2, cores = 1, seed = 12345, iter = 500)
 ```
 
 Again, we can pass this model directly to `afex_plot` (see panel A). However, the data is not aggregated within the groupin variable worker. If we want to aggregate the individual data points for the grouping factor, we need to pass both the name of the grouping variable (`Worker`) and the data used for fitting.
 
 ```{r, eval=FALSE}
 b3 <- afex_plot(mm, "Machine")
-# dv column detected: score
-# No id column passed. Assuming all rows are independent samples.
+## dv column detected: score
+## No id column passed. Assuming all rows are independent samples.
 b4 <- afex_plot(mm, "Machine", id = "Worker", data = Machines)
-# dv column detected: score
+## dv column detected: score
 plot_grid(b3, b4, labels = "AUTO")
 ```
 
-```{r fig.width=7, fig.height=3}
+```{r fig.width=6, fig.height=3, echo=FALSE}
 load(system.file("extdata/", "plots_rstanarm.rda", package = "afex"))
 plot_grid(b3, b4, labels = "AUTO")
 ```
 
 
 ```{r, eval=FALSE, include=FALSE}
+library("rstanarm") ## requires resetting the ggplot2 theme
+theme_set(theme_bw(base_size = 10) + 
+            theme(legend.position="bottom", 
+                  panel.grid.major.x = element_blank(),
+                  panel.grid.minor.x = element_blank()))
 set_sum_contrasts()
 cbpp <- lme4::cbpp 
 cbpp$prob <- with(cbpp, incidence / size)
@@ -254,7 +278,7 @@ mm <- rstanarm::stan_lmer(score ~ Machine + (Machine|Worker), data=Machines,
                           chains = 2, cores = 1, seed = 12345, iter = 500)
 b3 <- afex_plot(mm, "Machine")
 b4 <- afex_plot(mm, "Machine", id = "Worker", data = Machines)
-save(b1, b2, b3, b4, file = "inst/extdata/plots_rstanarm.rda")
+save(b1, b2, b3, b4, file = "inst/extdata/plots_rstanarm.rda", compress = "xz")
 ```
 
 
@@ -273,13 +297,13 @@ However, to pass a `brms` object to `afex_plot` we need to pass both, the `data`
 
 ```{r, eval=FALSE}
 bb1 <- afex_plot(mrt, "Machine", data = Machines, dv = "score")
-# No id column passed. Assuming all rows are independent samples.
+## No id column passed. Assuming all rows are independent samples.
 bb2 <- afex_plot(mm, "Machine", id = "Worker", 
           data = Machines, dv = "score")
 plot_grid(bb1, bb2)
 ```
 
-```{r fig.width=7, fig.height=3}
+```{r fig.width=6, fig.height=3, echo=FALSE}
 load(system.file("extdata/", "plots_brms.rda", package = "afex"))
 plot_grid(bb1, bb2)
 ```
@@ -297,9 +321,9 @@ save(bb1, bb2, file = "inst/extdata/plots_brms.rda")
 ```
 
 
-# Not Yet Supported
+# Not Yet Supported: GLMMadaptive
 
-Some models are unfortunately not yet supported. For example models fit with the new and pretty cool looking [`GLMMadaptive`](https://cran.r-project.org/package=GLMMadaptive) package. The following unfortunately does not produce a reasonable plot. Hopefully in the future.
+Some models are unfortunately not yet supported. For example, models fit with the new and pretty cool looking [`GLMMadaptive`](https://cran.r-project.org/package=GLMMadaptive) package using some of the special families do not seem to produce reasonable results. The following unfortunately does not produce a reasonable plot. 
 
 ```{r fig.width=4, fig.height=3, eval = FALSE}
 library("GLMMadaptive")

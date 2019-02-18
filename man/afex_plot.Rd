@@ -154,7 +154,7 @@ points. \code{error = "within"} or \code{error = "between"} require that
 \item{dv}{An optional scalar \code{character} vector giving the name of the
 column containing the dependent variable for the \code{afex_plot.default}
 method. If missing, the function attempts to take it from the \code{call}
-slot of \code{object}.}
+slot of \code{object}. This is also used as y-axis label.}
 
 \item{data}{For the \code{afex_plot.default} method, an optional
 \code{data.frame} containing the raw data used for fitting the model and
@@ -730,11 +730,6 @@ afex_plot(oats.1, "nitro", data = Oats)
 afex_plot(oats.1, "nitro", data = Oats, id = c("Block", "Variety"))
 afex_plot(oats.1, "nitro", data = Oats, id = "Block")
 
-
-### MASS (from: ?effects::Effect), not yet working
-# mod.wvs <- MASS::polr(poverty ~ gender + religion + degree + country*poly(age,3),
-#                     data=carData::WVS)
-# afex_plot(mod.wvs, "country", c("poverty"), data=carData::WVS)
 }
 }
 \references{

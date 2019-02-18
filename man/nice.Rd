@@ -91,16 +91,12 @@ sphericity corrected or uncorrected degrees of freedom can be reported.
 \details{
 The returned \code{data.frame} is print-ready when adding to a
   document with proper methods. Either directly via \pkg{knitr} or similar
-  approaches such as via packages \pkg{ascii} or \pkg{xtable} (nowadays
-  \pkg{knitr} is probably the best approach, see
-  \href{http://yihui.name/knitr/}{here}). \pkg{ascii} provides conversion to
-  \href{http://www.methods.co.nz/asciidoc/}{AsciiDoc} and
-  \href{http://orgmode.org/}{org-mode} (see \code{\link[ascii]{ascii}} and
-  \code{\link[ascii]{print-ascii}}). \pkg{xtable} converts a
-  \code{data.frame} into LaTeX code with many possible options (e.g.,
-  allowing for \code{"longtable"} or \code{"sidewaystable"}), see
-  \code{\link[xtable]{xtable}} and \code{\link[xtable]{print.xtable}}. See
-  Examples.
+  approaches such as via package \pkg{xtable} (nowadays \pkg{knitr} is
+  probably the best approach, see \href{http://yihui.name/knitr/}{here}).
+  \pkg{xtable} converts a \code{data.frame} into LaTeX code with many
+  possible options (e.g., allowing for \code{"longtable"} or
+  \code{"sidewaystable"}), see \code{\link[xtable]{xtable}} and
+  \code{\link[xtable]{print.xtable}}. See Examples.
 
   Conversion functions to other formats (such as HTML, ODF, or Word) can be
   found at the

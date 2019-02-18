@@ -35,7 +35,7 @@ Throughout the document, we will need `afex` as well as `ggplot2`. In addition, 
 library("afex")     
 library("ggplot2")  
 library("cowplot")
-theme_set(theme_bw(base_size = 10) + 
+theme_set(theme_bw(base_size = 12) + 
             theme(legend.position="bottom", 
                   panel.grid.major.x = element_blank(),
                   panel.grid.minor.x = element_blank()))
@@ -48,7 +48,7 @@ set_sum_contrasts()
 ```
 
 
-Please note, the best way to export a figure is via `ggsave()` or a similar function call. For Word and similar documents `png` is a good format, for `LaTeX` and similar documents, `pdf` is a good format.
+Please note, the best way to export a figure is via `ggsave()` or a similar function call. For Word and similar document formats, `png` is a good file type, for `LaTeX` and similar document formats, `pdf` is a good file type.
 
 # Base R stats models: lm, glm
 
@@ -205,7 +205,7 @@ afex_plot(tmb, "spp", "mined", id = "site", data = Salamanders,
 
 ```{r, eval=FALSE}
 library("rstanarm") ## requires resetting the ggplot2 theme
-theme_set(theme_bw(base_size = 10) + 
+theme_set(theme_bw(base_size = 12) + 
             theme(legend.position="bottom", 
                   panel.grid.major.x = element_blank(),
                   panel.grid.minor.x = element_blank()))
@@ -260,7 +260,8 @@ plot_grid(b3, b4, labels = "AUTO")
 
 ```{r, eval=FALSE, include=FALSE}
 library("rstanarm") ## requires resetting the ggplot2 theme
-theme_set(theme_bw(base_size = 10) + 
+library("ggplot2")
+theme_set(theme_bw(base_size = 12) + 
             theme(legend.position="bottom", 
                   panel.grid.major.x = element_blank(),
                   panel.grid.minor.x = element_blank()))
@@ -271,7 +272,7 @@ example_model <- rstanarm::stan_glmer(prob ~ size + period + (1|herd),
     data = cbpp, family = binomial, weight = size,
     chains = 2, cores = 1, seed = 12345, iter = 500)
 b1 <- afex_plot(example_model, "period")
-b2 <- afex_plot(example_model, "period", id = "herd", data = cbpp)
+b2 <- afex_plot(example_model, "period", data_geom = geom_violin)
 
 data("Machines", package = "MEMSS") 
 mm <- rstanarm::stan_lmer(score ~ Machine + (Machine|Worker), data=Machines,

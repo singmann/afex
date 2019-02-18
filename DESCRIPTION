@@ -2,10 +2,41 @@ Package: afex
 Type: Package
 Title: Analysis of Factorial Experiments
 Depends: R (>= 3.1.0), lme4 (>= 1.1-8)
-Suggests: emmeans (>= 1.1.2), coin, xtable, parallel, plyr, optimx, nloptr, knitr, 
-          rmarkdown, R.rsp, lattice, latticeExtra, multcomp, testthat, mlmRev, 
-          dplyr, tidyr, dfoptim, Matrix, psych, ggplot2, MEMSS, effects, 
-          carData, ggbeeswarm, nlme, cowplot, jtools, ggpubr, ggpol, MASS
+Suggests: 
+    emmeans (>= 1.1.2),
+    coin,
+    xtable,
+    parallel,
+    plyr,
+    optimx,
+    nloptr,
+    knitr,
+    rmarkdown,
+    R.rsp,
+    lattice,
+    latticeExtra,
+    multcomp,
+    testthat,
+    mlmRev,
+    dplyr,
+    tidyr,
+    dfoptim,
+    Matrix,
+    psych,
+    ggplot2,
+    MEMSS,
+    effects,
+    carData,
+    ggbeeswarm,
+    nlme,
+    cowplot,
+    jtools,
+    ggpubr,
+    ggpol,
+    MASS,
+    glmmTMB,
+    brms,
+    rstanarm
 Imports: pbkrtest (>= 0.4-1), lmerTest (>= 3.0-0), car, reshape2, stats, methods
 Description: Convenience functions for analyzing factorial experiments using ANOVA or
          mixed models. aov_ez(), aov_car(), and aov_4() allow specification of

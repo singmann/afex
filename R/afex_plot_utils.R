@@ -88,7 +88,11 @@ get_emms <- function(object,
   }
   emms$x <- interaction(emms[x], sep = "\n")
   #col_y <- colnames(emms)[which(colnames(emms) == "SE")-1]
-  colnames(emms)[which(colnames(emms) == "SE")-1] <- "y"
+  if (any(colnames(emms) == "SE")) {
+    colnames(emms)[which(colnames(emms) == "SE")-1] <- "y"
+  } else {
+    colnames(emms)[grep("CL|HPD", colnames(emms))[1]-1] <- "y"
+  }
   attr(emms, "dv") <- attr(object, "dv")
   attr(emms, "x") <- paste(x, sep = "\n")
   if (length(panel) > 0) {
@@ -151,7 +155,7 @@ get_data_based_cis <- function(emms, data, error,
     emms$error <- emms$SE
     # emms$lower <- emms$lower.CL
     # emms$upper <- emms$upper.CL
-    col_cis <- grep("CL", colnames(emms), value = TRUE)
+    col_cis <- grep("CL|HPD", colnames(emms), value = TRUE)
     col_cis <- col_cis[!(col_cis %in% all_vars)]
     emms$lower <- emms[,col_cis[1]]
     emms$upper <- emms[,col_cis[2]]

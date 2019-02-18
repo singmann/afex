@@ -26,6 +26,12 @@ options(warn = 0)
 devtools::build_vignettes()
 clean_vignettes(pkg = ".")
 
+### add packages
+
+usethis::use_package("glmmTMB", "Suggests")
+usethis::use_package("rstanarm", "Suggests")
+usethis::use_package("brms", "Suggests")
+#usethis::use_package("GLMMadaptive", "Suggests")
 
 ### check reverse dependencies:
 

@@ -3,12 +3,13 @@
                     *************************
                     
                     Changes in afex Version 0.23-x
-                    Released September 2018
+                    Released February 2019
                     
     Significant User Visible Changes and New Features
     
     o   Added afex_plot.default() method which works with a wide variety of 
-        fitted objects. See ?afex_plot examples.
+        fitted objects. See new vignette:
+        vignette("afex_plot_supported_models", package = "afex")
         
     o   In afex_plot(), renamed 'random' argument to 'id' argument.
     
@@ -16,6 +17,9 @@
 
     o   Corrected bug in afex_plot() vignette and examples. Correct argument
         name is factor_levels.
+
+    o   Removed reference to ascii package from documentation, as the package 
+        was removed from CRAN.
 
 
                     *************************

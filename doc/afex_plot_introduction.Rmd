@@ -14,7 +14,7 @@ vignette: >
 
 ```{r set-options, echo=FALSE, cache=FALSE}
 options(width = 90)
-knitr::opts_chunk$set(dpi=100)
+knitr::opts_chunk$set(dpi=80)
 ```
 
 
@@ -56,7 +56,7 @@ The ANOVA shows that both, the two main effect as well as the interaction, are s
 
 ## Basic Plot
 
-```{r fig.width=7.5, fig.height=3}
+```{r fig.width=9, fig.height=4}
 p_an <- afex_plot(aw, x = "angle", trace = "noise") 
 p_na <- afex_plot(aw, x = "noise", trace = "angle")
 plot_grid(p_an, p_na)  ## try adding: labels = "AUTO"
@@ -256,6 +256,16 @@ afex_plot(aw, x = "angle", panel = "noise", error = "within",
           error_arg = list(size = 1.5, width = 0.05)) +
   theme(legend.position="none")
 ```
+
+Sometimes we still want to add a line connecting the estimated marginal means. As `afex_plot` returns a `ggplot2` object, we can do this easily by adding a `geom_line()` object to the call. As we want to add a line through all of the shown points in the foreground, we need to add the corresponding groups aesthetics to this call: `geom_line(aes(group = 1))`. We can add further arguments to this call, as shown in the left panel below.
+
+```{r fig.width=7, fig.height=3.5, message=FALSE}
+plot_grid(
+  po1 + geom_line(aes(group = 1), color = "darkgrey", size = 1.5), 
+  po2 + geom_line(aes(group = 1))
+) 
+```
+
 
 # 3-Way Mixed Model
 

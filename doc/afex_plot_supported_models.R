@@ -1,6 +1,6 @@
 ## ----set-options, echo=FALSE, cache=FALSE-----------------------------------------------
 options(width = 90)
-#knitr::opts_chunk$set(dpi=100)
+knitr::opts_chunk$set(dpi=100)
 knitr::knit_hooks$set(document = function(x){
   gsub("```\n*```r*\n*", "", x)
 })
@@ -9,7 +9,7 @@ knitr::knit_hooks$set(document = function(x){
 library("afex")     
 library("ggplot2")  
 library("cowplot")
-theme_set(theme_bw(base_size = 12) + 
+theme_set(theme_bw(base_size = 14) + 
             theme(legend.position="bottom", 
                   panel.grid.major.x = element_blank(),
                   panel.grid.minor.x = element_blank()))
@@ -98,7 +98,7 @@ plot_grid(
   labels = "AUTO", nrow = 1
 )
 
-## ----fig.width=7, fig.height=3----------------------------------------------------------
+## ----fig.width=8.5, fig.height=3.5------------------------------------------------------
 a <- afex_plot(tmb, "spp", "mined")
 b <- afex_plot(tmb, "spp", "mined", data_alpha = 0.3,
           data_arg = list(
@@ -111,7 +111,7 @@ b <- afex_plot(tmb, "spp", "mined", data_alpha = 0.3,
             color = "darkgrey"))
 plot_grid(a, b, labels = "AUTO")
 
-## ----fig.width=4.5, fig.height=3--------------------------------------------------------
+## ----fig.width=5.5, fig.height=3.5------------------------------------------------------
 afex_plot(tmb, "spp", "mined", id = "site", data = Salamanders, 
           data_geom = ggbeeswarm::geom_beeswarm, 
           data_arg = list(dodge.width = 0.5, cex = 0.4,
@@ -120,7 +120,7 @@ afex_plot(tmb, "spp", "mined", id = "site", data = Salamanders,
 
 ## ---- eval=FALSE------------------------------------------------------------------------
 #  library("rstanarm") ## requires resetting the ggplot2 theme
-#  theme_set(theme_bw(base_size = 12) +
+#  theme_set(theme_bw(base_size = 14) +
 #              theme(legend.position="bottom",
 #                    panel.grid.major.x = element_blank(),
 #                    panel.grid.minor.x = element_blank()))
@@ -139,7 +139,7 @@ afex_plot(tmb, "spp", "mined", id = "site", data = Salamanders,
 #  ## No id column passed. Assuming all rows are independent samples.
 #  plot_grid(b1, b2, labels = "AUTO")
 
-## ----fig.width=6, fig.height=3, echo=FALSE----------------------------------------------
+## ----fig.width=7, fig.height=3, echo=FALSE----------------------------------------------
 load(system.file("extdata/", "plots_rstanarm.rda", package = "afex"))
 plot_grid(b1, b2, labels = "AUTO")
 
@@ -156,29 +156,29 @@ plot_grid(b1, b2, labels = "AUTO")
 #  ## dv column detected: score
 #  plot_grid(b3, b4, labels = "AUTO")
 
-## ----fig.width=6, fig.height=3, echo=FALSE----------------------------------------------
+## ----fig.width=7, fig.height=3, echo=FALSE----------------------------------------------
 load(system.file("extdata/", "plots_rstanarm.rda", package = "afex"))
 plot_grid(b3, b4, labels = "AUTO")
 
 ## ---- eval=FALSE, include=FALSE---------------------------------------------------------
 #  library("rstanarm") ## requires resetting the ggplot2 theme
 #  library("ggplot2")
-#  theme_set(theme_bw(base_size = 12) +
+#  theme_set(theme_bw(base_size = 14) +
 #              theme(legend.position="bottom",
 #                    panel.grid.major.x = element_blank(),
 #                    panel.grid.minor.x = element_blank()))
 #  set_sum_contrasts()
 #  cbpp <- lme4::cbpp
 #  cbpp$prob <- with(cbpp, incidence / size)
-#  example_model <- rstanarm::stan_glmer(prob ~ size + period + (1|herd),
-#      data = cbpp, family = binomial, weight = size,
-#      chains = 2, cores = 1, seed = 12345, iter = 500)
+#  example_model <- stan_glmer(prob ~ size + period + (1|herd),
+#                              data = cbpp, family = binomial, weight = size,
+#                              chains = 2, cores = 1, seed = 12345, iter = 500)
 #  b1 <- afex_plot(example_model, "period")
 #  b2 <- afex_plot(example_model, "period", data_geom = geom_violin)
 #  
 #  data("Machines", package = "MEMSS")
-#  mm <- rstanarm::stan_lmer(score ~ Machine + (Machine|Worker), data=Machines,
-#                            chains = 2, cores = 1, seed = 12345, iter = 500)
+#  mm <- stan_lmer(score ~ Machine + (Machine|Worker), data=Machines,
+#                  chains = 2, cores = 1, seed = 12345, iter = 500)
 #  b3 <- afex_plot(mm, "Machine")
 #  b4 <- afex_plot(mm, "Machine", id = "Worker", data = Machines)
 #  save(b1, b2, b3, b4, file = "inst/extdata/plots_rstanarm.rda", compress = "xz")
@@ -196,7 +196,7 @@ plot_grid(b3, b4, labels = "AUTO")
 #            data = Machines, dv = "score")
 #  plot_grid(bb1, bb2)
 
-## ----fig.width=6, fig.height=3, echo=FALSE----------------------------------------------
+## ----fig.width=7, fig.height=3, echo=FALSE----------------------------------------------
 load(system.file("extdata/", "plots_brms.rda", package = "afex"))
 plot_grid(bb1, bb2)
 

@@ -1,6 +1,6 @@
 ## ----set-options, echo=FALSE, cache=FALSE-----------------------------------------------
 options(width = 90)
-knitr::opts_chunk$set(dpi=100)
+knitr::opts_chunk$set(dpi=80)
 
 ## ----message=FALSE, warning=FALSE-------------------------------------------------------
 library("afex")     
@@ -12,7 +12,7 @@ theme_set(theme_grey())
 data(md_12.1)
 (aw <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise")))
 
-## ----fig.width=7.5, fig.height=3--------------------------------------------------------
+## ----fig.width=9, fig.height=4----------------------------------------------------------
 p_an <- afex_plot(aw, x = "angle", trace = "noise") 
 p_na <- afex_plot(aw, x = "noise", trace = "angle")
 plot_grid(p_an, p_na)  ## try adding: labels = "AUTO"
@@ -149,6 +149,12 @@ afex_plot(aw, x = "angle", panel = "noise", error = "within",
           point_arg = list(size = 2.5),
           error_arg = list(size = 1.5, width = 0.05)) +
   theme(legend.position="none")
+
+## ----fig.width=7, fig.height=3.5, message=FALSE-----------------------------------------
+plot_grid(
+  po1 + geom_line(aes(group = 1), color = "darkgrey", size = 1.5), 
+  po2 + geom_line(aes(group = 1))
+) 
 
 ## ---- eval=FALSE, echo=FALSE, results='hide'--------------------------------------------
 #  data("fhch2010") # load

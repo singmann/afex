@@ -31,6 +31,8 @@ clean_vignettes(pkg = ".")
 usethis::use_package("glmmTMB", "Suggests")
 usethis::use_package("rstanarm", "Suggests")
 usethis::use_package("brms", "Suggests")
+usethis::use_package("cowplot", "Suggests")
+usethis::use_package("nlme", "Suggests")
 #usethis::use_package("GLMMadaptive", "Suggests")
 
 ### check reverse dependencies:

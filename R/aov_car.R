@@ -18,27 +18,6 @@
 #' provide test of effects avoiding the somewhat unhandy format of
 #' \code{car::Anova}.
 #' 
-#' @usage 
-#' aov_ez(id, dv, data, between = NULL, within = NULL, covariate = NULL, 
-#'      observed = NULL, fun_aggregate = NULL, transformation,
-#'      type = afex_options("type"), 
-#'      factorize = afex_options("factorize"), 
-#'      check_contrasts = afex_options("check_contrasts"), 
-#'      return = afex_options("return_aov"), 
-#'      anova_table = list(), ..., print.formula = FALSE)
-#'      
-#' aov_car(formula, data, fun_aggregate = NULL, type = afex_options("type"), 
-#'      factorize = afex_options("factorize"), 
-#'      check_contrasts = afex_options("check_contrasts"), 
-#'      return = afex_options("return_aov"), observed = NULL, 
-#'      anova_table = list(), ...)
-#'      
-#' aov_4(formula, data, observed = NULL, fun_aggregate = NULL, type = afex_options("type"),
-#'      factorize = afex_options("factorize"), 
-#'      check_contrasts = afex_options("check_contrasts"),
-#'      return = afex_options("return_aov"), 
-#'      anova_table = list(), ..., print.formula = FALSE)
-#' 
 #'
 #' @param id \code{character} vector (of length 1) indicating the subject
 #'   identifier column in \code{data}.
@@ -90,24 +69,32 @@
 #' @param print.formula \code{aov_ez} and \code{aov_4} are wrapper for
 #'   \code{aov_car}. This boolean argument indicates whether the formula in the
 #'   call to \code{car.aov} should be printed.
-#' @param return What should be returned? The default is given by
-#'   \code{afex_options("return_aov")}, which is initially \code{"afex_aov"},
-#'   returning an S3 object of class \code{afex_aov} for which various
-#'   \link[=afex_aov-methods]{methods} exist (see there and below for more
-#'   details). To avoid the (potentially costly) computation via \code{aov} set
-#'   \code{return} to \code{"nice"} in which case only the nice ANOVA table is
-#'   returned (produced by \code{\link{nice}}, this was the previous default
-#'   return value). Other values are currently still supported for backward
-#'   compatibility.
-# Possible values are \code{c("Anova", "lm", "data", "nice", "full", "all",
-# "univariate", "marginal", "aov")} (possibly abbreviated).
+
 #' @param anova_table \code{list} of further arguments passed to function
 #'   producing the ANOVA table.  Arguments such as \code{es} (effect size) or
 #'   \code{correction}  are passed to either \code{anova.afex_aov} or
 #'   \code{nice}. Note that those settings can also be changed once an object of
 #'   class \code{afex_aov} is created by invoking the \code{anova} method
 #'   directly.
+#' @param include_aov Boolean. Allows suppressing the calculation of the aov
+#'   object, which is per default part of the returned \code{afex_aov} object.
+#'   \code{FALSE} prevents this potentially costly calculation. Especially for
+#'   designs with larger N and within-subjects factors, this is highly
+#'   advisable. Follow-up analyses using \pkg{emmeans} are then always based on
+#'   the multivariate or \code{lm} model.
 #' @param ... Further arguments passed to \code{fun_aggregate}.
+#' @param return What should be returned? The default is given by
+#'   \code{afex_options("return_aov")}, which is initially \code{"afex_aov"},
+#'   returning an S3 object of class \code{afex_aov} for which various
+#'   \link[=afex_aov-methods]{methods} exist (see there and below for more
+#'   details). Other values are currently still supported for backward
+#'   compatibility.
+#    To avoid the (potentially costly) computation via \code{aov} set
+#    \code{return} to \code{"nice"} in which case only the nice ANOVA table is
+#    returned (produced by \code{\link{nice}}, this was the previous default
+#    return value).
+#    Possible values are \code{c("Anova", "lm", "data", "nice", "full", "all",
+#    "univariate", "marginal", "aov")} (possibly abbreviated).
 #'
 #' @return \code{aov_car}, \code{aov_4}, and \code{aov_ez} are wrappers for
 #'   \code{\link[car]{Anova}} and \code{\link{aov}}, the return value is
@@ -272,10 +259,8 @@
 #' @note Calculation of ANOVA models via \code{aov} (which is done per default)
 #'   can be comparatively slow and produce comparatively large objects for
 #'   ANOVAs with many within-subjects factors or levels. To avoid this
-#'   calculation set the return argument to \code{"nice"}. This can also be done
-#'   globally via \code{afex_options(return_aov = "nice")}. \code{return =
-#'   "nice"} also produces the default output of previous versions of afex
-#'   (versions 0.13 and earlier).
+#'   calculation set \code{include_aov = FALSE}. You can also disable this
+#'   globally with: \code{afex_options(include_aov = FALSE)}
 #'   
 #'   The id variable and variables entered as within-subjects (i.e.,
 #'   repeated-measures) factors are silently converted to factors. Levels of
@@ -303,7 +288,8 @@
 #' sizes.
 #' 
 #' \code{\link{mixed}} provides a (formula) interface for obtaining p-values for
-#' mixed-models via \pkg{lme4}.
+#' mixed-models via \pkg{lme4}. The functions presented here do not estimate
+#' mixed models.
 #' 
 #' @references Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever,
 #'   H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015).
@@ -320,9 +306,6 @@
 #'   the S-Plus User's Conference, Washington DC, 8-9 October 1998, Washington,
 #'   DC. Available from: \url{http://www.stats.ox.ac.uk/pub/MASS3/Exegeses.pdf}
 #'   
-#' @name aov_car
-#' @aliases aov_ez aov_car aov_4
-#' @export aov_ez aov_car  aov_4
 #' @importFrom car Anova
 #' @importFrom reshape2 dcast
 #' @importFrom lme4 findbars nobars 
@@ -332,16 +315,18 @@
 #' 
 #' 
 #' @encoding UTF-8
-#'
+
+#' @export
 aov_car <- function(formula, 
                     data, 
                     fun_aggregate = NULL, 
                     type = afex_options("type"), 
                     factorize = afex_options("factorize"), 
                     check_contrasts = afex_options("check_contrasts"), 
-                    return = afex_options("return_aov"), 
                     observed = NULL, 
                     anova_table = list(), 
+                    include_aov = afex_options("include_aov"),
+                    return = afex_options("return_aov"), 
                     ...) {
   return <- match.arg(return, 
                       c("Anova", "lm", "data", "nice", "afex_aov", 
@@ -590,9 +575,8 @@ aov_car <- function(formula,
                 call. = FALSE)
     }
   }
-  if (return %in% c("aov", "afex_aov")) include.aov <- TRUE
-  else include.aov <- FALSE
-  if(include.aov){
+  if (return %in% c("aov")) include_aov <- TRUE
+  if(include_aov){
     if (check_contrasts) {
       factor_vars <- 
         vapply(dat.ret[,c(within, between), drop = FALSE], is.factor, NA)
@@ -610,6 +594,8 @@ aov_car <- function(formula,
             paste(within.escaped, collapse="*"), "))")
       } else rh2))
     aov <- aov(tmp_formula, data=dat.ret, contrasts = contrasts)
+  } else {
+    aov <- NULL
   }
   if(return == "aov") return(aov)
   data.l <- list(long = dat.ret, wide = tmp.dat)
@@ -713,6 +699,9 @@ aov_car <- function(formula,
   }
 }
 
+#' @describeIn aov_car Allows definition of ANOVA-model using
+#'   \code{lme4::lmer}-like Syntax (but still fits a standard ANOVA).
+#' @export
 aov_4 <- function(formula, 
                   data, 
                   observed = NULL, 
@@ -722,6 +711,7 @@ aov_4 <- function(formula,
                   check_contrasts = afex_options("check_contrasts"), 
                   return = afex_options("return_aov"), 
                   anova_table = list(), 
+                  include_aov = afex_options("include_aov"),
                   ..., 
                   print.formula = FALSE) {
 
@@ -758,11 +748,13 @@ aov_4 <- function(formula,
           check_contrasts = check_contrasts, 
           observed = observed, 
           anova_table = anova_table, 
+          include_aov = include_aov,
           ...)
 }
 
 
-
+#' @describeIn aov_car Allows definition of ANOVA-model using character strings.
+#' @export
 aov_ez <- function(id, 
                    dv, 
                    data, 
@@ -777,6 +769,7 @@ aov_ez <- function(id,
                    check_contrasts = afex_options("check_contrasts"), 
                    return = afex_options("return_aov"), 
                    anova_table = list(), 
+                   include_aov = afex_options("include_aov"),
                    ..., 
                    print.formula = FALSE) {
   if (is.null(between) & is.null(within)) 
@@ -811,6 +804,7 @@ aov_ez <- function(id,
           check_contrasts = check_contrasts, 
           observed = observed, 
           anova_table = anova_table, 
+          include_aov = include_aov,
           ...)
 }
 

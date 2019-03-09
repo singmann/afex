@@ -63,3 +63,39 @@ test_that("afex_aov object contains the right things", {
   expect_that(out1[["data"]], is_a(c("list")))  
   expect_that(attr(out1, "dv"), is_a(c("character")))  
 })
+
+test_that("afex_aov objects works without aov object", {
+  data(obk.long, package = "afex")
+  
+  a1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
+        data = obk.long, observed = "gender", include_aov = FALSE)
+  a2 <- aov_4(value ~ treatment * gender + (phase*hour|id), 
+              data = obk.long, observed = "gender", include_aov = FALSE)
+  a3 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
+               within = c("phase", "hour"), observed = "gender", 
+               include_aov = FALSE)
+  expect_equal(a1, a2)
+  expect_equal(a1, a3)
+  expect_null(a1$aov)
+  
+  skip_if_not_installed("emmeans")
+  expect_message(em1 <- emmeans::emmeans(a1, "treatment"), "multivariate")
+  
+  expect_message(em2 <- emmeans::emmeans(a1, c("phase", "hour")), "multivariate")
+  
+  expect_identical(as.data.frame(summary(em1))$df[1], 
+                   as.data.frame(summary(em2))$df[2])
+  
+  op <- afex_options()
+  ad <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
+        data = obk.long, observed = "gender")
+  afex_options(include_aov = FALSE)
+  an <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
+        data = obk.long, observed = "gender")
+  expect_null(an$aov)
+  expect_is(ad$aov, "aovlist")
+  em3 <- emmeans::emmeans(ad, c("phase", "hour"))
+  expect_message(em4 <- emmeans::emmeans(a1, c("phase", "hour")), "multivariate")
+  expect_false(any(as.data.frame(summary(em3))$df == as.data.frame(summary(em4))$df))
+  afex_options(op)
+})

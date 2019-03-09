@@ -7,6 +7,23 @@
                     
     Significant User Visible Changes and New Features
     
+    o   Added possibility to suppress creation of aov object for ANOVAs, via
+        argument 'include_aov' (with default = TRUE). Suppressing the creation 
+        of the aov object can significantly increase calculation of ANOVA for 
+        models with large N. emmeans are then always based on the multivariate 
+        or lm model. 
+
+
+
+                    *************************
+                    ** afex VERSION 0.23-x **
+                    *************************
+                    
+                    Changes in afex Version 0.23-x
+                    Released February 2019
+                    
+    Significant User Visible Changes and New Features
+    
     o   Added afex_plot.default() method which works with a wide variety of 
         fitted objects. See new vignette:
         vignette("afex_plot_supported_models", package = "afex")

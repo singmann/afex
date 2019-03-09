@@ -208,6 +208,10 @@ summary.afex_aov <- function(object, ...) {
 recover_data.afex_aov = function(object, ..., 
                                  model = afex_options("emmeans_model")) {
   model <- match.arg(model, c("univariate", "multivariate"))
+  if (model == "univariate" & is.null(object$aov)) {
+    message("Substituting multivariate/lm model, as aov object missing.")
+    model <- "multivariate"
+  }
   if (model == "univariate") {
     emmeans::recover_data(object = object$aov, ...)
   } else if (model == "multivariate") {
@@ -228,6 +232,10 @@ recover_data.afex_aov = function(object, ...,
 emm_basis.afex_aov = function(object, trms, xlev, grid, ..., 
                               model = afex_options("emmeans_model")) {
   model <- match.arg(model, c("univariate", "multivariate"))
+  if (model == "univariate" & is.null(object$aov)) {
+    #message("Substituting multivariate/lm model, as aov object missing.")
+    model <- "multivariate"
+  }
   if (model == "univariate") {
     out <- emmeans::emm_basis(object$aov, trms, xlev, grid, ...)
   } else if (model == "multivariate") {

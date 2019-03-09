@@ -3,29 +3,30 @@
 \encoding{UTF-8}
 \name{aov_car}
 \alias{aov_car}
-\alias{aov_ez}
 \alias{aov_4}
+\alias{aov_ez}
 \title{Convenient ANOVA estimation for factorial designs}
 \usage{
-aov_ez(id, dv, data, between = NULL, within = NULL, covariate = NULL, 
-     observed = NULL, fun_aggregate = NULL, transformation,
-     type = afex_options("type"), 
-     factorize = afex_options("factorize"), 
-     check_contrasts = afex_options("check_contrasts"), 
-     return = afex_options("return_aov"), 
-     anova_table = list(), ..., print.formula = FALSE)
-     
-aov_car(formula, data, fun_aggregate = NULL, type = afex_options("type"), 
-     factorize = afex_options("factorize"), 
-     check_contrasts = afex_options("check_contrasts"), 
-     return = afex_options("return_aov"), observed = NULL, 
-     anova_table = list(), ...)
-     
-aov_4(formula, data, observed = NULL, fun_aggregate = NULL, type = afex_options("type"),
-     factorize = afex_options("factorize"), 
-     check_contrasts = afex_options("check_contrasts"),
-     return = afex_options("return_aov"), 
-     anova_table = list(), ..., print.formula = FALSE)
+aov_car(formula, data, fun_aggregate = NULL,
+  type = afex_options("type"), factorize = afex_options("factorize"),
+  check_contrasts = afex_options("check_contrasts"), observed = NULL,
+  anova_table = list(), include_aov = afex_options("include_aov"),
+  return = afex_options("return_aov"), ...)
+
+aov_4(formula, data, observed = NULL, fun_aggregate = NULL,
+  type = afex_options("type"), factorize = afex_options("factorize"),
+  check_contrasts = afex_options("check_contrasts"),
+  return = afex_options("return_aov"), anova_table = list(),
+  include_aov = afex_options("include_aov"), ...,
+  print.formula = FALSE)
+
+aov_ez(id, dv, data, between = NULL, within = NULL, covariate = NULL,
+  observed = NULL, fun_aggregate = NULL, transformation,
+  type = afex_options("type"), factorize = afex_options("factorize"),
+  check_contrasts = afex_options("check_contrasts"),
+  return = afex_options("return_aov"), anova_table = list(),
+  include_aov = afex_options("include_aov"), ...,
+  print.formula = FALSE)
 }
 \arguments{
 \item{formula}{A formula specifying the ANOVA model similar to
@@ -59,16 +60,6 @@ factors be checked and (if necessary) changed to be \code{"contr.sum"}. See
 details. The default is given by \code{afex_options("check_contrasts")},
 which is initially \code{TRUE}.}
 
-\item{return}{What should be returned? The default is given by
-\code{afex_options("return_aov")}, which is initially \code{"afex_aov"},
-returning an S3 object of class \code{afex_aov} for which various
-\link[=afex_aov-methods]{methods} exist (see there and below for more
-details). To avoid the (potentially costly) computation via \code{aov} set
-\code{return} to \code{"nice"} in which case only the nice ANOVA table is
-returned (produced by \code{\link{nice}}, this was the previous default
-return value). Other values are currently still supported for backward
-compatibility.}
-
 \item{observed}{\code{character} vector indicating which of the variables are
 observed (i.e, measured) as compared to experimentally manipulated. The
 default effect size reported (generalized eta-squared) requires correct
@@ -81,7 +72,25 @@ producing the ANOVA table.  Arguments such as \code{es} (effect size) or
 class \code{afex_aov} is created by invoking the \code{anova} method
 directly.}
 
+\item{include_aov}{Boolean. Allows suppressing the calculation of the aov
+object, which is per default part of the returned \code{afex_aov} object.
+\code{FALSE} prevents this potentially costly calculation. Especially for
+designs with larger N and within-subjects factors, this is highly
+advisable. Follow-up analyses using \pkg{emmeans} are then always based on
+the multivariate or \code{lm} model.}
+
+\item{return}{What should be returned? The default is given by
+\code{afex_options("return_aov")}, which is initially \code{"afex_aov"},
+returning an S3 object of class \code{afex_aov} for which various
+\link[=afex_aov-methods]{methods} exist (see there and below for more
+details). Other values are currently still supported for backward
+compatibility.}
+
 \item{...}{Further arguments passed to \code{fun_aggregate}.}
+
+\item{print.formula}{\code{aov_ez} and \code{aov_4} are wrapper for
+\code{aov_car}. This boolean argument indicates whether the formula in the
+call to \code{car.aov} should be printed.}
 
 \item{id}{\code{character} vector (of length 1) indicating the subject
 identifier column in \code{data}.}
@@ -106,10 +115,6 @@ indicating no covariates.}
 fitting the model. If missing, no transformation is applied. In 
 \code{aov_car} and \code{aov_4}, a response transformation may be 
 incorporated in the left-hand side of \code{formula}.}
-
-\item{print.formula}{\code{aov_ez} and \code{aov_4} are wrapper for
-\code{aov_car}. This boolean argument indicates whether the formula in the
-call to \code{car.aov} should be printed.}
 }
 \value{
 \code{aov_car}, \code{aov_4}, and \code{aov_ez} are wrappers for
@@ -285,14 +290,20 @@ most values and transforms them into characters for nice printing. Also has
 arguments like \code{correction} and \code{es} which can be used to obtain an
 ANOVA table with different correction than the one initially specified. }
 }
+\section{Functions}{
+\itemize{
+\item \code{aov_4}: Allows definition of ANOVA-model using
+\code{lme4::lmer}-like Syntax (but still fits a standard ANOVA).
+
+\item \code{aov_ez}: Allows definition of ANOVA-model using character strings.
+}}
+
 \note{
 Calculation of ANOVA models via \code{aov} (which is done per default)
   can be comparatively slow and produce comparatively large objects for
   ANOVAs with many within-subjects factors or levels. To avoid this
-  calculation set the return argument to \code{"nice"}. This can also be done
-  globally via \code{afex_options(return_aov = "nice")}. \code{return =
-  "nice"} also produces the default output of previous versions of afex
-  (versions 0.13 and earlier).
+  calculation set \code{include_aov = FALSE}. You can also disable this
+  globally with: \code{afex_options(include_aov = FALSE)}
   
   The id variable and variables entered as within-subjects (i.e.,
   repeated-measures) factors are silently converted to factors. Levels of
@@ -544,7 +555,8 @@ See also there for a slightly longer discussion of the available effect
 sizes.
 
 \code{\link{mixed}} provides a (formula) interface for obtaining p-values for
-mixed-models via \pkg{lme4}.
+mixed-models via \pkg{lme4}. The functions presented here do not estimate
+mixed models.
 }
 \author{
 Henrik Singmann

@@ -1,24 +1,56 @@
 #' Set/get global afex options
-#' 
-#' Global afex options are used, for example, by \code{\link{aov_car}} (et al.) and \code{\link{mixed}}. But can be changed in each functions directly using an argument (which has precedence over the global options).
-#' 
-#' @param ... One of four: (1) nothing, then returns all options as a list; (2) a name of an option element, then returns its' value; (3) a name-value pair which sets the corresponding option to the new value (and returns nothing), (4) a list with option-value pairs which sets all the corresponding arguments. The example show all possible cases.
+#'
+#' Global afex options are used, for example, by \code{\link{aov_car}} (et al.)
+#' and \code{\link{mixed}}. But can be changed in each functions directly using
+#' an argument (which has precedence over the global options).
+#'
+#' @param ... One of four: (1) nothing, then returns all options as a list; (2)
+#'   a name of an option element, then returns its' value; (3) a name-value pair
+#'   which sets the corresponding option to the new value (and returns nothing),
+#'   (4) a list with option-value pairs which sets all the corresponding
+#'   arguments. The example show all possible cases.
 #' 
 #' @details The following arguments are currently set:
 #' \itemize{
-#' \item \code{check_contrasts} should contrasts be checked and changed to sum-to-zero contrasts? Default is \code{TRUE}.
-#' \item \code{type} type of sums-of-squares to be used for testing effects, default is 3 which reports Type 3 tests.
-#' \item \code{method_mixed}: Method used to obtain p-values in \code{\link{mixed}}, default is \code{"KR"} (which will change to \code{"LRT"} soon). (\code{mixed()} only)
-#' \item \code{return_aov}: Return value of the ANOVA functions (see \code{\link{aov_car}}), default is \code{"nice"}. 
-#' \item \code{es_aov}: Effect size reported for ANOVAs (see \code{\link{aov_car}}), default is \code{"ges"} (generalized eta-squared).
-#' \item \code{correction_aov}: Correction used for within-subjects factors with more than two levels for ANOVAs  (see \code{\link{aov_car}} or \code{\link{nice}}), default is \code{"GG"} (Greenhouse-Geisser correction). (ANOVA functions only)
-#' \item \code{factorize}: Should between subject factors be factorized (with note) before running the analysis? Default is \code{TRUE}. (ANOVA functions only)
-#' \item \code{sig_symbols}: Default significant symbols used for ANOVA and \code{mixed} printing. Default is\code{c(" +", " *", " **", " ***")}.
-#' \item \code{lmer_function}: Which \code{lmer} function should \code{mixed} or \code{lmer_alt} use. The default is \code{"lmerTest"} which uses \code{\link[lmerTest]{lmer}}, \code{"lme4"} is also possible which uses \code{\link[lme4]{lmer}}. Note that \code{mixed} methods \code{"KR"} and \code{"S"} only work with \code{"lmerTest"}. For the other methods, \code{"lme4"} could be minimally faster, but does not allow to use \code{lmerTest::anova()}.
+#' \item \code{check_contrasts} should contrasts be checked and changed to
+#'   sum-to-zero contrasts? Default is \code{TRUE}.
+#' \item \code{type} type of sums-of-squares to be used for testing effects,
+#'   default is 3 which reports Type 3 tests.
+#' \item \code{method_mixed}: Method used to obtain p-values in
+#'   \code{\link{mixed}}, default is \code{"KR"} (which will change to
+#'   \code{"LRT"} soon). (\code{mixed()} only)
+#' \item \code{es_aov}: Effect size reported for ANOVAs (see
+#'   \code{\link{aov_car}}), default is \code{"ges"} (generalized eta-squared).
+#' \item \code{correction_aov}: Correction used for within-subjects factors with
+#'   more than two levels for ANOVAs  (see \code{\link{aov_car}} or
+#'   \code{\link{nice}}), default is \code{"GG"} (Greenhouse-Geisser correction).
+#'   (ANOVA functions only)
+#' \item \code{emmeans_model}: Which model should be used by \pkg{emmeans} for
+#'   follow-up analysis of ANOVAs (i.e., objects pf class \code{"afex_aov"})?
+#'   Default is \code{"univariate"} which uses the \code{aov} model object (if
+#'   present). The other option is \code{"multivariate"} which uses the \code{lm}
+#'   model object (which is an object of class \code{"mlm"} in case
+#'   repeated-measures factors are present).
+#' \item \code{include_aov}: Should the \code{aov} model be included into ANOVA objects of class \code{"afex_aov"}? Setting this to \code{FALSE} can lead to considerable speed improvements.
+#' \item \code{factorize}: Should between subject factors be factorized (with
+#'   note) before running the analysis? Default is \code{TRUE}. (ANOVA functions
+#'   only)
+#' \item \code{sig_symbols}: Default significant symbols used for ANOVA and
+#'   \code{mixed} printing. Default is\code{c(" +", " *", " **", " ***")}.
+#' \item \code{lmer_function}: Which \code{lmer} function should \code{mixed} or
+#'   \code{lmer_alt} use. The default is \code{"lmerTest"} which uses
+#'   \code{\link[lmerTest]{lmer}}, \code{"lme4"} is also possible which uses
+#'   \code{\link[lme4]{lmer}}. Note that \code{mixed} methods \code{"KR"} and
+#'   \code{"S"} only work with \code{"lmerTest"}. For the other methods,
+#'   \code{"lme4"} could be minimally faster, but does not allow to use
+#'   \code{lmerTest::anova()}.
+#' \item \code{return_aov}: Return value of the ANOVA functions (see
+#'   \code{\link{aov_car}}), default is \code{"nice"}.
 #' }
 #' 
-#' @note All options are saved in the global R \code{\link{options}} with prefix \code{afex.}
-#' 
+#' @note All options are saved in the global R \code{\link{options}} with prefix
+#'   \code{afex.}
+#'   
 #' @return depends on input, see above.
 #'
 #' @example examples/examples.helpers.R

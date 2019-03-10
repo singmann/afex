@@ -1,17 +1,19 @@
                     *************************
-                    ** afex VERSION 0.23-x **
+                    ** afex VERSION 0.24-x **
                     *************************
                     
-                    Changes in afex Version 0.23-x
-                    Released February 2019
+                    Changes in afex Version 0.24-x
+                    Released March 2019
                     
     Significant User Visible Changes and New Features
     
-    o   Added possibility to suppress creation of aov object for ANOVAs, via
-        argument 'include_aov' (with default = TRUE). Suppressing the creation 
-        of the aov object can significantly increase calculation of ANOVA for 
-        models with large N. emmeans are then always based on the multivariate 
-        or lm model. 
+    o   Added possibility to suppress calculation of aov object for ANOVAs, via
+        argument 'include_aov' (with default = TRUE). Suppressing the 
+        calculation of the aov object can significantly reduce estimation 
+        time of ANOVAs for models with large N and within-subjects factors. Even 
+        for small models, a speed increase by more than 10% is expected.
+        For ANOVAs without aov object, emmeans are always based on the 
+        multivariate or lm model. 
 
 
 

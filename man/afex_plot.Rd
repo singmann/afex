@@ -60,7 +60,9 @@ oneway_plot(means, data, mapping = "", error_plot = TRUE,
   col_lower = "lower", col_upper = "upper")
 }
 \arguments{
-\item{object}{\code{afex_aov}, \code{mixed}, or \code{merMod} object.}
+\item{object}{\code{afex_aov}, \code{mixed}, \code{merMod} or other model
+object supported by \pkg{emmeans} (for further examples see:
+\code{vignette("afex_plot_supported_models")}).}
 
 \item{...}{currently ignored.}
 

@@ -15,7 +15,9 @@
 #'   present. \code{oneway_plot} does the plotting when a \code{trace} factor is
 #'   absent.
 #'   
-#' @param object \code{afex_aov}, \code{mixed}, or \code{merMod} object.
+#' @param object \code{afex_aov}, \code{mixed}, \code{merMod} or other model
+#'   object supported by \pkg{emmeans} (for further examples see:
+#'   \code{vignette("afex_plot_supported_models")}).
 #' @param x A \code{character} vector or one-sided \code{formula} specifying the
 #'   factor names of the predictors displayed on the x-axis. \code{mapping}
 #'   specifies further mappings for these factors if \code{trace} is missing.

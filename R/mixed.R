@@ -450,6 +450,9 @@ mixed <- function(formula,
     #browser()
     resetted <- NULL
     for (i in vars.to.check) {
+      if (!is.numeric(data[,i])) {
+        data[,i] <- factor(data[,i])
+      }
       if (is.factor(data[,i])) {
         if (is.null(attr(data[,i], "contrasts")) & 
             (options("contrasts")[[1]][1] != "contr.sum")) {

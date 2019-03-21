@@ -2,6 +2,22 @@
 
 context("mixed: known bugs")
 
+
+test_that("character variables are treated as factors", {
+  data("sk2011.2")
+  # use only affirmation problems (S&K also splitted the data like this)
+  sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+  sk_m1 <- mixed(response ~ instruction*inference+(1|id), sk2_aff, 
+                 method = "LRT", progress = FALSE)
+  
+  sk2_aff$instruction <- as.character(sk2_aff$instruction)
+  sk2_aff$inference <- as.character(sk2_aff$inference)
+  sk_m2 <- mixed(response ~ instruction*inference+(1|id), sk2_aff2, 
+                 method = "LRT", progress = FALSE)
+  expect_equivalent(anova(sk_m1), anova(sk_m2))
+  
+})
+
 test_that("mixed works with long formulas", {
   data(obk.long)
   obk2 <- obk.long

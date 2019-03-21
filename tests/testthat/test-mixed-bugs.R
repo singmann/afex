@@ -12,7 +12,7 @@ test_that("character variables are treated as factors", {
   
   sk2_aff$instruction <- as.character(sk2_aff$instruction)
   sk2_aff$inference <- as.character(sk2_aff$inference)
-  sk_m2 <- mixed(response ~ instruction*inference+(1|id), sk2_aff2, 
+  sk_m2 <- mixed(response ~ instruction*inference+(1|id), sk2_aff, 
                  method = "LRT", progress = FALSE)
   expect_equivalent(anova(sk_m1), anova(sk_m2))
   

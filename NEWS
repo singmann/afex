@@ -17,10 +17,10 @@
 
     Bugfixes
 
-    o   Sum-to-zero contrasts will now be set to all non-numeric variables 
-        passed to mixed(). Before, only factor variables were changed. This
-        specifically ensures that character variables (such as obtained from 
-        tidyverse data load functions) are handled like factors in mixed models.
+    o   Sum-to-zero contrasts will now be set to all character variables 
+        passed to mixed(). Before, only factor variables were assigned 
+        sum-to-zero contrasts and transformation into factors happened only in 
+        the call to model.matrix() (which then used the global contrasts).
 
 
                     *************************

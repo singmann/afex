@@ -450,7 +450,7 @@ mixed <- function(formula,
     #browser()
     resetted <- NULL
     for (i in vars.to.check) {
-      if (!is.numeric(data[,i])) {
+      if (is.character(data[,i])) {
         data[,i] <- factor(data[,i])
       }
       if (is.factor(data[,i])) {

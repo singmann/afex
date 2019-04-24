@@ -108,7 +108,9 @@ containing the \strong{dependent variable} in \code{data}.}
 
 \item{covariate}{\code{character} vector indicating the between-subject(s)
 covariate(s) (i.e., column(s)) in \code{data}. Default is \code{NULL}
-indicating no covariates.}
+indicating no covariates. Please note that \code{factorize} needs to be set
+to \code{FALSE} in case the covariate is numeric and should be treated as
+such.}
 
 \item{transformation}{In \code{aov_ez}, a \code{character} vector (of length 
 1) indicating the name of a transformation to apply to \code{dv} before 

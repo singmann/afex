@@ -31,7 +31,9 @@
 #'   \code{data}.  Default is \code{NULL} indicating no within-subjects factors.
 #' @param covariate \code{character} vector indicating the between-subject(s)
 #'   covariate(s) (i.e., column(s)) in \code{data}. Default is \code{NULL}
-#'   indicating no covariates.
+#'   indicating no covariates. Please note that \code{factorize} needs to be set
+#'   to \code{FALSE} in case the covariate is numeric and should be treated as
+#'   such.
 #' @param observed \code{character} vector indicating which of the variables are
 #'   observed (i.e, measured) as compared to experimentally manipulated. The
 #'   default effect size reported (generalized eta-squared) requires correct

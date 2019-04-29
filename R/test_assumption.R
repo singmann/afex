@@ -55,9 +55,17 @@ residuals_qqplot <- function(afex_aov, return = 'plot') {
   dv <- attr(afex_aov,'dv')
   id <- attr(afex_aov,'id')
   between <- names(attr(afex_aov,'between'))
+  is.cov <- sapply(attr(afex_aov,'between'), is.null)
+  covariate <- between[is.cov]
+  between <- between[!is.cov]
   within <- names(attr(afex_aov,'within'))
 
-  lhs <- paste0(c(within,between),collapse = '*')
+  if (length(covariate)!=0) {
+    covariate <- paste0(covariate,collapse = '+')
+    between <- paste0('(',paste0(c(paste0(between,collapse = '*'),covariate),collapse = '+'),')')
+  }
+  lhs <- paste0(c(between,within),collapse = '*')
+
   err <- ''
   if (!is.null(within)) {
     err <- paste0('+Error(',id,'/(',paste0(within,collapse = '*'),'))')

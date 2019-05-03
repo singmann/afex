@@ -9,15 +9,9 @@
 #' @author Mattan S. Ben-Shachar
 #' 
 #' @examples 
-#' \dontrun{
 #' fit_value <- aov_car(value ~ treatment*gender + Error(id), data = obk.long)
 #' 
 #' test_levene(fit_value)
-#' #> Levene's Test for Homogeneity of Variance (center = center)
-#' #>       Df F value Pr(>F)
-#' #> group  5  1.2671 0.3497
-#' #>       10 
-#' }
 #'
 #' @export
 test_levene <- function(afex_aov, center = mean, ...){
@@ -46,25 +40,9 @@ test_levene <- function(afex_aov, center = mean, ...){
 #' @author Mattan S. Ben-Shachar
 #' 
 #' @examples 
-#' \dontrun{
 #' fit_value <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk.long)
 #' 
 #' test_sphericity(fit_value)
-#' #>                             Test statistic p-value
-#' #> phase                              0.74927 0.27282
-#' #> treatment:phase                    0.74927 0.27282
-#' #> gender:phase                       0.74927 0.27282
-#' #> treatment:gender:phase             0.74927 0.27282
-#' #> hour                               0.06607 0.00760
-#' #> treatment:hour                     0.06607 0.00760
-#' #> gender:hour                        0.06607 0.00760
-#' #> treatment:gender:hour              0.06607 0.00760
-#' #> phase:hour                         0.00478 0.44939
-#' #> treatment:phase:hour               0.00478 0.44939
-#' #> gender:phase:hour                  0.00478 0.44939
-#' #> treatment:gender:phase:hour        0.00478 0.44939
-#' 
-#' }
 #'
 #' @export
 test_sphericity<- function(afex_aov){

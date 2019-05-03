@@ -7,9 +7,23 @@
 #' @param ... passed to \code{car::leveneTest}
 #'
 #' @author Mattan S. Ben-Shachar
+#' 
+#' @examples 
+#' \dontrun{
+#' fit_value <- aov_car(value ~ treatment*gender + Error(id), data = obk.long)
+#' 
+#' test_levene(fit_value)
+#' #> Levene's Test for Homogeneity of Variance (center = center)
+#' #>       Df F value Pr(>F)
+#' #> group  5  1.2671 0.3497
+#' #>       10 
+#' }
 #'
 #' @export
 test_levene <- function(afex_aov, center = mean, ...){
+  if (length(attr(afex_aov,'between'))==0) {
+    stop("Levene test is only aplicable to models with between subject factors.")
+  }
   data <- afex_aov$data$long
   dv <- attr(afex_aov,'dv')
   id <- attr(afex_aov,'id')
@@ -30,76 +44,32 @@ test_levene <- function(afex_aov, center = mean, ...){
 #' @param afex_aov \code{afex_aov} object.
 #'
 #' @author Mattan S. Ben-Shachar
+#' 
+#' @examples 
+#' \dontrun{
+#' fit_value <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk.long)
+#' 
+#' test_sphericity(fit_value)
+#' #>                             Test statistic p-value
+#' #> phase                              0.74927 0.27282
+#' #> treatment:phase                    0.74927 0.27282
+#' #> gender:phase                       0.74927 0.27282
+#' #> treatment:gender:phase             0.74927 0.27282
+#' #> hour                               0.06607 0.00760
+#' #> treatment:hour                     0.06607 0.00760
+#' #> gender:hour                        0.06607 0.00760
+#' #> treatment:gender:hour              0.06607 0.00760
+#' #> phase:hour                         0.00478 0.44939
+#' #> treatment:phase:hour               0.00478 0.44939
+#' #> gender:phase:hour                  0.00478 0.44939
+#' #> treatment:gender:phase:hour        0.00478 0.44939
+#' 
+#' }
 #'
 #' @export
 test_sphericity<- function(afex_aov){
+  if (length(attr(between_1,'within'))==0) {
+    stop("Mauchly Test of Sphericity is only aplicable to models with within subject factors.")
+  }
   summary(afex_aov)$sphericity.tests
-}
-
-#' Plot Residuals' QQ-plot
-#'
-#' Plot qq-plot and qq-line for the residuals of each error term. Used to test normality of residuals.
-#'
-#' @param afex_aov \code{afex_aov} object.
-#' @return if \code{return='plot'} will return a ggplot2 of the qqplot. Anything else will return a list of residulas.
-#'
-#' @author Mattan S. Ben-Shachar
-#'
-#' @export
-residuals_qqplot <- function(afex_aov, return = 'plot') {
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("package ggplot2 is required.", call. = FALSE)
-  }
-  # get aovlist
-  data <- afex_aov$data$long
-  dv <- attr(afex_aov,'dv')
-  id <- attr(afex_aov,'id')
-  between <- names(attr(afex_aov,'between'))
-  is.cov <- sapply(attr(afex_aov,'between'), is.null)
-  covariate <- between[is.cov]
-  between <- between[!is.cov]
-  within <- names(attr(afex_aov,'within'))
-
-  if (length(covariate)!=0) {
-    covariate <- paste0(covariate,collapse = '+')
-    between <- paste0('(',paste0(c(paste0(between,collapse = '*'),covariate),collapse = '+'),')')
-  }
-  lhs <- paste0(c(between,within),collapse = '*')
-
-  err <- ''
-  if (!is.null(within)) {
-    err <- paste0('+Error(',id,'/(',paste0(within,collapse = '*'),'))')
-  }
-
-  form <- formula(paste0(dv,'~',lhs,err))
-
-  aov_fit <- aov(form,data)
-
-  # get residuals
-  aov_proj <- proj(aov_fit)
-
-  if (!is.list(aov_proj)) aov_proj <- list(aov_proj)
-
-  res_vals <- lapply(aov_proj,function(X) as.data.frame(X)[['Residuals']])
-
-  res_names <- lapply(aov_proj, function(X) paste0(attr(X,"factors")$Residuals,collapse = ':'))
-
-  remove_ <- sapply(res_vals,is.null)
-  res_vals <- res_vals[!remove_]
-  res_names <- res_names[!remove_]
-  names(res_vals) <- res_names
-
-  if (return=='plot') {
-    # plot
-    plot_data <- data.frame(x    = unlist(res_vals),
-                            proj = unlist(lapply(res_names, function(X) rep(X,nrow(data)))),
-                            row.names = NULL)
-
-    ggplot(plot_data,aes(sample = x)) +
-      geom_qq() +
-      geom_qq_line() +
-      facet_wrap(~proj)
-  } else {
-    return(res_vals)
-  }
 }

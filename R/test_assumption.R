@@ -9,15 +9,13 @@
 #'   default) gives the original Levene's test.
 #' @param ... passed to \code{\link[car]{leveneTest}}
 #'
-#' @author Mattan S. Ben-Shachar
+#' @author Mattan S. Ben-Shachar and Henrik Singmann
 #' 
-#' @rdname test_assumptions 
 #' 
 #' @example examples/examples.test_assumptions.R
-
-
+#' 
+#' @rdname test_assumptions 
 #' @export
-#' @rdname assumption_tests 
 test_levene <- function(afex_aov, center = mean, ...){
   if (length(attr(afex_aov,'between'))==0) {
     stop("Levene test is only aplicable to ANOVAs with between-subjects factors.")
@@ -36,7 +34,7 @@ test_levene <- function(afex_aov, center = mean, ...){
 }
 
 #' @export
-#' @rdname assumption_tests 
+#' @rdname test_assumptions 
 test_sphericity<- function(afex_aov){
   if (length(attr(afex_aov,'within'))==0) {
     stop("Mauchly Test of Sphericity is only aplicable to ANOVAs with within-subjects factors.")

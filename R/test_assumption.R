@@ -17,7 +17,7 @@
 #' @rdname test_assumptions 
 #' @export
 test_levene <- function(afex_aov, center = mean, ...){
-  if (length(attr(afex_aov,'between'))==0) {
+  if (length(attr(afex_aov,'between')) == 0) {
     stop("Levene test is only aplicable to ANOVAs with between-subjects factors.")
   }
   data <- afex_aov$data$long
@@ -25,7 +25,7 @@ test_levene <- function(afex_aov, center = mean, ...){
   id <- attr(afex_aov,'id')
   between <- names(attr(afex_aov,'between'))
 
-  form <- formula(paste0(dv,'~',paste0(between,collapse = '*')))
+  form <- stats::formula(paste0(dv,'~',paste0(between,collapse = '*')))
 
   ag_data <- aggregate(data[,dv],data[,c(between,id)],mean)
   colnames(ag_data)[length(c(between,id))+1] <- dv
@@ -36,7 +36,7 @@ test_levene <- function(afex_aov, center = mean, ...){
 #' @export
 #' @rdname test_assumptions 
 test_sphericity<- function(afex_aov){
-  if (length(attr(afex_aov,'within'))==0) {
+  if (length(attr(afex_aov,'within')) == 0) {
     stop("Mauchly Test of Sphericity is only aplicable to ANOVAs with within-subjects factors.")
   }
   summary(afex_aov)$sphericity.tests

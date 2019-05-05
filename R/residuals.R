@@ -81,5 +81,5 @@ residuals_qqplot <- function(object){
   ggplot2::ggplot(plot_data,ggplot2::aes(sample = residuals)) +
     ggplot2::geom_qq() +
     ggplot2::geom_qq_line() +
-    ggplot2::facet_wrap(~proj)
+    ggplot2::facet_wrap(~proj, scales = "free")
 }

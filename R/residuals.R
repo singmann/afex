@@ -39,7 +39,7 @@ residuals.afex_aov <- function(object, model = c("multivariate","univariate"), .
     combs <- expand.grid(lapply(within, function(x) c(x,NA)))
     combs$id <- id
     combs <- head(combs,-1)
-    combs <- lapply(as.list(as.data.frame(t(combs))),na.omit)
+    combs <- lapply(as.data.frame(t(combs)),na.omit)
     
     model_residuals <- list()
     for (i in seq_along(combs)) {

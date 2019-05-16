@@ -70,9 +70,8 @@ residuals_qqplot <- function(object){
   all_residuals <- residuals(object,model = "univariate")
   
   if (is.list(all_residuals)) {
-    all_residuals <- lapply(names(all_residuals), function(x) data.frame(residuals = all_residuals[[x]],proj = x))
-    
-    plot_data <- do.call("rbind",all_residuals)
+    plot_data <- stack(all_residuals)
+    colnames(plot_data) <- c("residuals","proj")
   } else {
     plot_data <- data.frame(residuals = all_residuals,
                             proj      = attr(object,"id"))

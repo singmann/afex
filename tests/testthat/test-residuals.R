@@ -13,8 +13,9 @@ test_that("Residuals works", {
   expect_is(residuals(within, model = "univariate"),"list")
   expect_is(residuals(mixed, model = "univariate"),"list")
   
-  # multivariate and univariate residuals are the same for between-ANOVA only
   expect_is(residuals(between, model = "univariate"),"numeric")
+  
+  # multivariate and univariate residuals are the same for between-ANOVA only
   expect_equal(residuals(between, model = "multivariate"),
                residuals(between, model = "univariate"))
   

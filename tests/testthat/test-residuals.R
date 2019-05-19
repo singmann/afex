@@ -6,18 +6,13 @@ mixed <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk
 within <- aov_car(value ~ 1 + Error(id/(phase*hour)), data = obk.long)
 
 test_that("Residuals works", {
-  # different output for different types of residuals
-  expect_is(residuals(within, model = "multivariate"),"matrix")
-  expect_is(residuals(mixed, model = "multivariate"),"matrix")
+  expect_is(residuals(within),"numeric")
+  expect_is(residuals(mixed),"numeric")
+  expect_is(residuals(between),"numeric")
   
-  expect_is(residuals(within, model = "univariate"),"list")
-  expect_is(residuals(mixed, model = "univariate"),"list")
-  
-  expect_is(residuals(between, model = "univariate"),"numeric")
-  
-  # multivariate and univariate residuals are the same for between-ANOVA only
-  expect_equal(residuals(between, model = "multivariate"),
-               residuals(between, model = "univariate"))
+  expect_is(residuals(within, return_df = TRUE),"data.frame")
+  expect_is(residuals(mixed, return_df = TRUE),"data.frame")
+  expect_is(residuals(between, return_df = TRUE),"data.frame")
   
   # plot
   expect_is(residuals_qqplot(within),"ggplot")

@@ -5,28 +5,19 @@
 \alias{residuals_qqplot}
 \title{Extract and Plot \code{afex_aov} Model Residuals}
 \usage{
-\method{residuals}{afex_aov}(object, model = c("multivariate",
-  "univariate"), ...)
+\method{residuals}{afex_aov}(object, return_df = FALSE, ...)
 
 residuals_qqplot(object)
 }
 \arguments{
 \item{object}{\code{afex_aov} object.}
 
-\item{model}{If returned residuals should be multivariate (default) or univariate. Can be abbreviated.}
+\item{return_df}{if \code{TRUE} returns the long data with an additional column \code{residuals}.}
 
 \item{...}{Not used.}
 }
 \value{
-\code{residuals} returns residuals in one of the following formats:
-\itemize{
-  \item For between-subject only ANOVAs, a vector of residuals.
-  \item For within-subject/mixed design ANOVAs:
-  \itemize {
-    \item \code{model = "multivariate"}: a multivariate residual matrix.
-    \item \code{model = "univariate"}: a list of residuals, with a vector for each of the ANOVA model's error-terms.
-  }
-}
+A vector of residualts, or if \code{return_df = TRUE} a data frame with an additional column \code{residuals}.
 
 \code{residuals_qqplot} returns a \emph{ggplot2} plot (i.e., object of class \code{c("gg", "ggplot")})
 }

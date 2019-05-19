@@ -5,35 +5,55 @@
 #' @example examples/examples.residuals.R
 #' 
 #' @param object \code{afex_aov} object.
-#' @param model If returned residuals should be multivariate (default) or univariate. Can be abbreviated.
+#' @param return_df if \code{TRUE} returns the long data with an additional column \code{residuals}.
 #' @param ... Not used.
 #' 
-#' @return
-#' \code{residuals} returns residuals in one of the following formats:
-#' \itemize{
-#'   \item For between-subject only ANOVAs, a vector of residuals.
-#'   \item For within-subject/mixed design ANOVAs:
-#'   \itemize {
-#'     \item \code{model = "multivariate"}: a multivariate residual matrix.
-#'     \item \code{model = "univariate"}: a list of residuals, with a vector for each of the ANOVA model's error-terms.
-#'   }
-#' }
+#' @return A vector of residualts, or if \code{return_df = TRUE} a data frame with an additional column \code{residuals}.
 #' 
 #' \code{residuals_qqplot} returns a \emph{ggplot2} plot (i.e., object of class \code{c("gg", "ggplot")}) 
 #' 
 #' @export
-residuals.afex_aov <- function(object, model = c("multivariate","univariate"), ...){
-  model <- match.arg(model,c("multivariate","univariate"))
-  if (length(attr(object, "within")) == 0 || model == "multivariate") {
-    return(residuals(object$lm))
-    # or ?
-    # return(as.vector(residuals(object$lm)))
+residuals.afex_aov <- function(object, return_df = FALSE, ...){
+  data <- object$data$long
+  
+  if (length(attr(object, "within")) == 0) {
+    afex_residuals <- residuals(object$lm)
   } else {
-    data <- object$data$long
     dv <- attr(object,'dv')
     id <- attr(object,'id')
-    between <- names(attr(object,'between'))
+    
+    formula <- as.formula(object$Anova)[-1]
+    formula <- paste0(c(formula,id), collapse = "+")
+    formula <- as.formula(paste0(dv,"~",formula))
+    
+    afex_residuals <- residuals(lm(formula,data))
+  }
+  
+  if (return_df) {
+    data$residuals <- afex_residuals
+    return(data)
+  } else {
+    return(afex_residuals)
+  }
+}
+
+#' @rdname residuals.afex_aov
+#' @export
+residuals_qqplot <- function(object){
+  if (!requireNamespace("ggplot2", quietly = TRUE)) {
+    stop("package ggplot2 is required.", call. = FALSE)
+  }
+  all_residuals <- residuals(object,return_df = TRUE)
+  
+  id <- attr(object,'id')
+  
+  
+  if (length(attr(object, "within")) == 0) {
+    plot_data <- data.frame(residuals = all_residuals$residuals,
+                            proj = id)
+  } else {
     within <- names(attr(object,'within'))
+    between <- names(attr(object,'between'))
     
     # within
     combs <- expand.grid(lapply(within, function(x) c(x,NA)))
@@ -44,41 +64,25 @@ residuals.afex_aov <- function(object, model = c("multivariate","univariate"), .
     model_residuals <- list()
     for (i in seq_along(combs)) {
       temp_factors <- as.character(combs[[i]])
-      temp_data <- aggregate(data[,dv],data[,temp_factors],mean)
+      temp_data <- aggregate(all_residuals$residuals,all_residuals[,temp_factors],mean)
       
-      temp_name <- paste0(head(temp_factors,-1),collapse = '*')
-      temp_form <- formula(paste0("x~",temp_name,"+",id))
-      model_residuals[[temp_name]] <- residuals(lm(temp_form,temp_data))
+      temp_name <- paste0(temp_factors,collapse = '*')
+      model_residuals[[temp_name]] <- temp_data$x
     }
     
     # between
     if (!is.null(between)) {
-      temp_data <- aggregate(data[,dv],data[,c(between,id)],mean)
-      temp_form <- formula(paste0("x~",paste0(c(between),collapse = '*')))
-      model_residuals[[id]] <- residuals(lm(temp_form,temp_data))
+      temp_data <- aggregate(all_residuals$residuals,all_residuals[,c(between,id)],mean)
+      model_residuals[[id]] <- temp_data$x
     }
-    return(model_residuals)
-  }
-}
-
-#' @rdname residuals.afex_aov
-#' @export
-residuals_qqplot <- function(object){
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("package ggplot2 is required.", call. = FALSE)
-  }
-  all_residuals <- residuals(object,model = "univariate")
-  
-  if (is.list(all_residuals)) {
-    plot_data <- stack(all_residuals)
+    
+    plot_data <- stack(model_residuals)
     colnames(plot_data) <- c("residuals","proj")
-  } else {
-    plot_data <- data.frame(residuals = all_residuals,
-                            proj      = attr(object,"id"))
   }
   
-  ggplot2::ggplot(plot_data,ggplot2::aes(sample = residuals)) +
+  # plot
+  ggplot2::ggplot(plot_data,ggplot2::aes(sample = .data$residuals)) +
     ggplot2::geom_qq() +
     ggplot2::geom_qq_line() +
-    ggplot2::facet_wrap(~proj, scales = "free")
+    ggplot2::facet_wrap(~.data$proj, scales = "free")
 }

@@ -2,12 +2,9 @@
 % Please edit documentation in R/residuals.R
 \name{residuals.afex_aov}
 \alias{residuals.afex_aov}
-\alias{residuals_qqplot}
 \title{Extract and Plot \code{afex_aov} Model Residuals}
 \usage{
 \method{residuals}{afex_aov}(object, return_df = FALSE, ...)
-
-residuals_qqplot(object)
 }
 \arguments{
 \item{object}{\code{afex_aov} object.}
@@ -18,8 +15,6 @@ residuals_qqplot(object)
 }
 \value{
 A vector of residualts, or if \code{return_df = TRUE} a data frame with an additional column \code{residuals}.
-
-\code{residuals_qqplot} returns a \emph{ggplot2} plot (i.e., object of class \code{c("gg", "ggplot")})
 }
 \description{
 Extract and Plot \code{afex_aov} Model Residuals
@@ -31,22 +26,11 @@ between <- aov_car(value ~ treatment*gender + Error(id), data = obk.long)
 within <- aov_car(value ~ 1 + Error(id/(phase*hour)), data = obk.long)
 mixed <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk.long)
 
-# different output for different types of residuals
-residuals(within, model = "multivariate")
-residuals(within, model = "univariate")
-
-# Mixed residuals also have "id" level residuals in univariate residuals
-residuals(mixed, model = "multivariate")
-residuals(mixed, model = "univariate")
-
-# multivariate and univariate residuals are the same for between-ANOVA only
-residuals(between, model = "multivariate")
-residuals(between, model = "univariate")
-
-# Plot
-residuals_qqplot(within)
-residuals_qqplot(mixed)
-residuals_qqplot(between)
+# Residuals
+residuals(within)
+residuals(mixed)
+residuals(between)
+residuals(between, return_df = TRUE) # since data was aggragated across within conditions
 }
 \author{
 Mattan S. Ben-Shachar

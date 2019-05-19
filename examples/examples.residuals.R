@@ -9,8 +9,3 @@ residuals(within)
 residuals(mixed)
 residuals(between)
 residuals(between, return_df = TRUE) # since data was aggragated across within conditions
-
-# Plot
-residuals_qqplot(within)
-residuals_qqplot(mixed)
-residuals_qqplot(between)

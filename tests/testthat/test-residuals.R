@@ -13,9 +13,4 @@ test_that("Residuals works", {
   expect_is(residuals(within, return_df = TRUE),"data.frame")
   expect_is(residuals(mixed, return_df = TRUE),"data.frame")
   expect_is(residuals(between, return_df = TRUE),"data.frame")
-  
-  # plot
-  expect_is(residuals_qqplot(within),"ggplot")
-  expect_is(residuals_qqplot(mixed),"ggplot")
-  expect_is(residuals_qqplot(between),"ggplot")
 })

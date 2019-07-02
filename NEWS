@@ -3,7 +3,7 @@
                     *************************
                     
                     Changes in afex Version 0.24-x
-                    Released March 2019
+                    Released July 2019
                     
     Significant User Visible Changes and New Features
     
@@ -14,6 +14,10 @@
         for small models, a speed increase by more than 10% is expected.
         For ANOVAs without aov object, emmeans are always based on the 
         multivariate or lm model. 
+
+    o   Added test_levene() and test_sphercitiy() functions for assumption tests
+        for ANOVA models. Thanks to Mattan S. Ben-Shachar. Addresses #55, 
+        https://github.com/singmann/afex/issues/55
 
     Bugfixes
 

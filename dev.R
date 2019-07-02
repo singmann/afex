@@ -26,6 +26,8 @@ options(warn = 0)
 devtools::build_vignettes()
 clean_vignettes(pkg = ".")
 
+devtools::build()
+
 ### add packages
 
 usethis::use_package("glmmTMB", "Suggests")

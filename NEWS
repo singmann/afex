@@ -19,6 +19,9 @@
         for ANOVA models. Thanks to Mattan S. Ben-Shachar. Addresses #55, 
         https://github.com/singmann/afex/issues/55
 
+    o   afex now depends on R (>= 3.5.0), as it uses binary/serialized objects 
+        version 3.
+
     Bugfixes
 
     o   Sum-to-zero contrasts will now be set to all character variables 

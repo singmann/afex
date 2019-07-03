@@ -26,7 +26,7 @@ options(warn = 0)
 devtools::build_vignettes()
 clean_vignettes(pkg = ".")
 
-devtools::build()
+devtools::build(args = "--compact-vignettes=both")
 
 ### add packages
 

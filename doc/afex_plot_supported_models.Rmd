@@ -278,7 +278,7 @@ mm <- stan_lmer(score ~ Machine + (Machine|Worker), data=Machines,
                 chains = 2, cores = 1, seed = 12345, iter = 500)
 b3 <- afex_plot(mm, "Machine")
 b4 <- afex_plot(mm, "Machine", id = "Worker", data = Machines)
-save(b1, b2, b3, b4, file = "inst/extdata/plots_rstanarm.rda", compress = "xz")
+save(b1, b2, b3, b4, file = "../inst/extdata/plots_rstanarm.rda", compress = "xz")
 ```
 
 
@@ -317,7 +317,7 @@ mm2 <- brm(score ~ Machine + (Machine|Worker), data=Machines,
 bb1 <- afex_plot(mm2, "Machine", data = Machines, dv = "score")
 bb2 <- afex_plot(mm2, "Machine", id = "Worker", 
           data = Machines, dv = "score")
-save(bb1, bb2, file = "inst/extdata/plots_brms.rda")
+save(bb1, bb2, file = "../inst/extdata/plots_brms.rda")
 ```
 
 

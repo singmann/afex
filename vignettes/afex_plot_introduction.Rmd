@@ -220,19 +220,19 @@ plot_grid(p2, p3, p4, p5, ncol = 2, labels = 2:5)
 
 For graphical element in the foreground, `afex_plot` first plots all graphical elements belonging to the same factor level before plotting graphical elements belonging to a different factor level. This provides a consistent graphical impression for each factor level that is particularly relevant in case color is mapped.
 
-In case in which we have overlapping lines and error bars, we also sometimes do not want that the error bars also receives different line types. This can be controlled with the `error_linetype`. If `FALSE` as in the left plot, error bars are always shown as solid lines.
+In case we have overlapping lines and error bars or use large lines, we sometimes do not want that the error bars also receives different line types. To disable this behavior and always show error bars as solid lines, set `error_linetype = FALSE`. This is shown in the left plot.
 
 ```{r fig.width=8.5, fig.height=4, dpi = 150}
 p1 <- afex_plot(aw, x = "noise", trace = "angle", mapping = "color", 
-                point_arg = list(size = 5), 
-                error_arg = list(size = 2), 
-                line_arg = list(size = 2))
+                error = "within", 
+                point_arg = list(size = 5), line_arg = list(size = 2),
+                error_arg = list(size = 2))
 p2 <- afex_plot(aw, x = "noise", trace = "angle", 
                 mapping = c("color", "shape", "linetype"), 
-                point_arg = list(size = 5), 
+                error = "within", 
+                point_arg = list(size = 5), line_arg = list(size = 2),
                 error_arg = list(size = 2, width = 0), 
-                error_linetype = FALSE,
-                line_arg = list(size = 2))
+                error_linetype = FALSE)
 plot_grid(p1, p2, ncol = 2)
 ```
 

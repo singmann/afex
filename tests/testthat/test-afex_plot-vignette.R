@@ -59,10 +59,10 @@ test_that("rstanarm plots", {
   b4n <- afex_plot(mm, "Machine", id = "Worker", data = Machines)
   load(system.file("extdata/", "plots_rstanarm.rda", package = "afex"))
   
-  expect_equivalent(b1, b1n, tolerance = 0.1)
-  expect_equivalent(b2, b2n, tolerance = 0.1)
-  expect_equivalent(b3, b3n, tolerance = 0.1)
-  expect_equivalent(b4, b4n, tolerance = 0.1)
+  expect_equivalent(b1$data, b1n$data, tolerance = 0.1)
+  expect_equivalent(b2$data, b2n$data, tolerance = 0.1)
+  expect_equivalent(b3$data, b3n$data, tolerance = 0.1)
+  expect_equivalent(b4$data, b4n$data, tolerance = 0.1)
 })
 
 test_that("brms plots", {
@@ -84,6 +84,6 @@ test_that("brms plots", {
                    data = Machines, dv = "score")
   load(system.file("extdata/", "plots_brms.rda", package = "afex"))
   
-  expect_equivalent(bb1, bb1n, tolerance = 0.1)
-  expect_equivalent(bb2, bb2n, tolerance = 0.1)
+  expect_equivalent(bb1$data, bb1n$data, tolerance = 0.1)
+  expect_equivalent(bb2$data, bb2n$data, tolerance = 0.1)
 })

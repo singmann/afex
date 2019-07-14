@@ -55,11 +55,11 @@ interaction_plot(means, data, mapping = c("shape", "lineytpe"),
   col_lower = "lower", col_upper = "upper")
 
 oneway_plot(means, data, mapping = "", error_plot = TRUE,
-  error_arg = list(width = 0), data_plot = TRUE,
-  data_geom = ggbeeswarm::geom_beeswarm, data_alpha = 0.5,
-  data_arg = list(color = "darkgrey"), point_arg = list(),
-  legend_title, col_x = "x", col_y = "y", col_panel = "panel",
-  col_lower = "lower", col_upper = "upper")
+  error_arg = list(width = 0), error_linetype = TRUE,
+  data_plot = TRUE, data_geom = ggbeeswarm::geom_beeswarm,
+  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
+  point_arg = list(), legend_title, col_x = "x", col_y = "y",
+  col_panel = "panel", col_lower = "lower", col_upper = "upper")
 }
 \arguments{
 \item{object}{\code{afex_aov}, \code{mixed}, \code{merMod} or other model

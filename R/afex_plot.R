@@ -800,6 +800,17 @@ interaction_plot <- function(means,
   }
   tmp_list <- as.list(rep(col_trace, length(mapping)))
   names(tmp_list) <- mapping
+  
+  if (!error_linetype) {
+    error_mapping <- mapping[!(mapping %in% c("linetype", "shape", "fill"))]
+    tmp_list_error <- as.list(rep(col_trace, length(error_mapping)))
+    names(tmp_list_error) <- error_mapping
+  } else {
+    error_mapping <- mapping[!(mapping %in% c("shape", "fill"))]
+    tmp_list_error <- as.list(rep(col_trace, length(error_mapping)))
+    names(tmp_list_error) <- error_mapping
+  }
+  
   plot_out <- ggplot2::ggplot(data = means, 
                               mapping = do.call(
                                 what = ggplot2::aes_string, 
@@ -808,13 +819,6 @@ interaction_plot <- function(means,
                                   x = col_x, 
                                   group = col_trace),
                                   tmp_list)))
-  if (!error_linetype) {
-    error_mapping <- mapping[!(mapping %in% c("linetype", "shape"))]
-    tmp_list_error <- as.list(rep(col_trace, length(error_mapping)))
-    names(tmp_list_error) <- error_mapping
-  } else {
-    tmp_list_error <- tmp_list
-  }
   
   if (data_plot) {
     if (missing(data_geom)) {
@@ -924,6 +928,7 @@ oneway_plot <- function(means,
                         mapping = "",
                         error_plot = TRUE,
                         error_arg = list(width = 0),
+                        error_linetype = TRUE,
                         data_plot = TRUE,
                         data_geom = ggbeeswarm::geom_beeswarm,
                         data_alpha = 0.5,
@@ -943,8 +948,22 @@ oneway_plot <- function(means,
     mapping <- ""
   }
   
-  tmp_list <- as.list(rep(col_x, length(mapping)))
-  names(tmp_list) <- mapping
+  if (mapping != "") {
+    tmp_list <- as.list(rep(col_x, length(mapping)))
+    names(tmp_list) <- mapping
+    if (!error_linetype) {
+      error_mapping <- mapping[!(mapping %in% c("linetype", "shape", "fill"))]
+      tmp_list_error <- as.list(rep(col_x, length(error_mapping)))
+      names(tmp_list_error) <- error_mapping
+    } else {
+      error_mapping <- mapping[!(mapping %in% c("shape", "fill"))]
+      tmp_list_error <- as.list(rep(col_x, length(error_mapping)))
+      names(tmp_list_error) <- error_mapping
+    }
+  } else {
+    tmp_list <- list()
+    tmp_list_error <- list()
+  }
   
   plot_out <- ggplot2::ggplot(data = means, 
                               mapping = do.call(
@@ -981,10 +1000,15 @@ oneway_plot <- function(means,
     plot_out <- plot_out + 
       do.call(what = ggplot2::geom_errorbar, 
               args = c(
-                mapping = list(ggplot2::aes_string(
-                  ymin = col_lower,
-                  ymax = col_upper)),
-                error_arg
+                mapping = list(do.call(
+                    what = ggplot2::aes_string, 
+                    args = c(list(
+                      x = col_x, 
+                      ymin = col_lower,
+                      ymax = col_upper),
+                      tmp_list_error))),
+                error_arg,
+                inherit.aes = list(FALSE)
               ))
   }
   

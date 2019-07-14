@@ -181,7 +181,7 @@ plot_grid(b3, b4, labels = "AUTO")
 #                  chains = 2, cores = 1, seed = 12345, iter = 500)
 #  b3 <- afex_plot(mm, "Machine")
 #  b4 <- afex_plot(mm, "Machine", id = "Worker", data = Machines)
-#  save(b1, b2, b3, b4, file = "inst/extdata/plots_rstanarm.rda", compress = "xz")
+#  save(b1, b2, b3, b4, file = "../inst/extdata/plots_rstanarm.rda", compress = "xz")
 
 ## ---- eval=FALSE------------------------------------------------------------------------
 #  library("brms")
@@ -208,7 +208,7 @@ plot_grid(bb1, bb2)
 #  bb1 <- afex_plot(mm2, "Machine", data = Machines, dv = "score")
 #  bb2 <- afex_plot(mm2, "Machine", id = "Worker",
 #            data = Machines, dv = "score")
-#  save(bb1, bb2, file = "inst/extdata/plots_brms.rda")
+#  save(bb1, bb2, file = "../inst/extdata/plots_brms.rda")
 
 ## ----fig.width=4, fig.height=3, eval = FALSE--------------------------------------------
 #  library("GLMMadaptive")

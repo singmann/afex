@@ -117,6 +117,19 @@ p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
                 error_arg = list(size = 1.5, width = 0))
 plot_grid(p2, p3, p4, p5, ncol = 2, labels = 2:5) 
 
+## ----fig.width=8.5, fig.height=4, dpi = 150---------------------------------------------
+p1 <- afex_plot(aw, x = "noise", trace = "angle", mapping = "color", 
+                error = "within", 
+                point_arg = list(size = 5), line_arg = list(size = 2),
+                error_arg = list(size = 2))
+p2 <- afex_plot(aw, x = "noise", trace = "angle", 
+                mapping = c("color", "shape", "linetype"), 
+                error = "within", 
+                point_arg = list(size = 5), line_arg = list(size = 2),
+                error_arg = list(size = 2, width = 0), 
+                error_linetype = FALSE)
+plot_grid(p1, p2, ncol = 2)
+
 ## ----fig.width=7, fig.height=3.5, message=FALSE-----------------------------------------
 po1 <- afex_plot(aw, x = "angle", mapping = "color", error = "within", 
                  data_arg = list(),

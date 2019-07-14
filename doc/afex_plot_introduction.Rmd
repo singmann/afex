@@ -216,6 +216,27 @@ p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
 plot_grid(p2, p3, p4, p5, ncol = 2, labels = 2:5) 
 ```
 
+## Plotting Order and Error Bars
+
+For graphical element in the foreground, `afex_plot` first plots all graphical elements belonging to the same factor level before plotting graphical elements belonging to a different factor level. This provides a consistent graphical impression for each factor level that is particularly relevant in case color is mapped.
+
+In case we have overlapping lines and error bars or use large lines, we sometimes do not want that the error bars also receives different line types. To disable this behavior and always show error bars as solid lines, set `error_linetype = FALSE`. This is shown in the left plot.
+
+```{r fig.width=8.5, fig.height=4, dpi = 150}
+p1 <- afex_plot(aw, x = "noise", trace = "angle", mapping = "color", 
+                error = "within", 
+                point_arg = list(size = 5), line_arg = list(size = 2),
+                error_arg = list(size = 2))
+p2 <- afex_plot(aw, x = "noise", trace = "angle", 
+                mapping = c("color", "shape", "linetype"), 
+                error = "within", 
+                point_arg = list(size = 5), line_arg = list(size = 2),
+                error_arg = list(size = 2, width = 0), 
+                error_linetype = FALSE)
+plot_grid(p1, p2, ncol = 2)
+```
+
+
 ## One-way Plots Without Trace Factor
 
 If `afex_plot` is called without a trace factor, a one-way plot is created. We can customize this plot in very much the same way. Per default a one-way plot contains a legend if `mapping` is not empty (i.e., `""`). We show this legend for the left plot, but suppress it for the right one.

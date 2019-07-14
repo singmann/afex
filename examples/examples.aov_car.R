@@ -50,7 +50,7 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
 # 
 # Sphericity correction method: GG 
 # ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 
 # "numeric" variables are per default converted to factors (as long as factorize = TRUE):
 obk.long$hour2 <- as.numeric(as.character(obk.long$hour))

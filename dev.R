@@ -28,6 +28,8 @@ clean_vignettes(pkg = ".")
 
 devtools::build(args = "--compact-vignettes=both")
 
+tools::showNonASCIIfile("examples/examples.aov_car.R")
+
 ### add packages
 
 usethis::use_package("glmmTMB", "Suggests")

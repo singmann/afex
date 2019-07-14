@@ -557,6 +557,9 @@ aov_car <- function(formula,
     if (check_contrasts) {
       resetted <- NULL
       for (i in between) {
+        if (is.character(tmp.dat[,i])) {
+          tmp.dat[,i] <- factor(tmp.dat[,i])
+        }
         if (is.factor(tmp.dat[,i])) {
           if (is.null(attr(tmp.dat[,i], "contrasts")) & 
               (options("contrasts")[[1]][1] != "contr.sum")) {

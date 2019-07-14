@@ -255,3 +255,17 @@ test_that("aov_car works with p.val adjustment == NA for HF as well as GG", {
                    anova_table = list(correction = "HF"))),
             "nice_table")
 })
+
+test_that("aov_car: character variables and factorize = FALSE", {
+  data(obk.long)
+  obk2 <- obk.long
+  obk2$treatment <- as.character(obk2$treatment)
+  a1 <- aov_car(value ~ treatment * gender + Error(id), data = obk.long, 
+                fun_aggregate = mean)
+  a2 <- aov_car(value ~ treatment * gender + Error(id), data = obk2, 
+                fun_aggregate = mean)
+  a3 <- aov_car(value ~ treatment * gender + Error(id), data = obk2, 
+                fun_aggregate = mean, factorize = FALSE)
+  expect_equal(a1$anova_table, a2$anova_table)
+  expect_equal(a1$anova_table, a3$anova_table)
+})

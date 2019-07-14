@@ -12,7 +12,8 @@
 
     Bugfixes
 
-    o   
+    o   Correct Type III ANOVA results for character variables if 
+        factorize = FALSE.
 
 
 

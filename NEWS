@@ -7,8 +7,15 @@
                     
     Significant User Visible Changes and New Features
     
-    o   Better error messages for ANOVA, in some case in which data shows 
+    o   Better error messages for ANOVA in some case in which data shows 
         structural problems (e.g., missing design cells).
+        
+    o   afex_plot() now first draws all graphical elements belonging to a 
+        specific factor level, before drawing graphical elements belonging to 
+        the next factor level in interaction plots (does not apply to data in 
+        the background). This avoids inconsistencies in plotting order between
+        error bars and connecting lines.
+        
 
     Bugfixes
 

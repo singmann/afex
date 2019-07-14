@@ -823,33 +823,44 @@ interaction_plot <- function(means,
               )
       )
   }
-  
-  plot_out <- plot_out + 
-    do.call(what = ggplot2::geom_point, 
-            args = c(
-              position = list(
-                ggplot2::position_dodge(width = dodge)
-              ),
-              point_arg
-            )) +
-    do.call(what = ggplot2::geom_line, 
-            args = c(
-              position = list(
-                ggplot2::position_dodge(width = dodge)
-              ),
-              line_arg
-            ))
-
-  if (error_plot) {
+  for (i in levels(data$trace)) {
+    tmp_means <- means
+    tmp_means[means$trace != i, c(col_y, col_lower, col_upper)] <- NA
+    #tmp_means <- tmp_means[means$trace == i,]
     plot_out <- plot_out + 
-      do.call(what = ggplot2::geom_errorbar, 
+      do.call(what = ggplot2::geom_point, 
               args = c(
-                mapping = list(ggplot2::aes_string(
-                  ymin = col_lower,
-                  ymax = col_upper)),
-                position = list(ggplot2::position_dodge(width = dodge)),
-                error_arg
+                data = list(tmp_means),
+                position = list(
+                  ggplot2::position_dodge(width = dodge)
+                ),
+                point_arg, 
+                na.rm = list(TRUE)
+              )) +
+      do.call(what = ggplot2::geom_line, 
+              args = c(
+                data = list(tmp_means),
+                position = list(
+                  ggplot2::position_dodge(width = dodge)
+                ),
+                line_arg, 
+                na.rm = list(TRUE)
               ))
+    
+    if (error_plot) {
+      plot_out <- plot_out + 
+        do.call(what = ggplot2::geom_errorbar, 
+                args = c(
+                  data = list(tmp_means),
+                  mapping = list(ggplot2::aes_string(
+                    ymin = col_lower,
+                    ymax = col_upper)),
+                  position = list(ggplot2::position_dodge(width = dodge)),
+                  error_arg, 
+                na.rm = list(TRUE)
+                ))
+    }
+    
   }
   
   if (length(unique(means$panel)) > 1) {

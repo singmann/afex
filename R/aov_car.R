@@ -483,6 +483,25 @@ aov_car <- function(formula,
     }
   }
   
+  ## check for structurally missing data
+  # within-subjects
+  if ((length(within) > 0) && any(table(data[within]) == 0)) {
+    stop("Empty cells in within-subjects design ", 
+         " (i.e., bad data structure).\n", 
+         "", paste0("table(data[", deparse(within), "])"), "\n# ",
+         paste(capture.output(table(data[within])), collapse = "\n# "),
+         call. = FALSE)
+  }
+  # between-subjects
+  between_nn <- between[!vapply(data[between], is.numeric, NA)]
+  if (length(between_nn) > 0 && any(table(data[between_nn]) == 0)) {
+    stop("Empty cells in between-subjects design ", 
+         " (i.e., bad data structure).\n",  
+         "", paste0("table(data[", deparse(between_nn), "])"), "\n# ",
+         paste(capture.output(table(data[between_nn])), collapse = "\n# "),
+         call. = FALSE)
+  }
+  
   # Is fun_aggregate NULL and aggregation necessary?
   if (is.null(fun_aggregate)) {
     if (any(xtabs(
@@ -495,7 +514,6 @@ aov_car <- function(formula,
   } 
   
   # prepare the data:
-  
   tmp.dat <- do.call(
     dcast, 
     args = 

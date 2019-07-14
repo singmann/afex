@@ -119,3 +119,24 @@ test_that("anova_table attributes", {
   expect_equal(as.character(attr(anova(incomplete_cases), "incomplete_cases")), "10")
   
 })
+
+test_that("error messages for common problems", {
+  data(md_12.1)
+  md_12.2 <- md_12.1[!(md_12.1$noise == "present" & md_12.1$angle == "0"),]
+  
+  expect_error(
+    aov_ez("id", "rt", md_12.2, within = c("angle", "noise")),
+    "within-subjects design")
+  
+  data(obk.long)
+  obk2 <- obk.long[
+    !(obk.long$treatment == "A" & obk.long$gender == "F"),
+  ]
+  
+  expect_error(
+    aov_car(value ~ treatment * gender + Error(id), data = obk2),
+    "between-subjects design")
+  expect_error(
+    aov_car(value ~ treatment * gender + Error(id/phase*hour), data = obk2),
+    "between-subjects design")
+})

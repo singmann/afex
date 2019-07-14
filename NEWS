@@ -1,4 +1,22 @@
                     *************************
+                    ** afex VERSION 0.25-x **
+                    *************************
+                    
+                    Changes in afex Version 0.25-x
+                    Released XXXX 2019
+                    
+    Significant User Visible Changes and New Features
+    
+    o   Better error messages for ANOVA, in some case in which data shows 
+        structural problems (e.g., missing design cells).
+
+    Bugfixes
+
+    o   
+
+
+
+                    *************************
                     ** afex VERSION 0.24-x **
                     *************************
                     

@@ -94,7 +94,7 @@ get_emms <- function(object,
     colnames(emms)[grep("CL|HPD", colnames(emms))[1]-1] <- "y"
   }
   attr(emms, "dv") <- attr(object, "dv")
-  attr(emms, "x") <- paste(x, sep = "\n")
+  attr(emms, "x") <- paste(x, collapse = " - ")
   if (length(panel) > 0) {
     emms$panel <- interaction(emms[panel], sep = "\n")
   } else {

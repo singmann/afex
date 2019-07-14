@@ -16,6 +16,9 @@
         factorize = FALSE.
         
     o   afex_plot() for mixed or merMod objects uses actual dv on y-axis.
+    
+    o   afex_plot() x-labels and legend-title display correctly in case more 
+        than one variable is displayed.
 
 
 

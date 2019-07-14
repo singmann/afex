@@ -221,3 +221,20 @@ test_that("relabeling of factors and legend works", {
   expect_equal(p2$guides$shape$title, "Noise Condition")
   expect_equal(p2$guides$linetype$title, "Noise Condition")
 })
+
+test_that("labels are correct in case variables are of lenth > 1", {
+  data(obk.long, package = "afex")
+  # estimate mixed ANOVA on the full design:
+  a1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
+                data = obk.long, observed = "gender")
+  
+  p1 <- afex_plot(a1, c("phase", "hour"), c("treatment", "gender"), 
+                  error = "none")
+  p2 <- afex_plot(a1, c("phase", "hour"), error = "none")
+  expect_match(p1$labels$x, "phase")
+  expect_match(p1$labels$x, "hour")
+  expect_match(p1$guides$shape$title, "treatment")
+  expect_match(p1$guides$shape$title, "gender")
+  expect_match(p2$labels$x, "phase")
+  expect_match(p2$labels$x, "hour")
+})

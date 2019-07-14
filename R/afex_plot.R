@@ -453,6 +453,7 @@ afex_plot.mixed <- function(object,
                    emmeans_arg = emmeans_arg, 
                    factor_levels = factor_levels,
                    level = error_level)
+  attr(emms, "dv") <- deparse(object$full_model@call[["formula"]][[2]])
   
   if (length(id) == 1) {
     all_within <- lapply(lme4::findbars(object$call), all.vars)
@@ -576,6 +577,7 @@ afex_plot.merMod <- function(object,
                    emmeans_arg = emmeans_arg, 
                    factor_levels = factor_levels,
                    level = error_level)
+  attr(emms, "dv") <- deparse(object@call[["formula"]][[2]])
   
   if (length(id) == 1) {
     all_within <- lapply(lme4::findbars(object@call), all.vars)

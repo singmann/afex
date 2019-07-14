@@ -14,6 +14,8 @@
 
     o   Correct Type III ANOVA results for character variables if 
         factorize = FALSE.
+        
+    o   afex_plot() for mixed or merMod objects uses actual dv on y-axis.
 
 
 

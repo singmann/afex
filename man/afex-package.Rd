@@ -31,6 +31,7 @@ Authors:
   \item Ben Bolker
   \item Jake Westfall
   \item Frederik Aust (0000-0003-4900-788X)
+  \item Mattan S. Ben-Shachar
 }
 
 Other contributors:

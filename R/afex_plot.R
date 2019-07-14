@@ -948,7 +948,7 @@ oneway_plot <- function(means,
     mapping <- ""
   }
   
-  if (mapping != "") {
+  if (length(mapping) > 1 || mapping[1] != "") {
     tmp_list <- as.list(rep(col_x, length(mapping)))
     names(tmp_list) <- mapping
     if (!error_linetype) {

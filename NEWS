@@ -31,6 +31,9 @@
     
     o   afex_plot() x-labels and legend-title display correctly in case more 
         than one variable is displayed.
+        
+    o   Removed certain non-ASCII characters in examples:
+        https://github.com/singmann/afex/issues/66
 
 
 

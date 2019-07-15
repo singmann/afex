@@ -653,7 +653,7 @@ m1
 # 8   PrevType:meanWeight 1, 1601.18    6.18 *     .01
 # 9 NativeLanguage:Length 1, 1555.49 14.24 ***   .0002
 # ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 
 # Fitting a GLMM using parametric bootstrap:
 require("mlmRev") # for the data, see ?Contraception

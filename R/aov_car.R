@@ -489,7 +489,7 @@ aov_car <- function(formula,
     stop("Empty cells in within-subjects design ", 
          " (i.e., bad data structure).\n", 
          "", paste0("table(data[", deparse(within), "])"), "\n# ",
-         paste(capture.output(table(data[within])), collapse = "\n# "),
+         paste(utils::capture.output(table(data[within])), collapse = "\n# "),
          call. = FALSE)
   }
   # between-subjects

@@ -15,4 +15,6 @@ before_install:
 r_binary_packages:
  - ez
  - shiny
+ - rstanarm
+ - brms
  

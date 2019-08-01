@@ -143,8 +143,9 @@ The first two variants display only points, whereas the remaining ones use diffe
 
 1. Add jitter on the y-axis to points which avoids perfect overlap.
 2. Display points using a bee swarm plot, which displaces overlapping points on the x-axis: `ggbeeswarm::geom_beeswarm`
+3. Size of points show number of data points at a given y-axis position: `geom_count`. For this geom, adding a call to `scale_size_area()` can sometimes be beneficial.
 3. Violin plot: `geom_violin`
-4. Box plot: `geom_boxplot`
+4. Box plot: `geom_boxplot`. Note that for this plot we have added `linetype = 1` to `data_arg`, which avoids that the outline of the box plots is affected by the linetype mapping (this is in contrast with the violin plot).
 5. Combine box plot with jittered points: `ggpol::geom_boxjitter`
 
 
@@ -164,22 +165,24 @@ p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                   dodge.width = 0.5,  ## needs to be same as dodge
                   cex = 0.8,
                   color = "darkgrey"))
-p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-          data_geom = ggplot2::geom_violin, 
-          data_arg = list(width = 0.5))
+p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+                data_geom = geom_count)
 p4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-          data_geom = ggplot2::geom_boxplot, 
-          data_arg = list(width = 0.3))
-p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7, 
-          data_geom = ggpol::geom_boxjitter, 
-          data_arg = list(
-            width = 0.5, 
-            jitter.width = 0,
-            jitter.height = 10,
-            outlier.intersect = TRUE),
-          point_arg = list(size = 2.5), 
-          error_arg = list(size = 1.5, width = 0))
-plot_grid(p1, p2, p3, p4, p5, ncol = 2, labels = 1:5)  
+                data_geom = ggplot2::geom_violin, 
+                data_arg = list(width = 0.5))
+p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+                data_geom = ggplot2::geom_boxplot, 
+                data_arg = list(width = 0.3, linetype = 1))
+p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7, 
+                data_geom = ggpol::geom_boxjitter, 
+                data_arg = list(
+                  width = 0.5, 
+                  jitter.width = 0,
+                  jitter.height = 10,
+                  outlier.intersect = TRUE),
+                point_arg = list(size = 2.5), 
+                error_arg = list(size = 1.5, width = 0))
+plot_grid(p1, p2, p3, p4, p5, p6, ncol = 2, labels = 1:6)  
 ```
 
 ## Adding Color to Plots

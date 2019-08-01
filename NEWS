@@ -16,11 +16,6 @@
         the background). This avoids inconsistencies in plotting order between
         error bars and connecting lines.
         
-    o   afex_plot() has a new argument, error_linetype, which allows to control
-        whether the linetype mapping is also applied to the error bars. If TRUE,
-        the default, error bars receive the linetype mapping. If FALSE, error 
-        bars are always plotted as solid lines. See vignette for an example.
-        
 
     Bugfixes
 

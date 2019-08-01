@@ -14,40 +14,38 @@ afex_plot(object, ...)
 
 \method{afex_plot}{afex_aov}(object, x, trace, panel, mapping,
   error = "model", error_ci = TRUE, error_level = 0.95,
-  error_arg = list(width = 0), error_linetype = TRUE,
-  data_plot = TRUE, data_geom, data_alpha = 0.5,
-  data_arg = list(color = "darkgrey"), point_arg = list(),
-  line_arg = list(), emmeans_arg = list(), dodge = 0.5,
-  return = "plot", factor_levels = list(), legend_title, ...)
-
-\method{afex_plot}{mixed}(object, x, trace, panel, mapping, id,
-  error = "model", error_ci = TRUE, error_level = 0.95,
-  error_arg = list(width = 0), error_linetype = TRUE,
-  data_plot = TRUE, data_geom, data_alpha = 0.5,
-  data_arg = list(color = "darkgrey"), point_arg = list(),
-  line_arg = list(), emmeans_arg = list(), dodge = 0.5,
-  return = "plot", factor_levels = list(), legend_title, ...)
-
-\method{afex_plot}{merMod}(object, x, trace, panel, mapping, id,
-  error = "model", error_ci = TRUE, error_level = 0.95,
-  error_arg = list(width = 0), error_linetype = TRUE,
-  data_plot = TRUE, data_geom, data_alpha = 0.5,
-  data_arg = list(color = "darkgrey"), point_arg = list(),
-  line_arg = list(), emmeans_arg = list(), dodge = 0.5,
-  return = "plot", factor_levels = list(), legend_title, ...)
-
-\method{afex_plot}{default}(object, x, trace, panel, mapping, id, dv, data,
-  within_vars, between_vars, error = "model", error_ci = TRUE,
-  error_level = 0.95, error_arg = list(width = 0),
-  error_linetype = TRUE, data_plot = TRUE, data_geom,
+  error_arg = list(width = 0), data_plot = TRUE, data_geom,
   data_alpha = 0.5, data_arg = list(color = "darkgrey"),
   point_arg = list(), line_arg = list(), emmeans_arg = list(),
   dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
   ...)
 
+\method{afex_plot}{mixed}(object, x, trace, panel, mapping, id,
+  error = "model", error_ci = TRUE, error_level = 0.95,
+  error_arg = list(width = 0), data_plot = TRUE, data_geom,
+  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
+  point_arg = list(), line_arg = list(), emmeans_arg = list(),
+  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
+  ...)
+
+\method{afex_plot}{merMod}(object, x, trace, panel, mapping, id,
+  error = "model", error_ci = TRUE, error_level = 0.95,
+  error_arg = list(width = 0), data_plot = TRUE, data_geom,
+  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
+  point_arg = list(), line_arg = list(), emmeans_arg = list(),
+  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
+  ...)
+
+\method{afex_plot}{default}(object, x, trace, panel, mapping, id, dv, data,
+  within_vars, between_vars, error = "model", error_ci = TRUE,
+  error_level = 0.95, error_arg = list(width = 0), data_plot = TRUE,
+  data_geom, data_alpha = 0.5, data_arg = list(color = "darkgrey"),
+  point_arg = list(), line_arg = list(), emmeans_arg = list(),
+  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
+  ...)
+
 interaction_plot(means, data, mapping = c("shape", "lineytpe"),
-  error_plot = TRUE, error_arg = list(width = 0),
-  error_linetype = TRUE, data_plot = TRUE,
+  error_plot = TRUE, error_arg = list(width = 0), data_plot = TRUE,
   data_geom = ggplot2::geom_point, data_alpha = 0.5,
   data_arg = list(color = "darkgrey"), point_arg = list(),
   line_arg = list(), dodge = 0.5, legend_title, col_x = "x",
@@ -55,11 +53,11 @@ interaction_plot(means, data, mapping = c("shape", "lineytpe"),
   col_lower = "lower", col_upper = "upper")
 
 oneway_plot(means, data, mapping = "", error_plot = TRUE,
-  error_arg = list(width = 0), error_linetype = TRUE,
-  data_plot = TRUE, data_geom = ggbeeswarm::geom_beeswarm,
-  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
-  point_arg = list(), legend_title, col_x = "x", col_y = "y",
-  col_panel = "panel", col_lower = "lower", col_upper = "upper")
+  error_arg = list(width = 0), data_plot = TRUE,
+  data_geom = ggbeeswarm::geom_beeswarm, data_alpha = 0.5,
+  data_arg = list(color = "darkgrey"), point_arg = list(),
+  legend_title, col_x = "x", col_y = "y", col_panel = "panel",
+  col_lower = "lower", col_upper = "upper")
 }
 \arguments{
 \item{object}{\code{afex_aov}, \code{mixed}, \code{merMod} or other model
@@ -85,7 +83,11 @@ specified) or the \code{x} factors. Useful options are any combination of
 \code{"shape"}, \code{"color"}, \code{"linetype"}, or also \code{"fill"} 
 (see examples). The default (i.e., missing) uses \code{c("shape", 
 "linetype")} if \code{trace} is specified and \code{""} otherwise (i.e., no
-additional aesthetic).}
+additional aesthetic). If specific mappings should not be applied to
+specific graphical elements, one can override those via the corresponding
+further arguments. For example, for \code{data_arg} the default is
+\code{list(color = "darkgrey")} which prevents that \code{"color"} is
+mapped onto points in the background.}
 
 \item{error}{A scalar \code{character} vector specifying on which standard 
 error the error bars should be based. Default is \code{"model"}, which
@@ -104,10 +106,6 @@ interval.}
 \code{\link[ggplot2]{geom_errorbar}}, which draws the errorsbars. Default 
 is \code{list(width = 0)} which suppresses the vertical bars at the end of 
 the error bar.}
-
-\item{error_linetype}{Logical. If \code{TRUE}, the default, a potential
-\code{"linetype"} \code{mapping} is also applied to error bars. If
-\code{FALSE}, error bars are always plotted as solid lines.}
 
 \item{data_plot}{\code{logical}. Should raw data be plotted in the 
 background? Default is \code{TRUE}.}

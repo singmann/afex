@@ -32,7 +32,11 @@
 #'   \code{"shape"}, \code{"color"}, \code{"linetype"}, or also \code{"fill"} 
 #'   (see examples). The default (i.e., missing) uses \code{c("shape", 
 #'   "linetype")} if \code{trace} is specified and \code{""} otherwise (i.e., no
-#'   additional aesthetic).
+#'   additional aesthetic). If specific mappings should not be applied to
+#'   specific graphical elements, one can override those via the corresponding
+#'   further arguments. For example, for \code{data_arg} the default is
+#'   \code{list(color = "darkgrey")} which prevents that \code{"color"} is
+#'   mapped onto points in the background.
 #' @param error A scalar \code{character} vector specifying on which standard 
 #'   error the error bars should be based. Default is \code{"model"}, which
 #'   plots model-based standard errors. Further options are: \code{"none"} (or 
@@ -58,9 +62,6 @@
 #'   \code{\link[ggplot2]{geom_errorbar}}, which draws the errorsbars. Default 
 #'   is \code{list(width = 0)} which suppresses the vertical bars at the end of 
 #'   the error bar.
-#' @param error_linetype  Logical. If \code{TRUE}, the default, a potential
-#'   \code{"linetype"} \code{mapping} is also applied to error bars. If
-#'   \code{FALSE}, error bars are always plotted as solid lines.
 #' @param data_plot \code{logical}. Should raw data be plotted in the 
 #'   background? Default is \code{TRUE}.
 #' @param data_geom Geom \code{function} used for plotting data in background. 
@@ -277,7 +278,6 @@ afex_plot.afex_aov <- function(object,
                                error_ci = TRUE,
                                error_level = 0.95, 
                                error_arg = list(width = 0),
-                               error_linetype = TRUE,
                                data_plot = TRUE,
                                data_geom,
                                data_alpha = 0.5,
@@ -371,7 +371,6 @@ afex_plot.afex_aov <- function(object,
                             data = data,
                             error_plot = error_plot,
                             error_arg = error_arg, 
-                            error_linetype = error_linetype,
                             dodge = dodge, 
                             data_plot = data_plot,
                             data_geom = data_geom,
@@ -400,7 +399,6 @@ afex_plot.mixed <- function(object,
                             error_ci = TRUE,
                             error_level = 0.95, 
                             error_arg = list(width = 0),
-                            error_linetype = TRUE,
                             data_plot = TRUE,
                             data_geom,
                             data_alpha = 0.5,
@@ -493,7 +491,6 @@ afex_plot.mixed <- function(object,
                             data = data,
                             error_plot = error_plot,
                             error_arg = error_arg, 
-                            error_linetype = error_linetype,
                             dodge = dodge, 
                             data_plot = data_plot,
                             data_geom = data_geom,
@@ -521,7 +518,6 @@ afex_plot.merMod <- function(object,
                             error_ci = TRUE,
                             error_level = 0.95, 
                             error_arg = list(width = 0),
-                            error_linetype = TRUE,
                             data_plot = TRUE,
                             data_geom,
                             data_alpha = 0.5,
@@ -619,7 +615,6 @@ afex_plot.merMod <- function(object,
                             data = data,
                             error_plot = error_plot,
                             error_arg = error_arg, 
-                            error_linetype = error_linetype,
                             dodge = dodge, 
                             data_plot = data_plot,
                             data_geom = data_geom,
@@ -649,7 +644,6 @@ afex_plot.default <- function(object,
                               error_ci = TRUE,
                               error_level = 0.95, 
                               error_arg = list(width = 0),
-                              error_linetype = TRUE,
                               data_plot = TRUE,
                               data_geom,
                               data_alpha = 0.5,
@@ -751,7 +745,6 @@ afex_plot.default <- function(object,
                             data = data,
                             error_plot = error_plot,
                             error_arg = error_arg, 
-                            error_linetype = error_linetype,
                             dodge = dodge, 
                             data_plot = data_plot,
                             data_geom = data_geom,
@@ -774,7 +767,6 @@ interaction_plot <- function(means,
                              mapping = c("shape", "lineytpe"), 
                              error_plot = TRUE,
                              error_arg = list(width = 0),
-                             error_linetype = TRUE,
                              data_plot = TRUE,
                              data_geom = ggplot2::geom_point,
                              data_alpha = 0.5,
@@ -801,15 +793,10 @@ interaction_plot <- function(means,
   tmp_list <- as.list(rep(col_trace, length(mapping)))
   names(tmp_list) <- mapping
   
-  if (!error_linetype) {
-    error_mapping <- mapping[!(mapping %in% c("linetype", "shape", "fill"))]
-    tmp_list_error <- as.list(rep(col_trace, length(error_mapping)))
-    names(tmp_list_error) <- error_mapping
-  } else {
-    error_mapping <- mapping[!(mapping %in% c("shape", "fill"))]
-    tmp_list_error <- as.list(rep(col_trace, length(error_mapping)))
-    names(tmp_list_error) <- error_mapping
-  }
+  error_mapping <- mapping[!(mapping %in% c("linetype", "shape", "fill"))]
+  tmp_list_error <- as.list(rep(col_trace, length(error_mapping)))
+  names(tmp_list_error) <- error_mapping
+  
   
   plot_out <- ggplot2::ggplot(data = means, 
                               mapping = do.call(
@@ -928,7 +915,6 @@ oneway_plot <- function(means,
                         mapping = "",
                         error_plot = TRUE,
                         error_arg = list(width = 0),
-                        error_linetype = TRUE,
                         data_plot = TRUE,
                         data_geom = ggbeeswarm::geom_beeswarm,
                         data_alpha = 0.5,
@@ -951,15 +937,10 @@ oneway_plot <- function(means,
   if (length(mapping) > 1 || mapping[1] != "") {
     tmp_list <- as.list(rep(col_x, length(mapping)))
     names(tmp_list) <- mapping
-    if (!error_linetype) {
-      error_mapping <- mapping[!(mapping %in% c("linetype", "shape", "fill"))]
-      tmp_list_error <- as.list(rep(col_x, length(error_mapping)))
-      names(tmp_list_error) <- error_mapping
-    } else {
-      error_mapping <- mapping[!(mapping %in% c("shape", "fill"))]
-      tmp_list_error <- as.list(rep(col_x, length(error_mapping)))
-      names(tmp_list_error) <- error_mapping
-    }
+
+    error_mapping <- mapping[!(mapping %in% c("linetype", "shape", "fill"))]
+    tmp_list_error <- as.list(rep(col_x, length(error_mapping)))
+    names(tmp_list_error) <- error_mapping
   } else {
     tmp_list <- list()
     tmp_list_error <- list()

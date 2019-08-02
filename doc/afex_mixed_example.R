@@ -1,13 +1,15 @@
 ## ----set-options, echo=FALSE, cache=FALSE-----------------------------------------------
 options(width = 90)
+knitr::opts_chunk$set(dpi=100)
 
 ## ----message=FALSE, warning=FALSE-------------------------------------------------------
-require(afex) # needed for ANOVA, emmeans is loaded automatically.
-require(dplyr) # for working with data frames
-require(tidyr) # for transforming data frames from wide to long and the other way round.
-require(multcomp) # for advanced control for multiple testing/Type 1 errors.
-require(lattice) # for plots
-require(latticeExtra) # for combining lattice plots, etc.
+library("afex") # needed for mixed() and attaches lme4 automatically.
+library("emmeans") # emmeans is needed for follow-up tests (and not anymore loaded automatically).
+library("multcomp") # for advanced control for multiple testing/Type 1 errors.
+library("dplyr") # for working with data frames
+library("tidyr") # for transforming data frames from wide to long and the other way round.
+library("lattice") # for plots
+library("latticeExtra") # for combining lattice plots, etc.
 lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
 lattice.options(default.args = list(as.table = TRUE)) # better ordering
 

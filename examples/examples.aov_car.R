@@ -50,7 +50,7 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
 # 
 # Sphericity correction method: GG 
 # ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 
 # "numeric" variables are per default converted to factors (as long as factorize = TRUE):
 obk.long$hour2 <- as.numeric(as.character(obk.long$hour))
@@ -116,25 +116,39 @@ data(obk.long, package = "afex")
 a1 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
         within = c("phase", "hour"), observed = "gender")
 
+library("emmeans")  # package emmeans needs to be attached for follow-up tests.
+
 # 1b. plot data (per default with ggplot2):
 emmip(a1, gender ~ hour | treatment+phase)
 
-# use lattice instead of ggplot2:
+## add univariate CIs:
+emmip(a1, gender ~ hour | treatment+phase, CIs = TRUE)
+
+## add multivariate CIs
+emmip(a1, gender ~ hour | treatment+phase, CIs = TRUE, 
+      model = "multivariate")
+
+# use lattice instead of ggplot2 (which has no CIs):
 emm_options(graphics.engine = "lattice") 
 emmip(a1, gender ~ hour | treatment+phase)
 emm_options(graphics.engine = "ggplot") # reset options 
 
-# 2. obtain reference grid object:
+# 2. obtain reference grid object (default uses univariate model):
 r1 <- emmeans(a1, ~treatment +phase)
 r1
 
+# multivariate model may be more appropriate
+r1 <- emmeans(a1, ~treatment +phase, model = "multivariate")
+r1
+
+
 # 3. create list of contrasts on the reference grid:
 c1 <- list(
-  A_B_pre = c(0, -1, 1, rep(0, 6)),  # A versus B for pretest
-  A_B_comb = c(0, 0, 0, 0, -0.5, 0.5, 0, -0.5, 0.5), # A vs. B for post and follow-up combined
+  A_B_pre = c(rep(0, 6), 0, -1, 1),  # A versus B for pretest
+  A_B_comb = c(-0.5, 0.5, 0, -0.5, 0.5, 0, 0, 0, 0), # A vs. B for post and follow-up combined
   effect_post = c(0, 0, 0, -1, 0.5, 0.5, 0, 0, 0), # control versus A&B post
-  effect_fup = c(0, 0, 0, 0, 0, 0, -1, 0.5, 0.5), # control versus A&B follow-up
-  effect_comb = c(0, 0, 0, -0.5, 0.25, 0.25, -0.5, 0.25, 0.25) # control versus A&B combined
+  effect_fup = c(-1, 0.5, 0.5, 0, 0, 0, 0, 0, 0), # control versus A&B follow-up
+  effect_comb = c(-0.5, 0.25, 0.25, -0.5, 0.25, 0.25, 0, 0, 0) # control versus A&B combined
 )
 
 # 4. test contrasts on reference grid:
@@ -144,7 +158,10 @@ contrast(r1, c1)
 contrast(r1, c1, adjust = "holm")
 
 # 2. (alternative): all pairwise comparisons of treatment:
-emmeans(a1, "treatment", contr = "pairwise")
+emmeans(a1, "treatment", contr = "pairwise", model = "multivariate")
+
+## set multivariate models globally:
+# afex_options(emmeans_model = "multivariate")
 
 #######################
 ## 3: Other examples ##
@@ -158,7 +175,7 @@ obk_anova <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)),
 
 str(obk_anova, 1, give.attr = FALSE)
 # List of 5
-#  $ anova_table:Classes ‘anova’ and 'data.frame':	15 obs. of  6 variables:
+#  $ anova_table:Classes 'anova' and 'data.frame':	15 obs. of  6 variables:
 #  $ aov        :List of 5
 #  $ Anova      :List of 14
 #  $ lm         :List of 13

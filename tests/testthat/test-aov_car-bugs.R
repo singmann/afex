@@ -219,6 +219,16 @@ test_that("aov_car works with column names containing spaces: https://github.com
   expect_is(aov_ez("subject", "dependent", data, within = "RM Factor 1"), "afex_aov")
 })
 
+test_that("aov_car works with column names containing spaces for between factors", {
+  data <- list("dependent" = rnorm(100), "RM Factor 1" = factor(rep(c("Level 1", "Level 2"), 50)), "subject" = factor(rep(1:100)))
+  attr(data, 'row.names') <- seq_len(length(data[[1]]))
+  attr(data, 'class') <- 'data.frame'
+  
+  expect_is(aov_car(dependent ~ `RM Factor 1` + Error(subject), data),  "afex_aov")
+  expect_is(aov_4(dependent ~ `RM Factor 1` + (1|subject), data), "afex_aov")
+  expect_is(aov_ez("subject", "dependent", data, between = "RM Factor 1"), "afex_aov")
+})
+
 
 test_that("aov_ez works with multiple covariates", {
   skip_if_not_installed("psych")
@@ -244,4 +254,18 @@ test_that("aov_car works with p.val adjustment == NA for HF as well as GG", {
   expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"), 
                    anova_table = list(correction = "HF"))),
             "nice_table")
+})
+
+test_that("aov_car: character variables and factorize = FALSE", {
+  data(obk.long)
+  obk2 <- obk.long
+  obk2$treatment <- as.character(obk2$treatment)
+  a1 <- aov_car(value ~ treatment * gender + Error(id), data = obk.long, 
+                fun_aggregate = mean)
+  a2 <- aov_car(value ~ treatment * gender + Error(id), data = obk2, 
+                fun_aggregate = mean)
+  a3 <- aov_car(value ~ treatment * gender + Error(id), data = obk2, 
+                fun_aggregate = mean, factorize = FALSE)
+  expect_equal(a1$anova_table, a2$anova_table)
+  expect_equal(a1$anova_table, a3$anova_table)
 })

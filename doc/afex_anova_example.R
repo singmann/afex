@@ -1,9 +1,13 @@
 ## ----set-options, echo=FALSE, cache=FALSE-----------------------------------------------
 options(width = 90)
+knitr::opts_chunk$set(dpi=100)
 
 ## ----message=FALSE, warning=FALSE-------------------------------------------------------
-require(afex) # needed for ANOVA, emmeans is loaded automatically.
-require(multcomp) # for advanced control for multiple testing/Type 1 errors.
+library("afex")     # needed for ANOVA functions.
+library("emmeans")  # emmeans must now be loaded explicitly for follow-up tests.
+library("multcomp") # for advanced control for multiple testing/Type 1 errors.
+library("ggplot2")  # for customizing plots.
+afex_options(emmeans_model = "multivariate") # use multivariate model for all follow-up tests.
 
 ## ---------------------------------------------------------------------------------------
 data(sk2011.1)
@@ -17,6 +21,10 @@ with(sk2011.1, table(inference, id, plausibility))
 a1 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
        within = c("inference", "plausibility"))
 a1 # the default print method prints a data.frame produced by nice 
+
+## ---- eval=FALSE------------------------------------------------------------------------
+#  aov_car(response ~ instruction + Error(id/inference*plausibility), sk2011.1)
+#  aov_4(response ~ instruction + (inference*plausibility|id), sk2011.1)
 
 ## ---- results='asis'--------------------------------------------------------------------
 knitr::kable(nice(a1))
@@ -35,14 +43,16 @@ pairs(m1)
 summary(as.glht(pairs(m1)), test=adjusted("free"))
 
 ## ---------------------------------------------------------------------------------------
-m2 <- emmeans(a1, ~ inference|instruction)
+m2 <- emmeans(a1, "inference", by = "instruction")
+## equal: emmeans(a1, ~ inference|instruction)
 m2
 
 ## ---------------------------------------------------------------------------------------
 pairs(m2)
 
 ## ---------------------------------------------------------------------------------------
-m3 <- emmeans(a1, ~ inference:instruction)
+m3 <- emmeans(a1, c("inference", "instruction"))
+## equal: emmeans(a1, ~inference*instruction)
 m3
 pairs(m3)
 
@@ -54,20 +64,32 @@ c1 <- list(
   )
 
 contrast(m3, c1, adjust = "holm")
-summary(as.glht(contrast(m3, c1)), test =adjusted("free"))
+summary(as.glht(contrast(m3, c1)), test = adjusted("free"))
 
 ## ----fig.width=7.5, fig.height=4--------------------------------------------------------
-emmip(a1, instruction ~ inference|plausibility, CIs = TRUE)
+afex_plot(a1, x = "inference", trace = "instruction", panel = "plausibility")
 
 ## ----fig.width=7.5, fig.height=4--------------------------------------------------------
-emmip(a1, instruction ~ inference|plausibility, CIs = TRUE) +
-  ggplot2::theme_light()
+afex_plot(a1, x = "inference", trace = "instruction", panel = "plausibility", 
+          error = "within")
 
-## ---- fig.width=7.5, fig.height=4-------------------------------------------------------
-require(lattice) # for plots
-lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
-lattice.options(default.args = list(as.table = TRUE)) # better ordering
-emmip(a1, instruction ~ inference|plausibility, engine = "lattice")
+## ----fig.width=7.5, fig.height=4--------------------------------------------------------
+afex_plot(a1, x = "inference", trace = "instruction", panel = "plausibility", 
+          error = "none")
+
+## ----fig.width=7.5, fig.height=4--------------------------------------------------------
+p1 <- afex_plot(a1, x = "inference", trace = "instruction", 
+                panel = "plausibility", error = "none", 
+                mapping = c("color", "fill"), 
+                data_geom = geom_boxplot, data_arg = list(width = 0.4), 
+                point_arg = list(size = 1.5), line_arg = list(size = 1))
+p1
+
+## ----fig.width=7.5, fig.height=4--------------------------------------------------------
+p1 + theme_light()
+
+## ---------------------------------------------------------------------------------------
+theme_set(theme_light())
 
 ## ---------------------------------------------------------------------------------------
 a2 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
@@ -75,12 +97,9 @@ a2 <- aov_ez("id", "response", sk2011.1, between = "instruction",
 a2
 
 ## ----fig.width=7.5, fig.height=4--------------------------------------------------------
-emmip(a2, ~instruction ~ plausibility+validity|what, 
-      engine = "lattice",
-      scales = list(x=list(
-        at = 1:4,
-        labels = c("pl:v", "im:v", "pl:i", "im:i")
-        )))
+afex_plot(a2, x = c("plausibility", "validity"), 
+          trace = "instruction", panel = "what", 
+          error = "none")
 
 ## ---------------------------------------------------------------------------------------
 (m4 <- emmeans(a2, ~instruction+plausibility+validity|what))
@@ -97,7 +116,5 @@ c2 <- list(
 contrast(m4, c2, adjust = "holm")
 
 ## ---------------------------------------------------------------------------------------
-summary(as.glht(contrast(m4, c2[1:4])), test =adjusted("free"))
-summary(as.glht(contrast(m4, c2[5:6])), test =adjusted("free"))
-summary(as.glht(contrast(m4, c2[7:8])), test =adjusted("free"))
+summary(as.glht(contrast(m4, c2)), test = adjusted("free"))
 

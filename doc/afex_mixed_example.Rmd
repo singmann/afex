@@ -14,6 +14,7 @@ vignette: >
 
 ```{r set-options, echo=FALSE, cache=FALSE}
 options(width = 90)
+knitr::opts_chunk$set(dpi=100)
 ```
 
 ## Overview
@@ -26,17 +27,18 @@ The data are lexical decision and word naming latencies for 300 words and 300 no
 
 ## Data and R Preperation
 
-We start with loading some packages we will need throughout this example. For data manipulation we will be using the `dplyr` and `tidyr` packages from the [`tidyverse`](http://tidyverse.org/). A thorough introduction to these packages is beyond this example, but well worth it, and can be found in ['R for Data Science'](http://r4ds.had.co.nz/) by Wickham and Grolemund. For plotting we will be diverging from the `tidyverse` and use `lattice` instead. In my opinion `lattice` provides the best combination of expressive power and abstraction. Specifically, like in base graph, we can fully decide what gets plotted. 
+We start with loading some packages we will need throughout this example. For data manipulation we will be using the `dplyr` and `tidyr` packages from the [`tidyverse`](http://tidyverse.org/). A thorough introduction to these packages is beyond this example, but well worth it, and can be found in ['R for Data Science'](http://r4ds.had.co.nz/) by Wickham and Grolemund. For plotting we will be diverging from the `tidyverse` and use `lattice` instead. At some later point in time I will change this to `ggplot2` plots. 
 
 After loading the packages, we will load the data (which comes with `afex`), remove the errors, and take a look at the variables in the data.
 
 ```{r message=FALSE, warning=FALSE}
-require(afex) # needed for ANOVA, emmeans is loaded automatically.
-require(dplyr) # for working with data frames
-require(tidyr) # for transforming data frames from wide to long and the other way round.
-require(multcomp) # for advanced control for multiple testing/Type 1 errors.
-require(lattice) # for plots
-require(latticeExtra) # for combining lattice plots, etc.
+library("afex") # needed for mixed() and attaches lme4 automatically.
+library("emmeans") # emmeans is needed for follow-up tests (and not anymore loaded automatically).
+library("multcomp") # for advanced control for multiple testing/Type 1 errors.
+library("dplyr") # for working with data frames
+library("tidyr") # for transforming data frames from wide to long and the other way round.
+library("lattice") # for plots
+library("latticeExtra") # for combining lattice plots, etc.
 lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
 lattice.options(default.args = list(as.table = TRUE)) # better ordering
 

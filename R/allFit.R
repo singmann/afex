@@ -28,7 +28,7 @@
 #' 
 #' \code{nmkbw} is a simple wrapper function for fitting models with the corresponding optimizer. It needs to be exported for \code{lme4}, but should not be called directly by the user.
 #' 
-#' @note code taken from \url{https://github.com/lme4/lme4/blob/master/inst/utils/allFit.R}
+#' @note Very similar to the function of the same name that is part of \pkg{lme4}. The present function will be removed eventually in favor of the \pkg{lme4} function.
 #' 
 #' @return a list of fitted \code{merMod} objects
 #' @seealso slice, slice2D in the bbmle package
@@ -62,9 +62,13 @@ all_fit <- function(m,
                            list(maxfun=maxfun))
     ctrl <- do.call(if(isGLMM(m)) glmerControl else lmerControl, ctrl)
     if ("data" %in% names(dots)) {
-      tt <- system.time(rr <- tryCatch(update(m, control = ctrl, data = dots$data, ...), error = function(e) e))  
+      tt <- system.time(rr <- tryCatch(
+        update(m, control = ctrl, data = dots$data, ...),
+        error = function(e) e))
     } else {
-      tt <- system.time(rr <- tryCatch(update(m, control = ctrl, ...), error = function(e) e))  
+      tt <- system.time(rr <- tryCatch(
+        update(m, control = ctrl, ...), 
+        error = function(e) e))  
     }
     attr(rr, "optCtrl") <- ctrl$optCtrl # contains crucial info here
     attr(rr, "time") <- tt # store timing info

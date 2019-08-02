@@ -15,12 +15,15 @@ with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2]))
 ## 4          median              Z     -1.744      NA 0.17867
 
 # compare with:
-with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], alternative = "less"))
+with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], 
+                              alternative = "less"))
 
-with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], alternative = "greater"))
+with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], 
+                              alternative = "greater"))
 
 # doesn't make much sense as the data is not paired, but whatever:
-with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], paired = TRUE))
+with(sleep, compare.2.vectors(extra[group == 1], extra[group == 2], 
+                              paired = TRUE))
 
 # from ?t.test:
 compare.2.vectors(1:10,y=c(7:20, 200))

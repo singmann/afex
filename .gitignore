@@ -1,14 +1,15 @@
+Meta
 # History files
 .Rhistory
 .Rapp.history
 
 # Example code in package build process
 *-Ex.R
-
 # RStudio files
 .Rproj.user/
-
+Rplots.pdf
 # produced vignettes
 vignettes/*.html
-vignettes/*.pdf
 .Rproj.user
+# revdep folder
+revdep

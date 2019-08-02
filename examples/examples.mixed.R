@@ -20,6 +20,7 @@ summary(m2)$varcor
 # summary(lmer(score ~ Machine + (Machine||Worker), data=Machines))$varcor
 
 # follow-up tests
+library("emmeans")  # package emmeans needs to be attached for follow-up tests.
 (emm1 <- emmeans(m1, "Machine"))
 pairs(emm1, adjust = "holm") # all pairwise comparisons
 con1 <- list(
@@ -29,8 +30,8 @@ con1 <- list(
 contrast(emm1, con1, adjust = "holm")
 
 # plotting 
-emmip(m1, ~Machine)
-emmip(m2, ~Machine)
+emmip(m1, ~Machine, CIs = TRUE)
+emmip(m2, ~Machine, CIs = TRUE)
 
 
 \dontrun{
@@ -54,7 +55,7 @@ mixed(score ~ Machine + (Machine|Worker), data=Machines, cl = cl)
 
 # 2. Obtain PB samples via multicore: 
 mixed(score ~ Machine + (Machine|Worker), data=Machines,
- method = "PB", args_test = list(nsim = 50, cl = cl)) # better use 500 or 100 
+ method = "PB", args_test = list(nsim = 50, cl = cl)) # better use 500 or 1000 
 
 ## Both ways can be combined:
 # 2. Obtain PB samples via multicore: 
@@ -86,6 +87,7 @@ stopCluster(cl)
 ###################################################
 ## Replicating Maxwell & Delaney (2004) Examples ##
 ###################################################
+\dontrun{
 
 ### replicate results from Table 15.4 (Maxwell & Delaney, 2004, p. 789)
 data(md_15.1)
@@ -156,6 +158,7 @@ md_16.4b$cog <- scale(md_16.4b$cog, scale=FALSE)
 
 # parameters are again almost perfectly recovered:
 summary(mixed4_orig)
+}
 
 ###########################
 ## Full Analysis Example ##
@@ -185,7 +188,7 @@ sk_m1b <- mixed(response ~ instruction*inference*type+(inference*type|id),
                 sk2_aff, method="S")
 nice(sk_m1b)
 # identical results as:
-lmerTest::anova(sk_m1$full_model)
+anova(sk_m1$full_model)
 
 # suppressing correlation among random slopes:
 # very similar results, but significantly faster and often less convergence warnings. 
@@ -193,7 +196,8 @@ sk_m2 <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_a
                expand_re = TRUE)
 sk_m2
 
-## mixed objects can be passed to lsmeans directly:
+## mixed objects can be passed to emmeans
+library("emmeans")  # however, package emmeans needs to be attached first
 
 # recreates basically Figure 4 (S&K, 2011, upper panel)
 # only the 4th and 6th x-axis position are flipped
@@ -206,7 +210,7 @@ emm_options(graphics.engine = "ggplot") # reset options
 
 # set up reference grid for custom contrasts:
 # this can be made faster via:
-emm_options(lmer.df = "Kenward-Roger") # set df for lsmeans to KR
+emm_options(lmer.df = "Kenward-Roger") # set df for emmeans to KR
 # emm_options(lmer.df = "Satterthwaite") # the default
 # emm_options(lmer.df = "asymptotic") # the fastest, no df
 (rg1 <- emmeans(sk_m1, c("instruction", "type", "inference")))
@@ -279,7 +283,7 @@ m1
 # 8   PrevType:meanWeight 1, 1601.18    6.18 *     .01
 # 9 NativeLanguage:Length 1, 1555.49 14.24 ***   .0002
 # ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 
 # Fitting a GLMM using parametric bootstrap:
 require("mlmRev") # for the data, see ?Contraception
@@ -297,7 +301,8 @@ gm1 <- mixed(use ~ age + I(age^2) + urban + livch + (1 | district), method = "PB
 
 data("Machines", package = "MEMSS") 
 # simple model with random-slopes for repeated-measures factor
-m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines)
+m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines, 
+            set_data_arg = TRUE) ## necessary for it to work!
   
 library("effects")
 
@@ -308,7 +313,7 @@ Effect("Machine", m1$full_model) # not correct:
 # 59.65000 52.35556 60.32222 
 
 # compare:
-emmeans(m1, "Machine")
+emmeans::emmeans(m1, "Machine")
  # Machine   emmean       SE  df asymp.LCL asymp.UCL
  # A       52.35556 1.680711 Inf  49.06142  55.64969
  # B       60.32222 3.528546 Inf  53.40640  67.23804

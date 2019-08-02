@@ -2,7 +2,10 @@
 title: "ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)"
 author: "Henrik Singmann"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
 vignette: >
   %\VignetteIndexEntry{ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)}
   %\VignetteEngine{knitr::rmarkdown}
@@ -11,6 +14,7 @@ vignette: >
 
 ```{r set-options, echo=FALSE, cache=FALSE}
 options(width = 90)
+knitr::opts_chunk$set(dpi=100)
 ```
 
 # Overview
@@ -37,10 +41,17 @@ In contrast to the analysis reported in the manuscript, we initially do not sepa
 
 # Data and R Preperation
 
+We begin by loading the packages we will be using throughout.
+
 ```{r message=FALSE, warning=FALSE}
-require(afex) # needed for ANOVA, emmeans is loaded automatically.
-require(multcomp) # for advanced control for multiple testing/Type 1 errors.
+library("afex")     # needed for ANOVA functions.
+library("emmeans")  # emmeans must now be loaded explicitly for follow-up tests.
+library("multcomp") # for advanced control for multiple testing/Type 1 errors.
+library("ggplot2")  # for customizing plots.
+afex_options(emmeans_model = "multivariate") # use multivariate model for all follow-up tests.
 ```
+
+Note that for ANOVAs involving repeated-measures factors, follow-up tests based on the multivariate model are generally preferrably to univariate follow-up tests. Consequently, we set this option globally. Future versions of `afex` will likely use the multivariate model as the default.
 
 ```{r}
 data(sk2011.1)
@@ -57,13 +68,20 @@ with(sk2011.1, table(inference, id, plausibility))
 
 # ANOVA
 
-To get the full ANOVA table for the model, we simply pass it to `aov_ez` (`aov_car` or `aov4` would be alternatives producing the same results) using the design as described above. We save the returned object for further analysis.
+To get the full ANOVA table for the model, we simply pass it to `aov_ez` using the design as described above. We save the returned object for further analysis.  
 
 ```{r}
 a1 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
        within = c("inference", "plausibility"))
 a1 # the default print method prints a data.frame produced by nice 
 ```
+
+The equivalent calls (i.e., producing exactly the same output) of the other two ANOVA functions `aov_car` or `aov4` is shown below.
+```{r, eval=FALSE}
+aov_car(response ~ instruction + Error(id/inference*plausibility), sk2011.1)
+aov_4(response ~ instruction + (inference*plausibility|id), sk2011.1)
+```
+
 
 As mentioned before, the two responses per cell of the design and participants are aggregated for the analysis as indicated by the warning message. Furthermore, the degrees of freedom are Greenhouse-Geisser corrected per default for all effects involving `inference`, as `inference` is a within-subject factor with more than two levels (i.e., MP, MT, AC, & DA). In line with our expectations, the three-way interaction is significant.
 
@@ -81,7 +99,7 @@ print(xtable::xtable(anova(a1), digits = c(rep(2, 5), 3, 4)), type = "html")
 
 # Post-Hoc Contrasts and Plotting
 
-To further analyze the data we need to pass it to package `emmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `emmeans` can be obtained in [its vignettes](https://cran.r-project.org/package=emmeans) and [faq](https://CRAN.R-project.org/package=emmeans/vignettes/FAQs.html). `emmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `emmeans`. `emmeans` uses the ANOVA model estimated via base R's `aov` function that  is part of an `afex_aov` object.
+To further analyze the data we need to pass it to package `emmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `emmeans` can be obtained in [its vignettes](https://cran.r-project.org/package=emmeans) and [faq](https://CRAN.R-project.org/package=emmeans/vignettes/FAQs.html). `emmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `emmeans`. When using the `multivariate` options as described above, `emmeans` uses the ANOVA model estimated via base R's `lm` method (which in the case of a multivariate response is an object of class `c("mlm", "lm")`). In the default setting (i.e., `emmeans_model = "univariate"`), `emmeans` uses the object created by base R's `aov` function, which for now is also part of an `afex_aov` object.
 
 ## Some First Contrasts
 
@@ -108,24 +126,26 @@ summary(as.glht(pairs(m1)), test=adjusted("free"))
 
 ### A Simple interaction
 
-We could now also be interested in the marginal means of the inferences across the two instruction types. `emmeans` offers two ways to do so. The first splits the contrasts across levels of the factor.
+We could now also be interested in the marginal means of the inferences across the two instruction types. `emmeans` offers two ways to do so. The first splits the contrasts across levels of the factor using the `by` argument.
 
 
 ```{r}
-m2 <- emmeans(a1, ~ inference|instruction)
+m2 <- emmeans(a1, "inference", by = "instruction")
+## equal: emmeans(a1, ~ inference|instruction)
 m2
 ```
 
-Consequently test are also only performed within each level:
+Consequently, tests are also only performed within each level of the `by` factor:
 
 ```{r}
 pairs(m2)
 ```
 
-The second version treats all factor combinations together, producing a considerably larger number of pairwise comparisons:
+The second version considers all factor levels together. Consequently, the number of pairwise comparisons is a lot larger:
 
 ```{r}
-m3 <- emmeans(a1, ~ inference:instruction)
+m3 <- emmeans(a1, c("inference", "instruction"))
+## equal: emmeans(a1, ~inference*instruction)
 m3
 pairs(m3)
 
@@ -142,40 +162,71 @@ c1 <- list(
   )
 
 contrast(m3, c1, adjust = "holm")
-summary(as.glht(contrast(m3, c1)), test =adjusted("free"))
+summary(as.glht(contrast(m3, c1)), test = adjusted("free"))
 ```
 
 The results can be interpreted as in line with expectations. Responses are larger for valid than invalid problems in the deductive, but not the probabilistic condition.
 
 ## Plotting
 
-Function `emmip` from package `emmeans` can be used for plotting the data directly from an `afex_aov` object. As said initially, we are interested in the three-way interaction of instruction with inference, plausibility, and instruction. We show a few variants of this plot in the following. `emmeans` supports plotting via either `lattice` or `ggplot2`. The default plot function uses `ggplot2`, which also supports model based confidence intervals (i.e., these intervals cannot be used to gauge whether or not two conditions differ).
+Since version `0.22`, `afex` comes with its own plotting function based on `ggplot2`, `afex_plot`, which works directly with `afex_aov` objects. 
 
+As said initially, we are interested in the three-way interaction of instruction with inference, plausibility, and instruction. As we saw above, this interaction was significant. Consequently, we are interested in plotting this interaction.
+
+### Basic Plots
+
+For `afex_plot`, we need to specify the `x`-factor(s), which determine which factor-levels or combinations of factor-levels are plotted on the x-axis. We can also define `trace` factor(s), which determine which factor levels are connected by lines. Finally, we can also define `panel` factor(s), which determine if the plot is split into subplots. `afex_plot` then plots the estimated marginal means obtained from `emmeans`, confidence intervals, and the raw data in the background. Note that the raw data in the background is per default drawn using an alpha blending of .5 (i.e., 50% semi-transparency). Thus, in case of several points lying directly on top of each other, this point appears noticeably darker.
 
 ```{r fig.width=7.5, fig.height=4}
-emmip(a1, instruction ~ inference|plausibility, CIs = TRUE)
+afex_plot(a1, x = "inference", trace = "instruction", panel = "plausibility")
 ```
 
-We can also pass a different theme for `ggplot2`, if we do not like the default one:
+In the default settings, the error bars show 95%-confidence intervals based on the standard error of the underlying model (i.e., the `lm` model in the present case). In the present case, in which each subplot (defined by `x`- and `trace`-factor) shows a combination of a within-subjects factor (i.e., `inference`) and a between-subjects (i.e., `instruction`) factor, this is not optimal. The error bars only allow to assess differences regarding the between-subjects factor (i.e., across the lines), but not inferences regarding the within-subjects factor (i.e., within one line). This is also indicated by a warning.
+
+An alternative would be within-subject confidence intervals:
+```{r fig.width=7.5, fig.height=4}
+afex_plot(a1, x = "inference", trace = "instruction", panel = "plausibility", 
+          error = "within")
+```
+
+However, those only allow inferences regarding the within-subject factors and not regarding the between-subjecta factor. So the same warning is emitted again.
+
+A further alternative is to suppress the error bars altogether. This is the approach used in our original paper and probably a good idea in general when figures show both between- and within-subjects factors within the same panel. The presence of the raw data in the background still provides a visual depiction of the variability of the data.
+```{r fig.width=7.5, fig.height=4}
+afex_plot(a1, x = "inference", trace = "instruction", panel = "plausibility", 
+          error = "none")
+```
+
+### Customizing Plots
+
+`afex_plot` allows to customize the plot in a number of different ways. For example, we can easily change the aesthetic mapping associated with the `trace` factor. So instead of using lineytpe and shape of the symbols, we can use color. Furthermore, we can change the graphical element used for plotting the data points in the background. For example, instead of plotting the raw data, we can replace this with a boxplot. Finally, we can also make both the points showing the means and the lines connecting the means larger.
 
 ```{r fig.width=7.5, fig.height=4}
-emmip(a1, instruction ~ inference|plausibility, CIs = TRUE) +
-  ggplot2::theme_light()
+p1 <- afex_plot(a1, x = "inference", trace = "instruction", 
+                panel = "plausibility", error = "none", 
+                mapping = c("color", "fill"), 
+                data_geom = geom_boxplot, data_arg = list(width = 0.4), 
+                point_arg = list(size = 1.5), line_arg = list(size = 1))
+p1
 ```
 
-One downside of the `ggplot2` version is that it appears to always distinguish the different lines by color and does not appear to support distinguishing the lines by linetype. For this, we can use `lattice` if we set the appropriate options:
+Note that `afex_plot` returns a `ggplot2` plot object which can be used for further customization. For example, one can easily change the `theme` to something that does not have a grey background:
 
-```{r, fig.width=7.5, fig.height=4}
-require(lattice) # for plots
-lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
-lattice.options(default.args = list(as.table = TRUE)) # better ordering
-emmip(a1, instruction ~ inference|plausibility, engine = "lattice")
+```{r fig.width=7.5, fig.height=4}
+p1 + theme_light()
 ```
 
+We can also set the theme globally for the remainder of the `R` session.
+
+```{r}
+theme_set(theme_light())
+```
+
+The full set of customizations provided by `afex_plot` is beyond the scope of this vignette. The examples on the help page at `?afex_plot` provide a good overview. 
 
 # Replicate Analysis from Singmann and Klauer (2011)
 
-As this plot is not very helpful, we now fit a new ANOVA model in which we separate the data in affirmation and denial inferences, as done in the original manuscript and plot the data then a second time.
+However, the plots shown so far are not particularly helpful with respect to the research question. Next, we fit a new ANOVA model in which we separate the data in affirmation and denial inferences. This was also done in the original manuscript. We then lot the data a second time.
 
 ```{r}
 a2 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
@@ -183,18 +234,15 @@ a2 <- aov_ez("id", "response", sk2011.1, between = "instruction",
 a2
 ```
 
-Then we plot the data from this ANOVA. Note that we again use the `lattice` engine to pass corrected x-axis labels directly.
+Then we plot the data from this ANOVA. Because each panel would again show a mixed-design, we suppress the error bars. 
 
 ```{r fig.width=7.5, fig.height=4}
-emmip(a2, ~instruction ~ plausibility+validity|what, 
-      engine = "lattice",
-      scales = list(x=list(
-        at = 1:4,
-        labels = c("pl:v", "im:v", "pl:i", "im:i")
-        )))
+afex_plot(a2, x = c("plausibility", "validity"), 
+          trace = "instruction", panel = "what", 
+          error = "none")
 ```
 
-We see the critical predicted cross-over interaction in the left of those two graphs. For valid but implausible problems (`im:v`) deductive responses are larger than probabilistic responses. The opposite is true for invalid but plausible problems (`pl:i`). We now tests these differences at each of the four x-axis ticks in each plot using custom contrasts (`diff_1` to `diff_4`). Furthermore, we test for a validity effect and plausibility effect in both conditions. 
+We see the critical and predicted cross-over interaction in the left of those two graphs. For implausible but valid problems deductive responses are larger than probabilistic responses. The opposite is true for plausible but invalid  problems. We now tests these differences at each of the four x-axis ticks in each plot using custom contrasts (`diff_1` to `diff_4`). Furthermore, we test for a validity effect and plausibility effect in both conditions. 
 
 
 ```{r}
@@ -212,21 +260,18 @@ c2 <- list(
 contrast(m4, c2, adjust = "holm")
 ```
 
-As the resulting eight contrasts have different numbers of degrees-of-freedom, we can only pass them to `multcomp` in small batches. This gives us more powerful Type 1 error corrections but overall a reduced correction as we now control for three families of tests (i.e., overall Type 1 error probability of .15).
-
+We can also pass these tests to `multcomp` which gives us more powerful Type 1 error corrections.
 
 ```{r}
-summary(as.glht(contrast(m4, c2[1:4])), test =adjusted("free"))
-summary(as.glht(contrast(m4, c2[5:6])), test =adjusted("free"))
-summary(as.glht(contrast(m4, c2[7:8])), test =adjusted("free"))
+summary(as.glht(contrast(m4, c2)), test = adjusted("free"))
 ```
+
+Unfortunately, in the present case this function throws several warnings. Nevertheless, the p-values from both methods are very similar and agree on whether or not they are below or above .05. Because of the warnings it seems advisable to use the one provided by `emmeans` directly and not use the ones from `multcomp`.
 
 The pattern for the affirmation problems is in line with the expectations: We find the predicted differences between the instruction types for valid and implausible (`diff_2`) and invalid and plausible (`diff_3`) and the predicted non-differences for the other two problems (`diff_1` and `diff_4`). Furthermore, we find a validity effect in the deductive but not in the probabilistic condition. Likewise, we find a plausibility effect in the probabilistic but not in the deductive condition.
 
 # Some Cautionary Notes
 
-* While the df of the ANOVA tables are Greenhouse-Geisser corrected per default for within-subject factors with more than two levels, this is not the case for post-hoc tests or contrasts using `emmeans`. The contrasts use uncorrected degrees of freedom that are Satterthwaite approximated. This most likely produces anti-conservative tests if compound symmetry/sphericity is violated.
-* For unbalanced samples, `aov` is usually not the correct choise. This is why the test of effects is based on `car::Anova`. However, for `emmeans` we need to use `aov` models. However, `emmeans` offers the option to weight the marginal means differently in case of different group sizes (i.e., unbalanced data). For example, it offers the option   that each group is assumed to be of equal size (i.e., `weights = "equal"`) or proportionally (i.e., `weights = "proportional"`). See help of `emmeans` for more information.
 * Choosing the right correction for multiple testing can be difficult. In fact `multcomp` comes with an accompanying book (Bretz et al., 2011). If the degrees-of-freedom of all contrasts are identical using `multcomp`'s method `free` is more powerful than simply using the Bonferroni-Holm method. `free` is a generalization of the Bonferroni-Holm method that takes the correlations among the model parameters into account and uniformly more powerful.
 * For data sets with many within-subject factors, creating the `aov` object can take some time (i.e., compared to producing the ANOVA table which is usually very fast). Those objects are also comparatively large, often multiple MB. If speed is important and one is not interested in employing `emmeans` one can set `return = "nice"` in the call to the ANOVA function to only receive the ANOVA table (this can also be done globally: `afex_options(return_aov = "nice")`).
 

@@ -1,9 +1,157 @@
                     *************************
+                    ** afex VERSION 0.25-x **
+                    *************************
+                    
+                    Changes in afex Version 0.25-x
+                    Released XXXX 2019
+                    
+    Significant User Visible Changes and New Features
+    
+    o   Better error messages for ANOVA in some case in which data shows 
+        structural problems (e.g., missing design cells).
+        
+    o   afex_plot() now first draws all graphical elements belonging to a 
+        specific factor level, before drawing graphical elements belonging to 
+        the next factor level in interaction plots (does not apply to data in 
+        the background). This avoids inconsistencies in plotting order between
+        error bars and connecting lines.
+        
+
+    Bugfixes
+
+    o   Correct Type III ANOVA results for character variables if 
+        factorize = FALSE.
+        
+    o   afex_plot() for mixed or merMod objects uses actual dv on y-axis.
+    
+    o   afex_plot() x-labels and legend-title display correctly in case more 
+        than one variable is displayed.
+        
+    o   Removed certain non-ASCII characters in examples:
+        https://github.com/singmann/afex/issues/66
+
+
+
+                    *************************
+                    ** afex VERSION 0.24-x **
+                    *************************
+                    
+                    Changes in afex Version 0.24-x
+                    Released July 2019
+                    
+    Significant User Visible Changes and New Features
+    
+    o   Added possibility to suppress calculation of aov object for ANOVAs, via
+        argument 'include_aov' (with default = TRUE). Suppressing the 
+        calculation of the aov object can significantly reduce estimation 
+        time of ANOVAs for models with large N and within-subjects factors. Even 
+        for small models, a speed increase by more than 10% is expected.
+        For ANOVAs without aov object, emmeans are always based on the 
+        multivariate or lm model. 
+
+    o   Added test_levene() and test_sphercitiy() functions for assumption tests
+        for ANOVA models. Thanks to Mattan S. Ben-Shachar. Addresses #55, 
+        https://github.com/singmann/afex/issues/55
+
+    o   afex now depends on R (>= 3.5.0), as it uses binary/serialized objects 
+        version 3.
+
+    Bugfixes
+
+    o   Sum-to-zero contrasts will now be set to all character variables 
+        passed to mixed(). Before, only factor variables were assigned 
+        sum-to-zero contrasts and transformation into factors happened only in 
+        the call to model.matrix() (which then used the global contrasts).
+
+
+                    *************************
+                    ** afex VERSION 0.23-x **
+                    *************************
+                    
+                    Changes in afex Version 0.23-x
+                    Released February 2019
+                    
+    Significant User Visible Changes and New Features
+    
+    o   Added afex_plot.default() method which works with a wide variety of 
+        fitted objects. See new vignette:
+        vignette("afex_plot_supported_models", package = "afex")
+        
+    o   In afex_plot(), renamed 'random' argument to 'id' argument.
+    
+    Bugfixes
+
+    o   Corrected bug in afex_plot() vignette and examples. Correct argument
+        name is factor_levels.
+
+    o   Removed reference to ascii package from documentation, as the package 
+        was removed from CRAN.
+
+
+                    *************************
+                    ** afex VERSION 0.22-x **
+                    *************************
+                    
+                    Changes in afex Version 0.22-x
+                    Released September 2018
+                    
+    Significant User Visible Changes and New Features
+    
+    o   New functions for plotting results (means, error bars, and raw data) 
+        using ggplot2, afex_plot(), generic function for afex and lme4::merMod 
+        objects. Furthermore added two more functions:
+        - interaction_plot(): workhorse producing interaction plot
+        - oneway_plot(): workhorse producing oneway plot
+        Error bars can display confidence intervals (the default) or standard
+        errors and can be calculated using a variety of different standard 
+        errors (e.g., model-based, within-subjects).
+
+    o   Added vignette introducing afex_plot().
+        
+    o   Updated ANOVA vignette to use afex_plot() and the multivariate for 
+        follow-up test.
+    
+    o   Package emmeans was moved to suggests and needs to be either attached 
+        explicitly or called with ::
+        Option 1: emmeans::emmeans() 
+        Option 2: library("emmeans") and then just emmeans()
+        
+    o   Added call slot to mixed objects holding the matched call.
+    
+    Bugfixes
+
+    o   Error in ANOVA examples using emmeans corrected, see:
+        https://stats.stackexchange.com/q/360900/442
+
+
+                    *************************
+                    ** afex VERSION 0.21-x **
+                    *************************
+                    
+                    Changes in afex Version 0.21-x
+                    Released June 2018
+                    
+    Significant User Visible Changes and New Features
+    
+    o   Smaller package footprint: 
+        The stringr package is not imported any more, all calls to stringr 
+        functions were replaced with calls to base R functions.
+        The coin package (used in compare.2.vectors) was moved from Imports to 
+        Suggests.
+    
+    Bugfixes
+
+    o   ANOVA functions produce accurate emmeans even for ANCOVAs, see: 
+        https://afex.singmann.science/forums/topic/precise-estimates-from-emmeans-across-lm-and-aov_ez
+
+    
+    
+                    *************************
                     ** afex VERSION 0.20-x **
                     *************************
                     
-                    Changes in afex Version 0.20-0
-                    Released xxx 2018
+                    Changes in afex Version 0.20-x
+                    Released April 2018
                     
     Significant User Visible Changes and New Features
     
@@ -13,9 +161,24 @@
         estimate and more adequately accounts for violations of sphericity. To 
         use this model either call emmeans(..., model="multivariate") or set 
         globally via: afex_options(emmeans_model = "multivariate")
+
+    o   ANOVA functions now allow transformations of the dv (thanks to 
+        Russell Lenth).
     
     o   better (i.e., simpler) examples for mixed (use data from MEMSS). Added
         example showing how to use mixed() with effects package for plotting.
+        
+    o   set_data_arg argument of mixed() is now per default controlled via 
+        afex_options("set_data_arg"). The default has also changed from TRUE to 
+        FALSE. The reason for this change is that FALSE appears to work better 
+        with emmeans. 
+        
+    o   afex_aov objects have received an additional attribute, 
+        "incomplete_cases", that contains the IDs of removed participants due to 
+        missing values (thanks to Frederik Aust).
+        
+    o   afex should now work with the upcoming versions of car (3.0) and 
+        lmerTest (3.0). The latter thanks to Rune Haubo Bojesen. 
     
     Bugfixes
 
@@ -29,6 +192,8 @@
         
     o   set_data_arg now works for lmer_alt and mixed(..., return = "merMod"). 
         This allows to use those objects with e.g., the effects package.
+        
+    o   afex should now work with car version 3.0.
 
     
                     *************************

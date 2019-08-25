@@ -40,12 +40,40 @@ test_that("rstanarm plots", {
   cbpp <- lme4::cbpp 
   cbpp$prob <- with(cbpp, incidence / size)
   capture_output({
-  example_model <- rstanarm::stan_glmer(prob ~ size + period + (1|herd),
+  example_model <- rstanarm::stan_glmer(prob ~ period + (1|herd),
                                         data = cbpp, family = binomial, weight = size,
                                         chains = 2, cores = 1, seed = 12345, iter = 500)
   })
   b1n <- afex_plot(example_model, "period")
   b2n <- afex_plot(example_model, "period", data_geom = geom_violin)
+  expect_is(b1n, "ggplot")
+  expect_is(b2n, "ggplot")
+  
+  ## make cbpp long
+  cbpp_l <- vector("list", nrow(cbpp))
+  for (i in seq_along(cbpp_l)) {
+    cbpp_l[[i]] <- data.frame(
+      herd = cbpp$herd[i],
+      period = cbpp$period[i],
+      incidence = rep(0, cbpp$size[i])
+    )
+    cbpp_l[[i]]$incidence[seq_len(cbpp$incidence[i])] <- 1
+  }
+  cbpp_l <- do.call("rbind", cbpp_l)
+  cbpp_l$herd <- factor(cbpp_l$herd, levels = levels(cbpp$herd))
+  cbpp_l$period <- factor(cbpp_l$period, levels = levels(cbpp$period))
+  
+  capture_output({
+    example_model2 <- rstanarm::stan_glmer(incidence ~ period + (1|herd),
+                                           data = cbpp_l, family = binomial, 
+                                           chains = 2, cores = 1, seed = 12345, iter = 500)
+  })
+  
+  b3n <- afex_plot(example_model2, "period")
+  b4n <- afex_plot(example_model2, "period", id = "herd")
+  # b3n <- afex_plot(example_model2, "period", id = "herd", data = cbpp_l)
+  expect_is(b3n, "ggplot")
+  expect_is(b4n, "ggplot")
   
   skip_if_not_installed("MEMSS")
   data("Machines", package = "MEMSS") 
@@ -55,14 +83,16 @@ test_that("rstanarm plots", {
                             chains = 2, cores = 1, seed = 12345, iter = 500)
   }))
   
-  b3n <- afex_plot(mm, "Machine")
-  b4n <- afex_plot(mm, "Machine", id = "Worker", data = Machines)
+  b5n <- afex_plot(mm, "Machine")
+  b6n <- afex_plot(mm, "Machine", id = "Worker")
   load(system.file("extdata/", "plots_rstanarm.rda", package = "afex"))
   
   expect_equivalent(b1$data, b1n$data, tolerance = 0.1)
   expect_equivalent(b2$data, b2n$data, tolerance = 0.1)
   expect_equivalent(b3$data, b3n$data, tolerance = 0.1)
   expect_equivalent(b4$data, b4n$data, tolerance = 0.1)
+  expect_equivalent(b5$data, b5n$data, tolerance = 0.1)
+  expect_equivalent(b6$data, b6n$data, tolerance = 0.1)
 })
 
 test_that("brms plots", {

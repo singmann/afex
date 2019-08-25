@@ -3,7 +3,7 @@
                     *************************
                     
                     Changes in afex Version 0.25-x
-                    Released XXXX 2019
+                    Released August 2019
                     
     Significant User Visible Changes and New Features
     
@@ -26,6 +26,10 @@
     
     o   afex_plot() x-labels and legend-title display correctly in case more 
         than one variable is displayed.
+        
+    o   The default method for afex_plot() can now aggregate via the id argument 
+        even if the corresponding factor is only part if the random effects 
+        terms (see rstanarm examples in vignette).
         
     o   Removed certain non-ASCII characters in examples:
         https://github.com/singmann/afex/issues/66

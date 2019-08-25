@@ -681,10 +681,14 @@ afex_plot.default <- function(object,
   }
   ## prepare raw (i.e., participant by cell) data if missing
   if (missing(data)) {
-    data <- emmeans::recover_data(
+    data <- tryCatch(emmeans::recover_data(
+      object = object, 
+      #trms = terms(object)
+      trms = terms(lme4::subbars(formula(object)))
+    ), error = function(e) emmeans::recover_data(
       object = object, 
       trms = terms(object)
-    )
+    ))
   }
   if (missing(id)) {
     message("No id column passed. ", 

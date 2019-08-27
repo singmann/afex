@@ -258,7 +258,7 @@
 #'   https://doi.org/10.1198/000313001317097960
 #'   
 #'   
-#' @importFrom stats aggregate sd qt
+#' @importFrom stats aggregate sd qt formula
 #' 
 #' @example examples/examples.afex_plot.R
 #'   

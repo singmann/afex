@@ -1,4 +1,22 @@
                     *************************
+                    ** afex VERSION 0.26-x **
+                    *************************
+                    
+                    Changes in afex Version 0.26-x
+                    Released XXX 2019
+                    
+    Significant User Visible Changes and New Features
+	
+	o	
+	
+	Bugfixes
+	
+	o	Warning message for ANOVA functions when covariate has several values 
+		per ID. ANOVAs generally support only covariates with one value per 
+		ID/unit of observation.
+
+	
+					*************************
                     ** afex VERSION 0.25-x **
                     *************************
                     

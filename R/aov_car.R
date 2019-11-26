@@ -429,8 +429,19 @@ aov_car <- function(formula,
           "Numerical variables NOT centered on 0 (i.e., likely bogus results): ", 
                       paste0(non.null, collapse = ", ")), call. = FALSE)
     }
+    for (i in seq_along(c.ns)) {
+      check_unique_covariate <- tapply(
+        data[[c.ns[i]]], INDEX = data[[id]], FUN = function(x) length(unique(x))
+      )
+      if (any(check_unique_covariate > 1)) {
+        warning("For numerical covariate '", c.ns[i], "', multiple values for one ID.\n", 
+             "ANOVA functions only support covariates with one value per ID.\n",
+             "Use mixed() or other mixed model for within-subjects/repeated-measures covariates.",
+             call. = FALSE)
+      }
+    }
+    
   }
-  
   for (i in c(between, within)) {
     if (is.factor(data[,i]) && length(unique(data[,i])) == 1) 
       stop(paste0("Factor \"", i, 

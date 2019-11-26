@@ -238,7 +238,7 @@ test_that("aov_ez works with multiple covariates", {
   msq2 <- droplevels(msq2[msq2$ID != "18",])
   msq2$TOD <- msq2$TOD-mean(msq2$TOD)
   msq2$MSQ_Time <- msq2$MSQ_Time-mean(msq2$MSQ_Time)
-  msq2$condition <- msq2$condition-mean(msq2$condition) # that is somewhat stupid
+  msq2$condition <- factor(msq2$condition)
   expect_is(aov_ez(data=msq2, dv="Extraversion", id = "ID", between = "condition", 
     covariate=c("TOD", "MSQ_Time"), factorize=FALSE, fun_aggregate = mean), "afex_aov")
 })
@@ -268,4 +268,29 @@ test_that("aov_car: character variables and factorize = FALSE", {
                 fun_aggregate = mean, factorize = FALSE)
   expect_equal(a1$anova_table, a2$anova_table)
   expect_equal(a1$anova_table, a3$anova_table)
+})
+
+test_that("covariate bug: excldues data", {
+  #fish_data <- read.csv("tests/testthat/fishdatabase_cov.csv")
+  fish_data <- read.csv("fishdatabase_cov.csv")
+  
+  model1 <- aov_ez(id = "id", dv = "approachdist", 
+                   data = fish_data, 
+                   within = c("stimsize", "stimposition"), 
+                   factorize = FALSE)
+  
+  fish_data$tempc <- fish_data$temp - mean(fish_data$temp)
+  fish_data$tempc2 <- (fish_data$temp - mean(fish_data$temp)) / sd(fish_data$temp)
+  
+  expect_warning(aov_ez(id = "id", dv = "approachdist", 
+                   data = fish_data, 
+                   within = c("stimsize", "stimposition"), 
+                   covariate = "tempc", factorize = FALSE), 
+               "covariates with one value per ID")
+  
+  expect_warning(aov_ez(id = "id", dv = "approachdist", 
+                   data = fish_data, 
+                   within = c("stimsize", "stimposition"), 
+                   covariate = "tempc2", factorize = FALSE), 
+               "covariates with one value per ID")
 })

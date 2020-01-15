@@ -7,7 +7,7 @@
                     
     Significant User Visible Changes and New Features
     
-    o   factor_level argument of afex_plot() now accepts named character vectors
+    o   factor_levels argument of afex_plot() now accepts named character vectors
         which allows: 
         (1) renaming only a subset of factor levels (if only a subset of levels 
             is specified) 

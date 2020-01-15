@@ -79,7 +79,7 @@ p_an <- afex_plot(aw, x = "angle", trace = "noise", error = "within",
   labs(y = "RTs (in ms)", x = "Angle (in degrees)")
 ```
 
-Note that we could have also used the `factor_levels` argument to change the order of the factor levels by passing a named character vector (e.g., `factor_levels = list(angle = c(X8 = "8°", X4 = "4°", X0 = "0°"))`). This would change the order either in the legend or on the x-axis.
+As the additional output shows, changing the factor levels via `factor_levels` emits a `message` detailing old and new factor levels in the form `old -> new`. This message can be suppressed by wrapping the `afex_plot()` call into a `suppressMessages()` call or via `RMarkdown` settings. Note that we could have also used the `factor_levels` argument for changing the order of the factor levels by passing a named character vector (e.g., `factor_levels = list(angle = c(X8 = "8°", X4 = "4°", X0 = "0°"))`). This would change the order either on the x-axis or in the legend.
 
 As said above, I am not a big fan of the default grey theme of `ggplot2` plots. Consequently, we compare a number of different themes for this plot in the following. For all but `ggpubr::theme_pubr()`, we also move the legend to the bottom as this better allows the plot to cover only a single column in a two-column layout. `ggpubr::theme_pubr()` automatically plots the legend on top.
 

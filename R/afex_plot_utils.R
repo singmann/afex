@@ -65,6 +65,71 @@ afex_plot_internal <- function(x,
 
 se <- function(x, na.rm = FALSE) sd(x, na.rm = na.rm)/sqrt(length(x))
 
+rename_factor_levels <- function(data, factor_levels, 
+                                 status_message = TRUE) {
+  if (length(factor_levels) > 0) {
+    if (is.null(names(factor_levels))) {
+      stop("factor_levels needs to be a named list.", call. = FALSE)
+    }
+    if (any(!(names(factor_levels) %in% colnames(data)))) {
+      if (status_message) {
+        warning(
+          "factor_levels: No factor named ", 
+          paste(
+            paste0("'", 
+                   names(factor_levels)
+                   [!(names(factor_levels) %in% colnames(data))],
+                   "'"), 
+            collapse = ", "), 
+          " in data.",
+          call. = FALSE
+        )  
+      }
+      factor_levels <- factor_levels[names(factor_levels) %in% colnames(data)]
+    }
+    for (i in seq_along(factor_levels)) {
+      if (is.null(names(factor_levels[[i]]))) {
+        if (length(factor_levels[[i]]) != 
+            length(levels(data[[names(factor_levels)[i]]]))) {
+          stop("length of new factor_levels for '", 
+               names(factor_levels)[i], "' != length of factor levels.",
+               call. = FALSE)
+        }
+        names(factor_levels[[i]]) <- levels(data[[names(factor_levels)[i]]])
+      }
+      factor_levels[[i]] <- factor_levels[[i]][ 
+        names(factor_levels[[i]]) %in% levels(data[[names(factor_levels)[i]]]) ]
+      if (status_message) {
+        message("Renaming/reordering factor levels of '", 
+                names(factor_levels)[i], "':\n  ", 
+                paste(
+                  paste(
+                    levels(data[[names(factor_levels)[i]]])[
+                      match(names(factor_levels[[i]]), 
+                            levels(data[[names(factor_levels)[i]]]))
+                      ], 
+                        factor_levels[[i]], sep = " -> "), 
+                  collapse = "\n  ")
+        )
+      }
+      if (length(factor_levels[[i]]) == 
+          length(levels(data[[names(factor_levels)[i]]]))) {
+        data[[names(factor_levels)[i]]] <- factor(
+          x = data[[names(factor_levels)[i]]], 
+          levels = names(factor_levels[[i]]), 
+          labels = factor_levels[[i]]
+        )  
+      } else {
+        levels(data[[names(factor_levels)[i]]])[
+          match(names(factor_levels[[i]]), 
+                levels(data[[names(factor_levels)[i]]]))
+          ] <- factor_levels[[i]]
+      }
+    }
+  }
+  data
+}
+
 get_emms <- function(object, 
                      x,
                      trace,
@@ -83,9 +148,12 @@ get_emms <- function(object,
                                          specs = list(all_vars), 
                                          type = list("response"),
                                          emmeans_arg)))
-  for (i in seq_along(factor_levels)) {
-    levels(emms[[names(factor_levels)[i]]]) <- factor_levels[[i]]
-  }
+  emms <- rename_factor_levels(
+    data = emms, 
+    factor_levels = factor_levels, 
+    status_message = TRUE
+  )
+  
   emms$x <- interaction(emms[x], sep = "\n")
   #col_y <- colnames(emms)[which(colnames(emms) == "SE")-1]
   if (any(colnames(emms) == "SE")) {
@@ -112,9 +180,13 @@ prep_data <- function(data,
                       factor_levels,
                       dv_col, id) {
   all_vars <- c(x, trace, panel)
-  for (i in seq_along(factor_levels)) {
-    levels(data[[names(factor_levels)[i]]]) <- factor_levels[[i]]
-  }
+  
+  data <- rename_factor_levels(
+    data = data, 
+    factor_levels = factor_levels, 
+    status_message = FALSE
+  )
+  
   colnames(data)[colnames(data) == dv_col] <- "y"
   if (!is.numeric(data$y)) {
     message("transforming dv to numerical scale")
@@ -162,8 +234,8 @@ get_data_based_cis <- function(emms, data, error,
   } else if (error == "mean") {
     ses <- tapply(data$y, INDEX = list(data$all_vars), FUN = se)
     sizes <- tapply(data$y, INDEX = list(data$all_vars), FUN = length)
-    stopifnot(emms$all_vars == names(ses))
-    emms$error <- ses
+    stopifnot(emms$all_vars %in% names(ses))
+    emms$error <- ses[emms$all_vars]
     emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
     emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
   } else if (error %in% c("CMO", "within")) {
@@ -183,8 +255,8 @@ get_data_based_cis <- function(emms, data, error,
     new_z <- sqrt(J / (J-1)) * (new_y - y_bar[within_fac]) + y_bar[within_fac]
     ses <- tapply(new_z, INDEX = list(data$all_vars), FUN = se)
     sizes <- tapply(new_z, INDEX = list(data$all_vars), FUN = length)
-    stopifnot(emms$all_vars == names(ses))
-    emms$error <- ses
+    stopifnot(emms$all_vars %in% names(ses))
+    emms$error <- ses[emms$all_vars]
     emms$lower <- emms$y - qt(1-(1-error_level)/2, sizes - 1) * emms$error
     emms$upper <- emms$y + qt(1-(1-error_level)/2, sizes - 1) * emms$error
   } else if (error == "between") {

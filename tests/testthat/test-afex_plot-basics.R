@@ -215,7 +215,70 @@ test_that("relabeling of factors and legend works", {
                                        noise = c("Absent", "Present")))
   expect_equal(levels(p1$data$noise), c("Absent", "Present"))
   expect_equal(levels(p1$data$angle), c("0", "4", "8"))
-
+  
+  p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
+                  factor_levels = list(
+                    angle = c(X8 = "8", X4 = "4", X0 = "0"),
+                    noise = c(present = "Present")))
+  expect_equal(levels(p2$data$angle), rev(c("0", "4", "8")))
+  expect_equal(levels(p2$data$noise), c("absent", "Present"))
+  
+  p1d <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
+                  factor_levels = list(angle = c("0", "4", "8"),
+                                       noise = c("Absent", "Present")), 
+                  return = "data")
+  p2d <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
+                  factor_levels = list(
+                    angle = c(X8 = "8", X4 = "4", X0 = "0"),
+                    noise = c(present = "Present")), 
+                  return = "data")
+  expect_equal(p1d$means$lower, p2d$means$lower)
+  
+  expect_warning(p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "mean",
+                  factor_levels = list(
+                    angle = c(X8 = "8", X4 = "4", X0 = "0"),
+                    noise = c(present = "Present"))), 
+                 "show within-subjects factors, but not within-subjects error bars")
+  expect_equal(levels(p3$data$angle), rev(c("0", "4", "8")))
+  
+  expect_warning(p3d <- afex_plot(aw, x = "noise", trace = "angle", error = "mean",
+                  factor_levels = list(
+                    angle = c(X8 = "8", X4 = "4", X0 = "0"),
+                    noise = c(present = "Present")), 
+                  return = "data"), 
+                 "show within-subjects factors, but not within-subjects error bars")
+  
+  expect_warning(p3nd <- afex_plot(aw, x = "noise", trace = "angle", error = "mean",
+                  factor_levels = list(angle = c("0", "4", "8"),
+                                       noise = c("Absent", "Present")), 
+                  return = "data"), 
+                 "show within-subjects factors, but not within-subjects error bars")
+  expect_equal(p3d$means$lower, p3nd$means$lower)
+  
+  expect_warning(p4d <- afex_plot(aw, x = "noise", trace = "angle", 
+                                  error = "between",
+                                  factor_levels = list(
+                                    angle = c(X8 = "8", X4 = "4", X0 = "0"),
+                                    noise = c(present = "Present")), 
+                                  return = "data"), 
+                 "show within-subjects factors, but not within-subjects error bars")
+  
+  expect_warning(p4nd <- afex_plot(aw, x = "noise", trace = "angle", 
+                                   error = "between",
+                                   factor_levels = list(angle = c("0", "4", "8"),
+                                                        noise = c("Absent", "Present")), 
+                                   return = "data"), 
+                 "show within-subjects factors, but not within-subjects error bars")
+  expect_equal(p4d$means$lower, p4nd$means$lower)
+  
+  expect_error(
+    afex_plot(aw, x = "noise", trace = "angle", error = "within",
+                  factor_levels = list(angle = c("0", "4"),
+                                       noise = c("Absent", "Present"))), 
+    "length of new factor_levels for 'angle' != length of factor levels"
+  )
+  
+  
   p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
                   legend_title = "Noise Condition")
   expect_equal(p2$guides$shape$title, "Noise Condition")

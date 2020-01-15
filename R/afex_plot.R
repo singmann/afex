@@ -89,9 +89,15 @@
 #'   \code{"data"} returns a list with two \code{data.frame}s containing the 
 #'   data used for plotting: \code{means} contains the means and standard errors
 #'   for the foreground, \code{data} contains the raw data in the background.
-#' @param factor_levels A \code{list} of new factor levels that should be used in 
-#'   the plot. The name of each list entry needs to correspond to one of the 
-#'   factors in the plot. 
+#' @param factor_levels A \code{list} of new factor levels that should be used
+#'   in the plot. The name of each list entry needs to correspond to one of the
+#'   factors in the plot. Each list element can optionally be a named character
+#'   vector where the name corresponds to the old factor level and the value to
+#'   the new factor level. Named vectors allow two things: (1) updating only a
+#'   subset of factor levels (if only a subset of levels is specified) and (2)
+#'   reordering (and renaming) the factor levels, as order of names within a
+#'   list element are the order that will be used for plotting. If specified,
+#'   emits a \code{message} with \code{old -> new} factor levels.
 #' @param legend_title A scalar \code{character} vector with a new title for the
 #'   legend.
 #' @param data For the \code{afex_plot.default} method, an optional

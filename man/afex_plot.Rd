@@ -12,52 +12,149 @@
 \usage{
 afex_plot(object, ...)
 
-\method{afex_plot}{afex_aov}(object, x, trace, panel, mapping,
-  error = "model", error_ci = TRUE, error_level = 0.95,
-  error_arg = list(width = 0), data_plot = TRUE, data_geom,
-  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
-  point_arg = list(), line_arg = list(), emmeans_arg = list(),
-  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
-  ...)
+\method{afex_plot}{afex_aov}(
+  object,
+  x,
+  trace,
+  panel,
+  mapping,
+  error = "model",
+  error_ci = TRUE,
+  error_level = 0.95,
+  error_arg = list(width = 0),
+  data_plot = TRUE,
+  data_geom,
+  data_alpha = 0.5,
+  data_arg = list(color = "darkgrey"),
+  point_arg = list(),
+  line_arg = list(),
+  emmeans_arg = list(),
+  dodge = 0.5,
+  return = "plot",
+  factor_levels = list(),
+  legend_title,
+  ...
+)
 
-\method{afex_plot}{mixed}(object, x, trace, panel, mapping, id,
-  error = "model", error_ci = TRUE, error_level = 0.95,
-  error_arg = list(width = 0), data_plot = TRUE, data_geom,
-  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
-  point_arg = list(), line_arg = list(), emmeans_arg = list(),
-  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
-  ...)
+\method{afex_plot}{mixed}(
+  object,
+  x,
+  trace,
+  panel,
+  mapping,
+  id,
+  error = "model",
+  error_ci = TRUE,
+  error_level = 0.95,
+  error_arg = list(width = 0),
+  data_plot = TRUE,
+  data_geom,
+  data_alpha = 0.5,
+  data_arg = list(color = "darkgrey"),
+  point_arg = list(),
+  line_arg = list(),
+  emmeans_arg = list(),
+  dodge = 0.5,
+  return = "plot",
+  factor_levels = list(),
+  legend_title,
+  ...
+)
 
-\method{afex_plot}{merMod}(object, x, trace, panel, mapping, id,
-  error = "model", error_ci = TRUE, error_level = 0.95,
-  error_arg = list(width = 0), data_plot = TRUE, data_geom,
-  data_alpha = 0.5, data_arg = list(color = "darkgrey"),
-  point_arg = list(), line_arg = list(), emmeans_arg = list(),
-  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
-  ...)
+\method{afex_plot}{merMod}(
+  object,
+  x,
+  trace,
+  panel,
+  mapping,
+  id,
+  error = "model",
+  error_ci = TRUE,
+  error_level = 0.95,
+  error_arg = list(width = 0),
+  data_plot = TRUE,
+  data_geom,
+  data_alpha = 0.5,
+  data_arg = list(color = "darkgrey"),
+  point_arg = list(),
+  line_arg = list(),
+  emmeans_arg = list(),
+  dodge = 0.5,
+  return = "plot",
+  factor_levels = list(),
+  legend_title,
+  ...
+)
 
-\method{afex_plot}{default}(object, x, trace, panel, mapping, id, dv, data,
-  within_vars, between_vars, error = "model", error_ci = TRUE,
-  error_level = 0.95, error_arg = list(width = 0), data_plot = TRUE,
-  data_geom, data_alpha = 0.5, data_arg = list(color = "darkgrey"),
-  point_arg = list(), line_arg = list(), emmeans_arg = list(),
-  dodge = 0.5, return = "plot", factor_levels = list(), legend_title,
-  ...)
+\method{afex_plot}{default}(
+  object,
+  x,
+  trace,
+  panel,
+  mapping,
+  id,
+  dv,
+  data,
+  within_vars,
+  between_vars,
+  error = "model",
+  error_ci = TRUE,
+  error_level = 0.95,
+  error_arg = list(width = 0),
+  data_plot = TRUE,
+  data_geom,
+  data_alpha = 0.5,
+  data_arg = list(color = "darkgrey"),
+  point_arg = list(),
+  line_arg = list(),
+  emmeans_arg = list(),
+  dodge = 0.5,
+  return = "plot",
+  factor_levels = list(),
+  legend_title,
+  ...
+)
 
-interaction_plot(means, data, mapping = c("shape", "lineytpe"),
-  error_plot = TRUE, error_arg = list(width = 0), data_plot = TRUE,
-  data_geom = ggplot2::geom_point, data_alpha = 0.5,
-  data_arg = list(color = "darkgrey"), point_arg = list(),
-  line_arg = list(), dodge = 0.5, legend_title, col_x = "x",
-  col_y = "y", col_trace = "trace", col_panel = "panel",
-  col_lower = "lower", col_upper = "upper")
+interaction_plot(
+  means,
+  data,
+  mapping = c("shape", "lineytpe"),
+  error_plot = TRUE,
+  error_arg = list(width = 0),
+  data_plot = TRUE,
+  data_geom = ggplot2::geom_point,
+  data_alpha = 0.5,
+  data_arg = list(color = "darkgrey"),
+  point_arg = list(),
+  line_arg = list(),
+  dodge = 0.5,
+  legend_title,
+  col_x = "x",
+  col_y = "y",
+  col_trace = "trace",
+  col_panel = "panel",
+  col_lower = "lower",
+  col_upper = "upper"
+)
 
-oneway_plot(means, data, mapping = "", error_plot = TRUE,
-  error_arg = list(width = 0), data_plot = TRUE,
-  data_geom = ggbeeswarm::geom_beeswarm, data_alpha = 0.5,
-  data_arg = list(color = "darkgrey"), point_arg = list(),
-  legend_title, col_x = "x", col_y = "y", col_panel = "panel",
-  col_lower = "lower", col_upper = "upper")
+oneway_plot(
+  means,
+  data,
+  mapping = "",
+  error_plot = TRUE,
+  error_arg = list(width = 0),
+  data_plot = TRUE,
+  data_geom = ggbeeswarm::geom_beeswarm,
+  data_alpha = 0.5,
+  data_arg = list(color = "darkgrey"),
+  point_arg = list(),
+  legend_title,
+  col_x = "x",
+  col_y = "y",
+  col_panel = "panel",
+  col_lower = "lower",
+  col_upper = "upper"
+)
 }
 \arguments{
 \item{object}{\code{afex_aov}, \code{mixed}, \code{merMod} or other model
@@ -142,9 +239,15 @@ The default \code{"plot"} returns the \pkg{ggplot2} plot. The other option
 data used for plotting: \code{means} contains the means and standard errors
 for the foreground, \code{data} contains the raw data in the background.}
 
-\item{factor_levels}{A \code{list} of new factor levels that should be used in 
-the plot. The name of each list entry needs to correspond to one of the 
-factors in the plot.}
+\item{factor_levels}{A \code{list} of new factor levels that should be used
+in the plot. The name of each list entry needs to correspond to one of the
+factors in the plot. Each list element can optionally be a named character
+vector where the name corresponds to the old factor level and the value to
+the new factor level. Named vectors allow two things: (1) updating only a
+subset of factor levels (if only a subset of levels is specified) and (2)
+reordering (and renaming) the factor levels, as order of names within a
+list element are the order that will be used for plotting. If specified,
+emits a \code{message} with \code{old -> new} factor levels.}
 
 \item{legend_title}{A scalar \code{character} vector with a new title for the
 legend.}
@@ -487,10 +590,20 @@ afex_plot(aw, x = "angle", panel = "noise", error = "within",
 ##                      Other Basic Options                     -
 ##---------------------------------------------------------------
 
-## relabel factor levels via factor_levels
+## relabel factor levels via factor_levels (with message)
 afex_plot(aw, x = "noise", trace = "angle", 
           factor_levels = list(angle = c("0°", "4°", "8°"),
                                noise = c("Absent", "Present")))
+
+## factor_levels allows named vectors which enable reordering the factor levels 
+### and renaming subsets of levels:
+afex_plot(aw, x = "noise", trace = "angle", 
+          factor_levels = list(
+            angle = c(X8 = "8°", X4 = "4°", X0 = "0°"),
+            noise = c(present = "Present")
+          )
+)
+
 
 ## Change title of legend
 afex_plot(aw, x = "noise", trace = "angle", 

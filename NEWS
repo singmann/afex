@@ -1,4 +1,21 @@
                     *************************
+                    ** afex VERSION 0.26-x **
+                    *************************
+                    
+                    Changes in afex Version 0.26-x
+                    Released January 2020
+                    
+    Significant User Visible Changes and New Features
+    
+    o           
+
+    Bugfixes
+
+    o   msq data set is now part of psychTools and not of psych. 
+        Fixes CRAN check issues.
+
+
+                    *************************
                     ** afex VERSION 0.25-x **
                     *************************
                     

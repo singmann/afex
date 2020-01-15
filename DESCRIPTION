@@ -22,7 +22,7 @@ Suggests:
     tidyr,
     dfoptim,
     Matrix,
-    psych,
+    psychTools,
     ggplot2,
     MEMSS,
     effects,

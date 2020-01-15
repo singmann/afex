@@ -231,8 +231,8 @@ test_that("aov_car works with column names containing spaces for between factors
 
 
 test_that("aov_ez works with multiple covariates", {
-  skip_if_not_installed("psych")
-  require(psych)
+  skip_if_not_installed("psychTools")
+  require(psychTools)
   data(msq)
   msq2 <- msq[!is.na(msq$Extraversion),]
   msq2 <- droplevels(msq2[msq2$ID != "18",])

@@ -26,7 +26,7 @@ If a person is wet, then the person fell into a swimming pool.    \cr
 A person is wet.  \cr
 How valid is the conclusion/How likely is it that the person fell into a swimming pool?
 
-Our study also included valid and plausible and invalid and implausible problems.
+Our study also included valid and plausible and invalid and implausible problems. 
 
 Note that the factor `plausibility` is not present in the original manuscript, there it is a results of a combination of other factors.
 }

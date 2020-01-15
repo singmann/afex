@@ -6,13 +6,24 @@
 \alias{lmer_alt}
 \title{p-values for fixed effects of mixed-model via lme4::lmer()}
 \usage{
-mixed(formula, data, type = afex_options("type"),
-  method = afex_options("method_mixed"), per_parameter = NULL,
-  args_test = list(), test_intercept = FALSE,
-  check_contrasts = afex_options("check_contrasts"), expand_re = FALSE,
-  all_fit = FALSE, set_data_arg = afex_options("set_data_arg"),
-  progress = TRUE, cl = NULL, return = "mixed",
-  sig_symbols = afex_options("sig_symbols"), ...)
+mixed(
+  formula,
+  data,
+  type = afex_options("type"),
+  method = afex_options("method_mixed"),
+  per_parameter = NULL,
+  args_test = list(),
+  test_intercept = FALSE,
+  check_contrasts = afex_options("check_contrasts"),
+  expand_re = FALSE,
+  all_fit = FALSE,
+  set_data_arg = afex_options("set_data_arg"),
+  progress = TRUE,
+  cl = NULL,
+  return = "mixed",
+  sig_symbols = afex_options("sig_symbols"),
+  ...
+)
 
 lmer_alt(formula, data, check_contrasts = FALSE, ...)
 }

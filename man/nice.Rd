@@ -11,18 +11,28 @@
 \usage{
 nice(object, ...)
 
-\method{nice}{afex_aov}(object, es = attr(object$anova_table, "es"),
+\method{nice}{afex_aov}(
+  object,
+  es = attr(object$anova_table, "es"),
   observed = attr(object$anova_table, "observed"),
-  correction = attr(object$anova_table, "correction"), MSE = NULL,
-  intercept = NULL, p_adjust_method = attr(object$anova_table,
-  "p_adjust_method"), sig_symbols = attr(object$anova_table,
-  "sig_symbols"), ...)
+  correction = attr(object$anova_table, "correction"),
+  MSE = NULL,
+  intercept = NULL,
+  p_adjust_method = attr(object$anova_table, "p_adjust_method"),
+  sig_symbols = attr(object$anova_table, "sig_symbols"),
+  ...
+)
 
-\method{nice}{anova}(object, MSE = NULL, intercept = NULL,
-  sig_symbols = attr(object, "sig_symbols"), sig.symbols, ...)
+\method{nice}{anova}(
+  object,
+  MSE = NULL,
+  intercept = NULL,
+  sig_symbols = attr(object, "sig_symbols"),
+  sig.symbols,
+  ...
+)
 
-\method{nice}{mixed}(object, sig_symbols = attr(object$anova_table,
-  "sig_symbols"), ...)
+\method{nice}{mixed}(object, sig_symbols = attr(object$anova_table, "sig_symbols"), ...)
 
 \method{print}{nice_table}(x, ...)
 }

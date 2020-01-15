@@ -7,26 +7,54 @@
 \alias{aov_ez}
 \title{Convenient ANOVA estimation for factorial designs}
 \usage{
-aov_car(formula, data, fun_aggregate = NULL,
-  type = afex_options("type"), factorize = afex_options("factorize"),
-  check_contrasts = afex_options("check_contrasts"), observed = NULL,
-  anova_table = list(), include_aov = afex_options("include_aov"),
-  return = afex_options("return_aov"), ...)
-
-aov_4(formula, data, observed = NULL, fun_aggregate = NULL,
-  type = afex_options("type"), factorize = afex_options("factorize"),
+aov_car(
+  formula,
+  data,
+  fun_aggregate = NULL,
+  type = afex_options("type"),
+  factorize = afex_options("factorize"),
   check_contrasts = afex_options("check_contrasts"),
-  return = afex_options("return_aov"), anova_table = list(),
-  include_aov = afex_options("include_aov"), ...,
-  print.formula = FALSE)
+  observed = NULL,
+  anova_table = list(),
+  include_aov = afex_options("include_aov"),
+  return = afex_options("return_aov"),
+  ...
+)
 
-aov_ez(id, dv, data, between = NULL, within = NULL, covariate = NULL,
-  observed = NULL, fun_aggregate = NULL, transformation,
-  type = afex_options("type"), factorize = afex_options("factorize"),
+aov_4(
+  formula,
+  data,
+  observed = NULL,
+  fun_aggregate = NULL,
+  type = afex_options("type"),
+  factorize = afex_options("factorize"),
   check_contrasts = afex_options("check_contrasts"),
-  return = afex_options("return_aov"), anova_table = list(),
-  include_aov = afex_options("include_aov"), ...,
-  print.formula = FALSE)
+  return = afex_options("return_aov"),
+  anova_table = list(),
+  include_aov = afex_options("include_aov"),
+  ...,
+  print.formula = FALSE
+)
+
+aov_ez(
+  id,
+  dv,
+  data,
+  between = NULL,
+  within = NULL,
+  covariate = NULL,
+  observed = NULL,
+  fun_aggregate = NULL,
+  transformation,
+  type = afex_options("type"),
+  factorize = afex_options("factorize"),
+  check_contrasts = afex_options("check_contrasts"),
+  return = afex_options("return_aov"),
+  anova_table = list(),
+  include_aov = afex_options("include_aov"),
+  ...,
+  print.formula = FALSE
+)
 }
 \arguments{
 \item{formula}{A formula specifying the ANOVA model similar to

@@ -9,10 +9,17 @@
 \alias{emm_basis.afex_aov}
 \title{Methods for afex_aov objects}
 \usage{
-\method{anova}{afex_aov}(object, es = afex_options("es_aov"),
-  observed = NULL, correction = afex_options("correction_aov"),
-  MSE = TRUE, intercept = FALSE, p_adjust_method = NULL,
-  sig_symbols = attr(object$anova_table, "sig_symbols"), ...)
+\method{anova}{afex_aov}(
+  object,
+  es = afex_options("es_aov"),
+  observed = NULL,
+  correction = afex_options("correction_aov"),
+  MSE = TRUE,
+  intercept = FALSE,
+  p_adjust_method = NULL,
+  sig_symbols = attr(object$anova_table, "sig_symbols"),
+  ...
+)
 
 \method{print}{afex_aov}(x, ...)
 
@@ -20,8 +27,14 @@
 
 recover_data.afex_aov(object, ..., model = afex_options("emmeans_model"))
 
-emm_basis.afex_aov(object, trms, xlev, grid, ...,
-  model = afex_options("emmeans_model"))
+emm_basis.afex_aov(
+  object,
+  trms,
+  xlev,
+  grid,
+  ...,
+  model = afex_options("emmeans_model")
+)
 }
 \arguments{
 \item{object, x}{object of class \code{afex_aov} as returned from \code{\link{aov_car}} and related functions.}

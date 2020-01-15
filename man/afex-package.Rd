@@ -24,13 +24,13 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Henrik Singmann \email{singmann+afex@gmail.com} (0000-0002-4842-3657)
+\strong{Maintainer}: Henrik Singmann \email{singmann+afex@gmail.com} (\href{https://orcid.org/0000-0002-4842-3657}{ORCID})
 
 Authors:
 \itemize{
   \item Ben Bolker
   \item Jake Westfall
-  \item Frederik Aust (0000-0003-4900-788X)
+  \item Frederik Aust (\href{https://orcid.org/0000-0003-4900-788X}{ORCID})
   \item Mattan S. Ben-Shachar
 }
 

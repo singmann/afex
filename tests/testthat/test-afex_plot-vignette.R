@@ -12,7 +12,9 @@ test_that("glmmTMB object", {
   # save(tmb, file = "inst/extdata/tmb_example_fit.rda", 
   #      compress = "xz")
   load(system.file("extdata/", "tmb_example_fit.rda", package = "afex"))
-  expect_equivalent(tmb, tmb2, tolerance = 0.001)
+  expect_equivalent(summary(tmb), 
+                    summary(tmb2), 
+                    tolerance = 0.001)
   
   skip_if_not_installed("cowplot")
   skip_if_not_installed("ggplot2")

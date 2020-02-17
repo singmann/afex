@@ -1,4 +1,21 @@
                     *************************
+                    ** afex VERSION 0.27-x **
+                    *************************
+                    
+                    Changes in afex Version 0.27-x
+                    Released January 2020
+
+    Significant User Visible Changes and New Features
+    
+    o   
+
+    Bugfixes
+    
+    o   mixed(): check_contrasts = TRUE now works when the formula is not a 
+        formula (but e.g., a character string).
+
+
+                    *************************
                     ** afex VERSION 0.26-x **
                     *************************
                     

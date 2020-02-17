@@ -445,7 +445,7 @@ mixed <- function(formula,
   }
   
   ## real function begins:
-  vars.to.check <- all.vars(formula)
+  vars.to.check <- all.vars(as.formula(formula))
   if (check_contrasts) {
     #browser()
     resetted <- NULL

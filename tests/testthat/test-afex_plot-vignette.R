@@ -8,6 +8,9 @@ test_that("glmmTMB object", {
   tmb2 <- glmmTMB(count~spp * mined + (1|site), 
                  ziformula = ~spp * mined, 
                  family=nbinom2, Salamanders)
+  # tmb <- tmb2
+  # save(tmb, file = "inst/extdata/tmb_example_fit.rda", 
+  #      compress = "xz")
   load(system.file("extdata/", "tmb_example_fit.rda", package = "afex"))
   expect_equivalent(tmb, tmb2, tolerance = 0.001)
   

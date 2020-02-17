@@ -13,6 +13,8 @@
     
     o   mixed(): check_contrasts = TRUE now works when the formula is not a 
         formula (but e.g., a character string).
+        
+    o   Better error message when ANOVA formula does not include an errror term.
 
 
                     *************************

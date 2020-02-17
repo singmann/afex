@@ -40,7 +40,7 @@
 #'   specification of the obsered (in contrast to manipulated) variables.
 #' @param formula A formula specifying the ANOVA model similar to
 #'   \code{\link{aov}} (for \code{aov_car} or similar to \code{lme4:lmer} for
-#'   \code{aov_4}). Should include an error term (i.e., \code{Error(id/...)} for
+#'   \code{aov_4}). Must include an error term (i.e., \code{Error(id/...)} for
 #'   \code{aov_car} or \code{(...|id)} for \code{aov_4}). Note that the
 #'   within-subject factors do not need to be outside the Error term (this
 #'   contrasts with \code{aov}). See Details.
@@ -361,6 +361,10 @@ aov_car <- function(formula,
          domain = NA)
 
   # from here, code by Henrik Singmann:
+  if (is.null(indError)) {
+    stop("formula needs an error term identifying the ID column.")
+  }
+  
   vars <- all.vars(formula)
   #--- Russ Lenth added/modified code to detect transformed responses:
   lhs <- all.names(formula[[2]])

@@ -899,10 +899,16 @@ mixed <- function(formula,
         }
       }
       names(tests) <- fixed.effects
-      df.large  <- vapply(tests, function(x) x[["Df"]][2], 0)
-      df.small  <- vapply(tests, function(x) x[["Df"]][1], 0)
       chisq  <- vapply(tests, function(x) x[["Chisq"]][2], 0)
-      df  <- vapply(tests, function(x) x[["Chi Df"]][2], 0)
+      if (packageVersion("lme4") <= "1.1.21") {
+        df.large  <- vapply(tests, function(x) x[["Df"]][2], 0)
+        df.small  <- vapply(tests, function(x) x[["Df"]][1], 0)
+        df  <- vapply(tests, function(x) x[["Chi Df"]][2], 0)
+      } else {
+        df.large  <- vapply(tests, function(x) x[["npar"]][2], 0)
+        df.small  <- vapply(tests, function(x) x[["npar"]][1], 0)
+        df  <- vapply(tests, function(x) x[["Df"]][2], 0)
+      }
       p.value  <- vapply(tests, function(x) x[["Pr(>Chisq)"]][2], 0)
       anova_table <- data.frame(Df = df.small, 
                                 Chisq = chisq, 
@@ -912,7 +918,7 @@ mixed <- function(formula,
       rownames(anova_table) <- fixed.effects
       if (type == 3 | type == "III") 
         anova_tab_addition <- paste0("Df full model: ", df.large[1])
-      else anova_tab_addition <- paste0("Df full model(s): ", df.large)
+      else anova_tab_addition <- paste0("Df full model(s): ", paste(df.large, collapse = ", "))
     } else stop('Only methods "KR", "PB", "LRT", or "nested-KR" currently implemented.')
     
   } 

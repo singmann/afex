@@ -23,6 +23,8 @@
         formula (but e.g., a character string).
         
     o   Better error message when ANOVA formula does not include an errror term.
+    
+    o   Should work with both lme4 1.1-22 and later.
 
 
                     *************************

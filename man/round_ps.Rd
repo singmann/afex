@@ -25,7 +25,8 @@ For \code{round_ps_apa} p-values are rounded following APA guidelines: .999 -
 .001 to three digits, and < .001 for values below this threshold.
 }
 \note{
-These functions are useful in \code{\link(nice)}
+These functions are useful in \code{\link{nice}} and the default is set
+  via \code{\link{afex_options}}.
 }
 \examples{
 x <- runif(10)

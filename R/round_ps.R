@@ -13,7 +13,8 @@
 #'
 #' @return A character vector with the same length as x.
 #' 
-#' @note These functions are useful in \code{\link(nice)}
+#' @note These functions are useful in \code{\link{nice}} and the default is set
+#'   via \code{\link{afex_options}}.
 #'
 #' @author Henrik Singmann
 #'

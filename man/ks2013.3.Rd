@@ -5,7 +5,9 @@
 \name{ks2013.3}
 \alias{ks2013.3}
 \title{Data from Klauer & Singmann (2013, Experiment 3)}
-\format{A data.frame with 1440 rows and 6 variables.}
+\format{
+A data.frame with 1440 rows and 6 variables.
+}
 \source{
 Klauer, K. C., & Singmann, H. (2013). Does logic feel good? Testing for intuitive detection of logicality in syllogistic reasoning. Journal of Experimental Psychology: Learning, Memory, and Cognition, 39(4), 1265-1273. http://doi.org/10.1037/a0030530
 

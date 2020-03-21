@@ -5,7 +5,9 @@
 \name{obk.long}
 \alias{obk.long}
 \title{O'Brien Kaiser's Repeated-Measures Dataset with Covariate}
-\format{A data frame with 240 rows and 7 variables.}
+\format{
+A data frame with 240 rows and 7 variables.
+}
 \source{
 O'Brien, R. G., & Kaiser, M. K. (1985). MANOVA method for analyzing repeated measures designs: An extensive primer. \emph{Psychological Bulletin}, 97, 316-333. doi:10.1037/0033-2909.97.2.316
 }

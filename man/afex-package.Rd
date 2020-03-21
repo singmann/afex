@@ -24,7 +24,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Henrik Singmann \email{singmann+afex@gmail.com} (\href{https://orcid.org/0000-0002-4842-3657}{ORCID})
+\strong{Maintainer}: Henrik Singmann \email{singmann@gmail.com} (\href{https://orcid.org/0000-0002-4842-3657}{ORCID})
 
 Authors:
 \itemize{

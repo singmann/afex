@@ -20,6 +20,7 @@ nice(object, ...)
   intercept = NULL,
   p_adjust_method = attr(object$anova_table, "p_adjust_method"),
   sig_symbols = attr(object$anova_table, "sig_symbols"),
+  round_ps = attr(object$anova_table, "round_ps"),
   ...
 )
 
@@ -28,11 +29,17 @@ nice(object, ...)
   MSE = NULL,
   intercept = NULL,
   sig_symbols = attr(object, "sig_symbols"),
+  round_ps = attr(object, "round_ps"),
   sig.symbols,
   ...
 )
 
-\method{nice}{mixed}(object, sig_symbols = attr(object$anova_table, "sig_symbols"), ...)
+\method{nice}{mixed}(
+  object,
+  sig_symbols = attr(object$anova_table, "sig_symbols"),
+  round_ps = attr(object$anova_table, "round_ps"),
+  ...
+)
 
 \method{print}{nice_table}(x, ...)
 }
@@ -79,6 +86,9 @@ only those elements of the default (\code{c(" +", " *", " **", " ***")})
 will be replaced. \code{sig_symbols = ""} will display the stars but not
 the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols. The
 default is given by \code{afex_options("sig_symbols")}.}
+
+\item{round_ps}{Function that should be used for rounding p-values. The
+default is given by \code{afex_options("round_ps")}.}
 
 \item{sig.symbols}{deprecated argument, only for backwards compatibility, use
 \code{"sig_symbols"} instead.}

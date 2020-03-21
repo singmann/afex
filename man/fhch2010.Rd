@@ -5,7 +5,8 @@
 \name{fhch2010}
 \alias{fhch2010}
 \title{Data from Freeman, Heathcote, Chalmers, & Hockley (2010)}
-\format{A \code{data.frame} with 13,222 obs. of 9 variables:
+\format{
+A \code{data.frame} with 13,222 obs. of 9 variables:
 \describe{
  \item{id}{participant id, \code{factor}}
  \item{task}{\code{factor} with two levels indicating which task was performed: \code{"naming"} or \code{"lexdec"}}
@@ -17,7 +18,8 @@
  \item{rt}{response time in seconds}
  \item{log_rt}{natural logarithm of response time in seconds}
  \item{correct}{boolean indicating whether or not the response in the lexical decision task was correct or incorrect (incorrect responses of the naming task are not part of the data).}
-}}
+}
+}
 \source{
 Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in recognition memory for words. Journal of Memory and Language, 62(1), 1-18. http://doi.org/10.1016/j.jml.2009.09.004
 }

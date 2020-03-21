@@ -5,7 +5,9 @@
 \name{sk2011.2}
 \alias{sk2011.2}
 \title{Data from Singmann & Klauer (2011, Experiment 2)}
-\format{A data.frame with 2268 rows and 9 variables.}
+\format{
+A data.frame with 2268 rows and 9 variables.
+}
 \source{
 Singmann, H., & Klauer, K. C. (2011). Deductive and inductive conditional inferences: Two modes of reasoning. Thinking & Reasoning, 17(3), 247-281. doi:10.1080/13546783.2011.572718
 }

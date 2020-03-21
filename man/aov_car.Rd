@@ -388,25 +388,25 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
 # 
 # Response: value
 #                         Effect          df   MSE         F  ges p.value
-# 1                    treatment       2, 10 22.81    3.94 +  .20     .05
-# 2                       gender       1, 10 22.81    3.66 +  .11     .08
-# 3             treatment:gender       2, 10 22.81      2.86  .18     .10
-# 4                        phase 1.60, 15.99  5.02 16.13 ***  .15   .0003
-# 5              treatment:phase 3.20, 15.99  5.02    4.85 *  .10     .01
-# 6                 gender:phase 1.60, 15.99  5.02      0.28 .003     .71
-# 7       treatment:gender:phase 3.20, 15.99  5.02      0.64  .01     .61
-# 8                         hour 1.84, 18.41  3.39 16.69 ***  .13  <.0001
-# 9               treatment:hour 3.68, 18.41  3.39      0.09 .002     .98
-# 10                 gender:hour 1.84, 18.41  3.39      0.45 .004     .63
-# 11       treatment:gender:hour 3.68, 18.41  3.39      0.62  .01     .64
-# 12                  phase:hour 3.60, 35.96  2.67      1.18  .02     .33
-# 13        treatment:phase:hour 7.19, 35.96  2.67      0.35 .009     .93
-# 14           gender:phase:hour 3.60, 35.96  2.67      0.93  .01     .45
-# 15 treatment:gender:phase:hour 7.19, 35.96  2.67      0.74  .02     .65
+# 1                    treatment       2, 10 22.81    3.94 + .198    .055
+# 2                       gender       1, 10 22.81    3.66 + .115    .085
+# 3             treatment:gender       2, 10 22.81      2.86 .179    .104
+# 4                        phase 1.60, 15.99  5.02 16.13 *** .151   <.001
+# 5              treatment:phase 3.20, 15.99  5.02    4.85 * .097    .013
+# 6                 gender:phase 1.60, 15.99  5.02      0.28 .003    .709
+# 7       treatment:gender:phase 3.20, 15.99  5.02      0.64 .014    .612
+# 8                         hour 1.84, 18.41  3.39 16.69 *** .125   <.001
+# 9               treatment:hour 3.68, 18.41  3.39      0.09 .002    .979
+# 10                 gender:hour 1.84, 18.41  3.39      0.45 .004    .628
+# 11       treatment:gender:hour 3.68, 18.41  3.39      0.62 .011    .641
+# 12                  phase:hour 3.60, 35.96  2.67      1.18 .015    .335
+# 13        treatment:phase:hour 7.19, 35.96  2.67      0.35 .009    .930
+# 14           gender:phase:hour 3.60, 35.96  2.67      0.93 .012    .449
+# 15 treatment:gender:phase:hour 7.19, 35.96  2.67      0.74 .019    .646
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
 # 
 # Sphericity correction method: GG 
-# ---
-# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 
 # "numeric" variables are per default converted to factors (as long as factorize = TRUE):
 obk.long$hour2 <- as.numeric(as.character(obk.long$hour))
@@ -538,26 +538,26 @@ str(obk_anova, 1, give.attr = FALSE)
 #  $ data       :List of 3
 
 obk_anova$Anova
-## Type II Repeated Measures MANOVA Tests: Pillai test statistic
-##                             Df test stat approx F num Df den Df       Pr(>F)    
-## (Intercept)                  1     0.970      318      1     10 0.0000000065 ***
-## treatment                    2     0.481        5      2     10      0.03769 *  
-## gender                       1     0.204        3      1     10      0.14097    
-## treatment:gender             2     0.364        3      2     10      0.10447    
-## phase                        1     0.851       26      2      9      0.00019 ***
-## treatment:phase              2     0.685        3      4     20      0.06674 .  
-## gender:phase                 1     0.043        0      2      9      0.82000    
-## treatment:gender:phase       2     0.311        1      4     20      0.47215    
-## hour                         1     0.935       25      4      7      0.00030 ***
-## treatment:hour               2     0.301        0      8     16      0.92952    
-## gender:hour                  1     0.293        1      4      7      0.60237    
-## treatment:gender:hour        2     0.570        1      8     16      0.61319    
-## phase:hour                   1     0.550        0      8      3      0.83245    
-## treatment:phase:hour         2     0.664        0     16      8      0.99144    
-## gender:phase:hour            1     0.695        1      8      3      0.62021    
-## treatment:gender:phase:hour  2     0.793        0     16      8      0.97237    
-## ---
-## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+# Type II Repeated Measures MANOVA Tests: Pillai test statistic
+#                             Df test stat approx F num Df den Df    Pr(>F)    
+# (Intercept)                  1   0.96954   318.34      1     10 6.532e-09 ***
+# treatment                    2   0.48092     4.63      2     10 0.0376868 *  
+# gender                       1   0.20356     2.56      1     10 0.1409735    
+# treatment:gender             2   0.36350     2.86      2     10 0.1044692    
+# phase                        1   0.85052    25.61      2      9 0.0001930 ***
+# treatment:phase              2   0.68518     2.61      4     20 0.0667354 .  
+# gender:phase                 1   0.04314     0.20      2      9 0.8199968    
+# treatment:gender:phase       2   0.31060     0.92      4     20 0.4721498    
+# hour                         1   0.93468    25.04      4      7 0.0003043 ***
+# treatment:hour               2   0.30144     0.35      8     16 0.9295212    
+# gender:hour                  1   0.29274     0.72      4      7 0.6023742    
+# treatment:gender:hour        2   0.57022     0.80      8     16 0.6131884    
+# phase:hour                   1   0.54958     0.46      8      3 0.8324517    
+# treatment:phase:hour         2   0.66367     0.25     16      8 0.9914415    
+# gender:phase:hour            1   0.69505     0.85      8      3 0.6202076    
+# treatment:gender:phase:hour  2   0.79277     0.33     16      8 0.9723693    
+# ---
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
 
 }
 \references{

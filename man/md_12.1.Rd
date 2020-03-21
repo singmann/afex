@@ -5,7 +5,9 @@
 \name{md_12.1}
 \alias{md_12.1}
 \title{Data 12.1 from Maxwell & Delaney}
-\format{A data.frame with 60 rows and 4 variables.}
+\format{
+A data.frame with 60 rows and 4 variables.
+}
 \source{
 Maxwell, S. E., & Delaney, H. D. (2004). Designing experiments and analyzing data: a model-comparisons perspective. Mahwah, N.J.: Lawrence Erlbaum Associates. p. 574
 }

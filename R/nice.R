@@ -40,6 +40,8 @@
 #'   be displayed? Default is \code{TRUE}.
 #' @param intercept logical. Should intercept (if present) be included in the
 #'   ANOVA table? Default is \code{FALSE} which hides the intercept.
+#' @param round_ps Function that should be used for rounding p-values. The
+#'   default is given by \code{afex_options("round_ps")}.
 #' @param sig.symbols deprecated argument, only for backwards compatibility, use
 #'   \code{"sig_symbols"} instead.
 #' @param ... currently ignored.
@@ -122,6 +124,7 @@ nice.afex_aov <- function(object, es = attr(object$anova_table, "es"),
                           p_adjust_method = 
                             attr(object$anova_table, "p_adjust_method"), 
                           sig_symbols = attr(object$anova_table, "sig_symbols"), 
+                          round_ps = attr(object$anova_table, "round_ps"),
                           ...) { 
   # if(is.null(es)) { # Defaults to afex_options("es") because of default set in anova.afex_aov
   #   es <- c("pes", "ges")[c("pes", "ges") %in% colnames(object$anova_table)]
@@ -149,7 +152,7 @@ nice.afex_aov <- function(object, es = attr(object$anova_table, "es"),
                                      intercept = intercept, 
                                      p_adjust_method = p_adjust_method))
   nice.anova(anova_table, MSE = MSE, intercept = intercept, 
-             sig_symbols = sig_symbols)
+             sig_symbols = sig_symbols, round_ps = round_ps)
 }
 
 #' @rdname nice
@@ -159,7 +162,8 @@ nice.anova <- function(object,
                        MSE = NULL, 
                        intercept = NULL, 
                        sig_symbols = attr(object, "sig_symbols"), 
-                       sig.symbols, 
+                       round_ps = attr(object, "round_ps"),
+                       sig.symbols,
                        ...) {
   dots <- list(...)
   if(is.null(MSE)) { # Defaults to TRUE because of default set in anova.afex_aov
@@ -175,7 +179,9 @@ nice.anova <- function(object,
   if(is.null(sig_symbols)) {
     sig_symbols <- afex_options("sig_symbols")
   }
-  
+  if(is.null(round_ps)) {
+    round_ps <- afex_options("round_ps")
+  }
   
   # internal functions:
   is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  
@@ -225,6 +231,7 @@ nice.anova <- function(object,
   attr(df.out, "observed") <- attr(object, "observed")
   attr(df.out, "es") <- attr(object, "es")
   attr(df.out, "sig_symbols") <- symbols.use
+  attr(df.out, "round_ps") <- round_ps
   class(df.out) <- c("nice_table", class(df.out))
   df.out
 }
@@ -255,14 +262,18 @@ is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)
 #' @rdname nice
 #' @method nice mixed
 #' @export
-nice.mixed <- function(object, sig_symbols = attr(object$anova_table, "sig_symbols"), ...) {
+nice.mixed <- function(object, 
+                       sig_symbols = attr(object$anova_table, "sig_symbols"), 
+                       round_ps = attr(object$anova_table, "round_ps"),
+                       ...) {
   anova_table <- object$anova_table
   dots <- list(...)
   if("sig.symbols" %in% names(dots)) {  #(!missing(sig.symbols)) {
     warn_deprecated_arg("sig.symbols", "sig_symbols")
     sig_symbols <- dots$sig.symbols
   }
-  if(is.null("sig_symbols")) sig_symbols <- afex_options("sig_symbols")
+  if(is.null(sig_symbols)) sig_symbols <- afex_options("sig_symbols")
+  if(is.null(round_ps)) round_ps <- afex_options("round_ps")
   
   symbols.use <-  c(" +", " *", " **", " ***")
   symbols.use[seq_along(sig_symbols)] <- sig_symbols
@@ -315,6 +326,7 @@ nice.mixed <- function(object, sig_symbols = attr(object$anova_table, "sig_symbo
   rownames(df.out) <- NULL
   attr(df.out, "heading") <- attr(anova_table, "heading")
   attr(df.out, "sig_symbols") <- symbols.use
+  attr(df.out, "round_ps") <- round_ps
   class(df.out) <- c("nice_table", class(df.out))
   df.out
 }

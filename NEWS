@@ -1,4 +1,29 @@
                     *************************
+                    ** afex VERSION 0.27-x **
+                    *************************
+                    
+                    Changes in afex Version 0.27-x
+                    Released March 2020
+                    
+    Significant User Visible Changes and New Features
+    
+    o   p-values are now per default rounded to 3 digits following APA 
+        recommendations, thanks to Marius Barth: 
+        https://github.com/singmann/afex/issues/81
+        To achieve this, a new argument, round_ps, was added to nice() which 
+        accepts a rounding function and defaults to round_ps_apa() via 
+        afex_options("round_ps"). To reset to the old rounding behaviour, call:
+        afex_options(round_ps = round_ps)
+
+    o   New p-value rounding function round_ps_apa().  
+
+    Bugfixes
+
+    o   
+
+
+
+                    *************************
                     ** afex VERSION 0.26-x **
                     *************************
                     

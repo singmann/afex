@@ -15,7 +15,8 @@
     afex.lmer_function = "lmerTest",
     afex.sig_symbols = c(" +", " *", " **", " ***"),
     afex.emmeans_model = c("univariate"),
-    afex.include_aov = TRUE
+    afex.include_aov = TRUE,
+    afex.round_ps = round_ps_apa
   )
   toset <- !(names(op.afex) %in% names(op))
   if(any(toset)) options(op.afex[toset])

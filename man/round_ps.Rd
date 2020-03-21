@@ -3,9 +3,12 @@
 \encoding{UTF-8}
 \name{round_ps}
 \alias{round_ps}
+\alias{round_ps_apa}
 \title{Helper functions for rounding p-values}
 \usage{
 round_ps(x)
+
+round_ps_apa(x)
 }
 \arguments{
 \item{x}{a numeric vector}

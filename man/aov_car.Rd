@@ -59,7 +59,7 @@ aov_ez(
 \arguments{
 \item{formula}{A formula specifying the ANOVA model similar to
 \code{\link{aov}} (for \code{aov_car} or similar to \code{lme4:lmer} for
-\code{aov_4}). Should include an error term (i.e., \code{Error(id/...)} for
+\code{aov_4}). Must include an error term (i.e., \code{Error(id/...)} for
 \code{aov_car} or \code{(...|id)} for \code{aov_4}). Note that the
 within-subject factors do not need to be outside the Error term (this
 contrasts with \code{aov}). See Details.}

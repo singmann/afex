@@ -20,7 +20,7 @@
 #' @encoding UTF-8
 #'
 #' @export round_ps 
-#' @export round_apa
+#' @export round_ps_apa
 #' @examples
 #' x <- runif(10)
 #' y <- runif(10, 0, .01)

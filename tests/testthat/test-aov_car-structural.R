@@ -139,4 +139,7 @@ test_that("error messages for common problems", {
   expect_error(
     aov_car(value ~ treatment * gender + Error(id/phase*hour), data = obk2),
     "between-subjects design")
+  expect_error(
+    aov_car(value ~ treatment * gender, data = obk2), 
+    "formula needs an error term")
 })

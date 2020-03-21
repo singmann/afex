@@ -2,6 +2,18 @@
 
 context("mixed: known bugs")
 
+test_that("character formula is contrast checked", {
+  data("sk2011.2")
+  # use only affirmation problems (S&K also splitted the data like this)
+  sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+  sk_m1 <- mixed("response ~ instruction*inference+(1|id)", 
+                 sk2_aff, method = "S", progress = FALSE)
+  
+  sk_m2 <- mixed(response ~ instruction*inference+(1|id), sk2_aff, 
+                 method = "S", progress = FALSE)
+  expect_equivalent(fixef(sk_m1$full_model), fixef(sk_m2$full_model))
+  
+})
 
 test_that("character variables are treated as factors", {
   data("sk2011.2")

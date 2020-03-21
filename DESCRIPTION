@@ -1,7 +1,7 @@
 Package: afex
 Type: Package
 Title: Analysis of Factorial Experiments
-Depends: R (>= 3.1.0), lme4 (>= 1.1-8)
+Depends: R (>= 3.5.0), lme4 (>= 1.1-8)
 Suggests: 
     emmeans (>= 1.4),
     coin,

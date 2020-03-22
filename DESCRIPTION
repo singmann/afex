@@ -36,7 +36,8 @@ Suggests:
     MASS,
     glmmTMB,
     brms,
-    rstanarm
+    rstanarm,
+    statmod
 Imports: pbkrtest (>= 0.4-1), lmerTest (>= 3.0-0), car, reshape2, stats, methods, utils
 Description: Convenience functions for analyzing factorial experiments using ANOVA or
          mixed models. aov_ez(), aov_car(), and aov_4() allow specification of

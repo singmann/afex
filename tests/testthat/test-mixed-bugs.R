@@ -2,6 +2,39 @@
 
 context("mixed: known bugs")
 
+test_that("inverse.gaussian works", {
+  ## see: https://github.com/singmann/afex/issues/74
+  skip_if_not_installed("statmod")
+  skip_on_cran()
+  set.seed(666)
+  
+  id <- factor(1:20)
+  a <- factor(rep(c("a1","a2"),each=5000/2))
+  b <- factor(rep(c("b1","b2"),each=5000/2))
+  y <- statmod::rinvgauss(5000, 1, 2)
+  df <- data.frame(id=id,
+                   x1=sample(a),
+                   x2=sample(b),
+                   y=y)
+  
+  expect_is(mixed(y ~ x1 * x2 
+                     + (1|id),
+                     family = inverse.gaussian(link = "inverse"),
+                     control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                     data = df,
+                     method = "LRT", progress = FALSE), "mixed")
+  
+  ## fails due to pbkrtest issue
+  # expect_is(mixed(y ~ x1 * x2 
+  #                    + (1|id),
+  #                    family = inverse.gaussian(link = "inverse"),
+  #                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+  #                    data = df,
+  #                    method = "PB", progress = FALSE), "mixed")
+  
+  
+})
+
 test_that("character formula is contrast checked", {
   data("sk2011.2")
   # use only affirmation problems (S&K also splitted the data like this)

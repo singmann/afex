@@ -50,7 +50,7 @@ devtools::build(args = "--compact-vignettes=both")
 
 ### add packages
 
-usethis::use_package("glmmTMB", "Suggests")
+usethis::use_package("statmod", "Suggests")
 usethis::use_package("rstanarm", "Suggests")
 usethis::use_package("brms", "Suggests")
 usethis::use_package("cowplot", "Suggests")

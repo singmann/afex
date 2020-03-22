@@ -89,7 +89,7 @@ plot_grid(
   p_an + theme_bw() + theme(legend.position="bottom"),
   p_an + theme_light() + theme(legend.position="bottom"),
   p_an + theme_minimal() + theme(legend.position="bottom"),
-  p_an + jtools::theme_apa() + theme(legend.position="bottom"),
+  p_an + jtools::theme_nice() + theme(legend.position="bottom"),
   p_an + ggpubr::theme_pubr(),
   p_an + theme_cowplot() + theme(legend.position="bottom"),
   labels = "AUTO"
@@ -100,7 +100,7 @@ The first row, panels A to C, shows themes coming with `ggplot2` and the second 
 
 One general criticism I have with the current plots is that they show too many values on the y-axis. In the following I plot one more variant of this plot in which we change this to three values on the y-axis. We also increase the axes labels and remove the vertical grid lines.
 
-```{r fig.width=3.5, fig.height=3, dpi = 150, out.width='50%'}
+```{r fig.width=3.5, fig.height=3, dpi = 100, out.width='50%'}
 p_an + 
   scale_y_continuous(breaks=seq(400, 900, length.out = 3)) +
   theme_bw(base_size = 15) + 
@@ -125,7 +125,7 @@ For Word or similar documents I would export the plot as a `png` (never `jpg`):
 ```{r, eval=FALSE}
 ggsave("my_plot.png", device = "png", 
        width = 9, height = 8, units = "cm", 
-       dpi = 600) ## the higher the dpi, the better the resolution
+       dpi = 600) ## the larger the dpi, the better the resolution
 ```
 
 
@@ -151,7 +151,7 @@ The first two variants display only points, whereas the remaining ones use diffe
 5. Combine box plot with jittered points: `ggpol::geom_boxjitter`
 
 
-```{r fig.width=8.5, fig.height=12, dpi = 150}
+```{r fig.width=8.5, fig.height=12, dpi = 125}
 p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                 data_arg = list(
                   position = 
@@ -192,7 +192,7 @@ plot_grid(p1, p2, p3, p4, p5, p6, ncol = 2, labels = 1:6)
 So far, all plots were shown in black and white only. However, it is easy to include color. We do so for plots 2 to 5 from above. To achieve this, we have to change the value of the `mapping` argument. 
 
 
-```{r fig.width=8.5, fig.height=8, dpi = 150}
+```{r fig.width=8.5, fig.height=8, dpi = 125}
 p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                 mapping = c("shape", "color"),
                 data_geom = ggbeeswarm::geom_beeswarm,

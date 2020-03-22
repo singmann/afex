@@ -103,7 +103,7 @@ afex_plot(a, "task", "stimulus", "length")
 #> Suppress error bars with: error = "none"
 ```
 
-<img src="man/figures/README-unnamed-chunk-6-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-6-1.png)
 
 `afex_plot` returns a `ggplot2` plot object which allows simple customization:
 
@@ -116,7 +116,7 @@ afex_plot(a, "task", "stimulus", "length") +
 #> Suppress error bars with: error = "none"
 ```
 
-<img src="man/figures/README-unnamed-chunk-7-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-7-1.png)
 
 ### Follow-up Tests with `emmeans`
 
@@ -363,7 +363,7 @@ afex_plot(m3, "task", "length") +
   theme_bw()
 ```
 
-<img src="man/figures/README-unnamed-chunk-17-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-17-1.png)
 
 ``` r
 ## data points show IDs
@@ -371,7 +371,7 @@ afex_plot(m3, "task", "length", id = "id") +
   theme_bw()
 ```
 
-<img src="man/figures/README-unnamed-chunk-18-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-18-1.png)
 
 ``` r
 ## data points show items
@@ -379,7 +379,7 @@ afex_plot(m3, "task", "length", id = "item") +
   theme_bw()
 ```
 
-<img src="man/figures/README-unnamed-chunk-19-1.png" width="100%" />
+![](man/figures/README-unnamed-chunk-19-1.png)
 
 ### Follow-up Tests with `emmeans`
 

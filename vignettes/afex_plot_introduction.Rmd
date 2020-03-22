@@ -23,6 +23,7 @@ knitr::opts_chunk$set(dpi=72)
 - ANOVAs estimated with `aov_car()`, `aov_ez()`, or `aov_4()` (i.e., objects of class `"afex_aov"`)
 - Linear mixed models estimated with `mixed()` (i.e., objects of class `"mixed"`)
 - Linear mixed models estimated with `lme4::lmer` (i.e., objects of class `"merMod"`)
+- Models with `emmeans` support. For some examples see `vignette("afex_plot_supported_models", package = "afex")`
 
 This document provides an overview of the plots possible with `afex_plot()`. It does so mostly using the `afex_plot()` examples, see `?afex_plot`. We begin by loading `afex` and [`ggplot2`](https://ggplot2.tidyverse.org/) which is the package `afex_plot()` uses for plotting. Loading `ggplot2` explicitly is not strictly necessary, but makes the following code nicer. Otherwise, we would need to prepend each call to a function from `ggplot2` needed for customization with `ggplot2::` (as is done in the examples in `?afex_plot`). 
 

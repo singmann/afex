@@ -9,7 +9,7 @@ afex: Analysis of Factorial EXperiments
 The main functionalities provided by `afex` are:
 
 1.  Interfaces for estimating standard ANOVAs with any number or combination of within-subjects or between-subjects variables (the ANOVA functions are `aov_car()`, `aov_ez()`, and `aov_4()` which all fit the same model but differ in the way to specify the ANOVA model).
-2.  Function `mixed()` provides an interface for mixed models analysis (estimated via `lme4` `lmer` or `glmer`) that automatically obtains *p*-values for fixed effects model terms (i.e., main effects and interctions).
+2.  Function `mixed()` provides an interface for mixed models analysis (estimated via `lme4` `lmer` or `glmer`) that automatically obtains *p*-values for fixed effects model terms (i.e., main effects and interactions).
 3.  `afex_plot()` visualizes results from factorial experiments combining estimated marginal means and uncertainties associated with the estimated means in the foreground with a depiction of the raw data in the background.
 4.  All `afex` model objects (i.e., ANOVA and mixed models) can be passed to `emmeans` for follow-up/post-hoc/planned contrast analysis.
 
@@ -33,7 +33,7 @@ To calculate an ANOVA, `afex` requires the data to be in the long format (i.e., 
 
 A further overview is provided by the [vignette](https://cran.rstudio.com/web/packages/afex/vignettes/afex_anova_example.html).
 
-The following code provides a simple example for an ANOVA with both between- and within-subject factors. For this we use the lexical-decision and word naming latencies reported by Freeman, Heathcote, Chalmers, and Hockley (2010), see also `?fhch2010`. As is commonly done, we use the natural logarithm of the response times, `log_rt`, as dependent variable. As indepdendent variable we will consider the between-subjects factor `task` (`"naming"` or `"lexdec"`) as well as the within-subjects-factors `stimulus` (`"word"` or `"nonword"`) and `length` (with 3 levels, 3, 4, or 5 letters).
+The following code provides a simple example for an ANOVA with both between- and within-subject factors. For this we use the lexical-decision and word naming latencies reported by Freeman, Heathcote, Chalmers, and Hockley (2010), see also `?fhch2010`. As is commonly done, we use the natural logarithm of the response times, `log_rt`, as dependent variable. As independent variable we will consider the between-subjects factor `task` (`"naming"` or `"lexdec"`) as well as the within-subjects-factors `stimulus` (`"word"` or `"nonword"`) and `length` (with 3 levels, 3, 4, or 5 letters).
 
 ``` r
 library("afex")
@@ -301,7 +301,7 @@ summary(m1)
 
 ### Reducing the Random-Effects Structure
 
-Because of the singular fit warning, we reduce the random effects structure. Usually a good starting poin tis by removed the correlations among the random effects parameters. This can be done in `afex::mixed` even for factors by combining the double bar notation `||` with `expand_re = TRUE`. We do so for both random effects terms.
+Because of the singular fit warning, we reduce the random effects structure. Usually a good starting point is removing the correlations among the random effects parameters. This can be done in `afex::mixed` even for factors by combining the double bar notation `||` with `expand_re = TRUE`. We do so for both random effects terms.
 
 ``` r
 m2 <- mixed(log_rt ~ task * length + 

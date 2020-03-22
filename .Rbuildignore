@@ -11,3 +11,4 @@ README.md
 revdep
 Rplots.pdf
 
+^README\.Rmd$

@@ -56,6 +56,8 @@ usethis::use_package("brms", "Suggests")
 usethis::use_package("cowplot", "Suggests")
 usethis::use_package("nlme", "Suggests")
 #usethis::use_package("GLMMadaptive", "Suggests")
+usethis::use_readme_rmd()
+usethis::use_cran_badge()
 
 ### check reverse dependencies:
 

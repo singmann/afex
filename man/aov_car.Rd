@@ -473,6 +473,7 @@ a1 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
         within = c("phase", "hour"), observed = "gender")
 
 
+if (requireNamespace("ggplot2") & requireNamespace("emmeans")) {
 # 1b. plot data using afex_plot function, for more see: 
 ## vignette("afex_plot_introduction", package = "afex")
 
@@ -485,7 +486,9 @@ afex_plot(a1, "hour", "gender", c("treatment", "phase"),
 
 ## in a mixed between-within designs, no error-bars might be preferrable:
 afex_plot(a1, "hour", "gender", c("treatment", "phase"), error = "none")
+}
 
+if (requireNamespace("emmeans")) {
 library("emmeans")  # package emmeans needs to be attached for follow-up tests.
 
 # 2. obtain reference grid object (default uses univariate model):
@@ -517,6 +520,7 @@ emmeans(a1, "treatment", contr = "pairwise", model = "multivariate")
 
 ## set multivariate models globally:
 # afex_options(emmeans_model = "multivariate")
+}
 
 #######################
 ## 3: Other examples ##

@@ -19,6 +19,7 @@ summary(m2)$varcor
 # for wrong solution see: 
 # summary(lmer(score ~ Machine + (Machine||Worker), data=Machines))$varcor
 
+if (requireNamespace("emmeans")) {
 # follow-up tests
 library("emmeans")  # package emmeans needs to be attached for follow-up tests.
 (emm1 <- emmeans(m1, "Machine"))
@@ -29,6 +30,7 @@ con1 <- list(
 )
 contrast(emm1, con1, adjust = "holm")
 
+if (requireNamespace("ggplot2")) {
 # plotting 
 afex_plot(m1, "Machine") ## default uses model-based CIs
 ## within-subjects CIs somewhat more in line with pairwirse comparisons:
@@ -37,7 +39,7 @@ afex_plot(m1, "Machine", error = "within")
 ## less differences between CIs for model without correlations:
 afex_plot(m2, "Machine")
 afex_plot(m2, "Machine", error = "within")
-
+}}
 
 \dontrun{
 #######################

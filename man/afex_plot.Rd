@@ -441,6 +441,9 @@ aw <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
 ##                    Basic Interaction Plots                   -
 ##---------------------------------------------------------------
 
+## all examples require emmeans and ggplot2:
+if (requireNamespace("emmeans") && requireNamespace("ggplot2")) {
+
 afex_plot(aw, x = "angle", trace = "noise") 
 # or: afex_plot(aw, x = ~angle, trace = ~noise)
 
@@ -452,6 +455,7 @@ afex_plot(aw, x = "angle", trace = "noise", error = "within")
 
 ## use different themes for nicer graphs:
 p1 + ggplot2::theme_bw()
+}
 \dontrun{
 p1 + ggplot2::theme_light()
 p1 + ggplot2::theme_minimal()
@@ -534,9 +538,9 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
 ##                        One-Way Plots                         -
 ##---------------------------------------------------------------
 
+\dontrun{
 afex_plot(aw, x = "angle", error = "within") ## default
 
-\dontrun{
 ## with color we need larger points
 afex_plot(aw, x = "angle", mapping = "color", error = "within", 
           point_arg = list(size = 2.5), 
@@ -725,6 +729,8 @@ cbind(
 data("Machines", package = "MEMSS") 
 m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines)
 
+if (requireNamespace("emmeans") && requireNamespace("ggplot2")) {
+
 pairs(emmeans::emmeans(m1, "Machine"))
 # contrast   estimate       SE df t.ratio p.value
 # A - B     -7.966667 2.420850  5  -3.291  0.0481
@@ -737,7 +743,7 @@ afex_plot(m1, "Machine")
 
 ## Impression from within-subject error bars is more in line with pattern of differences.
 afex_plot(m1, "Machine", error = "within")
-
+}
 
 \dontrun{
 data("fhch2010") # load 

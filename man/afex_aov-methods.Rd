@@ -25,16 +25,9 @@
 
 \method{summary}{afex_aov}(object, ...)
 
-recover_data.afex_aov(object, ..., model = afex_options("emmeans_model"))
+\method{recover_data}{afex_aov}(object, ..., model = afex_options("emmeans_model"))
 
-emm_basis.afex_aov(
-  object,
-  trms,
-  xlev,
-  grid,
-  ...,
-  model = afex_options("emmeans_model")
-)
+\method{emm_basis}{afex_aov}(object, trms, xlev, grid, ..., model = afex_options("emmeans_model"))
 }
 \arguments{
 \item{object, x}{object of class \code{afex_aov} as returned from \code{\link{aov_car}} and related functions.}

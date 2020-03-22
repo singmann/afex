@@ -116,22 +116,21 @@ data(obk.long, package = "afex")
 a1 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
         within = c("phase", "hour"), observed = "gender")
 
+
+# 1b. plot data using afex_plot function, for more see: 
+## vignette("afex_plot_introduction", package = "afex")
+
+## default plot uses univariate model-based CIs
+afex_plot(a1, "hour", "gender", c("treatment", "phase"))
+
+## you can use multivairate model and CIs
+afex_plot(a1, "hour", "gender", c("treatment", "phase"), 
+          emmeans_arg = list(model = "multivariate"))
+
+## in a mixed between-within designs, no error-bars might be preferrable:
+afex_plot(a1, "hour", "gender", c("treatment", "phase"), error = "none")
+
 library("emmeans")  # package emmeans needs to be attached for follow-up tests.
-
-# 1b. plot data (per default with ggplot2):
-emmip(a1, gender ~ hour | treatment+phase)
-
-## add univariate CIs:
-emmip(a1, gender ~ hour | treatment+phase, CIs = TRUE)
-
-## add multivariate CIs
-emmip(a1, gender ~ hour | treatment+phase, CIs = TRUE, 
-      model = "multivariate")
-
-# use lattice instead of ggplot2 (which has no CIs):
-emm_options(graphics.engine = "lattice") 
-emmip(a1, gender ~ hour | treatment+phase)
-emm_options(graphics.engine = "ggplot") # reset options 
 
 # 2. obtain reference grid object (default uses univariate model):
 r1 <- emmeans(a1, ~treatment +phase)

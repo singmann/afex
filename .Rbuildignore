@@ -11,3 +11,4 @@ revdep
 Rplots.pdf
 
 ^README\.Rmd$
+^CODE_OF_CONDUCT\.md$

@@ -50,7 +50,7 @@ To calculate an ANOVA, `afex` requires the data to be in the long format (i.e., 
 - `aov_car` behaves similar to standard `aov` and requires the ANOVA to be specified as a formula containing an `Error` term (at least to identify the id variable).
 - `aov_4` allows the ANOVA to be specified via a formula similar to `lme4::lmer` (with one random effects term).
 
-A further overview is provided by the [vignette](https://cran.rstudio.com/web/packages/afex/vignettes/afex_anova_example.html). 
+A further overview is provided by the [vignette](https://cran.r-project.org/packages=afex/vignettes/afex_anova_example.html). 
 
 The following code provides a simple example for an ANOVA with both between- and within-subject factors. For this we use the lexical-decision and word naming latencies reported by Freeman, Heathcote, Chalmers, and Hockley (2010), see also `?fhch2010`. As is commonly done, we use the natural logarithm of the response times, `log_rt`, as dependent variable. As independent variable we will consider the between-subjects factor `task` (`"naming"` or `"lexdec"`) as well as the within-subjects-factors `stimulus` (`"word"` or `"nonword"`) and `length` (with 3 levels, 3, 4, or 5 letters).
 
@@ -128,7 +128,7 @@ contrast(em1, con, adjust = "holm")
 
 Function `mixed()` fits a mixed model with `lme4::lmer` (or `lme4::glmer` if a `family` argument is passed) and then calculates *p*-values for fixed effects model terms using a variety of methods. The formula to `mixed` needs to be the same as in a call to `lme4::lmer`. The default method for calculation of *p*-values is `'KR'` (Kenward-Roger) which only works for linear mixed models (i.e., no `family` argument) and can require considerable RAM and time, but provides the best control of Type I errors. Other methods are `'S'` (Satterthwaite, similar to `'KR'` but requires less RAM), `'PB'` (parametric bootstrap), and `'LRT'` (likelihood-ratio test). 
 
-More examples are provided in the [vignette](https://cran.rstudio.com/web/packages/afex/vignettes/afex_mixed_example.html), here we use the same example data as above, the lexical decision and word naming latencies collected by Freeman et al. (2010). To avoid long computation times we only consider the two factors `task` and `length` (omitting `stimulus` is probably not a fully sensible model).  Because mixed models easily allow it, we will consider crossed-random effects of participants (`id`) and items (`tem`).
+More examples are provided in the [vignette](https://cran.r-project.org/packages=afex/vignettes/afex_mixed_example.html), here we use the same example data as above, the lexical decision and word naming latencies collected by Freeman et al. (2010). To avoid long computation times we only consider the two factors `task` and `length` (omitting `stimulus` is probably not a fully sensible model).  Because mixed models easily allow it, we will consider crossed-random effects of participants (`id`) and items (`tem`).
 
 ```{r}
 library("afex")
@@ -198,7 +198,7 @@ m3
 Objects returned by `mixed` can be used for plotting with `afex_plot`. However, two things need to be considered.
 
 - The `id` argument of `afex_plot` allows specifying over which random effects grouping factors the data plotted in the background should be averaged over. Per default this uses all random effects grouping factors. In the present case this would mean that all data points are shown resulting in a very busy plot. When choosing only one of the random effects grouping factor, data points in the background show average response for each level of that factor. For example, when setting `id =  "id"` here each data point in the background shows the mean `log_rt` of one participant (i.e., level of `id`).
-- Estimated marginal means in the foreground are estimated via `emmeans` which per default attempts to estimate the degrees of freedom using the expensive Kenward-Roger method unless the number of data points is high (as here). This can produce quite some status messages (not shown here).
+- Estimated marginal means in the foreground are estimated via `emmeans` which per default attempts to estimate the degrees of freedom using the expensive Kenward-Roger method unless the number of data points is high (as here). This can produce quite some status messages (not shown here). Use `emmeans::emm_options(lmer.df = "asymptotic")` to suppress this calculation.
 
 ```{r, fig.width=4, fig.height=3, message=FALSE}
 library("ggplot2")
@@ -252,5 +252,6 @@ Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects struc
 
 Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in recognition memory for words. *Journal of Memory and Language*, 62(1), 1-18. http://doi.org/10.1016/j.jml.2009.09.004
 
-----
-Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+## Code of Conduct
+  
+Please note that `afex` is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/1/0/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

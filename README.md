@@ -31,7 +31,7 @@ To calculate an ANOVA, `afex` requires the data to be in the long format (i.e., 
 -   `aov_car` behaves similar to standard `aov` and requires the ANOVA to be specified as a formula containing an `Error` term (at least to identify the id variable).
 -   `aov_4` allows the ANOVA to be specified via a formula similar to `lme4::lmer` (with one random effects term).
 
-A further overview is provided by the [vignette](https://cran.rstudio.com/web/packages/afex/vignettes/afex_anova_example.html).
+A further overview is provided by the [vignette](https://cran.r-project.org/packages=afex/vignettes/afex_anova_example.html).
 
 The following code provides a simple example for an ANOVA with both between- and within-subject factors. For this we use the lexical-decision and word naming latencies reported by Freeman, Heathcote, Chalmers, and Hockley (2010), see also `?fhch2010`. As is commonly done, we use the natural logarithm of the response times, `log_rt`, as dependent variable. As independent variable we will consider the between-subjects factor `task` (`"naming"` or `"lexdec"`) as well as the within-subjects-factors `stimulus` (`"word"` or `"nonword"`) and `length` (with 3 levels, 3, 4, or 5 letters).
 
@@ -169,7 +169,7 @@ Mixed Models
 
 Function `mixed()` fits a mixed model with `lme4::lmer` (or `lme4::glmer` if a `family` argument is passed) and then calculates *p*-values for fixed effects model terms using a variety of methods. The formula to `mixed` needs to be the same as in a call to `lme4::lmer`. The default method for calculation of *p*-values is `'KR'` (Kenward-Roger) which only works for linear mixed models (i.e., no `family` argument) and can require considerable RAM and time, but provides the best control of Type I errors. Other methods are `'S'` (Satterthwaite, similar to `'KR'` but requires less RAM), `'PB'` (parametric bootstrap), and `'LRT'` (likelihood-ratio test).
 
-More examples are provided in the [vignette](https://cran.rstudio.com/web/packages/afex/vignettes/afex_mixed_example.html), here we use the same example data as above, the lexical decision and word naming latencies collected by Freeman et al. (2010). To avoid long computation times we only consider the two factors `task` and `length` (omitting `stimulus` is probably not a fully sensible model). Because mixed models easily allow it, we will consider crossed-random effects of participants (`id`) and items (`tem`).
+More examples are provided in the [vignette](https://cran.r-project.org/packages=afex/vignettes/afex_mixed_example.html), here we use the same example data as above, the lexical decision and word naming latencies collected by Freeman et al. (2010). To avoid long computation times we only consider the two factors `task` and `length` (omitting `stimulus` is probably not a fully sensible model). Because mixed models easily allow it, we will consider crossed-random effects of participants (`id`) and items (`tem`).
 
 ``` r
 library("afex")
@@ -216,9 +216,9 @@ m1
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>        Effect        df         F p.value
-#> 1        task  1, 45.05 13.52 ***   <.001
-#> 2      length 2, 325.22   6.03 **    .003
-#> 3 task:length 2, 302.68      0.33    .722
+#> 1        task  1, 44.80 13.47 ***   <.001
+#> 2      length 2, 325.78   6.03 **    .003
+#> 3 task:length 2, 303.23      0.33    .722
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 nice(m1)
@@ -227,9 +227,9 @@ nice(m1)
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>        Effect        df         F p.value
-#> 1        task  1, 45.05 13.52 ***   <.001
-#> 2      length 2, 325.22   6.03 **    .003
-#> 3 task:length 2, 302.68      0.33    .722
+#> 1        task  1, 44.80 13.47 ***   <.001
+#> 2      length 2, 325.78   6.03 **    .003
+#> 3 task:length 2, 303.23      0.33    .722
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 ```
@@ -245,9 +245,9 @@ anova(m1)
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>             num Df  den Df       F    Pr(>F)    
-#> task             1  45.047 13.5177 0.0006271 ***
-#> length           2 325.220  6.0264 0.0026922 ** 
-#> task:length      2 302.678  0.3262 0.7219139    
+#> task             1  44.797 13.4692 0.0006426 ***
+#> length           2 325.775  6.0255 0.0026940 ** 
+#> task:length      2 303.227  0.3263 0.7218472    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -265,36 +265,36 @@ summary(m1)
 #> 
 #> Scaled residuals: 
 #>     Min      1Q  Median      3Q     Max 
-#> -5.9268 -0.5900 -0.1016  0.4788  5.2670 
+#> -5.9267 -0.5900 -0.1018  0.4789  5.2673 
 #> 
 #> Random effects:
 #>  Groups   Name        Variance  Std.Dev. Corr       
-#>  item     (Intercept) 0.0115608 0.10752             
-#>           task1       0.0104502 0.10223  0.47       
-#>  id       (Intercept) 0.0372674 0.19305             
-#>           length1     0.0003315 0.01821   0.17      
-#>           length2     0.0001014 0.01007   0.10 -0.96
-#>  Residual             0.0925554 0.30423             
+#>  item     (Intercept) 0.0115702 0.10756             
+#>           task1       0.0104587 0.10227  0.47       
+#>  id       (Intercept) 0.0374050 0.19340             
+#>           length1     0.0003297 0.01816   0.16      
+#>           length2     0.0001009 0.01005   0.11 -0.96
+#>  Residual             0.0925502 0.30422             
 #> Number of obs: 12960, groups:  item, 600; id, 45
 #> 
 #> Fixed effects:
 #>                 Estimate Std. Error         df t value Pr(>|t|)    
-#> (Intercept)    -0.089098   0.029416  45.240840  -3.029 0.004046 ** 
-#> task1          -0.108035   0.029384  45.047389  -3.677 0.000627 ***
-#> length1        -0.020756   0.007810 226.277216  -2.658 0.008432 ** 
-#> length2        -0.003745   0.007465 379.689236  -0.502 0.616192    
-#> task1:length1   0.005719   0.007569 206.050460   0.755 0.450821    
-#> task1:length2  -0.004627   0.007213 352.648546  -0.641 0.521622    
+#> (Intercept)    -0.089098   0.029468  44.989068  -3.024 0.004117 ** 
+#> task1          -0.108035   0.029437  44.797243  -3.670 0.000643 ***
+#> length1        -0.020756   0.007810 226.902599  -2.658 0.008425 ** 
+#> length2        -0.003746   0.007467 380.122063  -0.502 0.616214    
+#> task1:length1   0.005719   0.007569 206.633789   0.756 0.450736    
+#> task1:length2  -0.004627   0.007214 353.115359  -0.641 0.521661    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
 #> Correlation of Fixed Effects:
 #>             (Intr) task1  lngth1 lngth2 tsk1:1
 #> task1        0.118                            
-#> length1      0.057  0.007                     
-#> length2      0.020  0.002 -0.526              
-#> tsk1:lngth1  0.007  0.059  0.328 -0.173       
-#> tsk1:lngth2  0.002  0.021 -0.174  0.349 -0.528
+#> length1      0.056  0.007                     
+#> length2      0.021  0.002 -0.526              
+#> tsk1:lngth1  0.007  0.058  0.329 -0.173       
+#> tsk1:lngth2  0.003  0.022 -0.174  0.349 -0.528
 #> convergence code: 0
 #> boundary (singular) fit: see ?isSingular
 ```
@@ -319,11 +319,11 @@ However, the singular fit warning remains. We therefore inspect the random-effec
 ``` r
 summary(m2)$varcor
 #>  Groups   Name        Std.Dev.  
-#>  item     re2.task1   1.0120e-01
-#>  item.1   (Intercept) 1.0684e-01
-#>  id       re1.length2 5.9187e-06
-#>  id.1     re1.length1 1.2287e-02
-#>  id.2     (Intercept) 1.9337e-01
+#>  item     re2.task1   1.0119e-01
+#>  item.1   (Intercept) 1.0685e-01
+#>  id       re1.length2 3.1129e-06
+#>  id.1     re1.length1 1.2292e-02
+#>  id.2     (Intercept) 1.9340e-01
 #>  Residual             3.0437e-01
 ```
 
@@ -354,7 +354,7 @@ m3
 Objects returned by `mixed` can be used for plotting with `afex_plot`. However, two things need to be considered.
 
 -   The `id` argument of `afex_plot` allows specifying over which random effects grouping factors the data plotted in the background should be averaged over. Per default this uses all random effects grouping factors. In the present case this would mean that all data points are shown resulting in a very busy plot. When choosing only one of the random effects grouping factor, data points in the background show average response for each level of that factor. For example, when setting `id =  "id"` here each data point in the background shows the mean `log_rt` of one participant (i.e., level of `id`).
--   Estimated marginal means in the foreground are estimated via `emmeans` which per default attempts to estimate the degrees of freedom using the expensive Kenward-Roger method unless the number of data points is high (as here). This can produce quite some status messages (not shown here).
+-   Estimated marginal means in the foreground are estimated via `emmeans` which per default attempts to estimate the degrees of freedom using the expensive Kenward-Roger method unless the number of data points is high (as here). This can produce quite some status messages (not shown here). Use `emmeans::emm_options(lmer.df = "asymptotic")` to suppress this calculation.
 
 ``` r
 library("ggplot2")
@@ -439,6 +439,7 @@ Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects struc
 
 Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in recognition memory for words. *Journal of Memory and Language*, 62(1), 1-18. <http://doi.org/10.1016/j.jml.2009.09.004>
 
-------------------------------------------------------------------------
+Code of Conduct
+---------------
 
-Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
+Please note that `afex` is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/1/0/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

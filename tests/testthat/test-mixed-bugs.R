@@ -5,6 +5,7 @@ context("mixed: known bugs")
 test_that("inverse.gaussian works", {
   ## see: https://github.com/singmann/afex/issues/74
   skip_if_not_installed("statmod")
+  skip_if(packageVersion("lme4") <= "1.1.21")
   skip_on_cran()
   set.seed(666)
   
@@ -24,13 +25,12 @@ test_that("inverse.gaussian works", {
                      data = df,
                      method = "LRT", progress = FALSE), "mixed")
   
-  ## fails due to pbkrtest issue
-  # expect_is(mixed(y ~ x1 * x2 
-  #                    + (1|id),
-  #                    family = inverse.gaussian(link = "inverse"),
-  #                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
-  #                    data = df,
-  #                    method = "PB", progress = FALSE), "mixed")
+  expect_is(mixed(y ~ x1 * x2 + (1|id),
+                     family = inverse.gaussian(link = "inverse"),
+                     control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                     data = df,
+                     method = "PB", progress = FALSE, 
+                  args_test = list(nsim = 5)), "mixed")
   
   
 })

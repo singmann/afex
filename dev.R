@@ -60,6 +60,7 @@ usethis::use_package("nlme", "Suggests")
 #usethis::use_package("GLMMadaptive", "Suggests")
 usethis::use_readme_rmd()
 usethis::use_cran_badge()
+usethis::use_code_of_conduct()
 
 ### check reverse dependencies:
 

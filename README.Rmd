@@ -254,4 +254,4 @@ Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in 
 
 ## Code of Conduct
   
-Please note that `afex` is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/1/0/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
+Please note that `afex` is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.

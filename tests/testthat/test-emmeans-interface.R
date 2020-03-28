@@ -146,7 +146,9 @@ test_that("ANCOVA with emmeans is correct for univariate & multivariate", {
 
 test_that("mixed works with emmeans", {
   skip_if_not_installed("emmeans")
+  skip_on_cran()
   data(sk2011.1)
+  emmeans::emm_options(lmer.df = "asymptotic")
   m1 <- mixed(response ~ instruction*inference*plausibility +(1|id), sk2011.1, progress = FALSE)
   expect_is(emmeans::emmeans(m1, ~ inference), "emmGrid")
   m2 <- mixed(response ~ inference +(inference|id), sk2011.1, progress = FALSE)
@@ -187,6 +189,7 @@ test_that("mixed works with type=2 and all methods", {
 
 test_that("emmeans works with mixed and expand_er = TRUE", {
   skip_if_not_installed("emmeans")
+  skip_if_not_installed("MEMSS")
   data("Machines", package = "MEMSS") 
   m2 <- mixed(score ~ Machine + (Machine||Worker), data=Machines, 
               expand_re = TRUE, progress = FALSE)
@@ -208,6 +211,7 @@ test_that("emmeans works with mixed and expand_er = TRUE", {
 
 test_that("emmeans with mixed & expand_re = TRUE with pre 3.0 lmerTest objects", {
   skip_if_not_installed("emmeans")
+  skip_on_cran()
   load("m_machines_lmerTest-pre3.0.rda")
   # load("tests/testthat/m_machines_lmerTest-pre3.0.rda")
   t1 <- emmeans::emmeans(m_machines, "Machine", lmer.df = "asymptotic")

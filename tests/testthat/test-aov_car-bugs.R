@@ -245,6 +245,7 @@ test_that("aov_ez works with multiple covariates", {
 
 test_that("aov_car works with p.val adjustment == NA for HF as well as GG", {
   # see: https://github.com/singmann/afex/issues/36
+  skip_on_cran()
   load("anova_hf_error.rda")
   expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"))), 
             "nice_table")

@@ -21,6 +21,8 @@ options(error = NULL)
 options(warn = 2)
 options(warn = 0)
 
+usethis::use_data(stroop, internal = FALSE, overwrite = TRUE)
+
 ## check for non-ASCII characters in examples:
 for (f in list.files("examples/", full.names = TRUE)) {
   cat(f, "\n")

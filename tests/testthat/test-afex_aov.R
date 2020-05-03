@@ -99,3 +99,29 @@ test_that("afex_aov objects works without aov object", {
   expect_false(any(as.data.frame(summary(em3))$df == as.data.frame(summary(em4))$df))
   afex_options(op)
 })
+
+test_that("better error message in case of all data having NAs", {
+  data("stroop")
+  # stroop_e1 <- stroop %>%
+  #   filter(!is.na(acc)) %>% 
+  #   filter(study == "1") %>% 
+  #   droplevels()
+  stroop_e1_na <- stroop %>%
+    filter(study == "1") 
+  
+  suppressWarnings(expect_error(aov_ez(
+    id = "pno", 
+    dv = "acc", 
+    data = stroop_e1_na,
+    within = c("congruency", "condition")
+  ), "Try adding to ANOVA call: na.rm = TRUE"))
+  
+  expect_is(aov_ez(
+    id = "pno", 
+    dv = "acc", 
+    data = stroop_e1_na,
+    within = c("congruency", "condition"), 
+    na.rm = TRUE, 
+    include_aov = FALSE
+  ), "afex_aov")
+})

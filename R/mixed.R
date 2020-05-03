@@ -494,7 +494,7 @@ mixed <- function(formula,
   mapping <- attr(m.matrix, "assign")
   fixed.vars <- all.vars(rh2)
   # check for missing values in variables used:
-  if (nrow(m.matrix) != nrow(data)) {
+  if (nrow(model.matrix(nobars(formula.f), data = data)) != nrow(data)) {
     data <- model.frame(
       as.formula(paste0(vars.to.check[1], 
                        "~", 
@@ -502,9 +502,10 @@ mixed <- function(formula,
       data = data)
     m.matrix <- model.matrix(rh2, data = data)
     warning(paste0("Due to missing values, reduced number of observations to ", 
-                  nrow(data)))
+                  nrow(data)), call. = FALSE)
     if(set_data_arg) {
-      warning("Due to missing values, set_data_arg set to FALSE.")
+      warning("Due to missing values, set_data_arg set to FALSE.", 
+              call. = FALSE)
       set_data_arg <- FALSE
     }
   }
@@ -550,7 +551,8 @@ mixed <- function(formula,
              method, '"', call. = FALSE)
       mf[[1]] <- quote(lme4::lmer)
     }
-    else stop("value of afex_options('lmer_function') not supported.")
+    else stop("value of afex_options('lmer_function') not supported.", 
+              call. = FALSE)
     use_reml <- TRUE
   }
   mf[["data"]] <- as.name("data")
@@ -568,7 +570,7 @@ mixed <- function(formula,
   }
   if ("family" %in% names(mf)) {
     if (!(method[1] %in% c("LRT", "PB"))) 
-      stop("GLMMs can only be estimated with 'LRT' or 'PB'.")
+      stop("GLMMs can only be estimated with 'LRT' or 'PB'.", call. = FALSE)
   }
   ## do not calculate nested models for these methods:
   if (method[1] %in% c("KR", "S")) {

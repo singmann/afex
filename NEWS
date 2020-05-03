@@ -1,4 +1,25 @@
                     *************************
+                    ** afex VERSION 0.28-x **
+                    *************************
+                    
+                    Changes in afex Version 0.28-x
+                    Released May 2020
+                    
+    Significant User Visible Changes and New Features
+    
+    o   Added new data set, stroop, which contains the accuracy and response 
+        time from Lin, Saunders, Friese, Evans, and Inzlicht (2020, Psych 
+        Science, https://doi.org/10.1177/0956797620904990).
+
+    o   Better error messages in case of NAs in the response variable for 
+        ANOVAs and mixed models.
+
+    Bugfixes
+
+    o   
+
+
+                    *************************
                     ** afex VERSION 0.27-x **
                     *************************
                     

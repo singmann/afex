@@ -536,6 +536,10 @@ aov_car <- function(formula,
                   "\nRemoving those cases from the analysis."), call. = FALSE) 
     tmp.dat <- tmp.dat[!missing.values,]
     data <- data[ !(data[,id] %in% missing_ids),]
+    if ((nrow(data) == 0 ) | (nrow(tmp.dat) == 0)) {
+      stop("No observations remain after removing missing values.", 
+           "\n  Try adding to ANOVA call: na.rm = TRUE", call. = FALSE)
+    }
   } else {
     missing_ids <- NULL
   }

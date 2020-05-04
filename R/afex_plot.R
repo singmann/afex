@@ -143,15 +143,16 @@
 #'   confidence intervals (if \code{error_ci = TRUE}, the default) or standard 
 #'   errors (if \code{error_ci = FALSE}).
 #'   
-#'   A further complication is that readers routinely misinterpret confidence 
-#'   intervals. The most common error is to assume that non-overlapping error 
-#'   bars indicate a significant difference (e.g., Belia et al., 2005). This is 
-#'   rarely the case (see e.g., Cumming & Finch, 2005; Knol et al., 2011; 
-#'   Schenker & Gentleman, 2005). For example, in a fully between-subjects design
-#'   in which the error bars depict 95\% confidence intervals and groups are of 
-#'   approximately equal size and have equal variance, even error bars that 
-#'   overlap by as much as 50\% still correspond to \emph{p} < .05. Error bars 
-#'   that are just touching roughly correspond to \emph{p} = .01.
+#'   A further complication is that readers routinely misinterpret confidence
+#'   intervals. The most common error is to assume that non-overlapping error
+#'   bars indicate a significant difference (e.g., Belia et al., 2005). This is
+#'   often too strong an assumption. (see e.g., Cumming & Finch, 2005; Knol et
+#'   al., 2011; Schenker & Gentleman, 2005). For example, in a fully
+#'   between-subjects design in which the error bars depict 95\% confidence
+#'   intervals and groups are of approximately equal size and have equal
+#'   variance, even error bars that overlap by as much as 50\% still correspond
+#'   to \emph{p} < .05. Error bars that are just touching roughly correspond to
+#'   \emph{p} = .01.
 #'   
 #'   In the case of designs involving repeated-measures factors the usual
 #'   confidence intervals or standard errors (i.e., model-based confidence

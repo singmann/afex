@@ -80,7 +80,11 @@ all_fit <- function(m,
       else cat("[ERROR]\n")
     }
   }
-  ##
+  ## reset call slot of refitted objects
+  res <- lapply(res, function(x) {
+    try(x@call[["data"]] <- m@call[["data"]], silent = TRUE)
+    x
+  })
   res
 }
 

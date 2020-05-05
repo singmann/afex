@@ -1074,7 +1074,6 @@ print.mixed <- function(x, ...) {
   invisible(tmp)
 }
 
-
 #anova.mixed <- 
 
 #' @method summary mixed

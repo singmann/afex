@@ -8,8 +8,11 @@
     Significant User Visible Changes and New Features
     
     o   Added new data set, stroop, which contains the accuracy and response 
-        time from Lin, Saunders, Friese, Evans, and Inzlicht (2020, Psych 
+        time data from Lin, Saunders, Friese, Evans, and Inzlicht (2020, Psych 
         Science, https://doi.org/10.1177/0956797620904990).
+        
+    o   Added new vignette, "Analysis of Accuracy Data using ANOVA and binomial 
+        GLMMs" which uses the new Stroop data.
 
     o   Better error messages in case of NAs in the response variable for 
         ANOVAs and mixed models.

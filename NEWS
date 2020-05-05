@@ -16,7 +16,8 @@
 
     Bugfixes
 
-    o   
+    o   objects estimated with mixed(..., all_fit = TRUE) should now work
+        again with emmeans.
 
 
                     *************************

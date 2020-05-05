@@ -2,6 +2,15 @@
 
 context("mixed: known bugs")
 
+test_that("all_fit = TRUE works with emmeans", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("MEMSS")
+  skip_if_not_installed("emmeans")
+  data("Machines", package = "MEMSS") 
+  m1 <- mixed(score ~ Machine + (1|Worker), data=Machines, all_fit = TRUE)
+  expect_is(emmeans::emmeans(m1, "Machine"), "emmGrid")
+})
+
 test_that("inverse.gaussian works", {
   ## see: https://github.com/singmann/afex/issues/74
   skip_if_not_installed("statmod")

@@ -21,6 +21,9 @@
 
     o   objects estimated with mixed(..., all_fit = TRUE) should now work
         again with emmeans.
+        
+    o   afex_plot() works with mixed models estimated with mixed(..., type = 2) 
+        (i.e., mixed models with Type II sums of squares).
 
 
                     *************************

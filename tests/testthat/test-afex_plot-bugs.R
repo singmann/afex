@@ -14,3 +14,24 @@ test_that("mixed models with Type = 2 work", {
   expect_is(afex_plot(m1, "Machine"), "ggplot")
 })
 
+test_that("response variable y works", {
+  
+  testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("MEMSS")
+  testthat::skip_on_cran()
+  
+  data("Machines", package = "MEMSS") 
+
+  Machines$y <- rnorm(nrow(Machines), mean = -100)
+  ## was a problem if it came before the DV column
+  Machines <- Machines[, c("y", "Worker", "Machine", "score")]
+  
+  # simple model with random-slopes for repeated-measures factor
+  m1 <- mixed(score ~ Machine + (1|Worker), data=Machines, progress = FALSE)
+  m1
+  
+  pp <- afex_plot(m1, "Machine")
+  
+  expect_true(all(pp$layers[[1]]$data$y > 0))
+})

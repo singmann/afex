@@ -24,6 +24,9 @@
         
     o   afex_plot() works with mixed models estimated with mixed(..., type = 2) 
         (i.e., mixed models with Type II sums of squares).
+        
+    o   afex_plot() did not work if data had a column called y that appeared
+        before the response/DV column in data.
 
 
                     *************************

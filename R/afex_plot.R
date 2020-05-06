@@ -264,6 +264,9 @@
 #'   \emph{The American Statistician}, 55(3), 182-186.
 #'   https://doi.org/10.1198/000313001317097960
 #'   
+#' @note Only the DV/response variable can be called \code{y}, but no
+#'   factor/variable used for plotting.
+#'   
 #'   
 #' @importFrom stats aggregate sd qt formula
 #' 
@@ -314,6 +317,10 @@ afex_plot.afex_aov <- function(object,
   trace <- get_plot_var(trace)
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
+  if ("y" %in% all_vars) {
+    stop("Variable 'y' cannot be used for plotting. Rename variable and refit.",
+         call. = FALSE)
+  }
   
   emms <- get_emms(object = object, 
                    x = x,
@@ -441,6 +448,10 @@ afex_plot.mixed <- function(object,
   trace <- get_plot_var(trace)
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
+  if ("y" %in% all_vars) {
+    stop("Variable 'y' cannot be used for plotting. Rename variable and refit.",
+         call. = FALSE)
+  }
   
   if (missing(id)) {
     id <- unique(names(lme4::ranef(full_model)))
@@ -560,6 +571,10 @@ afex_plot.merMod <- function(object,
   trace <- get_plot_var(trace)
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
+  if ("y" %in% all_vars) {
+    stop("Variable 'y' cannot be used for plotting. Rename variable and refit.",
+         call. = FALSE)
+  }
   
   
   if (missing(id)) {
@@ -686,6 +701,10 @@ afex_plot.default <- function(object,
   trace <- get_plot_var(trace)
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
+  if ("y" %in% all_vars) {
+    stop("Variable 'y' cannot be used for plotting. Rename variable and refit.",
+         call. = FALSE)
+  }
   
   if (missing(dv)) {
     formula_name <- names(object$call)[2]

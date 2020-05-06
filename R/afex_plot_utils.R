@@ -187,13 +187,26 @@ prep_data <- function(data,
     status_message = FALSE
   )
   
-  colnames(data)[colnames(data) == dv_col] <- "y"
-  if (!is.numeric(data$y)) {
+  ## we have to make sure that if data already contains a column y, the correct
+  ## one is used for aggregation here.
+  ## the old code below led to problems in this case
+  # colnames(data)[colnames(data) == dv_col] <- "y"
+  # if (!is.numeric(data$y)) {
+  #   message("transforming dv to numerical scale")
+  #   data$y <- as.numeric(data$y)
+  # }
+  # data <- aggregate(data$y, by = data[c(all_vars,id)], 
+  #                   FUN = mean, drop = TRUE)
+  #colnames(data)[colnames(data) == dv_col] <- "y"
+  
+  if (!is.numeric(data[[dv_col]])) {
     message("transforming dv to numerical scale")
-    data$y <- as.numeric(data$y)
+    data[[dv_col]] <- as.numeric(data[[dv_col]])
   }
-  data <- aggregate(data$y, by = data[c(all_vars,id)], 
+  data <- aggregate(data[[dv_col]], 
+                    by = data[c(all_vars,id)],
                     FUN = mean, drop = TRUE)
+  
   data$y <- data$x
   data$x <- interaction(data[x], sep = "\n")
   if (length(panel) > 0) {

@@ -157,6 +157,7 @@ Before looking at the results, let us first discuss the alternative way of speci
 
 At first, we need to aggregate the data. For this, we can use the following `dplyr` syntax.
 
+
 ```{r}
 stroop_e1_agg <- stroop_e1 %>% 
   group_by(condition, congruency, pno) %>% 
@@ -345,10 +346,21 @@ message("Aggregating data over: pno")
 pp2a_inter
 ```
 
+For reference, we can also make the plot based on the model using variant 1 (i.e., based on trial-wise non-aggregated data) which produces the same figure.
 
+```{r, eval=FALSE}
+afex_plot(e1_mixed1_v1, "condition", "congruency", 
+          data_geom = geom_violin)
+```
+
+```{r, echo=FALSE, fig.width=4.5, fig.height=3.5}
+message("Aggregating data over: pno")
+pp2a_inter_v1
+```
 
 ```{r, eval=FALSE, include=FALSE}
 save(e1_mixed1_v1, e1_mixed1_v2, e1_mixed1_v2_allfit,
+     e12_mixed1_t2, e12_mixed1, e12_mixed1_t2_red,
      file = "development/stroop_mixed.rda", compress = "xz")
 ## load("development/stroop_mixed.rda")
 ```
@@ -383,6 +395,8 @@ emm_2a_inter2_out <- capture_call(print(emm_2a_inter2))
 emm_2a_cong_out <- capture_call(print(emm_2a_cong))
 emm_2a_cond_out <- capture_call(print(emm_2a_cond))
 
+emm_inter_1 <- emmeans(e1_mixed1_v2_allfit, "congruency", 
+                       by = "condition", type = "response")
 emm_2a_pairs <- capture_call(print(pairs(emm_inter_1)))
 
 pp2a_main <- plot_grid(
@@ -397,23 +411,319 @@ pp2a_main <- plot_grid(
 pp2a_inter <- afex_plot(e1_mixed1_v2_allfit, "condition", "congruency", 
           data_geom = geom_violin)
 
+pp2a_inter_v1 <- afex_plot(e1_mixed1_v1, "condition", "congruency", 
+          data_geom = geom_violin)
+
+### experiments 1 and 2
+
+outp_e12_mixed1 <- capture_call(print(e12_mixed1))
+outp_e12_mixed1_t2 <- capture_call(print(e12_mixed1_t2))
+
+outp_e12_mixed1_t2_red <- capture_call(print(e12_mixed1_t2_red))
+
+emm_e12_inter_out <- capture_call(print(emmeans(e12_mixed1, 
+                                    c("condition", "congruency"), 
+                                    type = "response")))
+
+emm_e12_t2_inter_out <- capture_call(print(emmeans(e12_mixed1_t2, 
+                                    c("condition", "congruency"), 
+                                    type = "response")))
+
+emm_e12_t2_red_inter_out <- capture_call(print(emmeans(e12_mixed1_t2_red,  
+                           c("congruency", "condition"), 
+                           type = "response")))
+
+emm_e12_t2_red_pairs_out <- capture_call(print(pairs(
+  emmeans(e12_mixed1_t2_red, "congruency", 
+                                    by = "condition", 
+                                    type = "response"))))
+
+emm_e12_t2_pairs_out <- capture_call(print(pairs(
+  emmeans(e12_mixed1_t2, "congruency", 
+                                by = "condition", type = "response"))))
+
+emm_e12_t2_pairs_p_out <- capture_call(print(pairs(
+  emmeans(e12_mixed1_t2, "congruency", 
+                                by = "condition", type = "response", 
+                                weights = "proportional"))))
+
+pp_e12_inter_t3 <- afex_plot(e12_mixed1, "condition", "congruency", 
+                             data_geom = geom_violin)
+pp_e12_inter_t2 <- afex_plot(e12_mixed1_t2, "condition", "congruency", 
+                             data_geom = geom_violin)
+pp_e12_inter_t2_red <- afex_plot(e12_mixed1_t2_red, "condition", "congruency", 
+                                 data_geom = geom_violin)
+
 save(outp_e1_mixed1_v1, outp_e1_mixed1_v2, 
      outp_e1_mixed1_v2_allfit, 
      emm_2a_cong_out, emm_2a_cond_out,
      pp2a_main,  
      emm_2a_inter1_out, emm_2a_inter2_out,
      emm_2a_pairs, 
-     pp2a_inter,
+     pp2a_inter, pp2a_inter_v1,
+     
+     outp_e12_mixed1, outp_e12_mixed1_t2,
+     outp_e12_mixed1_t2_red, 
+     emm_e12_inter_out, emm_e12_t2_inter_out, 
+     emm_e12_t2_red_inter_out, 
+     emm_e12_t2_red_pairs_out, 
+     emm_e12_t2_pairs_out, 
+     emm_e12_t2_pairs_p_out,
+     pp_e12_inter_t3, pp_e12_inter_t2,
+     pp_e12_inter_t2_red,
+     
      file = "inst/extdata/outputs_glmm_vignette.rda", 
      compress = "xz")
 
 ```
 
+# Analysis of Two Studies with GLMM
+
+The `stroop` data set contains all four experiments of Lin et al. (2020). So far we only looked at Experiment 1. Here, we want to look at Experiments 1 and 2 to show some additional functionality of analyzing accuracy data with GLMMs. Let us begin by preparing the data.
+
+```{r}
+## extract data from experiment 1 and remove NAs
+stroop_e12 <- stroop %>%
+  filter(!is.na(acc)) %>% 
+  filter(study %in% c("1", "2")) %>% 
+  droplevels()
+```
+
+We then have a look at the number of participants per experiment. As can be seen below, there is a clear imbalance with experiment 1 having a lot more participants than experiment 2. We will see below what we can do with this information.
 
 
+```{r}
+stroop_e12 %>% 
+  group_by(study) %>% 
+  summarise(n = length(unique(pno)))
+```
+
+But first, we aggregate the data for analysing it using the second variant introduced above as it is dramatically faster.
+
+```{r}
+stroop_e12_agg <- stroop_e12 %>% 
+  group_by(study, condition, congruency, pno) %>% 
+  summarise(acc = mean(acc), 
+            n = n())
+```
+
+
+We are now ready to fit the model. However, because we now have to fit 8 models in total and we also have more data at hand, fitting will take quite a bit longer even when using the aggregated data. Especially, because based on our experience with the data froM Experiment 1, it makes sense to set `all_fit = TRUE` here.
+
+## Estimating Models in Parallel
+
+Therefore, it makes sense to reduce our fitting time by distributing the estimation across the available CPU cores using the `parallel` package support provided by `mixed`. Note that this simply distributes the different models across cores (i.e., each individual fit is still run on a single core). Because we have to pass both the average accuracy as well as the weights as an additional vector, we also need to export the `data.frame` holding the weights to the cores so they are available there (again, this is a consequence of the arguably somewhat sub-optimal way `mixed` deals with the extra `weight` argument). 
+
+```{r, eval = FALSE}
+library("parallel")
+nc <- detectCores() # number of cores
+cl <- makeCluster(rep("localhost", nc)) # make cluster
+clusterExport(cl = cl, "stroop_e12_agg")
+```
+
+We can then fit the model using the new data in a similar manner as above. The main changes are that we add `*study` to the fixed effects part of the model formula which estimates main effects and all interactions with `study`. We do not estimate any random slopes for `study` because participants are in only one study (i.e., study is a between-subjects factor). We also enable multicore estimation by setting `cl = cl`.
+
+```{r, eval = FALSE}
+e12_mixed1 <- mixed(
+  acc ~ congruency*condition*study + (congruency*condition|pno), 
+  data = stroop_e12_agg, 
+  method = "LRT", 
+  family = binomial,
+  weight = stroop_e12_agg$n, 
+  all_fit = TRUE, 
+  cl = cl
+)
+```
+
+## Type III versus Type II Sums of Squares 
+
+The default `type` argument when using `mixed` (and the other `afex` functions) is `3` which estimates so-called type III sums of squares tests of model terms. There is a somewhat heated discussion on these topics on in the literature which I do not want to rehash here (more can be found in [our chapter](http://singmann.org/download/publications/singmann_kellen-introduction-mixed-models.pdf)). In short, the distinction between Type III (default in `afex`) and Type II (recommended by some vocal statisticians) is about how to deal with imbalance (i.e., different group sizes). Type III sums of squares assume that the imbalance is random and estimates a model in which all groups are assumed to have equal sizes. In contrast, using Type II sums of squares the differences in group sizes are assumed to be meaningful (e.g., as a consequence of different group sizes in the environment) and the model is set-up such that the differences in group sizes are represented.
+
+Remember that the first experiment (study 1) had a lot more participants than the second experiment (study 2). However, the default Type III tests treat both studies as having the same sample size. In this case it might therefore make sense to also look at th eresults with Type II tests. For this, we simply need to add `type = 2` (or equivalently `type = "II"`) to the call as shown below.
+
+```{r, eval = FALSE}
+e12_mixed1_t2 <- mixed(
+  acc ~ congruency*condition*study + (congruency*condition|pno), 
+  data = stroop_e12_agg, 
+  method = "LRT", 
+  family = binomial,
+  weight = stroop_e12_agg$n, 
+  all_fit = TRUE, 
+  cl = cl,
+  type = 2
+)
+```
+
+Fitting both models shows a number of warnings similar to the previous model which we do not reproduce here. Let us instead take a look at the results.
+
+We begin with the Type III model. 
+
+```{r, eval=FALSE}
+e12_mixed1
+```
+```{r, echo=FALSE}
+cat(outp_e12_mixed1$output, sep = "\n")
+```
+
+The results are now more in line with the results from the ANOVA analysis. We only see significant main effects of congruency and condition, but no congruency by condition interaction. Furthermore, no effect involving study is significant.
+
+Let us now take a look at the Type II results.
+
+```{r, eval=FALSE}
+e12_mixed1_t2
+```
+```{r, echo=FALSE}
+cat(outp_e12_mixed1_t2$output, sep = "\n")
+```
+
+These look quite similar with one difference. The congruency by condition interaction is still not significant, however, the p-value is below .1. 
+
+Taken together the results somewhat suggest that the congruency by condition interaction is a pattern mainly found in (the larger) Experiment 1, but not in Experiment 2. In the Type III analysis in which both studies are weighed equally the interaction therefore does not reach significance. In contrast, in the Type II analysis in which the additional participants of Experiment 1 have a larger influence on the interaction, the p-value drops and is nearer the .05 cutoff. However, the difference in the interaction between the experiments is also not too large as the three way interaction of congruency by condition by study is clearly not significant (and as the highest order effect, the same in both analyses). 
+
+## Follow-Up Tests for Type II Models
+
+We can now of course also plot the data. Let us plot the congruency by condition interaction as before. We begin with the plot of the Type III model.
+
+```{r, eval=FALSE}
+afex_plot(e12_mixed1, "condition", "congruency", 
+          data_geom = geom_violin)
+```
+
+```{r, echo=FALSE, fig.width=4.5, fig.height=3.5}
+message("Aggregating data over: pno")
+message("NOTE: Results may be misleading due to involvement in interactions")
+pp_e12_inter_t3
+```
+
+We then plot the interaction of the Type II model.
+
+```{r, eval=FALSE}
+afex_plot(e12_mixed1_t2, "condition", "congruency", 
+          data_geom = geom_violin)
+```
+
+```{r, echo=FALSE, fig.width=4.5, fig.height=3.5}
+message("Aggregating data over: pno")
+message("emmeans are based on full model which includes all effects.")
+message("NOTE: Results may be misleading due to involvement in interactions")
+pp_e12_inter_t2
+```
+
+Both look pretty much the same and actually are the same. The reason for this is also given as a message when producing the second plot. When using `mixed` Type II models, all folow-up tests (which includes plotting via `afex_plot`) are based on the full model. However, Type II model tests are not all based on the full model. Rather, for tests of lower-order effects higher order effects are not part of the comparison (i.e., tests of two-way interactions such as the congruency by condition interaction are compared against a reference model that only includes all two-way interactions and not the three-way interaction). 
+
+We can also see this when comparing the corresponding `emmeans` for both models:
+
+```{r, eval=FALSE}
+emmeans(e12_mixed1, c("condition", "congruency"), type = "response")
+```
+```{r, echo=FALSE}
+message("NOTE: Results may be misleading due to involvement in interactions")
+cat(emm_2a_cond_out$output, sep = "\n")
+```
+
+```{r, eval=FALSE}
+emmeans(e12_mixed1_t2, c("condition", "congruency"), type = "response")
+```
+```{r, echo=FALSE}
+message("NOTE: Results may be misleading due to involvement in interactions")
+cat(emm_2a_cond_out$output, sep = "\n")
+```
+
+We again see that they are identical. Thus, the Type II outputs do not actually reflect Type II tests.
+
+A more appropriate way to look at this two-way interaction would be to use a model that reflects the Type II tests; that is, a model without the three-way interaction. A variant of this model is part of the `e12_mixed1_t2` object. However, because of the way `afex::mixed` creates the set of tests, this model is parameterized in a different way so we cannot pass it to `emmeans` for tests. Therefore, we have to refit the model without the three-way interaction. We do so by changing the fixed effects part of the formula to `(congruency+condition+study)^2` which means all main effects and up to two-way interactions.
+
+
+```{r, eval = FALSE}
+e12_mixed1_t2_red <- mixed(
+  acc ~ (congruency+condition+study)^2 + (congruency*condition|pno), 
+  data = stroop_e12_agg, 
+  method = "LRT", 
+  family = binomial,
+  weight = stroop_e12_agg$n, 
+  all_fit = TRUE, 
+  cl = cl,
+  type = 2
+)
+```
+
+```{r, eval=FALSE}
+e12_mixed1_t2_red
+```
+```{r, echo=FALSE}
+cat(outp_e12_mixed1_t2_red$output, sep = "\n")
+```
+
+We first have a look at the resulting ANOVA table (note, we suppress the warnings again here). As expected, the Type II tests are the same as in `e12_mixed1_t2`, because they are based on the exact same models.
+
+We then take a look at the maringal means for the two-way interaction of congruency by condition. 
+
+
+```{r, eval=FALSE}
+emmeans(e12_mixed1_t2_red,  c("congruency", "condition"), type = "response") 
+```
+```{r, echo=FALSE}
+message("emmeans are based on full model which includes all effects.")
+cat(emm_e12_t2_red_inter_out$output, sep = "\n")
+```
+
+We can see these are now a bit different from the previous one, but not by a lot. A better way to see the difference is to use the same approach as abova and look at the estimated Stroop effects for each condition.
+
+For the correct Type II model these are given by the following call:
+
+```{r, eval=FALSE}
+emmeans(e12_mixed1_t2_red, "congruency", by = "condition", 
+        type = "response") %>% 
+  pairs()
+```
+```{r, echo=FALSE}
+message("emmeans are based on full model which includes all effects.")
+cat(emm_e12_t2_red_pairs_out$output, sep = "\n")
+```
+
+For the wrong Type II model these are given below:
+
+```{r, eval=FALSE}
+emmeans(e12_mixed1_t2, "congruency", by = "condition", type = "response") %>% 
+  pairs()
+```
+```{r, echo=FALSE}
+message("emmeans are based on full model which includes all effects.")
+message("NOTE: Results may be misleading due to involvement in interactions")
+cat(emm_e12_t2_pairs_out$output, sep = "\n")
+```
+
+We can see that as expected the magnitude of the difference between the Stroop effects is smaller in `e12_mixed1_t2` (5.73 vs 5.13) than in `e12_mixed1_t2_red` (5.81 vs. 5.06).
+
+One way to approximate the latter behaviour without actually refitting the model is by passing `weights = "proportional"`. This does not produce exact Type II marginal means as when actually refitting the model. But at least approximates those.
+
+```{r, eval=FALSE}
+emmeans(e12_mixed1_t2, "congruency", by = "condition", type = "response", 
+        weights = "proportional") %>% 
+  pairs()
+```
+```{r, echo=FALSE}
+message("emmeans are based on full model which includes all effects.")
+message("NOTE: Results may be misleading due to involvement in interactions")
+cat(emm_e12_t2_pairs_p_out$output, sep = "\n")
+```
+
+Finally, we can also use this model to plot the two-way interaction.
+
+```{r, eval=FALSE}
+afex_plot(e12_mixed1_t2_red, "condition", "congruency", 
+          data_geom = geom_violin)
+```
+
+```{r, echo=FALSE, fig.width=4.5, fig.height=3.5}
+message("Aggregating data over: pno")
+message("emmeans are based on full model which includes all effects.")
+pp_e12_inter_t2_red
+```
 
 # References
 
 - Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. *Journal of Memory and Language*, 68(3), 255–278. https://doi.org/10.1016/j.jml.2012.11.001
 - Lin, H., Saunders, B., Friese, M., Evans, N. J., & Inzlicht, M. (2020). Strong Effort Manipulations Reduce Response Caution: A Preregistered Reinvention of the Ego-Depletion Paradigm. *Psychological Science*. https://doi.org/10.1177/0956797620904990
 - Singmann, H., & Kellen, D. (2019). An Introduction to Mixed Models for Experimental Psychology. In D. H. Spieler & E. Schumacher (Eds.), *New Methods in Cognitive Psychology* (pp. 4–31). Psychology Press.
+ 

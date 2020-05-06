@@ -707,9 +707,19 @@ afex_plot.default <- function(object,
   }
   
   if (missing(dv)) {
-    formula_name <- names(object$call)[2]
+    tryCatch({
+      formula_name <- names(object$call)[2]
+    }, error = function(e) stop(
+      "Could not detect dv column. Please specify via dv argument.", 
+      call. = FALSE
+    ))
+    if (is.null(formula_name)) stop(
+      "Could not detect dv column. Please specify via dv argument.", 
+      call. = FALSE
+    )
     message("dv column detected: ", deparse(object$call[[formula_name]][[2]]))
     dv <- deparse(object$call[[formula_name]][[2]])
+    
   }
   ## prepare raw (i.e., participant by cell) data if missing
   if (missing(data)) {

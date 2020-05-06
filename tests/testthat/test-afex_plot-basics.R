@@ -184,8 +184,7 @@ test_that("afex_plot works with various geoms (from examples)", {
                   data_geom = ggpol::geom_boxjitter, 
                   data_arg = list(
                     width = 0.3, 
-                    jitter.width = 0,
-                    jitter.height = 10,
+                    jitter.params = list(width = 0, height = 10),
                     outlier.intersect = TRUE),
                   point_arg = list(size = 2.5), 
                   error_arg = list(size = 1.5, width = 0))
@@ -197,8 +196,7 @@ test_that("afex_plot works with various geoms (from examples)", {
                   data_geom = ggpol::geom_boxjitter, 
                   data_arg = list(
                     width = 0.5, 
-                    jitter.width = 0,
-                    jitter.height = 10,
+                    jitter.params = list(width = 0, height = 10),
                     outlier.intersect = TRUE),
                   point_arg = list(size = 2.5), 
                   line_arg = list(linetype = 0),

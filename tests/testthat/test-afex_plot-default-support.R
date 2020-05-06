@@ -67,20 +67,3 @@ test_that("nlme works", {
   expect_true(nrow(d5$data) < nrow(Oats))
 })
 
-test_that("brms support works", {
-  testthat::skip_on_cran()
-  testthat::skip_on_travis()
-  testthat::skip_if_not_installed("brms")
-  testthat::skip_if_not_installed("MEMSS")
-  library("brms")
-  data("Machines", package = "MEMSS") 
-  capture.output(
-    mm2 <- brm(score ~ Machine + (Machine|Worker), data=Machines, 
-               chains = 2, cores = 1, seed = 12345, iter = 500)
-  )
-  expect_is(afex_plot(mm2, "Machine", data = Machines, dv = "score"), "ggplot")
-  
-  expect_error(afex_plot(mm2, "Machine", data = Machines), 
-               "Could not detect dv column")
-  
-})

@@ -121,4 +121,8 @@ test_that("brms plots", {
   
   expect_equivalent(bb1$data, bb1n$data, tolerance = 0.1)
   expect_equivalent(bb2$data, bb2n$data, tolerance = 0.1)
+  
+  expect_error(afex_plot(mm2, "Machine", data = Machines), 
+               "Could not detect dv column")
+  
 })

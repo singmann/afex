@@ -106,8 +106,7 @@ test_that("better error message in case of all data having NAs", {
   #   filter(!is.na(acc)) %>% 
   #   filter(study == "1") %>% 
   #   droplevels()
-  stroop_e1_na <- stroop %>%
-    filter(study == "1") 
+  stroop_e1_na <- stroop[ stroop$study == "1", ]
   
   suppressWarnings(expect_error(aov_ez(
     id = "pno", 
@@ -122,6 +121,7 @@ test_that("better error message in case of all data having NAs", {
     data = stroop_e1_na,
     within = c("congruency", "condition"), 
     na.rm = TRUE, 
-    include_aov = FALSE
+    include_aov = FALSE, 
+    fun_aggregate = mean
   ), "afex_aov")
 })

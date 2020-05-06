@@ -1,6 +1,6 @@
 ## ----set-options, echo=FALSE, cache=FALSE-----------------------------------------------
 options(width = 90)
-knitr::opts_chunk$set(dpi=100)
+knitr::opts_chunk$set(dpi=72)
 knitr::knit_hooks$set(document = function(x){
   gsub("```\n*```r*\n*", "", x)
 })
@@ -126,7 +126,7 @@ afex_plot(tmb, "spp", "mined", id = "site", data = Salamanders,
 #                    panel.grid.minor.x = element_blank()))
 #  cbpp <- lme4::cbpp
 #  cbpp$prob <- with(cbpp, incidence / size)
-#  example_model <- stan_glmer(prob ~ size + period + (1|herd),
+#  example_model <- stan_glmer(prob ~ period + (1|herd),
 #                              data = cbpp, family = binomial, weight = size,
 #                              chains = 2, cores = 1, seed = 12345, iter = 500)
 
@@ -144,21 +144,48 @@ load(system.file("extdata/", "plots_rstanarm.rda", package = "afex"))
 plot_grid(b1, b2, labels = "AUTO")
 
 ## ---- eval=FALSE------------------------------------------------------------------------
+#  cbpp_l <- vector("list", nrow(cbpp))
+#  for (i in seq_along(cbpp_l)) {
+#    cbpp_l[[i]] <- data.frame(
+#      herd = cbpp$herd[i],
+#      period = cbpp$period[i],
+#      incidence = rep(0, cbpp$size[i])
+#    )
+#    cbpp_l[[i]]$incidence[seq_len(cbpp$incidence[i])] <- 1
+#  }
+#  cbpp_l <- do.call("rbind", cbpp_l)
+#  cbpp_l$herd <- factor(cbpp_l$herd, levels = levels(cbpp$herd))
+#  cbpp_l$period <- factor(cbpp_l$period, levels = levels(cbpp$period))
+#  example_model2 <- stan_glmer(incidence ~ period + (1|herd),
+#                               data = cbpp_l, family = binomial,
+#                               chains = 2, cores = 1, seed = 12345, iter = 500)
+
+## ---- eval=FALSE------------------------------------------------------------------------
+#  b3 <- afex_plot(example_model2, "period")
+#  ## dv column detected: incidence
+#  ## No id column passed. Assuming all rows are independent samples.
+#  b4 <- afex_plot(example_model2, "period", id = "herd")
+#  ## dv column detected: incidence
+#  plot_grid(b3, b4, labels = "AUTO")
+
+## ----fig.width=7, fig.height=3, echo=FALSE----------------------------------------------
+plot_grid(b3, b4, labels = "AUTO")
+
+## ---- eval=FALSE------------------------------------------------------------------------
 #  data("Machines", package = "MEMSS")
 #  mm <- stan_lmer(score ~ Machine + (Machine|Worker), data=Machines,
 #                  chains = 2, cores = 1, seed = 12345, iter = 500)
 
 ## ---- eval=FALSE------------------------------------------------------------------------
-#  b3 <- afex_plot(mm, "Machine")
+#  b5 <- afex_plot(mm, "Machine")
 #  ## dv column detected: score
 #  ## No id column passed. Assuming all rows are independent samples.
-#  b4 <- afex_plot(mm, "Machine", id = "Worker", data = Machines)
+#  b6 <- afex_plot(mm, "Machine", id = "Worker")
 #  ## dv column detected: score
-#  plot_grid(b3, b4, labels = "AUTO")
+#  plot_grid(b5, b6, labels = "AUTO")
 
 ## ----fig.width=7, fig.height=3, echo=FALSE----------------------------------------------
-load(system.file("extdata/", "plots_rstanarm.rda", package = "afex"))
-plot_grid(b3, b4, labels = "AUTO")
+plot_grid(b5, b6, labels = "AUTO")
 
 ## ---- eval=FALSE, include=FALSE---------------------------------------------------------
 #  library("rstanarm") ## requires resetting the ggplot2 theme
@@ -170,18 +197,37 @@ plot_grid(b3, b4, labels = "AUTO")
 #  set_sum_contrasts()
 #  cbpp <- lme4::cbpp
 #  cbpp$prob <- with(cbpp, incidence / size)
-#  example_model <- stan_glmer(prob ~ size + period + (1|herd),
+#  example_model <- stan_glmer(prob ~ period + (1|herd),
 #                              data = cbpp, family = binomial, weight = size,
 #                              chains = 2, cores = 1, seed = 12345, iter = 500)
 #  b1 <- afex_plot(example_model, "period")
 #  b2 <- afex_plot(example_model, "period", data_geom = geom_violin)
 #  
+#  cbpp_l <- vector("list", nrow(cbpp))
+#  for (i in seq_along(cbpp_l)) {
+#    cbpp_l[[i]] <- data.frame(
+#      herd = cbpp$herd[i],
+#      period = cbpp$period[i],
+#      incidence = rep(0, cbpp$size[i])
+#    )
+#    cbpp_l[[i]]$incidence[seq_len(cbpp$incidence[i])] <- 1
+#  }
+#  cbpp_l <- do.call("rbind", cbpp_l)
+#  cbpp_l$herd <- factor(cbpp_l$herd, levels = levels(cbpp$herd))
+#  cbpp_l$period <- factor(cbpp_l$period, levels = levels(cbpp$period))
+#  example_model2 <- stan_glmer(incidence ~ period + (1|herd),
+#                               data = cbpp_l, family = binomial,
+#                               chains = 2, cores = 1, seed = 12345, iter = 500)
+#  b3 <- afex_plot(example_model2, "period")
+#  b4 <- afex_plot(example_model2, "period", id = "herd")
+#  
 #  data("Machines", package = "MEMSS")
 #  mm <- stan_lmer(score ~ Machine + (Machine|Worker), data=Machines,
 #                  chains = 2, cores = 1, seed = 12345, iter = 500)
-#  b3 <- afex_plot(mm, "Machine")
-#  b4 <- afex_plot(mm, "Machine", id = "Worker", data = Machines)
-#  save(b1, b2, b3, b4, file = "../inst/extdata/plots_rstanarm.rda", compress = "xz")
+#  b5 <- afex_plot(mm, "Machine")
+#  b6 <- afex_plot(mm, "Machine", id = "Worker", data = Machines)
+#  save(b1, b2, b3, b4, b5, b6, file = "../inst/extdata/plots_rstanarm.rda",
+#       compress = "xz", version = 2)
 
 ## ---- eval=FALSE------------------------------------------------------------------------
 #  library("brms")
@@ -208,7 +254,7 @@ plot_grid(bb1, bb2)
 #  bb1 <- afex_plot(mm2, "Machine", data = Machines, dv = "score")
 #  bb2 <- afex_plot(mm2, "Machine", id = "Worker",
 #            data = Machines, dv = "score")
-#  save(bb1, bb2, file = "../inst/extdata/plots_brms.rda")
+#  save(bb1, bb2, file = "../inst/extdata/plots_brms.rda", version = 2)
 
 ## ----fig.width=4, fig.height=3, eval = FALSE--------------------------------------------
 #  library("GLMMadaptive")

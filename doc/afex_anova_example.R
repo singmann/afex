@@ -1,6 +1,6 @@
 ## ----set-options, echo=FALSE, cache=FALSE-----------------------------------------------
 options(width = 90)
-knitr::opts_chunk$set(dpi=100)
+knitr::opts_chunk$set(dpi=72)
 
 ## ----message=FALSE, warning=FALSE-------------------------------------------------------
 library("afex")     # needed for ANOVA functions.

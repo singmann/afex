@@ -64,7 +64,7 @@ str(stroop_e1)
 ```
 
 
-## ANOVA Analysis
+# ANOVA Analysis
 
 We begin with an analysis of the data using standard repeated-measures ANOVA. ANOVA is probably the most common approach to analyse such data in psychology, but its use is somewhat questionable. The reason is that ANOVA assumes that response variable is normally distributed (or more precisely, the conditional distribution of the data after taking the model into account, i.e., the residuals, are assumed to follow a normal distribution). Here, our data are only 0s and 1s which do not follow a normal but rather a binomial or Bernoulli distribution. Nevertheless, analysis of such data using models assuming normal distribution such as ANOVA is not uncommon and in many cases leads to the same conclusions than the more complicated model discussed below. However, as we will see below, the results can also change.
 
@@ -124,7 +124,7 @@ plot_grid(
 
 
 
-## Mixed Model Analysis
+# Mixed Model Analysis
 
 ```{r, echo=FALSE}
 load(system.file("extdata/", "outputs_glmm_vignette.rda", package = "afex"))
@@ -139,7 +139,7 @@ As for all mixed models, we should begin our analysis with the "maximal model ju
 
 Another important decision when fitting a mixed model with `afex::mixed` is the choice of the `method` for tetsing model terms. The default `method` is the Kenward-Roger approximation. However, this is not possible for GLMMs (i.e., it only applies to LMMs). For GLMMs we only have two methods available, likelihood ratio tests (`method = "LRT"`) and parametric bootstrap (`method = "PB"`). Parametric bootstrap is generally the preferrable procedure, especially in settings with small N, specifically low numbers of levels for the random effects grouping factor (i.e., few participants in the present case). However, parametric bootstrap can be prohibitively time consuming, especially for models that have just a moderately complicated random effects structure such as in the present case (even though computations can be distributed on a multicore machine). One rule of thumb (for which I have never seen any actual data) is that with more than around 50 levels for each random effects goruping factor, likelihood ratio tests are probably okay and parametric bootstrap no tnecessary. Luckily, in the present case we have over 250 participants (so way more than 50), so we decide to use likelihood ratio tests as a method for testing model terms (i.e., `method = "LRT"`).
 
-### Setting-Up and Fitting the Models
+## Setting-Up and Fitting the Models
 
 There are two ways on how to setup such models in `afex::mixed` (`lme4` provides another third variant that is not possible in `afex::mixed`). Before describing both ways, the somewhat surprising fact is that the second way, based on the aggregated data, is considerably faster then the first way. In the present case the first way takes more than an hour on my laptop versus the second way takes around one minute. To understand the two different ways, it might help to recall some basics about the [binomial distribution](https://en.wikipedia.org/wiki/Binomial_distribution). It is defined by the number of observations and the number of successes and has one parameter, the success probability. Because we want to estimate the parameter of the binomial distribution, the success probability, we have to pass two pieces of information to the `mixed` function; the number of successes and the total number of trials. The easiest way to do so with the current data is by directly passing the accuracy column `acc`. It only consists of zeros and ones so the total number of observations is the number of trials, and the number of ones is the number of successes.  The following code sets up the maximal model as discussed above using this approach. Note that fitting this model takes more than an hour (likely several hours).
 
@@ -179,7 +179,7 @@ e1_mixed1_v2 <- mixed(
 )
 ```
 
-### Dealind with Fit Warnings
+## Dealind with Fit Warnings
 
 Before looking at the results, we see that fitting produces quite a few warnings. These are reproduced below in the way we would also get them when simply typing in the object name (e.g., `e1_mixed1_v2`). The following are the warnings for the first variant, `e1_mixed1_v1`.
 
@@ -220,7 +220,7 @@ xxx <- lapply(outp_e1_mixed1_v2_allfit$warnings,
 
 Somewhat surprisingly the fit using all optimizers produces more convergence warnings than the previous fit. However, all warnings are of the same type as for the other variants.
 
-### ANOVA Table for GLMMs
+## ANOVA Table for GLMMs
 
 We can now print the model to get the resulting ANOVA table, that is the table of model terms (i.e., main effects and interactions), as for the regular ANOVA model. Doing so would normally also reproduces the warnings shown above but is suppressed here. 
 
@@ -257,7 +257,7 @@ As can be seen, the results of the three different variants are extremely simila
 
 As for the ANOVA we see significant main effects of congruency and condition. However, we also see a significant congruency by condition interaction. 
 
-### Follow-Up Analysis and Plots
+## Follow-Up Analysis and Plots
 
 Let us first look at the main effects as for the ANOVA model. For this, we will always use the model with `all_fit = TRUE`, `e1_mixed1_v2_allfit`. For easier interpretability, we also always set `type = "response"` in the call to `emmeans`. This provides estimated marginal means on the response scale (i.e., in probability units after applying the inverse link function). In case of the default (i.e., `type = "link"`) marginal mean are given on the linear scale which in this case is the logit scale.   
 
@@ -408,6 +408,8 @@ save(outp_e1_mixed1_v1, outp_e1_mixed1_v2,
      compress = "xz")
 
 ```
+
+
 
 
 # References

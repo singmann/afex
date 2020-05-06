@@ -431,13 +431,19 @@ afex_plot.mixed <- function(object,
             paste(names(dots), collapse = ", "), call. = FALSE)
   }
   
+  if (attr(object, "type") %in% c("II", 2)) {
+    full_model <- object$full_model[[1]]
+  } else (
+    full_model <- object$full_model
+  )
+  
   x <- get_plot_var(x)
   trace <- get_plot_var(trace)
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
   
   if (missing(id)) {
-    id <- unique(names(lme4::ranef(object$full_model)))
+    id <- unique(names(lme4::ranef(full_model)))
     message("Aggregating data over: ", paste(id, collapse = ", "))
   }
   ## prepare raw (i.e., participant by cell) data
@@ -446,7 +452,7 @@ afex_plot.mixed <- function(object,
                     trace = trace,
                     panel = panel,
                     factor_levels = factor_levels,
-                    dv_col = deparse(object$full_model@call[["formula"]][[2]]),
+                    dv_col = deparse(full_model@call[["formula"]][[2]]),
                     id = id)
   data$afex_id <- interaction(data[id], sep = ".")
   
@@ -464,7 +470,7 @@ afex_plot.mixed <- function(object,
                    emmeans_arg = emmeans_arg, 
                    factor_levels = factor_levels,
                    level = error_level)
-  attr(emms, "dv") <- deparse(object$full_model@call[["formula"]][[2]])
+  attr(emms, "dv") <- deparse(full_model@call[["formula"]][[2]])
   
   if (length(id) == 1) {
     all_within <- lapply(lme4::findbars(object$call), all.vars)

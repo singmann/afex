@@ -349,9 +349,9 @@ mm2 <- brm(score ~ Machine + (Machine|Worker), data=Machines,
 However, to pass a `brms` object to `afex_plot` we need to pass both, the `data` used for fitting as well as the name of the dependent variable (here `score`) via the `dv` argument. We again build the plot such that the left panel shows the raw data without aggregation and the right panel shows the data aggregated within the grouping factor `Worker`.
 
 ```{r, eval=FALSE}
-bb1 <- afex_plot(mrt, "Machine", data = Machines, dv = "score")
+bb1 <- afex_plot(mm2, "Machine", data = Machines, dv = "score")
 ## No id column passed. Assuming all rows are independent samples.
-bb2 <- afex_plot(mm, "Machine", id = "Worker", 
+bb2 <- afex_plot(mm2, "Machine", id = "Worker", 
           data = Machines, dv = "score")
 plot_grid(bb1, bb2)
 ```

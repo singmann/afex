@@ -236,9 +236,9 @@ plot_grid(b5, b6, labels = "AUTO")
 #             chains = 2, cores = 1, seed = 12345, iter = 500)
 
 ## ---- eval=FALSE------------------------------------------------------------------------
-#  bb1 <- afex_plot(mrt, "Machine", data = Machines, dv = "score")
+#  bb1 <- afex_plot(mm2, "Machine", data = Machines, dv = "score")
 #  ## No id column passed. Assuming all rows are independent samples.
-#  bb2 <- afex_plot(mm, "Machine", id = "Worker",
+#  bb2 <- afex_plot(mm2, "Machine", id = "Worker",
 #            data = Machines, dv = "score")
 #  plot_grid(bb1, bb2)
 

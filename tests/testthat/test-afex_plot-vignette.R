@@ -19,19 +19,19 @@ test_that("glmmTMB object", {
   skip_if_not_installed("cowplot")
   skip_if_not_installed("ggplot2")
   library("ggplot2")
-  po <- cowplot::plot_grid(
-    afex_plot(tmb, "spp"),
-    afex_plot(tmb, "spp", data_geom = geom_violin),
-    afex_plot(tmb, "spp", id = "site", data = Salamanders), 
-    labels = "AUTO", nrow = 1
-  )
-  pn <- cowplot::plot_grid(
-    afex_plot(tmb2, "spp"),
-    afex_plot(tmb2, "spp", data_geom = geom_violin),
-    afex_plot(tmb2, "spp", id = "site", data = Salamanders), 
-    labels = "AUTO", nrow = 1
-  )
-  expect_equivalent(po$data, pn$data)
+  
+  p1o <- afex_plot(tmb, "spp")
+  p1n <- afex_plot(tmb2, "spp")
+  expect_equivalent(p1o, p1n)
+  
+  p2o <- afex_plot(tmb, "spp", data_geom = geom_violin)
+  p2n <- afex_plot(tmb2, "spp", data_geom = geom_violin)
+  expect_equivalent(p2o, p2n)
+  
+  p3o <- afex_plot(tmb, "spp", id = "site", data = Salamanders)
+  p3n <- afex_plot(tmb2, "spp", id = "site", data = Salamanders)
+  expect_equivalent(p3o, p3n)
+  
 })
 
 

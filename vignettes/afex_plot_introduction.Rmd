@@ -144,14 +144,17 @@ ggsave("my_plot.pdf", device = "pdf",
 The first two variants display only points, whereas the remaining ones use different visualizations of the raw data. Note that depending on the specific variant we change a few further plot options to obtain a visually pleasing result. For example, the `dodge` argument controls the spread of points belonging to different levels of the `trace` factor at each x-axis position. 
 
 1. Add jitter on the y-axis to points which avoids perfect overlap.
-2. Display points using a bee swarm plot, which displaces overlapping points on the x-axis: `ggbeeswarm::geom_beeswarm`
 3. Size of points show number of data points at a given y-axis position: `geom_count`. For this geom, adding a call to `scale_size_area()` can sometimes be beneficial.
 3. Violin plot: `geom_violin`
 4. Box plot: `geom_boxplot`. Note that for this plot we have added `linetype = 1` to `data_arg`, which avoids that the outline of the box plots is affected by the linetype mapping (this is in contrast with the violin plot).
+2. Display points using a bee swarm plot, which displaces overlapping points on the x-axis: `ggbeeswarm::geom_beeswarm`
+2. Display points using a variant of the bee swarm plot that even works in case of many data points: `ggbeeswarm::geom_quasirandom`
 5. Combine box plot with jittered points: `ggpol::geom_boxjitter`
 
 
-```{r fig.width=8.5, fig.height=12, dpi = 125}
+
+
+```{r fig.width=8.5, fig.height=16, dpi = 125}
 p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                 data_arg = list(
                   position = 
@@ -162,20 +165,25 @@ p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                     ),
                   color = "darkgrey"))
 p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+                data_geom = geom_count)
+p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+                data_geom = geom_violin, 
+                data_arg = list(width = 0.5))
+p4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+                data_geom = geom_boxplot, 
+                data_arg = list(width = 0.3, linetype = 1))
+p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                 data_geom = ggbeeswarm::geom_beeswarm,
                 data_arg = list(
                   dodge.width = 0.5,  ## needs to be same as dodge
                   cex = 0.8,
                   color = "darkgrey"))
-p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
-                data_geom = geom_count)
-p4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-                data_geom = ggplot2::geom_violin, 
-                data_arg = list(width = 0.5))
-p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-                data_geom = ggplot2::geom_boxplot, 
-                data_arg = list(width = 0.3, linetype = 1))
-p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7, 
+p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+                data_geom = ggbeeswarm::geom_quasirandom,
+                data_arg = list(
+                  dodge.width = 0.5,  ## needs to be same as dodge
+                  color = "darkgrey"))
+p7 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7, 
                 data_geom = ggpol::geom_boxjitter, 
                 data_arg = list(
                   width = 0.5, 
@@ -183,7 +191,7 @@ p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
                   outlier.intersect = TRUE),
                 point_arg = list(size = 2.5), 
                 error_arg = list(size = 1.5, width = 0))
-plot_grid(p1, p2, p3, p4, p5, p6, ncol = 2, labels = 1:6)  
+plot_grid(p1, p2, p3, p4, p5, p6, p7, ncol = 2, labels = 1:7)  
 ```
 
 ## Adding Color to Plots

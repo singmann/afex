@@ -13,9 +13,9 @@
         
     o   Added new vignette, "Analysis of Accuracy Data using ANOVA and binomial 
         GLMMs" which uses the new Stroop data.
-
-    o   Better error messages in case of NAs in the response variable for 
-        ANOVAs and mixed models.
+        
+    o   afex_plot introduction vignette and help page now refer to 
+        ggbeeswarm::geom_quasirandom as a good alternative to the beeswarm plot.
 
     Bugfixes
 
@@ -27,6 +27,14 @@
         
     o   afex_plot() did not work if data had a column called y that appeared
         before the response/DV column in data.
+        
+    o   Better error message if afex_plot() fails to recover the dv from the 
+        formula (e.g., for brms models).
+        
+    o   Better error message if afex_plot() 
+    
+    o   Better error messages in case of NAs in the response variable for 
+        ANOVAs and mixed models.
 
 
                     *************************

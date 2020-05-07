@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 # Overview
 
-This vignette shows how accuracy data can be analysed with `afex` using either ANOVA or a binomial generalized linear mixed model (i.e., a mixed model that uses the appropriate distributional family for such data). Accuracy data means data where each observations can be categorized as either a 0, which indicates failure, miss, or an erroneous response, or 1 which indicates success or a correct response.
+This vignette shows how accuracy data can be analysed with `afex` using either ANOVA or a binomial generalized linear mixed model (i.e., a mixed model that uses the appropriate distributional family for such data). Accuracy data means data where each observation can be categorized as either a 0, which indicates failure, miss, or an erroneous response, or 1 which indicates success or a correct response.
 
 We begin by loading the packages needed here and set a somewhat nicer `ggplot2` theme.
 

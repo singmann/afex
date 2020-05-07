@@ -15,7 +15,8 @@
         GLMMs" which uses the new Stroop data.
         
     o   afex_plot introduction vignette and help page now refer to 
-        ggbeeswarm::geom_quasirandom as a good alternative to the beeswarm plot.
+        ggbeeswarm::geom_quasirandom as a good alternative to the bee swarm 
+        plot.
 
     Bugfixes
 

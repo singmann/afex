@@ -26,16 +26,21 @@
     o   afex_plot() works with mixed models estimated with mixed(..., type = 2) 
         (i.e., mixed models with Type II sums of squares).
         
-    o   afex_plot() did not work if data had a column called y that appeared
+    o   afex_plot() did not work if data had a column called 'y' that appeared
         before the response/DV column in data.
+        
+    o   Better error message if afex_plot() is called with variable/factor 'y' 
+        for plotting (which is not supported, 'y' can only be the name of the 
+        response variable).
         
     o   Better error message if afex_plot() fails to recover the dv from the 
         formula (e.g., for brms models).
-        
-    o   Better error message if afex_plot() 
     
     o   Better error messages in case of NAs in the response variable for 
         ANOVAs and mixed models.
+        
+    o   afex_plot.merMod() method does not fail any more for models with missing
+        data. 
 
 
                     *************************

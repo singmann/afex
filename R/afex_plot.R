@@ -585,8 +585,9 @@ afex_plot.merMod <- function(object,
   ## prepare raw (i.e., participant by cell) data
   data <- prep_data(
     data = emmeans::recover_data(
-      object = object, 
-      trms = terms(object, fixed.only = FALSE)
+      object = object@call, 
+      trms = terms(object, fixed.only = FALSE), 
+      na.action = attr(object@frame, ".na.action")
       ), 
     x = x,
     trace = trace,

@@ -8,4 +8,4 @@ mixed <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk
 residuals(within)
 residuals(mixed)
 residuals(between)
-residuals(between, return_df = TRUE) # since data was aggragated across within conditions
+residuals(between, append = TRUE) # since data was aggragated across within conditions

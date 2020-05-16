@@ -10,7 +10,7 @@ test_that("Residuals works", {
   expect_is(residuals(mixed),"numeric")
   expect_is(residuals(between),"numeric")
   
-  expect_is(residuals(within, return_df = TRUE),"data.frame")
-  expect_is(residuals(mixed, return_df = TRUE),"data.frame")
-  expect_is(residuals(between, return_df = TRUE),"data.frame")
+  expect_is(residuals(within, append = TRUE),"data.frame")
+  expect_is(residuals(mixed, append = TRUE),"data.frame")
+  expect_is(residuals(between, append = TRUE),"data.frame")
 })

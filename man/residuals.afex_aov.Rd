@@ -2,22 +2,24 @@
 % Please edit documentation in R/residuals.R
 \name{residuals.afex_aov}
 \alias{residuals.afex_aov}
-\title{Extract and Plot \code{afex_aov} Model Residuals}
+\title{Extract \code{afex_aov} Model Residuals}
 \usage{
-\method{residuals}{afex_aov}(object, return_df = FALSE, ...)
+\method{residuals}{afex_aov}(object, append = FALSE, ...)
 }
 \arguments{
 \item{object}{\code{afex_aov} object.}
 
-\item{return_df}{if \code{TRUE} returns the long data with an additional column \code{residuals}.}
+\item{append}{If set to \code{TRUE} returns the residuals appended as an additional column \code{.residuals.} to the long data. 
+Recomended when data was aggragated across within conditions.}
 
 \item{...}{Not used.}
 }
 \value{
-A vector of residualts, or if \code{return_df = TRUE} a data frame with an additional column \code{residuals}.
+A vector of residualts corresponding to the data in \code{object$data$long}, 
+or if \code{append = TRUE} a data frame with an additional column \code{.residuals.}.
 }
 \description{
-Extract and Plot \code{afex_aov} Model Residuals
+Extract residuals from \code{afex_aov} objects.
 }
 \examples{
 ### Setup ANOVAs
@@ -30,7 +32,7 @@ mixed <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk
 residuals(within)
 residuals(mixed)
 residuals(between)
-residuals(between, return_df = TRUE) # since data was aggragated across within conditions
+residuals(between, append = TRUE) # since data was aggragated across within conditions
 }
 \author{
 Mattan S. Ben-Shachar

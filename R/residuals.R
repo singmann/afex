@@ -16,6 +16,13 @@
 #' 
 #' @export
 residuals.afex_aov <- function(object, append = FALSE, ...) {
+  if (!append && attr(object, "data_changed")) {
+    warning("Data was changed during ANOVA calculation. ", 
+            "Thus, residuals cannot be added to original data.", 
+            "\nresiduals(..., append = TRUE) will return data and residuals.", 
+            call. = FALSE)
+  }
+  
   if (length(attr(object, "within")) > 0) {
     # residuals in long format
     e <- data.frame(residuals(object$lm))

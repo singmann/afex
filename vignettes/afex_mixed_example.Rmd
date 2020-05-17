@@ -19,29 +19,47 @@ knitr::opts_chunk$set(dpi=72)
 
 ## Overview
 
-This documents reanalysis response time data from an Experiment performed by Freeman, Heathcote, Chalmers, and Hockley (2010) using the mixed model functionality of __afex__ implemented in function `mixed` followed by post-hoc tests using package __emmeans__ (Lenth, 2017). After a brief description of the data set and research question, the code and results are presented. 
+This documents reanalysis response time data from an Experiment performed by
+Freeman, Heathcote, Chalmers, and Hockley (2010) using the mixed model
+functionality of __afex__ implemented in function `mixed` followed by post-hoc
+tests using package __emmeans__ (Lenth, 2017). After a brief description of the
+data set and research question, the code and results are presented.
 
 ## Description of Experiment and Data
 
-The data are lexical decision and word naming latencies for 300 words and 300 nonwords from 45 participants presented in Freeman et al. (2010). The 300 items in each `stimulus` condition were selected to form a balanced $2 \times 2$ design with factors neighborhood `density` (low versus high) and `frequency` (low versus high). The `task` was a between subjects factor: 25 participants worked on the lexical decision task and 20 participants on the naming task. After excluding erroneous responses each participants responded to between 135 and 150 words and between 124 and 150 nonwords. We analyzed log RTs which showed an approximately normal picture. 
+The data are lexical decision and word naming latencies for 300 words and 300
+nonwords from 45 participants presented in Freeman et al. (2010). The 300 items
+in each `stimulus` condition were selected to form a balanced $2 \times 2$
+design with factors neighborhood `density` (low versus high) and `frequency`
+(low versus high). The `task` was a between subjects factor: 25 participants
+worked on the lexical decision task and 20 participants on the naming task.
+After excluding erroneous responses each participants responded to between 135
+and 150 words and between 124 and 150 nonwords. We analyzed log RTs which
+exhibited an approximately normal marginal distribution.
 
 ## Data and R Preperation
 
-We start with loading some packages we will need throughout this example. For data manipulation we will be using the `dplyr` and `tidyr` packages from the [`tidyverse`](http://tidyverse.org/). A thorough introduction to these packages is beyond this example, but well worth it, and can be found in ['R for Data Science'](http://r4ds.had.co.nz/) by Wickham and Grolemund. For plotting we will be diverging from the `tidyverse` and use `lattice` instead. At some later point in time I will change this to `ggplot2` plots. 
+We start with loading some packages we will need throughout this example. For
+data manipulation and plotting we will be using `dplyr`, `tidyr`, and `ggplot2`
+from the [`tidyverse`](http://tidyverse.org/). A thorough introduction to these
+packages is beyond this example, but well worth it, and can be found in ['R for
+Data Science'](http://r4ds.had.co.nz/) by Wickham and Grolemund. 
 
-After loading the packages, we will load the data (which comes with `afex`), remove the errors, and take a look at the variables in the data.
+After loading the packages, we will load the data (which comes with `afex`),
+remove the errors, and take a look at the variables in the data.
 
 ```{r message=FALSE, warning=FALSE}
 library("afex") # needed for mixed() and attaches lme4 automatically.
 library("emmeans") # emmeans is needed for follow-up tests (and not anymore loaded automatically).
 library("multcomp") # for advanced control for multiple testing/Type 1 errors.
 library("dplyr") # for working with data frames
+options("dplyr.summarise.inform" = FALSE)  # avoids unnecessary messages
 library("tidyr") # for transforming data frames from wide to long and the other way round.
-library("lattice") # for plots
-library("latticeExtra") # for combining lattice plots, etc.
-lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
-lattice.options(default.args = list(as.table = TRUE)) # better ordering
-
+library("ggplot2")
+library("ggbeeswarm")  ## for geom_quasirandom()
+theme_set(theme_bw(base_size = 15) + 
+            theme(legend.position="bottom", 
+                  panel.grid.major.x = element_blank()))
 data("fhch2010") # load 
 fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
 str(fhch2010) # structure of the data
@@ -51,73 +69,100 @@ To make sure our expectations about the data match the data we use some `dplyr` 
 
 ```{r}
 ## are all participants in only one task?
-fhch2010 %>% group_by(id) %>%
+fhch2010 %>% 
+  group_by(id) %>%
   summarise(task = n_distinct(task)) %>%
-  as.data.frame() %>% 
   {.$task == 1} %>%
   all()
 
 ## participants per condition:
-fhch2010 %>% group_by(id) %>%
+fhch2010 %>% 
+  group_by(id) %>%
   summarise(task = first(task)) %>%
   ungroup() %>%
   group_by(task) %>%
   summarise(n = n())
 
 ## number of different items per participant:
-fhch2010 %>% group_by(id, stimulus) %>%
+fhch2010 %>% 
+  group_by(id, stimulus) %>%
   summarise(items = n_distinct(item)) %>%
   ungroup() %>%
   group_by(stimulus) %>%
   summarise(min = min(items), 
             max = max(items), 
             mean = mean(items))
-
-
 ```
 
-Before running the analysis we should make sure that our dependent variable looks roughly normal. To compare `rt` with `log_rt` within the same graph using `lattice` we first need to transform the data from the wide format (where both rt types occupy one column each) into the long format (in which the two rt types are combined into a single column with an additional indicator column). To do so we use `tidyr::gather`. Then we simply call the `histogram` function on the new `data.frame` and make a few adjustments to the defaults to obtain a nice looking output. The plot shows that `log_rt` looks clearly more normal than `rt`, although not perfectly so. An interesting exercise could be to rerun the analysis below using a transformation that provides an even better 'normalization'.
+Before running the analysis we should make sure that our dependent variable
+looks roughly normal. Note though that normality of the dependent variable is
+not an actual assumption of the model, but normality of the residuals. However,
+in cases in which all covariates (i.e., independent variables) are
+categorical/factors, normality of the dependent variable is usually a sufficient
+criterion for the latter. To compare `rt` with `log_rt` within the same plot we
+first need to transform the data from the wide format (where both rt types
+occupy one column each) into the long format (in which the two rt types are
+combined into a single column with an additional indicator column). To do so we
+use `tidyr::pivot_loner`.
+
+Then we call `ggplot()` on the long data using `geom_histogram` and `facet_wrap`
+on the `rt_type` column with ` scales = "free_x"`. The plot shows that `log_rt`
+looks clearly more normal than `rt`, although not perfectly so. An interesting
+exercise could be to rerun the analysis below using a transformation that
+provides an even better 'normalization' (e.g., the inverse transformation `1/rt`
+after removing some outliers).
 
 ```{r, fig.width=7, fig.height=4}
-fhch_long <- fhch %>% gather("rt_type", "rt", rt, log_rt)
-histogram(~rt|rt_type, fhch_long, breaks = "Scott", type = "density",
-          scale = list(x = list(relation = "free")))
+fhch_long <- fhch %>% 
+  pivot_longer(cols = c(rt, log_rt), names_to = "rt_type", values_to = "rt")
+ggplot(fhch_long, aes(rt)) +
+  geom_histogram(bins = 50) +
+  facet_wrap("rt_type", scales = "free_x")
 ```
 
 ## Descriptive Analysis
 
-The main factors in the experiment were the between-subjects factor `task` (`naming` vs. `lexdec`), and the within-subjects factors `stimulus` (`word` vs. `nonword`), `density` (`low` vs. `high`), and `frequency` (`low` vs. `high`). Before running an analysis it is a good idea to visually inspect the data to gather some expectations regarding the results. Should the statistical results dramatically disagree with the expectations this suggests some type of error along the way (e.g., model misspecification) or at least encourages a thorough check to make sure everything is correct. We first begin by plotting the data aggregated by-participant. 
+The main factors in the experiment were the between-subjects factor `task`
+(`naming` vs. `lexdec`), and the within-subjects factors `stimulus` (`word` vs.
+`nonword`), `density` (`low` vs. `high`), and `frequency` (`low` vs. `high`).
+Before running an analysis it is a good idea to visually inspect the data to
+gather some expectations regarding the results. Should the statistical results
+dramatically disagree with the expectations this suggests some type of error
+along the way (e.g., model misspecification) or at least encourages a thorough
+check to make sure everything is correct. We first begin by plotting the data
+aggregated by-participant.
 
-In each plot we plot the raw data in the background. To make the individual data points visible we add some `jitter` on the x-axis and choose `pch` and `alpha` values such that we see where more data points are (i.e., where plot overlaps it is darker). Then we add the mean as a x in a circle. Both of this is done in the same call to `xyplot` using a custom panel function. Finally, we combine this plot with a simple boxplot using `bwplot`. 
+In each plot we plot the individual data points (i.e., the data points
+aggregated across participants) in the background but in a way showing the form
+of the distribution (using `ggbeeswarm::geom_quasirandom`). Then we add the
+means and standard errors of the mean in red as well as a boxplot. 
 
 ```{r, fig.width=7, fig.height=6}
-agg_p <- fhch %>% group_by(id, task, stimulus, density, frequency) %>%
+agg_p <- fhch %>% 
+  group_by(id, task, stimulus, density, frequency) %>%
   summarise(mean = mean(log_rt)) %>%
   ungroup()
 
-xyplot(mean ~ density:frequency|task+stimulus, agg_p, jitter.x = TRUE, pch = 20, alpha = 0.5, 
-       panel = function(x, y, ...) {
-         panel.xyplot(x, y, ...)
-         tmp <- aggregate(y, by = list(x), mean)
-         panel.points(tmp$x, tmp$y, pch = 13, cex =1.5)
-       }) + 
-bwplot(mean ~ density:frequency|task+stimulus, agg_p, pch="|", do.out = FALSE)
+ggplot(agg_p, aes(x = density:frequency, y = mean)) +
+  geom_boxplot() +
+  geom_quasirandom(alpha = 0.5) +
+  stat_summary(color = "red", fun.data = mean_se) +
+  facet_wrap(vars(stimulus, task))
 ```
 
 Now we plot the same data but aggregated across items:
 
 ```{r, fig.width=7, fig.height=6}
-agg_i <- fhch %>% group_by(item, task, stimulus, density, frequency) %>%
+agg_i <- fhch %>% 
+  group_by(item, task, stimulus, density, frequency) %>%
   summarise(mean = mean(log_rt)) %>%
   ungroup()
 
-xyplot(mean ~ density:frequency|task+stimulus, agg_i, jitter.x = TRUE, pch = 20, alpha = 0.2, 
-       panel = function(x, y, ...) {
-         panel.xyplot(x, y, ...)
-         tmp <- aggregate(y, by = list(x), mean)
-         panel.points(tmp$x, tmp$y, pch = 13, cex =1.5)
-       }) + 
-bwplot(mean ~ density:frequency|task+stimulus, agg_i, pch="|", do.out = FALSE)
+ggplot(agg_i, aes(x = density:frequency, y = mean)) +
+  geom_boxplot() +
+  geom_quasirandom(alpha = 0.3) +
+  stat_summary(color = "red", fun.data = mean_se) +
+  facet_wrap(vars(stimulus, task))
 ```
 
 These two plots show a very similar pattern and suggest several things:
@@ -130,16 +175,38 @@ These two plots show a very similar pattern and suggest several things:
 
 ## Model Setup
 
-To set up a mixed model it is important to identify which factors vary within which grouping factor generating random variability (i.e., grouping factors are sources of stochastic variability). The two grouping factors are participants (`id`) and items (`item`). The within-participant factors are `stimulus`, `density`, and `frequency`. The within-item factor is `task`. The 'maximal model' (Barr, Levy, Scheepers, and Tily, 2013) therefore is the model with by-participant random slopes for `stimulus`, `density`, and `frequency` and their interactions and by-item random slopes for `task`.
+To set up a mixed model it is important to identify which factors vary within
+which grouping factor generating random variability (i.e., grouping factors are
+sources of stochastic variability). The two grouping factors are participants
+(`id`) and items (`item`). The within-participant factors are `stimulus`,
+`density`, and `frequency`. The within-item factor is `task`. The 'maximal
+model' (Barr, Levy, Scheepers, and Tily, 2013) therefore is the model with
+by-participant random slopes for `stimulus`, `density`, and `frequency` and
+their interactions and by-item random slopes for `task`.
 
-Occasionally, the maximal model does not converge successfully. In this case a good first approach for dealing with this problem is to remove the corelations among the random terms. In our example, there are two sets of correlations, one for each random effect grouping variable. Consequently, we can build four model that have the maximal structure in terms of random-slopes and only differ in which correlations among random terms are calculated:
+Occasionally, the maximal model does not converge successfully. In this case a
+good first approach for dealing with this problem is to remove the corelations
+among the random terms. In our example, there are two sets of correlations, one
+for each random effect grouping variable. Consequently, we can build four model
+that have the maximal structure in terms of random-slopes and only differ in
+which correlations among random terms are calculated:
 
 1. With all correlations.
 2. No correlation among by-item random effects (i.e., no correlation between random intercept and `task` random slope).
 3. No correlation among by-participant random effect terms (i.e., no correlation among random slopes themselves and between the random slopes and the random intercept).
 4. No correlation among either random grouping factor.
 
-The next decision to be made is which method to use for obtaining $p$-values. The default method is `KR` (=Kenward-Roger) which provides the best control against anti-conservative results. However, `KR` needs quite a lot of RAM, especially with complicated random effect structures and large data sets. As in this case we have both, relatively large data (i.e., many levels on each random effect, especially the item random effect) and a complicated random effect structure, it seems a reasonable decision to choose another method. The second 'best' method (in terms of controlling for Type I errors)  is the 'Satterthwaite' approximation, `method='S'`. It provides a similar control of Type I errors as the Kenward-Roger approximation and needs less RAM, however one downside is that it simply fails in some cases.
+The next decision to be made is which method to use for obtaining $p$-values.
+The default method is `KR` (=Kenward-Roger) which provides the best control
+against anti-conservative results. However, `KR` needs quite a lot of RAM,
+especially with complicated random effect structures and large data sets. As in
+this case we have both, relatively large data (i.e., many levels on each random
+effect, especially the item random effect) and a complicated random effect
+structure, it seems a reasonable decision to choose another method. The second
+'best' method (in terms of controlling for Type I errors)  is the
+'Satterthwaite' approximation, `method='S'`. It provides a similar control of
+Type I errors as the Kenward-Roger approximation and needs less RAM, however one
+downside is that it simply fails in some cases.
 
 ## Results 
 ### Satterthwaite Results
@@ -291,6 +358,40 @@ In contrast to our expectation, the results show two significant effects and not
 * Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in recognition memory for words. _Journal of Memory and Language_, 62(1), 1-18. https://doi.org/10.1016/j.jml.2009.09.004
 * Lenth, R. (2017). _emmeans: Estimated Marginal Means, aka Least-Squares Means_. R package version 0.9.1. https://CRAN.R-project.org/package=emmeans
 * Maxwell, S. E., & Delaney, H. D. (2004). _Designing experiments and analyzing data: a model-comparisons perspective_. Mahwah, N.J.: Lawrence Erlbaum Associates.
+
+
+```{r}
+## code for fitting all models and saving them in the development folder (not on
+## CRAN, only github):
+m1s <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency|id)+
+               (task|item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)))
+m2s <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency|id)+
+               (task||item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+m3s <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency||id)+
+               (task|item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+m4s <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency||id)+
+               (task||item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+m1lrt <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency|id)+
+                 (task|item), fhch, method = "LRT", 
+               control = lmerControl(optCtrl = list(maxfun = 1e6)))
+m2lrt <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency|id)+
+                 (task||item), fhch, method = "LRT", 
+               control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+m3lrt <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency||id)+
+                 (task|item), fhch, method = "LRT", 
+               control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+m4lrt <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency||id)+
+                 (task||item), fhch, method = "LRT", 
+               control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+save(m1s, m2s, m3s, m4s, m1lrt, m2lrt, m3lrt, m4lrt, 
+     file = "../development/freeman_models.rda", 
+     compress = "xz")
+
+```
 
 
 ```{r, echo=FALSE, eval = FALSE}

@@ -16,7 +16,7 @@ test_that("Residuals", {
   expect_warning(residuals(between))
   expect_warning(residuals(between2), regexp = NA)
   
-  expect_equal(residuals(between2), unname(residuals(between2lm)))
+  expect_equal(residuals(between2), residuals(between2lm))
   
   expect_is(suppressWarnings(residuals(within)),"numeric")
   expect_is(suppressWarnings(residuals(mixed)),"numeric")
@@ -34,7 +34,7 @@ test_that("Fitted", {
   expect_warning(fitted(between))
   expect_warning(fitted(between2), regexp = NA)
   
-  expect_equal(fitted(between2), unname(fitted(between2lm)))
+  expect_equal(fitted(between2), fitted(between2lm))
   
   expect_is(suppressWarnings(fitted(within)),"numeric")
   expect_is(suppressWarnings(fitted(mixed)),"numeric")

@@ -83,6 +83,6 @@ fitted.afex_aov <- function(object, append = FALSE, colname_fitted = ".fitted", 
   if (append) {
     return(mv)
   } else {
-    mv[[values_colname]]
+    return(setNames(mv[[values_colname]],rownames(mv)))
   }
 }

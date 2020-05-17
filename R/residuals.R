@@ -58,8 +58,6 @@ residuals.afex_aov <- function(object, append = FALSE, ...) {
     e$.residuals. <- residuals(object$lm)
   }
   
-  e[[attr(object, "dv")]] <- NULL
-  
   if (append) {
     return(e)
   } else {

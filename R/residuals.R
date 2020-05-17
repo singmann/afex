@@ -1,21 +1,22 @@
-#' Extract \code{afex_aov} Model Residuals
+#' Extract Residuals and Fitted Values from \code{afex_aov} objects
 #' 
-#' Extract residuals from \code{afex_aov} objects.
+#' Extract Residuals and Fitted Values from \code{afex_aov} objects.
 #' 
 #' @author Mattan S. Ben-Shachar
 #' 
 #' @example examples/examples.residuals.R
 #' 
 #' @param object \code{afex_aov} object.
-#' @param append If set to \code{TRUE} returns the residuals appended as an additional column \code{.residuals.} to the long data. 
+#' @param append If set to \code{TRUE} returns the residuals/fitted values appended as an additional column to the long data. 
 #'   Recomended when data was aggragated across within conditions.
-#' @param ... Not used.
+#' @param colname_residuals,colname_fitted Name of the appended column when \code{append = TRUE}.
+#' @param ... Additional arguments passed to \code{residuals.lm}/\code{fitted.lm}.
 #' 
-#' @return A vector of residualts corresponding to the data in \code{object$data$long}, 
-#' or if \code{append = TRUE} a data frame with an additional column \code{.residuals.}.
+#' @return A vector of residualts/fitted values corresponding to the data in \code{object$data$long}, 
+#' or if \code{append = TRUE} a data frame with an additional column of residualts/fitted values.
 #' 
 #' @export
-residuals.afex_aov <- function(object, append = FALSE, ...) {
+residuals.afex_aov <- function(object, append = FALSE, colname_residuals = ".residuals",...) {
   if (!append && attr(object, "data_changed")) {
     warning("Data was changed during ANOVA calculation. ", 
             "Thus, residuals cannot be added to original data.", 
@@ -23,16 +24,37 @@ residuals.afex_aov <- function(object, append = FALSE, ...) {
             call. = FALSE)
   }
   
+  e <- residuals(object$lm, ...)
+  .clean_model_values(object, model_values = e, values_colname = colname_residuals, append = append)
+}
+
+#' @export
+#' @rdname residuals.afex_aov
+fitted.afex_aov <- function(object, append = FALSE, colname_fitted = ".fitted", ...) {
+  if (!append && attr(object, "data_changed")) {
+    warning("Data was changed during ANOVA calculation. ", 
+            "Thus, fitted values cannot be added to original data.", 
+            "\nrfitted(..., append = TRUE) will return data and fitted values.", 
+            call. = FALSE)
+  }
+  
+  e <- fitted(object$lm, ...)
+  .clean_model_values(object, model_values = e, values_colname = ".fitted", append = append)
+}
+
+
+#' @keywords internal
+.clean_model_values <- function(object, model_values, values_colname, append) {
   if (length(attr(object, "within")) > 0) {
-    # residuals in long format
-    e <- data.frame(residuals(object$lm))
-    varying <- colnames(e)
-    e[attr(object, "id")] <- object$data$wide[attr(object, "id")]
-    e <- reshape(
-      e,
+    # In long format
+    mv <- data.frame(model_values)
+    varying <- colnames(mv)
+    mv[attr(object, "id")] <- object$data$wide[attr(object, "id")]
+    mv <- reshape(
+      mv,
       direction = "long",
       varying = varying,
-      v.name = ".residuals.",
+      v.name = values_colname,
       times = varying,
       timevar = ".time.",
       idvar = attr(object, "id")
@@ -46,21 +68,21 @@ residuals.afex_aov <- function(object, append = FALSE, ...) {
     index$.index. <- seq_len(nrow(index))
     index <- merge(code, index, by = ".index.")
     
-    e <- merge(e, index, by = ".time.")
-    e$.time. <- NULL
-    e$.index. <- NULL
+    mv <- merge(mv, index, by = ".time.")
+    mv$.time. <- NULL
+    mv$.index. <- NULL
     
     # add between data
     between_data <- object$data$long
-    e <- merge(between_data, e, by = c(attr(object, "id"), names(attr(object, "within"))))
+    mv <- merge(between_data, mv, by = c(attr(object, "id"), names(attr(object, "within"))))
   } else {
-    e <- object$data$long
-    e$.residuals. <- residuals(object$lm)
+    mv <- object$data$long
+    mv[[values_colname]] <- model_values
   }
   
   if (append) {
-    return(e)
+    return(mv)
   } else {
-    e$.residuals.
+    mv[[values_colname]]
   }
 }

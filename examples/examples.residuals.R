@@ -23,3 +23,14 @@ all.equal(obk2, between2$data$long[,colnames(obk2)]) ## TRUE
 
 ## Therefore okay:
 obk2$residuals <- residuals(between2)
+
+
+## Same for fitted values:
+fitted(within)
+fitted(mixed)
+fitted(between)
+
+## Get fitted values plus data used for fitting: 
+fitted(within, append = TRUE)
+fitted(mixed, append = TRUE)
+fitted(between, append = TRUE)

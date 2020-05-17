@@ -2,24 +2,29 @@
 % Please edit documentation in R/residuals.R
 \name{residuals.afex_aov}
 \alias{residuals.afex_aov}
-\title{Extract \code{afex_aov} Model Residuals}
+\alias{fitted.afex_aov}
+\title{Extract Residuals and Fitted Values from \code{afex_aov} objects}
 \usage{
-\method{residuals}{afex_aov}(object, append = FALSE, ...)
+\method{residuals}{afex_aov}(object, append = FALSE, colname_residuals = ".residuals", ...)
+
+\method{fitted}{afex_aov}(object, append = FALSE, colname_fitted = ".fitted", ...)
 }
 \arguments{
 \item{object}{\code{afex_aov} object.}
 
-\item{append}{If set to \code{TRUE} returns the residuals appended as an additional column \code{.residuals.} to the long data. 
+\item{append}{If set to \code{TRUE} returns the residuals/fitted values appended as an additional column to the long data. 
 Recomended when data was aggragated across within conditions.}
 
-\item{...}{Not used.}
+\item{colname_residuals, colname_fitted}{Name of the appended column when \code{append = TRUE}.}
+
+\item{...}{Additional arguments passed to \code{residuals.lm}/\code{fitted.lm}.}
 }
 \value{
-A vector of residualts corresponding to the data in \code{object$data$long}, 
-or if \code{append = TRUE} a data frame with an additional column \code{.residuals.}.
+A vector of residualts/fitted values corresponding to the data in \code{object$data$long}, 
+or if \code{append = TRUE} a data frame with an additional column of residualts/fitted values.
 }
 \description{
-Extract residuals from \code{afex_aov} objects.
+Extract Residuals and Fitted Values from \code{afex_aov} objects.
 }
 \examples{
 ### Setup ANOVAs
@@ -32,7 +37,6 @@ mixed <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk
 residuals(within)
 residuals(mixed)
 residuals(between)
-residuals(between, append = TRUE) # since data was aggragated across within conditions
 
 ## Get residuals plus data used for fitting: 
 residuals(within, append = TRUE)
@@ -48,6 +52,17 @@ all.equal(obk2, between2$data$long[,colnames(obk2)]) ## TRUE
 
 ## Therefore okay:
 obk2$residuals <- residuals(between2)
+
+
+## Same for fitted values:
+fitted(within)
+fitted(mixed)
+fitted(between)
+
+## Get fitted values plus data used for fitting: 
+fitted(within, append = TRUE)
+fitted(mixed, append = TRUE)
+fitted(between, append = TRUE)
 }
 \author{
 Mattan S. Ben-Shachar

@@ -39,7 +39,7 @@ fitted.afex_aov <- function(object, append = FALSE, colname_fitted = ".fitted", 
   }
   
   e <- fitted(object$lm, ...)
-  .clean_model_values(object, model_values = e, values_colname = ".fitted", append = append)
+  .clean_model_values(object, model_values = e, values_colname = colname_fitted, append = append)
 }
 
 

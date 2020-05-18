@@ -34,7 +34,7 @@ fitted.afex_aov <- function(object, append = FALSE, colname_fitted = ".fitted", 
   if (!append && attr(object, "data_changed")) {
     warning("Data was changed during ANOVA calculation. ", 
             "Thus, fitted values cannot be added to original data.", 
-            "\nrfitted(..., append = TRUE) will return data and fitted values.", 
+            "\nfitted(..., append = TRUE) will return data and fitted values.", 
             call. = FALSE)
   }
   

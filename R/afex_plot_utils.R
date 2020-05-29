@@ -201,6 +201,9 @@ prep_data <- function(data,
   
   if (!is.numeric(data[[dv_col]])) {
     message("transforming dv to numerical scale")
+    if (is.factor(data[[dv_col]])) {
+      data[[dv_col]] <- as.numeric(data[[dv_col]]) - 1
+    }
     data[[dv_col]] <- as.numeric(data[[dv_col]])
   }
   data <- aggregate(data[[dv_col]], 

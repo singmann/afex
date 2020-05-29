@@ -18,7 +18,7 @@
         ggbeeswarm::geom_quasirandom as a good alternative to the bee swarm 
         plot.
 
-    Bugfixes
+    Bugfixes (most bugs in this updated were reported by Frantisek Bartos)
 
     o   objects estimated with mixed(..., all_fit = TRUE) should now work
         again with emmeans.
@@ -41,6 +41,9 @@
         
     o   afex_plot.merMod() method does not fail any more for models with missing
         data. 
+        
+    o   afex_plot() correctly plots data in the background if DV is a factor in 
+        a binomial model.
 
 
                     *************************

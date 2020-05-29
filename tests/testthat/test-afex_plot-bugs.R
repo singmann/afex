@@ -60,3 +60,27 @@ test_that("merMod objects with missing data can be plotted", {
     pp$layers[[1]]$data, pp2$layers[[1]]$data  
   )
 })
+
+
+test_that("binomial models plot data correctly with factor DVs", {
+  ## long format binomial GLM (https://stats.stackexchange.com/q/322038/442):
+  drc4 <- function(x, b =1.0, c = 0, d = 1, e = 0){
+    (d - c)/ (1 + exp(-b * (log(x)  - log(e))))
+  }
+  # simulate long form of dataset
+  nReps = 30
+  dfLong <- data.frame(dose = factor(rep(letters[1:3], each = nReps)))
+  dfLong$mortality <-rbinom(n = dim(dfLong)[1], size = 1,
+                            prob = drc4(as.numeric(dfLong$dose), b = 2, e = 5))
+  
+  fitLong <- glm( mortality ~ dose, data = dfLong, 
+                  family = "binomial")
+  p1 <- afex_plot(fitLong, "dose")
+  dfLong$mortality <- factor(dfLong$mortality)
+  fitLong2 <- glm( mortality ~ dose, data = dfLong, 
+                   family = "binomial")
+  
+  
+  p2 <- afex_plot(fitLong2, "dose")
+  expect_equivalent(p1, p2)
+})

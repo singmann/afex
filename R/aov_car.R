@@ -571,49 +571,12 @@ aov_car <- function(formula,
   }
   
   if (length(between) > 0) {
-    if (check_contrasts) {
-      resetted <- NULL
-      for (i in between) {
-        if (is.character(tmp.dat[,i])) {
-          tmp.dat[,i] <- factor(tmp.dat[,i])
-        }
-        if (is.factor(tmp.dat[,i])) {
-          if (is.null(attr(tmp.dat[,i], "contrasts")) & 
-              (options("contrasts")[[1]][1] != "contr.sum")) {
-            contrasts(tmp.dat[,i]) <- "contr.sum"
-            resetted  <- c(resetted, i)
-          }
-          else if (!is.null(attr(tmp.dat[,i], "contrasts")) && 
-                   attr(tmp.dat[,i], "contrasts") != "contr.sum") {
-            contrasts(tmp.dat[,i]) <- "contr.sum"
-            resetted  <- c(resetted, i)
-          }
-        }
-      }
-      if (!is.null(resetted)) 
-        message(paste0("Contrasts set to contr.sum for the following variables: ", 
-                      paste0(resetted, collapse=", ")))
-    } else {
-      non_sum_contrast <- c()
-      for (i in between) {
-        if (is.factor(tmp.dat[,i])) {
-          if (is.null(attr(tmp.dat[,i], "contrasts")) & 
-              (options("contrasts")[[1]][1] != "contr.sum")) {
-            non_sum_contrast <- c(non_sum_contrast, between)
-          }
-          else if (!is.null(attr(tmp.dat[,i], "contrasts")) && 
-                   attr(tmp.dat[,i], "contrasts") != "contr.sum") {
-            non_sum_contrast <- c(non_sum_contrast, between)
-          }
-        }
-      }
-      if((type == 3 | type == "III") && (length(non_sum_contrast)>0)) 
-        warning(
-          paste0("Calculating Type 3 sums with contrasts != 'contr.sum' for: ", 
-                      paste0(non_sum_contrast, collapse=", "), 
-                      "\n  Results likely bogus or not interpretable!\n  You probably want check_contrasts = TRUE or options(contrasts=c('contr.sum','contr.poly'))"), 
-                call. = FALSE)
-    }
+    tmp.dat <- check_contrasts(
+      data = tmp.dat,
+      factors = between,
+      check_contrasts = check_contrasts,
+      type = type
+    )
   }
   if (return %in% c("aov")) include_aov <- TRUE
   if(include_aov){

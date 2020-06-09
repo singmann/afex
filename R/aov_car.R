@@ -560,6 +560,14 @@ aov_car <- function(formula,
              dots, 
              value.var = dv))
   colnames(dat.ret)[length(colnames(dat.ret))] <- dv
+  if (!isTRUE(
+    all.equal(target = data[,c(id, between, within, dv)], 
+              current = dat.ret[,c(id, between, within, dv)])
+  )) {
+    data_changed <- TRUE
+  } else {
+    data_changed <- FALSE
+  }
   
   if (length(between) > 0) {
     if (check_contrasts) {
@@ -690,6 +698,7 @@ aov_car <- function(formula,
     attr(afex_aov, "type") <- type
     attr(afex_aov, "transf") <- transf
     attr(afex_aov, "incomplete_cases") <- missing_ids
+    attr(afex_aov, "data_changed") <- data_changed
     afex_aov$anova_table <- 
       do.call("anova", 
               args = c(object = list(afex_aov), observed = list(observed), 

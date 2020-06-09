@@ -5,16 +5,27 @@ between <- aov_car(value ~ treatment*gender + Error(id), data = obk.long)
 mixed <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk.long)
 within <- aov_car(value ~ 1 + Error(id/(phase*hour)), data = obk.long)
 
+## between data with correct order
 obk2 <- aggregate(value ~ gender + treatment + id , data = obk.long, FUN = mean)
 between2 <- aov_car(value ~ treatment*gender + Error(id), data = obk2)
 between2lm <- lm(value ~ treatment*gender, data = obk2)
 
+between3 <- aov_car(value ~ treatment*gender + Error(id), 
+                    data = obk2[rev(seq_len(nrow(obk2))),])
+
+
+## within data with correct order
+obk3 <- obk.long[with(obk.long, order(id, phase, hour)), ]
+within2 <- aov_car(value ~ 1 + Error(id/(phase*hour)), data = obk3)
 
 test_that("Residuals", {
-  expect_warning(residuals(within))
-  expect_warning(residuals(mixed))
-  expect_warning(residuals(between))
+  expect_warning(residuals(within), "Data was changed")
+  expect_warning(residuals(mixed), "Data was changed")
+  expect_warning(residuals(between), "Data was changed")
+  expect_warning(residuals(between3), "Data was changed")
+  
   expect_warning(residuals(between2), regexp = NA)
+  expect_warning(residuals(within2), regexp = NA)
   
   expect_equal(residuals(between2), residuals(between2lm))
   
@@ -32,7 +43,9 @@ test_that("Fitted", {
   expect_warning(fitted(within))
   expect_warning(fitted(mixed))
   expect_warning(fitted(between))
+  
   expect_warning(fitted(between2), regexp = NA)
+  expect_warning(fitted(within2), regexp = NA)
   
   expect_equal(fitted(between2), fitted(between2lm))
   

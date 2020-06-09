@@ -404,7 +404,7 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
 # 14           gender:phase:hour 3.60, 35.96  2.67      0.93 .012    .449
 # 15 treatment:gender:phase:hour 7.19, 35.96  2.67      0.74 .019    .646
 # ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
+# Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜+â€™ 0.1 â€˜ â€™ 1
 # 
 # Sphericity correction method: GG 
 
@@ -560,7 +560,7 @@ obk_anova$Anova
 # gender:phase:hour            1   0.69505     0.85      8      3 0.6202076    
 # treatment:gender:phase:hour  2   0.79277     0.33     16      8 0.9723693    
 # ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+# Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1
 
 }
 \references{

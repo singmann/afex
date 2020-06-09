@@ -1,6 +1,7 @@
 
 check_contrasts <- function(data, factors, 
-                            check_contrasts, type) {
+                            check_contrasts, type, 
+                            warn = TRUE) {
   if (check_contrasts) {
     resetted <- NULL
     for (i in factors) {
@@ -23,7 +24,7 @@ check_contrasts <- function(data, factors,
     if (!is.null(resetted)) 
       message(paste0("Contrasts set to contr.sum for the following variables: ", 
                      paste0(resetted, collapse=", ")))
-  } else {
+  } else if (warn) {
     non_sum_contrast <- c()
     for (i in factors) {
       if (is.factor(data[,i])) {

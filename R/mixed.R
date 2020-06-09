@@ -446,30 +446,14 @@ mixed <- function(formula,
   
   ## real function begins:
   vars.to.check <- all.vars(as.formula(formula))
-  if (check_contrasts) {
-    #browser()
-    resetted <- NULL
-    for (i in vars.to.check) {
-      if (is.character(data[,i])) {
-        data[,i] <- factor(data[,i])
-      }
-      if (is.factor(data[,i])) {
-        if (is.null(attr(data[,i], "contrasts")) & 
-            (options("contrasts")[[1]][1] != "contr.sum")) {
-          contrasts(data[,i]) <- "contr.sum"
-          resetted  <- c(resetted, i)
-        }
-        else if (!is.null(attr(data[,i], "contrasts")) && 
-                 attr(data[,i], "contrasts") != "contr.sum") {
-          contrasts(data[,i]) <- "contr.sum"
-          resetted  <- c(resetted, i)
-        }
-      }
-    }
-    if (!is.null(resetted)) 
-      message(paste0("Contrasts set to contr.sum for the following variables: ", 
-                    paste0(resetted, collapse=", ")))
-  }
+  data <- check_contrasts(
+    data = data,
+    factors = vars.to.check,
+    check_contrasts = check_contrasts,
+    type = type,
+    warn = FALSE
+  )
+  
   method <- match.arg(method, c("KR", "S", "PB", "LRT", "nested-KR", "F"), 
                       several.ok=FALSE)
   

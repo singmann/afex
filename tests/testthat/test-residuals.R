@@ -1,7 +1,8 @@
 context("residuals: check if it works")
 
 data(obk.long, package = "afex")
-between <- aov_car(value ~ treatment*gender + Error(id), data = obk.long)
+between <- aov_car(value ~ treatment*gender + Error(id), data = obk.long, 
+                   fun_aggregate = mean)
 mixed <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk.long)
 within <- aov_car(value ~ 1 + Error(id/(phase*hour)), data = obk.long)
 

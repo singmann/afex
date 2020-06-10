@@ -20,13 +20,13 @@ obk3 <- obk.long[with(obk.long, order(id, phase, hour)), ]
 within2 <- aov_car(value ~ 1 + Error(id/(phase*hour)), data = obk3)
 
 test_that("Residuals", {
-  expect_warning(residuals(within), "Data was changed")
-  expect_warning(residuals(mixed), "Data was changed")
-  expect_warning(residuals(between), "Data was changed")
-  expect_warning(residuals(between3), "Data was changed")
+  expect_message(residuals(within), "Data was changed")
+  expect_message(residuals(mixed), "Data was changed")
+  expect_message(residuals(between), "Data was changed")
+  expect_message(residuals(between3), "Data was changed")
   
-  expect_warning(residuals(between2), regexp = NA)
-  expect_warning(residuals(within2), regexp = NA)
+  expect_message(residuals(between2), regexp = NA)
+  expect_message(residuals(within2), regexp = NA)
   
   expect_equal(residuals(between2), residuals(between2lm))
   
@@ -41,12 +41,12 @@ test_that("Residuals", {
 
 
 test_that("Fitted", {
-  expect_warning(fitted(within))
-  expect_warning(fitted(mixed))
-  expect_warning(fitted(between))
+  expect_message(fitted(within))
+  expect_message(fitted(mixed))
+  expect_message(fitted(between))
   
-  expect_warning(fitted(between2), regexp = NA)
-  expect_warning(fitted(within2), regexp = NA)
+  expect_message(fitted(between2), regexp = NA)
+  expect_message(fitted(within2), regexp = NA)
   
   expect_equal(fitted(between2), fitted(between2lm))
   

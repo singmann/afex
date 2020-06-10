@@ -23,6 +23,7 @@ options(warn = 0)
 
 usethis::use_data(stroop, internal = FALSE, overwrite = TRUE)
 usethis::use_vignette("afex_analysing_accuracy_data")
+usethis::use_github_action_check_standard()
 
 ## check for non-ASCII characters in examples:
 for (f in list.files("examples/", full.names = TRUE)) {
@@ -59,7 +60,7 @@ usethis::use_package("statmod", "Suggests")
 usethis::use_package("rstanarm", "Suggests")
 usethis::use_package("brms", "Suggests")
 usethis::use_package("cowplot", "Suggests")
-usethis::use_package("nlme", "Suggests")
+usethis::use_package("ggResidpanel", "Suggests")
 #usethis::use_package("GLMMadaptive", "Suggests")
 usethis::use_readme_rmd()
 usethis::use_cran_badge()

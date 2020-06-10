@@ -76,6 +76,12 @@ fitted(between, append = TRUE)
 ## No warnings:
 fitted(between2)
 fitted(within2)
+
+#### residuals() and fitted() methods can be used for plotting
+### requires package ggResidpanel
+if (require("ggResidpanel")) {
+  resid_auxpanel(residuals = residuals(mixed), predicted = fitted(mixed))
+}
 }
 \author{
 Mattan S. Ben-Shachar

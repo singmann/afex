@@ -1,39 +1,84 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-afex: Analysis of Factorial EXperiments
-=======================================
+
+# afex: Analysis of Factorial EXperiments
 
 <!-- badges: start -->
-[![CRAN status](https://www.r-pkg.org/badges/version/afex)](https://CRAN.R-project.org/package=afex) [![monthly downloads](http://cranlogs.r-pkg.org/badges/afex)](http://cranlogs.r-pkg.org/badges/afex) [![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/afex)](http://cranlogs.r-pkg.org/badges/grand-total/afex) [![Research software impact](http://depsy.org/api/package/cran/afex/badge.svg)](http://depsy.org/package/r/afex) [![Travis-CI Build Status](https://travis-ci.org/singmann/afex.svg?branch=master)](https://travis-ci.org/singmann/afex) <!-- badges: end -->
+
+[![CRAN
+status](https://www.r-pkg.org/badges/version/afex)](https://CRAN.R-project.org/package=afex)
+<http://cranlogs.r-pkg.org/badges/afex>
+<http://cranlogs.r-pkg.org/badges/grand-total/afex> [![Research software
+impact](http://depsy.org/api/package/cran/afex/badge.svg)](http://depsy.org/package/r/afex)
+[![Travis-CI Build
+Status](https://travis-ci.org/singmann/afex.svg?branch=master)](https://travis-ci.org/singmann/afex)
+[![R build
+status](https://github.com/singmann/afex/workflows/R-CMD-check/badge.svg)](https://github.com/singmann/afex/actions)
+<!-- badges: end -->
 
 The main functionalities provided by `afex` are:
 
-1.  Interfaces for estimating standard ANOVAs with any number or combination of within-subjects or between-subjects variables (the ANOVA functions are `aov_car()`, `aov_ez()`, and `aov_4()` which all fit the same model but differ in the way to specify the ANOVA model).
-2.  Function `mixed()` provides an interface for mixed models analysis (estimated via `lme4` `lmer` or `glmer`) that automatically obtains *p*-values for fixed effects model terms (i.e., main effects and interactions).
-3.  `afex_plot()` visualizes results from factorial experiments combining estimated marginal means and uncertainties associated with the estimated means in the foreground with a depiction of the raw data in the background.
-4.  All `afex` model objects (i.e., ANOVA and mixed models) can be passed to `emmeans` for follow-up/post-hoc/planned contrast analysis.
+1.  Interfaces for estimating standard ANOVAs with any number or
+    combination of within-subjects or between-subjects variables (the
+    ANOVA functions are `aov_car()`, `aov_ez()`, and `aov_4()` which all
+    fit the same model but differ in the way to specify the ANOVA
+    model).
+2.  Function `mixed()` provides an interface for mixed models analysis
+    (estimated via `lme4` `lmer` or `glmer`) that automatically obtains
+    *p*-values for fixed effects model terms (i.e., main effects and
+    interactions).
+3.  `afex_plot()` visualizes results from factorial experiments
+    combining estimated marginal means and uncertainties associated with
+    the estimated means in the foreground with a depiction of the raw
+    data in the background.  
+4.  All `afex` model objects (i.e., ANOVA and mixed models) can be
+    passed to `emmeans` for follow-up/post-hoc/planned contrast
+    analysis.
 
-For `afex` support visit: [afex.singmann.science](http://afex.singmann.science/)
+For `afex` support visit:
+[afex.singmann.science](http://afex.singmann.science/)
 
-Installation
-------------
+## Installation
 
--   `afex` is available from CRAN so the current stable version can be installed directly via: `install.packages("afex")`
+  - `afex` is available from CRAN so the current stable version can be
+    installed directly via: `install.packages("afex")`
 
--   To install the latest development version you will need the [`devtools`](https://github.com/hadley/devtools) package: `devtools::install_github("singmann/afex@master")`
+  - To install the latest development version you will need the
+    [`devtools`](https://github.com/hadley/devtools) package:
+    `devtools::install_github("singmann/afex@master")`
 
-ANOVA functionality
--------------------
+## ANOVA functionality
 
-To calculate an ANOVA, `afex` requires the data to be in the long format (i.e., one row per data point/observation). An ANOVA can then be calculated via one of three functions that only differ in how the model components are specified, but not in the output. Note that in contrast to base `lm` or `aov`, `afex` ANOVA functions always require the specification of a subject identifier column (the id-column), because in case there are multiple observations per participant and cell of the design, these multiple observations are aggregated (i.e., averaged) per default.
+To calculate an ANOVA, `afex` requires the data to be in the long format
+(i.e., one row per data point/observation). An ANOVA can then be
+calculated via one of three functions that only differ in how the model
+components are specified, but not in the output. Note that in contrast
+to base `lm` or `aov`, `afex` ANOVA functions always require the
+specification of a subject identifier column (the id-column), because in
+case there are multiple observations per participant and cell of the
+design, these multiple observations are aggregated (i.e., averaged) per
+default.
 
--   In `aov_ez` the columns containing id variable, dependent variable, and factors need to be specified as character vectors.
--   `aov_car` behaves similar to standard `aov` and requires the ANOVA to be specified as a formula containing an `Error` term (at least to identify the id variable).
--   `aov_4` allows the ANOVA to be specified via a formula similar to `lme4::lmer` (with one random effects term).
+  - In `aov_ez` the columns containing id variable, dependent variable,
+    and factors need to be specified as character vectors.
+  - `aov_car` behaves similar to standard `aov` and requires the ANOVA
+    to be specified as a formula containing an `Error` term (at least to
+    identify the id variable).
+  - `aov_4` allows the ANOVA to be specified via a formula similar to
+    `lme4::lmer` (with one random effects term).
 
-A further overview is provided by the [vignette](https://cran.r-project.org/package=afex/vignettes/afex_anova_example.html).
+A further overview is provided by the
+[vignette](https://cran.r-project.org/package=afex/vignettes/afex_anova_example.html).
 
-The following code provides a simple example for an ANOVA with both between- and within-subject factors. For this we use the lexical-decision and word naming latencies reported by Freeman, Heathcote, Chalmers, and Hockley (2010), see also `?fhch2010`. As is commonly done, we use the natural logarithm of the response times, `log_rt`, as dependent variable. As independent variable we will consider the between-subjects factor `task` (`"naming"` or `"lexdec"`) as well as the within-subjects-factors `stimulus` (`"word"` or `"nonword"`) and `length` (with 3 levels, 3, 4, or 5 letters).
+The following code provides a simple example for an ANOVA with both
+between- and within-subject factors. For this we use the
+lexical-decision and word naming latencies reported by Freeman,
+Heathcote, Chalmers, and Hockley (2010), see also `?fhch2010`. As is
+commonly done, we use the natural logarithm of the response times,
+`log_rt`, as dependent variable. As independent variable we will
+consider the between-subjects factor `task` (`"naming"` or `"lexdec"`)
+as well as the within-subjects-factors `stimulus` (`"word"` or
+`"nonword"`) and `length` (with 3 levels, 3, 4, or 5 letters).
 
 ``` r
 library("afex")
@@ -103,9 +148,10 @@ afex_plot(a, "task", "stimulus", "length")
 #> Suppress error bars with: error = "none"
 ```
 
-![](man/figures/README-unnamed-chunk-6-1.png)
+![](man/figures/README-unnamed-chunk-6-1.png)<!-- -->
 
-`afex_plot` returns a `ggplot2` plot object which allows simple customization:
+`afex_plot` returns a `ggplot2` plot object which allows simple
+customization:
 
 ``` r
 library("ggplot2")
@@ -116,14 +162,20 @@ afex_plot(a, "task", "stimulus", "length") +
 #> Suppress error bars with: error = "none"
 ```
 
-![](man/figures/README-unnamed-chunk-7-1.png)
+![](man/figures/README-unnamed-chunk-7-1.png)<!-- -->
 
 ### Follow-up Tests with `emmeans`
 
 Follow-up tests with `emmeans` need to be specified in two steps.
 
-1.  Decide which factors of model should be involved in tests. Use these factors to set-up reference grid of marginal means using `emmeans()`.
-2.  Specify set of tests on reference grid from step 1. Either custom contrasts as a `list` and using `contrast()` or a convenience function such as `pairs()`.
+1.  Decide which factors of model should be involved in tests. Use these
+    factors to set-up reference grid of marginal means using
+    `emmeans()`.
+2.  Specify set of tests on reference grid from step 1. Either custom
+    contrasts as a `list` and using `contrast()` or a convenience
+    function such as `pairs()`.
+
+<!-- end list -->
 
 ``` r
 library("emmeans")
@@ -164,12 +216,27 @@ contrast(em1, con, adjust = "holm")
 #> P value adjustment: holm method for 2 tests
 ```
 
-Mixed Models
-------------
+## Mixed Models
 
-Function `mixed()` fits a mixed model with `lme4::lmer` (or `lme4::glmer` if a `family` argument is passed) and then calculates *p*-values for fixed effects model terms using a variety of methods. The formula to `mixed` needs to be the same as in a call to `lme4::lmer`. The default method for calculation of *p*-values is `'KR'` (Kenward-Roger) which only works for linear mixed models (i.e., no `family` argument) and can require considerable RAM and time, but provides the best control of Type I errors. Other methods are `'S'` (Satterthwaite, similar to `'KR'` but requires less RAM), `'PB'` (parametric bootstrap), and `'LRT'` (likelihood-ratio test).
+Function `mixed()` fits a mixed model with `lme4::lmer` (or
+`lme4::glmer` if a `family` argument is passed) and then calculates
+*p*-values for fixed effects model terms using a variety of methods. The
+formula to `mixed` needs to be the same as in a call to `lme4::lmer`.
+The default method for calculation of *p*-values is `'KR'`
+(Kenward-Roger) which only works for linear mixed models (i.e., no
+`family` argument) and can require considerable RAM and time, but
+provides the best control of Type I errors. Other methods are `'S'`
+(Satterthwaite, similar to `'KR'` but requires less RAM), `'PB'`
+(parametric bootstrap), and `'LRT'` (likelihood-ratio test).
 
-More examples are provided in the [vignette](https://cran.r-project.org/package=afex/vignettes/afex_mixed_example.html), here we use the same example data as above, the lexical decision and word naming latencies collected by Freeman et al. (2010). To avoid long computation times we only consider the two factors `task` and `length` (omitting `stimulus` is probably not a fully sensible model). Because mixed models easily allow it, we will consider crossed-random effects of participants (`id`) and items (`tem`).
+More examples are provided in the
+[vignette](https://cran.r-project.org/package=afex/vignettes/afex_mixed_example.html),
+here we use the same example data as above, the lexical decision and
+word naming latencies collected by Freeman et al. (2010). To avoid long
+computation times we only consider the two factors `task` and `length`
+(omitting `stimulus` is probably not a fully sensible model). Because
+mixed models easily allow it, we will consider crossed-random effects of
+participants (`id`) and items (`tem`).
 
 ``` r
 library("afex")
@@ -190,7 +257,13 @@ str(fhch2010) # structure of the data
 #>  $ correct  : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
 ```
 
-Because the data has plenty of levels of the random-effects grouping factors we use the Satterthwaite method. For the random-effects grouping factors we begin with the maximal random-effects structure justified by the design (see Barr, Levy, Scheepers, & Tily, 2013). In this case this is by-subject random intercepts and by-subjects random slopes for `stimulus` and by-item random intercepts and by-item random slopes for `task`.
+Because the data has plenty of levels of the random-effects grouping
+factors we use the Satterthwaite method. For the random-effects grouping
+factors we begin with the maximal random-effects structure justified by
+the design (see Barr, Levy, Scheepers, & Tily, 2013). In this case this
+is by-subject random intercepts and by-subjects random slopes for
+`stimulus` and by-item random intercepts and by-item random slopes for
+`task`.
 
 ``` r
 m1 <- mixed(log_rt ~ task * length + 
@@ -203,9 +276,14 @@ m1 <- mixed(log_rt ~ task * length +
 #> Calculating p-values. [DONE]
 ```
 
-Fitting this model produces a critical convergence warning, that the fit is singular. This warning usually indicates that the data does not provide enough information for the request random effects parameters. When seeing this warning it is usually indicated to reduce the random-effects structure.
+Fitting this model produces a critical convergence warning, that the fit
+is singular. This warning usually indicates that the data does not
+provide enough information for the request random effects parameters.
+When seeing this warning it is usually indicated to reduce the
+random-effects structure.
 
-This warning is also shown if we simply print the model object, but not if we call the `nice()` method.
+This warning is also shown if we simply print the model object, but not
+if we call the `nice()` method.
 
 ``` r
 m1
@@ -234,7 +312,9 @@ nice(m1)
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 ```
 
-If we call the `anova()` method a slightly different output is shown in which the p-values are not rounded in the same way and the warning is shown again.
+If we call the `anova()` method a slightly different output is shown in
+which the p-values are not rounded in the same way and the warning is
+shown again.
 
 ``` r
 anova(m1)
@@ -252,7 +332,15 @@ anova(m1)
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-We can also get the default `lme4` output if we call the `summary` method. However, note that in contrast to the previous methods, results are shown for factor-levels and not model-terms which is usually not interpretable for factors with more than two levels. This is the case for `length` here. The problem is that factors with *k* levels are mapped to *k* − 1 parameters and at the same time the intercept represent the (unweighted) grand mean. This means that factor-levels cannot be mapped in a 1-to-1 manner to the parameters and thus cannot be uniquely interpreted.
+We can also get the default `lme4` output if we call the `summary`
+method. However, note that in contrast to the previous methods, results
+are shown for factor-levels and not model-terms which is usually not
+interpretable for factors with more than two levels. This is the case
+for `length` here. The problem is that factors with \(k\) levels are
+mapped to \(k-1\) parameters and at the same time the intercept
+represent the (unweighted) grand mean. This means that factor-levels
+cannot be mapped in a 1-to-1 manner to the parameters and thus cannot be
+uniquely interpreted.
 
 ``` r
 summary(m1)
@@ -301,7 +389,11 @@ summary(m1)
 
 ### Reducing the Random-Effects Structure
 
-Because of the singular fit warning, we reduce the random effects structure. Usually a good starting point is removing the correlations among the random effects parameters. This can be done in `afex::mixed` even for factors by combining the double bar notation `||` with `expand_re = TRUE`. We do so for both random effects terms.
+Because of the singular fit warning, we reduce the random effects
+structure. Usually a good starting point is removing the correlations
+among the random effects parameters. This can be done in `afex::mixed`
+even for factors by combining the double bar notation `||` with
+`expand_re = TRUE`. We do so for both random effects terms.
 
 ``` r
 m2 <- mixed(log_rt ~ task * length + 
@@ -314,7 +406,9 @@ m2 <- mixed(log_rt ~ task * length +
 #> Calculating p-values. [DONE]
 ```
 
-However, the singular fit warning remains. We therefore inspect the random-effects estimates to see which random-effects parameter is estimated to be near to zero.
+However, the singular fit warning remains. We therefore inspect the
+random-effects estimates to see which random-effects parameter is
+estimated to be near to zero.
 
 ``` r
 summary(m2)$varcor
@@ -327,7 +421,10 @@ summary(m2)$varcor
 #>  Residual             3.0437e-01
 ```
 
-As shown above, one parameter of the by-participant random slope for `length` is estimated to be almost zero, `re1.length2`. We therefore remove the by-participant random slopes for `length` in the next model which does not show any convergence warnings.
+As shown above, one parameter of the by-participant random slope for
+`length` is estimated to be almost zero, `re1.length2`. We therefore
+remove the by-participant random slopes for `length` in the next model
+which does not show any convergence warnings.
 
 ``` r
 m3 <- mixed(log_rt ~ task * length + 
@@ -351,10 +448,26 @@ m3
 
 ### Plotting with `afex_plot`
 
-Objects returned by `mixed` can be used for plotting with `afex_plot`. However, two things need to be considered.
+Objects returned by `mixed` can be used for plotting with `afex_plot`.
+However, two things need to be considered.
 
--   The `id` argument of `afex_plot` allows specifying over which random effects grouping factors the data plotted in the background should be averaged over. Per default this uses all random effects grouping factors. In the present case this would mean that all data points are shown resulting in a very busy plot. When choosing only one of the random effects grouping factor, data points in the background show average response for each level of that factor. For example, when setting `id =  "id"` here each data point in the background shows the mean `log_rt` of one participant (i.e., level of `id`).
--   Estimated marginal means in the foreground are estimated via `emmeans` which per default attempts to estimate the degrees of freedom using the expensive Kenward-Roger method unless the number of data points is high (as here). This can produce quite some status messages (not shown here). Use `emmeans::emm_options(lmer.df = "asymptotic")` to suppress this calculation.
+  - The `id` argument of `afex_plot` allows specifying over which random
+    effects grouping factors the data plotted in the background should
+    be averaged over. Per default this uses all random effects grouping
+    factors. In the present case this would mean that all data points
+    are shown resulting in a very busy plot. When choosing only one of
+    the random effects grouping factor, data points in the background
+    show average response for each level of that factor. For example,
+    when setting `id = "id"` here each data point in the background
+    shows the mean `log_rt` of one participant (i.e., level of `id`).
+  - Estimated marginal means in the foreground are estimated via
+    `emmeans` which per default attempts to estimate the degrees of
+    freedom using the expensive Kenward-Roger method unless the number
+    of data points is high (as here). This can produce quite some status
+    messages (not shown here). Use `emmeans::emm_options(lmer.df =
+    "asymptotic")` to suppress this calculation.
+
+<!-- end list -->
 
 ``` r
 library("ggplot2")
@@ -363,7 +476,7 @@ afex_plot(m3, "task", "length") +
   theme_bw()
 ```
 
-![](man/figures/README-unnamed-chunk-17-1.png)
+![](man/figures/README-unnamed-chunk-17-1.png)<!-- -->
 
 ``` r
 ## data points show IDs
@@ -371,7 +484,7 @@ afex_plot(m3, "task", "length", id = "id") +
   theme_bw()
 ```
 
-![](man/figures/README-unnamed-chunk-18-1.png)
+![](man/figures/README-unnamed-chunk-18-1.png)<!-- -->
 
 ``` r
 ## data points show items
@@ -379,16 +492,23 @@ afex_plot(m3, "task", "length", id = "item") +
   theme_bw()
 ```
 
-![](man/figures/README-unnamed-chunk-19-1.png)
+![](man/figures/README-unnamed-chunk-19-1.png)<!-- -->
 
 ### Follow-up Tests with `emmeans`
 
 Follow-up tests with `emmeans` need to be specified in two steps.
 
-1.  Decide which factors of model should be involved in tests. Use these factors to set-up reference grid of marginal means using `emmeans()`.
-2.  Specify set of tests on reference grid from step 1. Either custom contrasts as a `list` and using `contrast()` or a convenience function such as `pairs()`.
+1.  Decide which factors of model should be involved in tests. Use these
+    factors to set-up reference grid of marginal means using
+    `emmeans()`.
+2.  Specify set of tests on reference grid from step 1. Either custom
+    contrasts as a `list` and using `contrast()` or a convenience
+    function such as `pairs()`.
 
-For mixed models, `emmeans` attempts to estimate the degrees of freedom. The method can be set via `emm_options(lmer.df = ...)`. Here we use `"asymptotic"` which does not estimate the degrees of freedom, but sets them to infinity.
+For mixed models, `emmeans` attempts to estimate the degrees of freedom.
+The method can be set via `emm_options(lmer.df = ...)`. Here we use
+`"asymptotic"` which does not estimate the degrees of freedom, but sets
+them to infinity.
 
 ``` r
 library("emmeans")
@@ -432,14 +552,19 @@ contrast(em2, con, adjust = "holm")
 #> P value adjustment: holm method for 2 tests
 ```
 
-References
-----------
+## References
 
-Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. *Journal of Memory and Language*, 68(3), 255-278. <https://doi.org/10.1016/j.jml.2012.11.001>
+Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random
+effects structure for confirmatory hypothesis testing: Keep it maximal.
+*Journal of Memory and Language*, 68(3), 255-278.
+<https://doi.org/10.1016/j.jml.2012.11.001>
 
-Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in recognition memory for words. *Journal of Memory and Language*, 62(1), 1-18. <https://doi.org/10.1016/j.jml.2009.09.004>
+Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item
+effects in recognition memory for words. *Journal of Memory and
+Language*, 62(1), 1-18. <https://doi.org/10.1016/j.jml.2009.09.004>
 
-Code of Conduct
----------------
+## Code of Conduct
 
-Please note that `afex` is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html). By contributing to this project, you agree to abide by its terms.
+Please note that `afex` is released with a [Contributor Code of
+Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+By contributing to this project, you agree to abide by its terms.

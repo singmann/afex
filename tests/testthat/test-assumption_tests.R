@@ -10,6 +10,10 @@ between_2 <- aov_car(value ~ treatment*gender + Error(id), data = obk.long,
 mixed <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk.long)
 within <- aov_car(value ~ 1 + Error(id/(phase*hour)), data = obk.long)
 
+obk.long_sub <- subset(obk.long, phase %in% c("pre", "post"))
+within_2 <- aov_car(value ~ 1 + Error(id/phase), data = obk.long_sub)
+
+
 test_that("Levene Test works", {
   l1 <- test_levene(between_1)
   l2 <- test_levene(between_2)
@@ -29,6 +33,7 @@ test_that("Levene Test works", {
 test_that("Sphericity Test works", {
   expect_error(test_sphericity(between_1), "within-subjects")
   expect_error(test_sphericity(between_2), "within-subjects")
+  expect_error(test_sphericity(within_2), "more than two levels")
   
   s1 <- test_sphericity(mixed)
   expect_is(s1, "anova")

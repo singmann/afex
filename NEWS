@@ -1,9 +1,150 @@
                     *************************
+                    ** afex VERSION 0.28-x **
+                    *************************
+                    
+                    Changes in afex Version 0.28-x
+                    Released June 2020
+                    
+    Significant User Visible Changes and New Features
+    
+    o   Added residuals() and fitted() methods for afex_aov objects. 
+        Thanks to a pull request by Mattan S. Ben-Shachar.
+    
+    o   Added new data set, stroop, which contains the accuracy and response 
+        time data from Lin, Saunders, Friese, Evans, and Inzlicht (2020, Psych. 
+        Science, https://doi.org/10.1177/0956797620904990).
+        
+    o   Added new vignette, "Analysis of Accuracy Data using ANOVA and binomial 
+        GLMMs" which uses the new Stroop data.
+        
+    o   afex_plot introduction vignette and help page now refer to 
+        ggbeeswarm::geom_quasirandom as a good alternative to the bee swarm 
+        plot.
+
+    Bugfixes (most bugs in this updated were reported by Frantisek Bartos)
+
+    o   objects estimated with mixed(..., all_fit = TRUE) should now work
+        again with emmeans.
+        
+    o   afex_plot() works with mixed models estimated with mixed(..., type = 2) 
+        (i.e., mixed models with Type II sums of squares).
+        
+    o   afex_plot() did not work if data had a column called 'y' that appeared
+        before the response/DV column in data.
+        
+    o   Better error message if afex_plot() is called with variable/factor 'y' 
+        for plotting (which is not supported, 'y' can only be the name of the 
+        response variable).
+        
+    o   Better error message if afex_plot() fails to recover the dv from the 
+        formula (e.g., for brms models).
+    
+    o   Better error messages in case of NAs in the response variable for 
+        ANOVAs and mixed models.
+        
+    o   afex_plot.merMod() method does not fail any more for models with missing
+        data. 
+        
+    o   afex_plot() correctly plots data in the background if DV is a factor in 
+        a binomial model.
+
+
+                    *************************
+                    ** afex VERSION 0.27-x **
+                    *************************
+                    
+                    Changes in afex Version 0.27-x
+                    Released March 2020
+                    
+    Significant User Visible Changes and New Features
+    
+    o   p-values are now per default rounded to 3 digits following APA 
+        recommendations, thanks to Marius Barth: 
+        https://github.com/singmann/afex/issues/81
+        To achieve this, a new argument, round_ps, was added to nice() which 
+        accepts a rounding function and defaults to round_ps_apa() via 
+        afex_options("round_ps"). To reset to the old rounding behaviour, call:
+        afex_options(round_ps = round_ps)
+
+    o   New p-value rounding function round_ps_apa().  
+
+    Bugfixes
+
+    o   mixed(): check_contrasts = TRUE now works when the formula is not a 
+        formula (but e.g., a character string).
+        
+    o   Better error message when ANOVA formula does not include an errror term.
+    
+    o   Should work with both lme4 1.1-22 and later.
+
+
+                    *************************
+                    ** afex VERSION 0.26-x **
+                    *************************
+                    
+                    Changes in afex Version 0.26-x
+                    Released January 2020
+                    
+    Significant User Visible Changes and New Features
+    
+    o   factor_levels argument of afex_plot() now accepts named character vectors
+        which allows: 
+        (1) renaming only a subset of factor levels (if only a subset of levels 
+            is specified) 
+        (2) reordering in which order factor levels are shown in the plot (order
+            of names within a list element determine order that will be used for
+            plotting)
+
+    Bugfixes
+
+    o   msq data set is now part of psychTools and not of psych. 
+        Fixes CRAN check issues.
+
+
+                    *************************
+                    ** afex VERSION 0.25-x **
+                    *************************
+                    
+                    Changes in afex Version 0.25-x
+                    Released August 2019
+                    
+    Significant User Visible Changes and New Features
+    
+    o   Better error messages for ANOVA in some case in which data shows 
+        structural problems (e.g., missing design cells).
+        
+    o   afex_plot() now first draws all graphical elements belonging to a 
+        specific factor level, before drawing graphical elements belonging to 
+        the next factor level in interaction plots (does not apply to data in 
+        the background). This avoids inconsistencies in plotting order between
+        error bars and connecting lines.
+        
+
+    Bugfixes
+
+    o   Correct Type III ANOVA results for character variables if 
+        factorize = FALSE.
+        
+    o   afex_plot() for mixed or merMod objects uses actual dv on y-axis.
+    
+    o   afex_plot() x-labels and legend-title display correctly in case more 
+        than one variable is displayed.
+        
+    o   The default method for afex_plot() can now aggregate via the id argument 
+        even if the corresponding factor is only part if the random effects 
+        terms (see rstanarm examples in vignette).
+        
+    o   Removed certain non-ASCII characters in examples:
+        https://github.com/singmann/afex/issues/66
+
+
+
+                    *************************
                     ** afex VERSION 0.24-x **
                     *************************
                     
                     Changes in afex Version 0.24-x
-                    Released March 2019
+                    Released July 2019
                     
     Significant User Visible Changes and New Features
     
@@ -14,6 +155,13 @@
         for small models, a speed increase by more than 10% is expected.
         For ANOVAs without aov object, emmeans are always based on the 
         multivariate or lm model. 
+
+    o   Added test_levene() and test_sphercitiy() functions for assumption tests
+        for ANOVA models. Thanks to Mattan S. Ben-Shachar. Addresses #55, 
+        https://github.com/singmann/afex/issues/55
+
+    o   afex now depends on R (>= 3.5.0), as it uses binary/serialized objects 
+        version 3.
 
     Bugfixes
 

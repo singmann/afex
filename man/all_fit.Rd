@@ -5,10 +5,15 @@
 \alias{nmkbw}
 \title{Refit \code{lmer} model using multiple optimizers}
 \usage{
-all_fit(m, meth_tab = cbind(optimizer = rep(c("bobyqa", "Nelder_Mead",
-  "optimx", "nloptwrap", "nmkbw"), c(1, 1, 2, 2, 1)), method = c("", "",
-  "nlminb", "L-BFGS-B", "NLOPT_LN_NELDERMEAD", "NLOPT_LN_BOBYQA", "")),
-  verbose = TRUE, maxfun = 1e+06, ...)
+all_fit(
+  m,
+  meth_tab = cbind(optimizer = rep(c("bobyqa", "Nelder_Mead", "optimx", "nloptwrap",
+    "nmkbw"), c(1, 1, 2, 2, 1)), method = c("", "", "nlminb", "L-BFGS-B",
+    "NLOPT_LN_NELDERMEAD", "NLOPT_LN_BOBYQA", "")),
+  verbose = TRUE,
+  maxfun = 1e+06,
+  ...
+)
 
 nmkbw(fn, par, lower, upper, control)
 }

@@ -74,15 +74,26 @@ test_that("mixed plots are produced", {
   #                            function(x) 0:29 + x)),]
   mrt <- mixed(log_rt ~ task*stimulus*frequency + (1|id), 
                fhch, method = "S", progress = FALSE)
+  
+  p1 <- afex_plot(mrt, "task", id = "id")
 
-  expect_is(afex_plot(mrt, "task", 
-                      id = "id"), "ggplot")
-  expect_is(afex_plot(mrt, x = "stimulus", panel = "task", 
-                      id = "id"), "ggplot")
-  expect_is(afex_plot(mrt, x = "stimulus", trace = "task", 
-                      id = "id"), "ggplot")
-  expect_is(afex_plot(mrt, x = "stimulus", trace =  "frequency", panel = "task", 
-                      id = "id"), "ggplot")
+  expect_is(p1, "ggplot")
+  expect_equal(p1$labels$y, "log_rt")
+  
+  p2 <- afex_plot(mrt, x = "stimulus", panel = "task", 
+                      id = "id")
+  expect_is(p2, "ggplot")
+  expect_equal(p2$labels$y, "log_rt")
+  
+  p3 <- afex_plot(mrt, x = "stimulus", trace = "task", 
+                      id = "id")
+  expect_is(p3, "ggplot")
+  expect_equal(p3$labels$y, "log_rt")
+  
+  p4 <- afex_plot(mrt, x = "stimulus", trace =  "frequency", panel = "task", 
+                      id = "id")
+  expect_is(p4, "ggplot")
+  expect_equal(p4$labels$y, "log_rt")
 })
 
 test_that("lme4::merMod plots are produced", {
@@ -90,8 +101,11 @@ test_that("lme4::merMod plots are produced", {
   Oats$VarBlock <- Oats$Variety:Oats$Block
   Oats.lmer <- lmer(yield ~ Variety * factor(nitro) + (1|VarBlock) + (1|Block),
                     data = Oats)
-  expect_is(afex_plot(Oats.lmer, "nitro", 
-                      id = "VarBlock"), "ggplot")
+  p1 <- afex_plot(Oats.lmer, "nitro", 
+                      id = "VarBlock")
+  expect_is(p1, "ggplot")
+  expect_equal(p1$labels$y, "yield")
+  
   expect_is(afex_plot(Oats.lmer, "nitro", "Variety", 
                       id = "VarBlock"), "ggplot")
   expect_is(afex_plot(Oats.lmer, "nitro", panel = "Variety", 
@@ -170,8 +184,7 @@ test_that("afex_plot works with various geoms (from examples)", {
                   data_geom = ggpol::geom_boxjitter, 
                   data_arg = list(
                     width = 0.3, 
-                    jitter.width = 0,
-                    jitter.height = 10,
+                    jitter.params = list(width = 0, height = 10),
                     outlier.intersect = TRUE),
                   point_arg = list(size = 2.5), 
                   error_arg = list(size = 1.5, width = 0))
@@ -183,8 +196,7 @@ test_that("afex_plot works with various geoms (from examples)", {
                   data_geom = ggpol::geom_boxjitter, 
                   data_arg = list(
                     width = 0.5, 
-                    jitter.width = 0,
-                    jitter.height = 10,
+                    jitter.params = list(width = 0, height = 10),
                     outlier.intersect = TRUE),
                   point_arg = list(size = 2.5), 
                   line_arg = list(linetype = 0),
@@ -201,9 +213,89 @@ test_that("relabeling of factors and legend works", {
                                        noise = c("Absent", "Present")))
   expect_equal(levels(p1$data$noise), c("Absent", "Present"))
   expect_equal(levels(p1$data$angle), c("0", "4", "8"))
-
+  
+  p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
+                  factor_levels = list(
+                    angle = c(X8 = "8", X4 = "4", X0 = "0"),
+                    noise = c(present = "Present")))
+  expect_equal(levels(p2$data$angle), rev(c("0", "4", "8")))
+  expect_equal(levels(p2$data$noise), c("absent", "Present"))
+  
+  p1d <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
+                  factor_levels = list(angle = c("0", "4", "8"),
+                                       noise = c("Absent", "Present")), 
+                  return = "data")
+  p2d <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
+                  factor_levels = list(
+                    angle = c(X8 = "8", X4 = "4", X0 = "0"),
+                    noise = c(present = "Present")), 
+                  return = "data")
+  expect_equal(p1d$means$lower, p2d$means$lower)
+  
+  expect_warning(p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "mean",
+                  factor_levels = list(
+                    angle = c(X8 = "8", X4 = "4", X0 = "0"),
+                    noise = c(present = "Present"))), 
+                 "show within-subjects factors, but not within-subjects error bars")
+  expect_equal(levels(p3$data$angle), rev(c("0", "4", "8")))
+  
+  expect_warning(p3d <- afex_plot(aw, x = "noise", trace = "angle", error = "mean",
+                  factor_levels = list(
+                    angle = c(X8 = "8", X4 = "4", X0 = "0"),
+                    noise = c(present = "Present")), 
+                  return = "data"), 
+                 "show within-subjects factors, but not within-subjects error bars")
+  
+  expect_warning(p3nd <- afex_plot(aw, x = "noise", trace = "angle", error = "mean",
+                  factor_levels = list(angle = c("0", "4", "8"),
+                                       noise = c("Absent", "Present")), 
+                  return = "data"), 
+                 "show within-subjects factors, but not within-subjects error bars")
+  expect_equal(p3d$means$lower, p3nd$means$lower)
+  
+  expect_warning(p4d <- afex_plot(aw, x = "noise", trace = "angle", 
+                                  error = "between",
+                                  factor_levels = list(
+                                    angle = c(X8 = "8", X4 = "4", X0 = "0"),
+                                    noise = c(present = "Present")), 
+                                  return = "data"), 
+                 "show within-subjects factors, but not within-subjects error bars")
+  
+  expect_warning(p4nd <- afex_plot(aw, x = "noise", trace = "angle", 
+                                   error = "between",
+                                   factor_levels = list(angle = c("0", "4", "8"),
+                                                        noise = c("Absent", "Present")), 
+                                   return = "data"), 
+                 "show within-subjects factors, but not within-subjects error bars")
+  expect_equal(p4d$means$lower, p4nd$means$lower)
+  
+  expect_error(
+    afex_plot(aw, x = "noise", trace = "angle", error = "within",
+                  factor_levels = list(angle = c("0", "4"),
+                                       noise = c("Absent", "Present"))), 
+    "length of new factor_levels for 'angle' != length of factor levels"
+  )
+  
+  
   p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
                   legend_title = "Noise Condition")
   expect_equal(p2$guides$shape$title, "Noise Condition")
   expect_equal(p2$guides$linetype$title, "Noise Condition")
+})
+
+test_that("labels are correct in case variables are of lenth > 1", {
+  data(obk.long, package = "afex")
+  # estimate mixed ANOVA on the full design:
+  a1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
+                data = obk.long, observed = "gender")
+  
+  p1 <- afex_plot(a1, c("phase", "hour"), c("treatment", "gender"), 
+                  error = "none")
+  p2 <- afex_plot(a1, c("phase", "hour"), error = "none")
+  expect_match(p1$labels$x, "phase")
+  expect_match(p1$labels$x, "hour")
+  expect_match(p1$guides$shape$title, "treatment")
+  expect_match(p1$guides$shape$title, "gender")
+  expect_match(p2$labels$x, "phase")
+  expect_match(p2$labels$x, "hour")
 })

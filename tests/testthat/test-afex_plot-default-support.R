@@ -66,3 +66,4 @@ test_that("nlme works", {
   expect_equal(nrow(d4$data), nrow(Oats))
   expect_true(nrow(d5$data) < nrow(Oats))
 })
+

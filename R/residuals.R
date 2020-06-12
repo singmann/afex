@@ -18,10 +18,9 @@
 #' @export
 residuals.afex_aov <- function(object, append = FALSE, colname_residuals = ".residuals",...) {
   if (!append && attr(object, "data_changed")) {
-    warning("Data was changed during ANOVA calculation. ", 
+    message("Data was changed during ANOVA calculation. ", 
             "Thus, residuals cannot be added to original data.", 
-            "\nresiduals(..., append = TRUE) will return data and residuals.", 
-            call. = FALSE)
+            "\nresiduals(..., append = TRUE) will return data and residuals.")
   }
   
   e <- residuals(object$lm, ...)
@@ -32,10 +31,9 @@ residuals.afex_aov <- function(object, append = FALSE, colname_residuals = ".res
 #' @rdname residuals.afex_aov
 fitted.afex_aov <- function(object, append = FALSE, colname_fitted = ".fitted", ...) {
   if (!append && attr(object, "data_changed")) {
-    warning("Data was changed during ANOVA calculation. ", 
+    message("Data was changed during ANOVA calculation. ", 
             "Thus, fitted values cannot be added to original data.", 
-            "\nfitted(..., append = TRUE) will return data and fitted values.", 
-            call. = FALSE)
+            "\nfitted(..., append = TRUE) will return data and fitted values.")
   }
   
   e <- fitted(object$lm, ...)

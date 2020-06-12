@@ -1,28 +1,64 @@
 #' Methods for afex_aov objects
+#'
+#' Methods defined for objects returned from the ANOVA functions
+#' \code{\link{aov_car}} et al. of class \code{afex_aov} containing both the
+#' ANOVA fitted via \code{car::Anova} and base R's \code{aov}.
 #' 
-#' Methods defined for objects returned from the ANOVA functions \code{\link{aov_car}} et al. of class \code{afex_aov} containing both the ANOVA fitted via \code{car::Anova} and base R's \code{aov}.
-#' 
-#' @param object,x object of class \code{afex_aov} as returned from \code{\link{aov_car}} and related functions.
-#' @param p_adjust_method \code{character} indicating if p-values for individual effects should be adjusted for multiple comparisons (see \link[stats]{p.adjust} and details).
-#' @param ... further arguments passed through, see description of return value for details.
+#' @param object,x object of class \code{afex_aov} as returned from
+#'   \code{\link{aov_car}} and related functions.
+#' @param p_adjust_method \code{character} indicating if p-values for individual
+#'   effects should be adjusted for multiple comparisons (see
+#'   \link[stats]{p.adjust} and details).
+#' @param ... further arguments passed through, see description of return value
+#'   for details.
 #' @param trms,xlev,grid same as for \code{\link[emmeans]{emm_basis}}.
-#' @param model argument for \code{\link[emmeans]{emmeans}()} and rlated functions that allows to choose on which model the follow-up tests for ANOVAs with repeated-measures factors are based. \code{"univariate"} uses the \code{aov} model and \code{"multivariate"} uses the \code{lm} model. Default given by \code{afex_options("emmeans_mode")}. Multivariate tests likely provide a better correction for violations of sphericity.
+#' @param model argument for \code{\link[emmeans]{emmeans}()} and rlated
+#'   functions that allows to choose on which model the follow-up tests for
+#'   ANOVAs with repeated-measures factors are based. \code{"univariate"} uses
+#'   the \code{aov} model and \code{"multivariate"} uses the \code{lm} model.
+#'   Default given by \code{afex_options("emmeans_mode")}. Multivariate tests
+#'   likely provide a better correction for violations of sphericity.
 #' 
 #' @return
 #' \describe{
-#'   \item{\code{anova}}{Returns an ANOVA table of class \code{c("anova", "data.frame")}. Information such as effect size (\code{es}) or df-correction are calculated each time this method is called.}
-#'   \item{\code{summary}}{For ANOVAs containing within-subject factors it returns the full output of the within-subject tests: the uncorrected results, results containing Greenhousse-Geisser and Hyunh-Feldt correction, and the results of the Mauchly test of sphericity (all achieved via \code{summary.Anova.mlm}). For other ANOVAs, the \code{anova} table is simply returned.}
-#'   \item{\code{print}}{Prints (and invisibly returns) the ANOVA table as constructed from \code{\link{nice}} (i.e., as strings rounded nicely). Arguments in \code{...} are passed to \code{nice} allowing to pass arguments such as \code{es} and \code{correction}.}
-#'   \item{\code{recover_data} and \code{emm_basis}}{Provide the backbone for using \code{\link[emmeans]{emmeans}} and related functions from \pkg{emmeans} directly on \code{afex_aov} objects by returning a \code{\link[emmeans]{emmGrid-class}} object. Should not be called directly but through the functionality provided by \pkg{emmeans}.}
-#'   
+#'   \item{\code{anova}}{Returns an ANOVA table of class \code{c("anova",
+#'   "data.frame")}. Information such as effect size (\code{es}) or
+#'   df-correction are calculated each time this method is called.}
+#'   \item{\code{summary}}{For ANOVAs containing within-subject factors it
+#'   returns the full output of the within-subject tests: the uncorrected
+#'   results, results containing Greenhousse-Geisser and Hyunh-Feldt correction,
+#'   and the results of the Mauchly test of sphericity (all achieved via
+#'   \code{summary.Anova.mlm}). For other ANOVAs, the \code{anova} table is
+#'   simply returned.}
+#'   \item{\code{print}}{Prints (and invisibly returns) the ANOVA table as
+#'   constructed from \code{\link{nice}} (i.e., as strings rounded nicely).
+#'   Arguments in \code{...} are passed to \code{nice} allowing to pass
+#'   arguments such as \code{es} and \code{correction}.}
+#'   \item{\code{recover_data} and \code{emm_basis}}{Provide the backbone for
+#'   using \code{\link[emmeans]{emmeans}} and related functions from
+#'   \pkg{emmeans} directly on \code{afex_aov} objects by returning a
+#'   \code{\link[emmeans]{emmGrid-class}} object. Should not be called directly
+#'   but through the functionality provided by \pkg{emmeans}.}
 #' }
 #'
 #' @details 
-#' Exploratory ANOVA, for which no detailed hypotheses have been specified a priori, harbor a multiple comparison problem (Cramer et al., 2015). To avoid an inflation of familywise Type I error rate, results need to be corrected for multiple comparisons using \code{p_adjust_method}.
-#' \code{p_adjust_method} defaults to the method specified in the call to \code{\link{aov_car}} in \code{anova_table}. If no method was specified and \code{p_adjust_method = NULL} p-values are not adjusted.
+#' Exploratory ANOVA, for which no detailed hypotheses have been specified a
+#' priori, harbor a multiple comparison problem (Cramer et al., 2015). To avoid
+#' an inflation of familywise Type I error rate, results need to be corrected
+#' for multiple comparisons using \code{p_adjust_method}. \code{p_adjust_method}
+#' defaults to the method specified in the call to \code{\link{aov_car}} in
+#' \code{anova_table}. If no method was specified and \code{p_adjust_method =
+#' NULL} p-values are not adjusted.
+#' 
+#' @seealso \code{residuals} and \code{fitted} methods also exists for
+#'   \code{afex_aov} objects, see: \code{\link{residuals.afex_aov}}.
 #' 
 #' @references 
-#' Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic Bulletin & Review}, 1-8. doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
+#' Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H., Wetzels,
+#' R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden multiplicity
+#' in exploratory multiway ANOVA: Prevalence and remedies.  \emph{Psychonomic
+#' Bulletin & Review}, 1-8.
+#' doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
 #' 
 #' @name afex_aov-methods
 #' @importFrom stats p.adjust

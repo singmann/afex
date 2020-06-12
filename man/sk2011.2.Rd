@@ -5,7 +5,9 @@
 \name{sk2011.2}
 \alias{sk2011.2}
 \title{Data from Singmann & Klauer (2011, Experiment 2)}
-\format{A data.frame with 2268 rows and 9 variables.}
+\format{
+A data.frame with 2268 rows and 9 variables.
+}
 \source{
 Singmann, H., & Klauer, K. C. (2011). Deductive and inductive conditional inferences: Two modes of reasoning. Thinking & Reasoning, 17(3), 247-281. doi:10.1080/13546783.2011.572718
 }
@@ -62,9 +64,11 @@ sk2_den$type2 <- factor(sk2_den$inference:sk2_den$type, levels = c("MT:prologica
 a2_b <- aov_ez("id", "response", sk2_den, 
        between = "instruction", within = c("type2"))
 
-if (requireNamespace("emmeans")) {
-  emmeans::emmip(a1_b,instruction~type2, ylim = c(0, 100))
-  emmeans::emmip(a2_b,instruction~type2, ylim = c(0, 100))
+if (requireNamespace("emmeans") && requireNamespace("ggplot2")) {
+  afex_plot(a1_b,"type2", "instruction") + 
+    ggplot2::coord_cartesian(ylim = c(0, 100))
+  afex_plot(a2_b,"type2", "instruction") + 
+    ggplot2::coord_cartesian(ylim = c(0, 100))
 }
 }
 \keyword{dataset}

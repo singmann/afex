@@ -445,31 +445,15 @@ mixed <- function(formula,
   }
   
   ## real function begins:
-  vars.to.check <- all.vars(formula)
-  if (check_contrasts) {
-    #browser()
-    resetted <- NULL
-    for (i in vars.to.check) {
-      if (is.character(data[,i])) {
-        data[,i] <- factor(data[,i])
-      }
-      if (is.factor(data[,i])) {
-        if (is.null(attr(data[,i], "contrasts")) & 
-            (options("contrasts")[[1]][1] != "contr.sum")) {
-          contrasts(data[,i]) <- "contr.sum"
-          resetted  <- c(resetted, i)
-        }
-        else if (!is.null(attr(data[,i], "contrasts")) && 
-                 attr(data[,i], "contrasts") != "contr.sum") {
-          contrasts(data[,i]) <- "contr.sum"
-          resetted  <- c(resetted, i)
-        }
-      }
-    }
-    if (!is.null(resetted)) 
-      message(paste0("Contrasts set to contr.sum for the following variables: ", 
-                    paste0(resetted, collapse=", ")))
-  }
+  vars.to.check <- all.vars(as.formula(formula))
+  data <- check_contrasts(
+    data = data,
+    factors = vars.to.check,
+    check_contrasts = check_contrasts,
+    type = type,
+    warn = FALSE
+  )
+  
   method <- match.arg(method, c("KR", "S", "PB", "LRT", "nested-KR", "F"), 
                       several.ok=FALSE)
   
@@ -494,7 +478,7 @@ mixed <- function(formula,
   mapping <- attr(m.matrix, "assign")
   fixed.vars <- all.vars(rh2)
   # check for missing values in variables used:
-  if (nrow(m.matrix) != nrow(data)) {
+  if (nrow(model.matrix(nobars(formula.f), data = data)) != nrow(data)) {
     data <- model.frame(
       as.formula(paste0(vars.to.check[1], 
                        "~", 
@@ -502,9 +486,10 @@ mixed <- function(formula,
       data = data)
     m.matrix <- model.matrix(rh2, data = data)
     warning(paste0("Due to missing values, reduced number of observations to ", 
-                  nrow(data)))
+                  nrow(data)), call. = FALSE)
     if(set_data_arg) {
-      warning("Due to missing values, set_data_arg set to FALSE.")
+      warning("Due to missing values, set_data_arg set to FALSE.", 
+              call. = FALSE)
       set_data_arg <- FALSE
     }
   }
@@ -550,7 +535,8 @@ mixed <- function(formula,
              method, '"', call. = FALSE)
       mf[[1]] <- quote(lme4::lmer)
     }
-    else stop("value of afex_options('lmer_function') not supported.")
+    else stop("value of afex_options('lmer_function') not supported.", 
+              call. = FALSE)
     use_reml <- TRUE
   }
   mf[["data"]] <- as.name("data")
@@ -568,7 +554,7 @@ mixed <- function(formula,
   }
   if ("family" %in% names(mf)) {
     if (!(method[1] %in% c("LRT", "PB"))) 
-      stop("GLMMs can only be estimated with 'LRT' or 'PB'.")
+      stop("GLMMs can only be estimated with 'LRT' or 'PB'.", call. = FALSE)
   }
   ## do not calculate nested models for these methods:
   if (method[1] %in% c("KR", "S")) {
@@ -899,10 +885,16 @@ mixed <- function(formula,
         }
       }
       names(tests) <- fixed.effects
-      df.large  <- vapply(tests, function(x) x[["Df"]][2], 0)
-      df.small  <- vapply(tests, function(x) x[["Df"]][1], 0)
       chisq  <- vapply(tests, function(x) x[["Chisq"]][2], 0)
-      df  <- vapply(tests, function(x) x[["Chi Df"]][2], 0)
+      if (packageVersion("lme4") <= "1.1.21") {
+        df.large  <- vapply(tests, function(x) x[["Df"]][2], 0)
+        df.small  <- vapply(tests, function(x) x[["Df"]][1], 0)
+        df  <- vapply(tests, function(x) x[["Chi Df"]][2], 0)
+      } else {
+        df.large  <- vapply(tests, function(x) x[["npar"]][2], 0)
+        df.small  <- vapply(tests, function(x) x[["npar"]][1], 0)
+        df  <- vapply(tests, function(x) x[["Df"]][2], 0)
+      }
       p.value  <- vapply(tests, function(x) x[["Pr(>Chisq)"]][2], 0)
       anova_table <- data.frame(Df = df.small, 
                                 Chisq = chisq, 
@@ -912,7 +904,7 @@ mixed <- function(formula,
       rownames(anova_table) <- fixed.effects
       if (type == 3 | type == "III") 
         anova_tab_addition <- paste0("Df full model: ", df.large[1])
-      else anova_tab_addition <- paste0("Df full model(s): ", df.large)
+      else anova_tab_addition <- paste0("Df full model(s): ", paste(df.large, collapse = ", "))
     } else stop('Only methods "KR", "PB", "LRT", or "nested-KR" currently implemented.')
     
   } 
@@ -1065,7 +1057,6 @@ print.mixed <- function(x, ...) {
   print(tmp)
   invisible(tmp)
 }
-
 
 #anova.mixed <- 
 

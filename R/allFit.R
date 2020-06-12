@@ -41,11 +41,13 @@
 #' 
 all_fit <- function(m, 
                     meth_tab = cbind(
-                      optimizer=rep(c("bobyqa","Nelder_Mead", "optimx", "nloptwrap", "nmkbw"), 
+                      optimizer=rep(c("bobyqa","Nelder_Mead", "optimx", 
+                                      "nloptwrap", "nmkbw"), 
                                     c( 1, 1, 2, 2, 1)),
-                      method= c("", "", "nlminb","L-BFGS-B","NLOPT_LN_NELDERMEAD", "NLOPT_LN_BOBYQA", "")
+                      method= c("", "", "nlminb","L-BFGS-B",
+                                "NLOPT_LN_NELDERMEAD", "NLOPT_LN_BOBYQA", "")
                       ),
-                    verbose=TRUE,maxfun=1e6, ...)
+                    verbose=TRUE, maxfun=1e6, ...)
 {
   stopifnot(length(dm <- dim(meth_tab)) == 2, dm[1] >= 1, dm[2] >= 2,
             is.character(optimizer <- meth_tab[,"optimizer"]),
@@ -78,7 +80,11 @@ all_fit <- function(m,
       else cat("[ERROR]\n")
     }
   }
-  ##
+  ## reset call slot of refitted objects
+  res <- lapply(res, function(x) {
+    try(x@call[["data"]] <- m@call[["data"]], silent = TRUE)
+    x
+  })
   res
 }
 

@@ -4,7 +4,7 @@ load_all()
 
 options(error = NULL)
 devtools::test()
-devtools::build() # R CMD build afex --compact-vignettes="gs+qpdf"
+devtools::build(args = "--compact-vignettes=both") # R CMD build afex --compact-vignettes="gs+qpdf"
 document()
 check()
 
@@ -21,19 +21,50 @@ options(error = NULL)
 options(warn = 2)
 options(warn = 0)
 
+usethis::use_data(stroop, internal = FALSE, overwrite = TRUE)
+usethis::use_vignette("afex_analysing_accuracy_data")
+usethis::use_github_action_check_standard()
+
+## check for non-ASCII characters in examples:
+for (f in list.files("examples/", full.names = TRUE)) {
+  cat(f, "\n")
+  tools::showNonASCIIfile(f)
+}
+
+## check for non-ASCII characters in R files:
+for (f in list.files("R/", full.names = TRUE)) {
+  cat(f, "\n")
+  tools::showNonASCIIfile(f)
+}
+
+## check for non-ASCII characters in Rd files:
+for (f in list.files("man/", full.names = TRUE)) {
+  cat(f, "\n")
+  tools::showNonASCIIfile(f)
+}
+
+## resave extdata:
+rda_files <- list.files("inst/extdata/", full.names = TRUE)
+for (i in rda_files) tools::resaveRdaFiles(i)
+
 #install.packages("afex", dependencies = TRUE)
 #devtools::build()
 devtools::build_vignettes()
 clean_vignettes(pkg = ".")
 
+devtools::build(args = "--compact-vignettes=both")
+
 ### add packages
 
-usethis::use_package("glmmTMB", "Suggests")
+usethis::use_package("statmod", "Suggests")
 usethis::use_package("rstanarm", "Suggests")
 usethis::use_package("brms", "Suggests")
 usethis::use_package("cowplot", "Suggests")
-usethis::use_package("nlme", "Suggests")
+usethis::use_package("ggResidpanel", "Suggests")
 #usethis::use_package("GLMMadaptive", "Suggests")
+usethis::use_readme_rmd()
+usethis::use_cran_badge()
+usethis::use_code_of_conduct()
 
 ### check reverse dependencies:
 

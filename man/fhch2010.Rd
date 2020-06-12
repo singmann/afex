@@ -5,7 +5,8 @@
 \name{fhch2010}
 \alias{fhch2010}
 \title{Data from Freeman, Heathcote, Chalmers, & Hockley (2010)}
-\format{A \code{data.frame} with 13,222 obs. of 9 variables:
+\format{
+A \code{data.frame} with 13,222 obs. of 9 variables:
 \describe{
  \item{id}{participant id, \code{factor}}
  \item{task}{\code{factor} with two levels indicating which task was performed: \code{"naming"} or \code{"lexdec"}}
@@ -17,7 +18,8 @@
  \item{rt}{response time in seconds}
  \item{log_rt}{natural logarithm of response time in seconds}
  \item{correct}{boolean indicating whether or not the response in the lexical decision task was correct or incorrect (incorrect responses of the naming task are not part of the data).}
-}}
+}
+}
 \source{
 Freeman, E., Heathcote, A., Chalmers, K., & Hockley, W. (2010). Item effects in recognition memory for words. Journal of Memory and Language, 62(1), 1-18. http://doi.org/10.1016/j.jml.2009.09.004
 }
@@ -41,10 +43,10 @@ a1 <- aov_ez("id", "log_rt", fhch2010, between = "task",
              within = c("density", "frequency", "length", "stimulus"))
 nice(a1)
 
-if (requireNamespace("emmeans")) {
-  emmeans::emmip(a1, frequency~length|task+stimulus)
-
-  emmeans::emmip(a1, frequency~density|task+stimulus)
+if (requireNamespace("emmeans") && requireNamespace("ggplot2")) {
+  afex_plot(a1, "length", "frequency", c("task", "stimulus"), error = "within")
+  
+  afex_plot(a1, "density", "frequency", c("task", "stimulus"), error = "within")
 }
 
 
@@ -53,10 +55,10 @@ a2 <- aov_ez("id", "rt", fhch2010, between = "task",
              within = c("density", "frequency", "length", "stimulus"))
 nice(a2)
 
-if (requireNamespace("emmeans")) {
-  emmeans::emmip(a2, frequency~length|task+stimulus)
+if (requireNamespace("emmeans") && requireNamespace("ggplot2")) {
+  afex_plot(a2, "length", "frequency", c("task", "stimulus"), error = "within")
   
-  emmeans::emmip(a2, frequency~density|task+stimulus)
+  afex_plot(a2, "density", "frequency", c("task", "stimulus"), error = "within")
 }
 }
 }

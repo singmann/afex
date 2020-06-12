@@ -3,27 +3,46 @@
 \encoding{UTF-8}
 \name{round_ps}
 \alias{round_ps}
-\title{Helper function which rounds p-values}
+\alias{round_ps_apa}
+\title{Helper functions for rounding p-values}
 \usage{
 round_ps(x)
+
+round_ps_apa(x)
 }
 \arguments{
 \item{x}{a numeric vector}
 }
 \value{
-A character vector with the same length of x.
+A character vector with the same length as x.
 }
 \description{
-p-values are rounded in a sane way: .99 - .01 to two digits, < .01 to three digits, < .001 to four digits.
+These functions return a character vector of p-values that are rounded as
+described below and without the leading zero before the decimal point.
+}
+\details{
+For \code{round_ps} p-values are rounded in a sane way: .99 - .01 to two
+digits, < .01 to three digits, < .001 to four digits.
+
+For \code{round_ps_apa} p-values are rounded following APA guidelines: .999 -
+.001 to three digits, and < .001 for values below this threshold.
+}
+\note{
+These functions are useful in \code{\link{nice}} and the default is set
+  via \code{\link{afex_options}}.
 }
 \examples{
-round_ps(runif(10))
+x <- runif(10)
+y <- runif(10, 0, .01)
 
-round_ps(runif(10, 0, .01))
+round_ps(x)
+round_ps_apa(x)
 
-round_ps(runif(10, 0, .001))
+round_ps(y)
+round_ps_apa(y)
 
 round_ps(0.0000000099)
+round_ps_apa(0.0000000099)
 
 }
 \author{

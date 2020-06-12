@@ -13,3 +13,4 @@ vignettes/*.html
 .Rproj.user
 # revdep folder
 revdep
+inst/doc

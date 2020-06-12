@@ -1,4 +1,55 @@
 
+check_contrasts <- function(data, factors, 
+                            check_contrasts, type, 
+                            warn = TRUE) {
+  if (check_contrasts) {
+    resetted <- NULL
+    for (i in factors) {
+      if (is.character(data[,i])) {
+        data[,i] <- factor(data[,i])
+      }
+      if (is.factor(data[,i])) {
+        if (is.null(attr(data[,i], "contrasts")) & 
+            (options("contrasts")[[1]][1] != "contr.sum")) {
+          contrasts(data[,i]) <- "contr.sum"
+          resetted  <- c(resetted, i)
+        }
+        else if (!is.null(attr(data[,i], "contrasts")) && 
+                 attr(data[,i], "contrasts") != "contr.sum") {
+          contrasts(data[,i]) <- "contr.sum"
+          resetted  <- c(resetted, i)
+        }
+      }
+    }
+    if (!is.null(resetted)) 
+      message(paste0("Contrasts set to contr.sum for the following variables: ", 
+                     paste0(resetted, collapse=", ")))
+  } else if (warn) {
+    non_sum_contrast <- c()
+    for (i in factors) {
+      if (is.factor(data[,i])) {
+        if (is.null(attr(data[,i], "contrasts")) & 
+            (options("contrasts")[[1]][1] != "contr.sum")) {
+          non_sum_contrast <- c(non_sum_contrast, i)
+        }
+        else if (!is.null(attr(data[,i], "contrasts")) && 
+                 attr(data[,i], "contrasts") != "contr.sum") {
+          non_sum_contrast <- c(non_sum_contrast, i)
+        }
+      }
+    }
+    if((type == 3 | type == "III") && (length(non_sum_contrast)>0)) 
+      warning(
+        paste0("Calculating Type 3 sums with contrasts != 'contr.sum' for: ", 
+               paste0(non_sum_contrast, collapse=", "), 
+               "\n  Results likely bogus or not interpretable!\n",
+               "You probably want check_contrasts = TRUE or ", 
+               "options(contrasts=c('contr.sum','contr.poly'))"), 
+        call. = FALSE)
+  }
+  return(data)
+}
+
 ## paste function that can replace stringr::str_c and differs from the way 
 # paste handles NULL arguments as last arguments. 
 # It checks whether the first or last char of the string is equal to sep and 

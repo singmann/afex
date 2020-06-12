@@ -2,6 +2,60 @@
 
 context("mixed: known bugs")
 
+test_that("all_fit = TRUE works with emmeans", {
+  testthat::skip_on_cran()
+  skip_if_not_installed("MEMSS")
+  skip_if_not_installed("emmeans")
+  data("Machines", package = "MEMSS") 
+  m1 <- mixed(score ~ Machine + (1|Worker), data=Machines, all_fit = TRUE)
+  expect_is(emmeans::emmeans(m1, "Machine"), "emmGrid")
+})
+
+test_that("inverse.gaussian works", {
+  ## see: https://github.com/singmann/afex/issues/74
+  skip_if_not_installed("statmod")
+  skip_if(packageVersion("lme4") <= "1.1.21")
+  skip_on_cran()
+  set.seed(666)
+  
+  id <- factor(1:20)
+  a <- factor(rep(c("a1","a2"),each=5000/2))
+  b <- factor(rep(c("b1","b2"),each=5000/2))
+  y <- statmod::rinvgauss(5000, 1, 2)
+  df <- data.frame(id=id,
+                   x1=sample(a),
+                   x2=sample(b),
+                   y=y)
+  
+  expect_is(mixed(y ~ x1 * x2 
+                     + (1|id),
+                     family = inverse.gaussian(link = "inverse"),
+                     control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                     data = df,
+                     method = "LRT", progress = FALSE), "mixed")
+  
+  expect_is(mixed(y ~ x1 * x2 + (1|id),
+                     family = inverse.gaussian(link = "inverse"),
+                     control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+                     data = df,
+                     method = "PB", progress = FALSE, 
+                  args_test = list(nsim = 5)), "mixed")
+  
+  
+})
+
+test_that("character formula is contrast checked", {
+  data("sk2011.2")
+  # use only affirmation problems (S&K also splitted the data like this)
+  sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
+  sk_m1 <- mixed("response ~ instruction*inference+(1|id)", 
+                 sk2_aff, method = "S", progress = FALSE)
+  
+  sk_m2 <- mixed(response ~ instruction*inference+(1|id), sk2_aff, 
+                 method = "S", progress = FALSE)
+  expect_equivalent(fixef(sk_m1$full_model), fixef(sk_m2$full_model))
+  
+})
 
 test_that("character variables are treated as factors", {
   data("sk2011.2")

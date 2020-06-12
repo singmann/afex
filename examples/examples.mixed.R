@@ -9,7 +9,7 @@ data("Machines", package = "MEMSS")
 m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines)
 m1
 
-# suppress correlation among random effect parameters with expand_re = TRUE
+# suppress correlations among random effect parameters with || and expand_re = TRUE
 m2 <- mixed(score ~ Machine + (Machine||Worker), data=Machines, expand_re = TRUE)
 m2
 
@@ -19,6 +19,7 @@ summary(m2)$varcor
 # for wrong solution see: 
 # summary(lmer(score ~ Machine + (Machine||Worker), data=Machines))$varcor
 
+if (requireNamespace("emmeans")) {
 # follow-up tests
 library("emmeans")  # package emmeans needs to be attached for follow-up tests.
 (emm1 <- emmeans(m1, "Machine"))
@@ -29,10 +30,16 @@ con1 <- list(
 )
 contrast(emm1, con1, adjust = "holm")
 
+if (requireNamespace("ggplot2")) {
 # plotting 
-emmip(m1, ~Machine, CIs = TRUE)
-emmip(m2, ~Machine, CIs = TRUE)
+afex_plot(m1, "Machine") ## default uses model-based CIs
+## within-subjects CIs somewhat more in line with pairwirse comparisons:
+afex_plot(m1, "Machine", error = "within") 
 
+## less differences between CIs for model without correlations:
+afex_plot(m2, "Machine")
+afex_plot(m2, "Machine", error = "within")
+}}
 
 \dontrun{
 #######################
@@ -199,20 +206,17 @@ sk_m2
 ## mixed objects can be passed to emmeans
 library("emmeans")  # however, package emmeans needs to be attached first
 
+# emmeans also approximate df which takes time with default Kenward-Roger
+emm_options(lmer.df = "Kenward-Roger") # default setting, slow
+emm_options(lmer.df = "Satterthwaite") # faster setting, preferrable
+emm_options(lmer.df = "asymptotic") # the fastest, df = infinity
+
+
 # recreates basically Figure 4 (S&K, 2011, upper panel)
 # only the 4th and 6th x-axis position are flipped
-emmip(sk_m1, instruction~type+inference)
-
-# use lattice instead of ggplot2:
-emm_options(graphics.engine = "lattice") 
-emmip(sk_m1, instruction~type+inference)
-emm_options(graphics.engine = "ggplot") # reset options 
+afex_plot(sk_m1, x = c("type", "inference"), trace = "instruction")
 
 # set up reference grid for custom contrasts:
-# this can be made faster via:
-emm_options(lmer.df = "Kenward-Roger") # set df for emmeans to KR
-# emm_options(lmer.df = "Satterthwaite") # the default
-# emm_options(lmer.df = "asymptotic") # the fastest, no df
 (rg1 <- emmeans(sk_m1, c("instruction", "type", "inference")))
 
 # set up contrasts on reference grid:
@@ -225,7 +229,7 @@ contr_sk2 <- list(
 
 # test the main double dissociation (see S&K, p. 268)
 contrast(rg1, contr_sk2, adjust = "holm")
-# only plausibility effect is not significant here.
+# all effects are significant.
 }
 
 ####################
@@ -283,7 +287,7 @@ m1
 # 8   PrevType:meanWeight 1, 1601.18    6.18 *     .01
 # 9 NativeLanguage:Length 1, 1555.49 14.24 ***   .0002
 # ---
-# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
+# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 
 # Fitting a GLMM using parametric bootstrap:
 require("mlmRev") # for the data, see ?Contraception

@@ -5,9 +5,11 @@
 afex-Ex.R
 examples
 dev.R
-README.md
 ^CONDUCT\.md$
 ^\.travis\.yml$
 revdep
 Rplots.pdf
-
+^development$
+^README\.Rmd$
+^CODE_OF_CONDUCT\.md$
+^\.github$

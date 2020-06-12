@@ -40,7 +40,7 @@
 #'   specification of the obsered (in contrast to manipulated) variables.
 #' @param formula A formula specifying the ANOVA model similar to
 #'   \code{\link{aov}} (for \code{aov_car} or similar to \code{lme4:lmer} for
-#'   \code{aov_4}). Should include an error term (i.e., \code{Error(id/...)} for
+#'   \code{aov_4}). Must include an error term (i.e., \code{Error(id/...)} for
 #'   \code{aov_car} or \code{(...|id)} for \code{aov_4}). Note that the
 #'   within-subject factors do not need to be outside the Error term (this
 #'   contrasts with \code{aov}). See Details.
@@ -361,6 +361,10 @@ aov_car <- function(formula,
          domain = NA)
 
   # from here, code by Henrik Singmann:
+  if (is.null(indError)) {
+    stop("formula needs an error term identifying the ID column.")
+  }
+  
   vars <- all.vars(formula)
   #--- Russ Lenth added/modified code to detect transformed responses:
   lhs <- all.names(formula[[2]])
@@ -483,6 +487,25 @@ aov_car <- function(formula,
     }
   }
   
+  ## check for structurally missing data
+  # within-subjects
+  if ((length(within) > 0) && any(table(data[within]) == 0)) {
+    stop("Empty cells in within-subjects design ", 
+         " (i.e., bad data structure).\n", 
+         "", paste0("table(data[", deparse(within), "])"), "\n# ",
+         paste(utils::capture.output(table(data[within])), collapse = "\n# "),
+         call. = FALSE)
+  }
+  # between-subjects
+  between_nn <- between[!vapply(data[between], is.numeric, NA)]
+  if (length(between_nn) > 0 && any(table(data[between_nn]) == 0)) {
+    stop("Empty cells in between-subjects design ", 
+         " (i.e., bad data structure).\n",  
+         "", paste0("table(data[", deparse(between_nn), "])"), "\n# ",
+         paste(utils::capture.output(table(data[between_nn])), collapse = "\n# "),
+         call. = FALSE)
+  }
+  
   # Is fun_aggregate NULL and aggregation necessary?
   if (is.null(fun_aggregate)) {
     if (any(xtabs(
@@ -495,7 +518,6 @@ aov_car <- function(formula,
   } 
   
   # prepare the data:
-  
   tmp.dat <- do.call(
     dcast, 
     args = 
@@ -514,6 +536,10 @@ aov_car <- function(formula,
                   "\nRemoving those cases from the analysis."), call. = FALSE) 
     tmp.dat <- tmp.dat[!missing.values,]
     data <- data[ !(data[,id] %in% missing_ids),]
+    if ((nrow(data) == 0 ) | (nrow(tmp.dat) == 0)) {
+      stop("No observations remain after removing missing values.", 
+           "\n  Try adding to ANOVA call: na.rm = TRUE", call. = FALSE)
+    }
   } else {
     missing_ids <- NULL
   }
@@ -536,7 +562,8 @@ aov_car <- function(formula,
   colnames(dat.ret)[length(colnames(dat.ret))] <- dv
   if (!isTRUE(
     all.equal(target = data[,c(id, between, within, dv)], 
-              current = dat.ret[,c(id, between, within, dv)])
+              current = dat.ret[,c(id, between, within, dv)], 
+              check.attributes = FALSE)
   )) {
     data_changed <- TRUE
   } else {
@@ -544,46 +571,12 @@ aov_car <- function(formula,
   }
   
   if (length(between) > 0) {
-    if (check_contrasts) {
-      resetted <- NULL
-      for (i in between) {
-        if (is.factor(tmp.dat[,i])) {
-          if (is.null(attr(tmp.dat[,i], "contrasts")) & 
-              (options("contrasts")[[1]][1] != "contr.sum")) {
-            contrasts(tmp.dat[,i]) <- "contr.sum"
-            resetted  <- c(resetted, i)
-          }
-          else if (!is.null(attr(tmp.dat[,i], "contrasts")) && 
-                   attr(tmp.dat[,i], "contrasts") != "contr.sum") {
-            contrasts(tmp.dat[,i]) <- "contr.sum"
-            resetted  <- c(resetted, i)
-          }
-        }
-      }
-      if (!is.null(resetted)) 
-        message(paste0("Contrasts set to contr.sum for the following variables: ", 
-                      paste0(resetted, collapse=", ")))
-    } else {
-      non_sum_contrast <- c()
-      for (i in between) {
-        if (is.factor(tmp.dat[,i])) {
-          if (is.null(attr(tmp.dat[,i], "contrasts")) & 
-              (options("contrasts")[[1]][1] != "contr.sum")) {
-            non_sum_contrast <- c(non_sum_contrast, between)
-          }
-          else if (!is.null(attr(tmp.dat[,i], "contrasts")) && 
-                   attr(tmp.dat[,i], "contrasts") != "contr.sum") {
-            non_sum_contrast <- c(non_sum_contrast, between)
-          }
-        }
-      }
-      if((type == 3 | type == "III") && (length(non_sum_contrast)>0)) 
-        warning(
-          paste0("Calculating Type 3 sums with contrasts != 'contr.sum' for: ", 
-                      paste0(non_sum_contrast, collapse=", "), 
-                      "\n  Results likely bogus or not interpretable!\n  You probably want check_contrasts = TRUE or options(contrasts=c('contr.sum','contr.poly'))"), 
-                call. = FALSE)
-    }
+    tmp.dat <- check_contrasts(
+      data = tmp.dat,
+      factors = between,
+      check_contrasts = check_contrasts,
+      type = type
+    )
   }
   if (return %in% c("aov")) include_aov <- TRUE
   if(include_aov){

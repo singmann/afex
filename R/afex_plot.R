@@ -32,7 +32,11 @@
 #'   \code{"shape"}, \code{"color"}, \code{"linetype"}, or also \code{"fill"} 
 #'   (see examples). The default (i.e., missing) uses \code{c("shape", 
 #'   "linetype")} if \code{trace} is specified and \code{""} otherwise (i.e., no
-#'   additional aesthetic).
+#'   additional aesthetic). If specific mappings should not be applied to
+#'   specific graphical elements, one can override those via the corresponding
+#'   further arguments. For example, for \code{data_arg} the default is
+#'   \code{list(color = "darkgrey")} which prevents that \code{"color"} is
+#'   mapped onto points in the background.
 #' @param error A scalar \code{character} vector specifying on which standard 
 #'   error the error bars should be based. Default is \code{"model"}, which
 #'   plots model-based standard errors. Further options are: \code{"none"} (or 
@@ -60,10 +64,11 @@
 #'   the error bar.
 #' @param data_plot \code{logical}. Should raw data be plotted in the 
 #'   background? Default is \code{TRUE}.
-#' @param data_geom Geom \code{function} used for plotting data in background. 
-#'   The default (missing) uses \code{\link[ggplot2]{geom_point}} if 
-#'   \code{trace} is specified, otherwise 
-#'   \code{\link[ggbeeswarm]{geom_beeswarm}}. See examples fo further options.
+#' @param data_geom Geom \code{function} used for plotting data in background.
+#'   The default (missing) uses \code{\link[ggplot2]{geom_point}} if
+#'   \code{trace} is specified, otherwise
+#'   \code{\link[ggbeeswarm]{geom_beeswarm}} (a good alternative is
+#'   \code{ggbeeswarm::geom_quasirandom}) . See examples fo further options.
 #' @param data_alpha numeric \code{alpha} value between 0 and 1 passed to 
 #'   \code{data_geom}. Default is \code{0.5} which correspond to semitransparent
 #'   data points in the background such that overlapping data points are plotted
@@ -85,9 +90,15 @@
 #'   \code{"data"} returns a list with two \code{data.frame}s containing the 
 #'   data used for plotting: \code{means} contains the means and standard errors
 #'   for the foreground, \code{data} contains the raw data in the background.
-#' @param factor_levels A \code{list} of new factor levels that should be used in 
-#'   the plot. The name of each list entry needs to correspond to one of the 
-#'   factors in the plot. 
+#' @param factor_levels A \code{list} of new factor levels that should be used
+#'   in the plot. The name of each list entry needs to correspond to one of the
+#'   factors in the plot. Each list element can optionally be a named character
+#'   vector where the name corresponds to the old factor level and the value to
+#'   the new factor level. Named vectors allow two things: (1) updating only a
+#'   subset of factor levels (if only a subset of levels is specified) and (2)
+#'   reordering (and renaming) the factor levels, as order of names within a
+#'   list element are the order that will be used for plotting. If specified,
+#'   emits a \code{message} with \code{old -> new} factor levels.
 #' @param legend_title A scalar \code{character} vector with a new title for the
 #'   legend.
 #' @param data For the \code{afex_plot.default} method, an optional
@@ -133,15 +144,16 @@
 #'   confidence intervals (if \code{error_ci = TRUE}, the default) or standard 
 #'   errors (if \code{error_ci = FALSE}).
 #'   
-#'   A further complication is that readers routinely misinterpret confidence 
-#'   intervals. The most common error is to assume that non-overlapping error 
-#'   bars indicate a significant difference (e.g., Belia et al., 2005). This is 
-#'   rarely the case (see e.g., Cumming & Finch, 2005; Knol et al., 2011; 
-#'   Schenker & Gentleman, 2005). For example, in a fully between-subjects design
-#'   in which the error bars depict 95\% confidence intervals and groups are of 
-#'   approximately equal size and have equal variance, even error bars that 
-#'   overlap by as much as 50\% still correspond to \emph{p} < .05. Error bars 
-#'   that are just touching roughly correspond to \emph{p} = .01.
+#'   A further complication is that readers routinely misinterpret confidence
+#'   intervals. The most common error is to assume that non-overlapping error
+#'   bars indicate a significant difference (e.g., Belia et al., 2005). This is
+#'   often too strong an assumption. (see e.g., Cumming & Finch, 2005; Knol et
+#'   al., 2011; Schenker & Gentleman, 2005). For example, in a fully
+#'   between-subjects design in which the error bars depict 95\% confidence
+#'   intervals and groups are of approximately equal size and have equal
+#'   variance, even error bars that overlap by as much as 50\% still correspond
+#'   to \emph{p} < .05. Error bars that are just touching roughly correspond to
+#'   \emph{p} = .01.
 #'   
 #'   In the case of designs involving repeated-measures factors the usual
 #'   confidence intervals or standard errors (i.e., model-based confidence
@@ -253,8 +265,11 @@
 #'   \emph{The American Statistician}, 55(3), 182-186.
 #'   https://doi.org/10.1198/000313001317097960
 #'   
+#' @note Only the DV/response variable can be called \code{y}, but no
+#'   factor/variable used for plotting.
 #'   
-#' @importFrom stats aggregate sd qt
+#'   
+#' @importFrom stats aggregate sd qt formula
 #' 
 #' @example examples/examples.afex_plot.R
 #'   
@@ -303,6 +318,10 @@ afex_plot.afex_aov <- function(object,
   trace <- get_plot_var(trace)
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
+  if ("y" %in% all_vars) {
+    stop("Variable 'y' cannot be used for plotting. Rename variable and refit.",
+         call. = FALSE)
+  }
   
   emms <- get_emms(object = object, 
                    x = x,
@@ -420,13 +439,23 @@ afex_plot.mixed <- function(object,
             paste(names(dots), collapse = ", "), call. = FALSE)
   }
   
+  if (attr(object, "type") %in% c("II", 2)) {
+    full_model <- object$full_model[[1]]
+  } else (
+    full_model <- object$full_model
+  )
+  
   x <- get_plot_var(x)
   trace <- get_plot_var(trace)
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
+  if ("y" %in% all_vars) {
+    stop("Variable 'y' cannot be used for plotting. Rename variable and refit.",
+         call. = FALSE)
+  }
   
   if (missing(id)) {
-    id <- unique(names(lme4::ranef(object$full_model)))
+    id <- unique(names(lme4::ranef(full_model)))
     message("Aggregating data over: ", paste(id, collapse = ", "))
   }
   ## prepare raw (i.e., participant by cell) data
@@ -435,7 +464,7 @@ afex_plot.mixed <- function(object,
                     trace = trace,
                     panel = panel,
                     factor_levels = factor_levels,
-                    dv_col = deparse(object$full_model@call[["formula"]][[2]]),
+                    dv_col = deparse(full_model@call[["formula"]][[2]]),
                     id = id)
   data$afex_id <- interaction(data[id], sep = ".")
   
@@ -453,6 +482,7 @@ afex_plot.mixed <- function(object,
                    emmeans_arg = emmeans_arg, 
                    factor_levels = factor_levels,
                    level = error_level)
+  attr(emms, "dv") <- deparse(full_model@call[["formula"]][[2]])
   
   if (length(id) == 1) {
     all_within <- lapply(lme4::findbars(object$call), all.vars)
@@ -542,6 +572,10 @@ afex_plot.merMod <- function(object,
   trace <- get_plot_var(trace)
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
+  if ("y" %in% all_vars) {
+    stop("Variable 'y' cannot be used for plotting. Rename variable and refit.",
+         call. = FALSE)
+  }
   
   
   if (missing(id)) {
@@ -551,8 +585,9 @@ afex_plot.merMod <- function(object,
   ## prepare raw (i.e., participant by cell) data
   data <- prep_data(
     data = emmeans::recover_data(
-      object = object, 
-      trms = terms(object, fixed.only = FALSE)
+      object = object@call, 
+      trms = terms(object, fixed.only = FALSE), 
+      na.action = attr(object@frame, ".na.action")
       ), 
     x = x,
     trace = trace,
@@ -576,6 +611,7 @@ afex_plot.merMod <- function(object,
                    emmeans_arg = emmeans_arg, 
                    factor_levels = factor_levels,
                    level = error_level)
+  attr(emms, "dv") <- deparse(object@call[["formula"]][[2]])
   
   if (length(id) == 1) {
     all_within <- lapply(lme4::findbars(object@call), all.vars)
@@ -667,18 +703,47 @@ afex_plot.default <- function(object,
   trace <- get_plot_var(trace)
   panel <- get_plot_var(panel)
   all_vars <- c(x, trace, panel)
+  if ("y" %in% all_vars) {
+    stop("Variable 'y' cannot be used for plotting. Rename variable and refit.",
+         call. = FALSE)
+  }
   
   if (missing(dv)) {
-    formula_name <- names(object$call)[2]
+    tryCatch({
+      formula_name <- names(object$call)[2]
+    }, error = function(e) stop(
+      "Could not detect dv column. Please specify via dv argument.", 
+      call. = FALSE
+    ))
+    if (is.null(formula_name)) stop(
+      "Could not detect dv column. Please specify via dv argument.", 
+      call. = FALSE
+    )
     message("dv column detected: ", deparse(object$call[[formula_name]][[2]]))
     dv <- deparse(object$call[[formula_name]][[2]])
+    
   }
   ## prepare raw (i.e., participant by cell) data if missing
   if (missing(data)) {
-    data <- emmeans::recover_data(
+    try(data <- emmeans::recover_data(
       object = object, 
-      trms = terms(object)
-    )
+      #trms = terms(object)
+      trms = terms(lme4::subbars(formula(object)))
+    ), silent = TRUE)
+    if (!exists("data", mode = "list")) {
+      try(data <- emmeans::recover_data(
+        object = object, 
+        trms = terms(object)
+      ), silent = TRUE)
+    }
+    if (!exists("data", mode = "list")) {
+      try(data <- model.frame(object), silent = TRUE)
+    }
+    
+    if (!exists("data", mode = "list")) {
+      stop("data could not be recovered. Please pass data via data argument.", 
+           call. = FALSE)
+    }
   }
   if (missing(id)) {
     message("No id column passed. ", 
@@ -753,224 +818,4 @@ afex_plot.default <- function(object,
 }
 
 
-###if(getRversion() >= "2.15.1")  utils::globalVariables(c("error", "y", "x"))
-#' @rdname afex_plot
-#' @export
-interaction_plot <- function(means, 
-                             data, 
-                             mapping = c("shape", "lineytpe"), 
-                             error_plot = TRUE,
-                             error_arg = list(width = 0),
-                             data_plot = TRUE,
-                             data_geom = ggplot2::geom_point,
-                             data_alpha = 0.5,
-                             data_arg = list(color = "darkgrey"),
-                             point_arg = list(),
-                             line_arg = list(),
-                             dodge = 0.5, 
-                             legend_title,
-                             col_x = "x",
-                             col_y = "y",
-                             col_trace = "trace",
-                             col_panel = "panel",
-                             col_lower = "lower",
-                             col_upper = "upper") {
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("package ggplot2 is required.", call. = FALSE)
-  }
-  if (missing(mapping)) {
-    mapping <- c('shape', 'linetype')
-  } else if (length(mapping) == 0) {
-    stop("mapping cannot be empty. Possible values: 'shape', 'color', 'linetype'.", 
-         call. = FALSE)
-  }
-  tmp_list <- as.list(rep(col_trace, length(mapping)))
-  names(tmp_list) <- mapping
-  plot_out <- ggplot2::ggplot(data = means, 
-                              mapping = do.call(
-                                what = ggplot2::aes_string, 
-                                args = c(list(
-                                  y = col_y, 
-                                  x = col_x, 
-                                  group = col_trace),
-                                  tmp_list)))
-  
-  if (data_plot) {
-    if (missing(data_geom)) {
-      data_geom <- ggplot2::geom_point
-    }
-    data_arg$alpha <- data_alpha
-    if (!("position" %in% names(data_arg)) & 
-        ("position" %in% names(formals(data_geom)))) {
-      data_arg$position = ggplot2::position_dodge(width = dodge)
-    }
-    plot_out <- plot_out +
-      do.call(what = data_geom,
-              args = c(
-                #mapping = list(ggplot2::aes(group = interaction(x, trace))),
-                mapping = 
-                  list(
-                    ggplot2::aes_string(
-                      group = 
-                        paste0("interaction(", 
-                               paste0(c(col_x, col_trace), collapse =  ", "), 
-                               ")")
-                    )),
-                data = list(data),
-                data_arg
-              )
-      )
-  }
-  
-  plot_out <- plot_out + 
-    do.call(what = ggplot2::geom_point, 
-            args = c(
-              position = list(
-                ggplot2::position_dodge(width = dodge)
-              ),
-              point_arg
-            )) +
-    do.call(what = ggplot2::geom_line, 
-            args = c(
-              position = list(
-                ggplot2::position_dodge(width = dodge)
-              ),
-              line_arg
-            ))
 
-  if (error_plot) {
-    plot_out <- plot_out + 
-      do.call(what = ggplot2::geom_errorbar, 
-              args = c(
-                mapping = list(ggplot2::aes_string(
-                  ymin = col_lower,
-                  ymax = col_upper)),
-                position = list(ggplot2::position_dodge(width = dodge)),
-                error_arg
-              ))
-  }
-  
-  if (length(unique(means$panel)) > 1) {
-    plot_out <- plot_out + 
-      ggplot2::facet_wrap(facets = "panel")
-  }
-  
-  ## add labels
-  if (!is.null(attr(means, "dv"))) {
-    plot_out <- plot_out + 
-      ggplot2::ylab(attr(means, "dv"))
-  }
-  if (!is.null(attr(means, "x"))) {
-    plot_out <- plot_out + 
-      ggplot2::xlab(attr(means, "x"))
-  }
-  if (!missing(legend_title)) {
-    tmp_list <- rep(list(ggplot2::guide_legend(title = legend_title)), 
-                    length(mapping))
-    names(tmp_list) <- mapping
-    plot_out <- plot_out + 
-      do.call(what = ggplot2::guides, 
-              args = tmp_list)
-  }
-  
-  return(plot_out)
-  
-}
-
-
-#' @rdname afex_plot
-#' @export
-oneway_plot <- function(means, 
-                        data, 
-                        mapping = "",
-                        error_plot = TRUE,
-                        error_arg = list(width = 0),
-                        data_plot = TRUE,
-                        data_geom = ggbeeswarm::geom_beeswarm,
-                        data_alpha = 0.5,
-                        data_arg = list(color = "darkgrey"),
-                        point_arg = list(),
-                        legend_title,
-                        col_x = "x",
-                        col_y = "y",
-                        col_panel = "panel",
-                        col_lower = "lower",
-                        col_upper = "upper") {
-  if (!requireNamespace("ggplot2", quietly = TRUE)) {
-    stop("package ggplot2 is required.", call. = FALSE)
-  }
-  
-  if (missing(mapping)) {
-    mapping <- ""
-  }
-  
-  tmp_list <- as.list(rep(col_x, length(mapping)))
-  names(tmp_list) <- mapping
-  
-  plot_out <- ggplot2::ggplot(data = means, 
-                              mapping = do.call(
-                                what = ggplot2::aes_string, 
-                                args = c(list(
-                                  y = col_y, 
-                                  x = col_x, 
-                                  group = col_x),
-                                  tmp_list)))
-  
-  
- if (data_plot) {
-    if (missing(data_geom)) {
-      if (!requireNamespace("ggbeeswarm", quietly = TRUE)) {
-        stop("package ggbeeswarm is required.", call. = FALSE)
-      }
-      data_geom <- ggbeeswarm::geom_beeswarm
-    }
-    data_arg$alpha <- data_alpha
-    plot_out <- plot_out +
-      do.call(what = data_geom,
-              args = c(
-                data = list(data),
-                data_arg
-              )
-      )
-  }
-  
-  plot_out <- plot_out + 
-    do.call(what = ggplot2::geom_point, 
-            args = point_arg) 
-
-  if (error_plot) {
-    plot_out <- plot_out + 
-      do.call(what = ggplot2::geom_errorbar, 
-              args = c(
-                mapping = list(ggplot2::aes_string(
-                  ymin = col_lower,
-                  ymax = col_upper)),
-                error_arg
-              ))
-  }
-  
-  if (length(unique(means$panel)) > 1) {
-    plot_out <- plot_out + 
-      ggplot2::facet_wrap(facets = "panel")
-  }
-  
-  ## add labels
-  if (!is.null(attr(means, "dv"))) {
-    plot_out <- plot_out + 
-      ggplot2::ylab(attr(means, "dv"))
-  }
-  if (!is.null(attr(means, "x"))) {
-    plot_out <- plot_out + 
-      ggplot2::xlab(attr(means, "x"))
-  }
-  if (!missing(legend_title)) {
-    tmp_list <- rep(list(ggplot2::guide_legend(title = legend_title)), 
-                    length(mapping))
-    names(tmp_list) <- mapping
-    plot_out <- plot_out + 
-      do.call(what = ggplot2::guides, 
-              args = tmp_list)
-  }
-  
-  return(plot_out)
-}

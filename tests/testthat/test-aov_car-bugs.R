@@ -231,8 +231,8 @@ test_that("aov_car works with column names containing spaces for between factors
 
 
 test_that("aov_ez works with multiple covariates", {
-  skip_if_not_installed("psych")
-  require(psych)
+  skip_if_not_installed("psychTools")
+  require(psychTools)
   data(msq)
   msq2 <- msq[!is.na(msq$Extraversion),]
   msq2 <- droplevels(msq2[msq2$ID != "18",])
@@ -245,6 +245,7 @@ test_that("aov_ez works with multiple covariates", {
 
 test_that("aov_car works with p.val adjustment == NA for HF as well as GG", {
   # see: https://github.com/singmann/afex/issues/36
+  skip_on_cran()
   load("anova_hf_error.rda")
   expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"))), 
             "nice_table")
@@ -254,4 +255,18 @@ test_that("aov_car works with p.val adjustment == NA for HF as well as GG", {
   expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"), 
                    anova_table = list(correction = "HF"))),
             "nice_table")
+})
+
+test_that("aov_car: character variables and factorize = FALSE", {
+  data(obk.long)
+  obk2 <- obk.long
+  obk2$treatment <- as.character(obk2$treatment)
+  a1 <- aov_car(value ~ treatment * gender + Error(id), data = obk.long, 
+                fun_aggregate = mean)
+  a2 <- aov_car(value ~ treatment * gender + Error(id), data = obk2, 
+                fun_aggregate = mean)
+  a3 <- aov_car(value ~ treatment * gender + Error(id), data = obk2, 
+                fun_aggregate = mean, factorize = FALSE)
+  expect_equal(a1$anova_table, a2$anova_table)
+  expect_equal(a1$anova_table, a3$anova_table)
 })

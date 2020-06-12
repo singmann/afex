@@ -36,8 +36,10 @@ test_levene <- function(afex_aov, center = mean, ...){
 #' @export
 #' @rdname test_assumptions 
 test_sphericity<- function(afex_aov){
-  if (length(attr(afex_aov,'within')) == 0) {
-    stop("Mauchly Test of Sphericity is only aplicable to ANOVAs with within-subjects factors.")
+  if (length(attr(afex_aov,'within')) == 0 || 
+      !any(sapply(attr(afex_aov,'within'), function(x) length(x) > 2))) {
+    stop("Mauchly Test of Sphericity is only aplicable to ANOVAs with within-subjects factors",
+         " with more than two levels.")
   }
   summary(afex_aov)$sphericity.tests
 }

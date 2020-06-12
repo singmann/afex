@@ -24,7 +24,14 @@ test_levene <- function(afex_aov, center = mean, ...){
   dv <- attr(afex_aov,'dv')
   id <- attr(afex_aov,'id')
   between <- names(attr(afex_aov,'between'))
-
+  
+  is_covar <- sapply(attr(afex_aov,'between'), is.null)
+  if (any(is_covar)) {
+    between <- between[!is_covar]
+    warning("Levene's test is not appropriate with quantitative explanatory variables. ",
+            "Testing assumption of homogeneity among factor groups only.")
+  }
+  
   form <- stats::formula(paste0(dv,'~',paste0(between,collapse = '*')))
 
   ag_data <- aggregate(data[,dv],data[,c(between,id)],mean)

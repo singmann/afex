@@ -7,6 +7,10 @@ between_1 <- aov_car(value ~ treatment + Error(id), data = obk.long,
                      fun_aggregate = mean)
 between_2 <- aov_car(value ~ treatment*gender + Error(id), data = obk.long, 
                      fun_aggregate = mean)
+between_cov <- aov_car(value ~ treatment + age + Error(id),
+                       data = obk.long,
+                       fun_aggregate = mean,
+                       factorize = FALSE)
 mixed <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), data = obk.long)
 within <- aov_car(value ~ 1 + Error(id/(phase*hour)), data = obk.long)
 
@@ -28,6 +32,7 @@ test_that("Levene Test works", {
   expect_is(l3, "data.frame")
   
   expect_error(test_levene(within), "between-subjects")
+  expect_warning(test_levene(between_cov), "among factor groups")
 })
 
 test_that("Sphericity Test works", {

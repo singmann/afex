@@ -21,6 +21,7 @@
 #'   visual bias. (requires \code{qqplotr}).
 #' @param return Should a \code{ggplot} be returned, or a data frame of the
 #'   requested errors.
+#' @param ... Not used.
 #' 
 #' @author Mattan S. Ben-Shachar
 #' 
@@ -31,7 +32,8 @@ qqnorm.afex_aov <- function(afex_aov,
                             type = c("marginal", "univariate", "multivariate"),
                             qqbands = TRUE, 
                             detrend = FALSE, 
-                            return = c("plot", "data")){
+                            return = c("plot", "data"),
+                            ...){
   type <- match.arg(type)
   return <- match.arg(return)
   

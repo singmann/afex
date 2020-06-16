@@ -1,0 +1,148 @@
+---
+title: "Testing the Aassumptions of ANOVAs"
+author: "Mattan S. Ben-Shacahr"
+date: "`r Sys.Date()`"
+show_toc: true
+output:
+  knitr:::html_vignette:
+    toc: yes
+vignette: >
+  %\VignetteIndexEntry{Testing the Aassumptions of ANOVAs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8} 
+---
+
+```{r set-options, echo=FALSE, cache=FALSE}
+options(width = 90)
+knitr::opts_chunk$set(dpi=72)
+```
+
+`afex` comes with a set of built-in functions to help in the testing of the assumptions of ANOVA design. Generally speaking, the testable assumptions of ANOVA are^[There is also the assumptions that (a) the model is correctly specified and that (b) errors are independent, but there is no "hard" test for these assumptions.]:
+
+1. ***Homogeneity of Variances***: the variances across all the groups (cells) of between-subject effects are the same. This can be tested with `test_levene()`.  
+2. ***Sphericity***: For within-subjects effects, sphericity is the condition where the variances of the differences between all possible pairs of within-subject conditions (i.e., levels of the independent variable) are equal. This can be thought of as a within-subjects' version of the *Homogeneity of Variances* assumption, and can be tested with `test_sphericity()`.   
+3. ***Normality of residuals***: The errors used for the estimation of the error term(s) (*MSE*) are normally distributed. This can be inferred using `qqnorm()`.
+
+What follows is a brief review of these assumptions and their tests.
+
+```{r, message=FALSE}
+library(afex)
+```
+
+
+## Homogeneity of Variances
+
+
+This assumption, for between subject-designs, states that the within group errors all share a common variance around the group's mean. This can be tested with Levene's test:
+
+
+```{r}
+data(obk.long, package = "afex")
+
+o1 <- aov_ez("id", "value", obk.long, 
+             between = c("treatment", "gender"))
+
+test_levene(o1)
+```
+These results indicate that homogeneity is not significantly violated.
+
+
+### What to do when assumption is violated?
+
+ANOVAs are generally robust to "light" heteroscedasticity, but there are various other methods (not available in `afex`) for getting robust error estimates.
+
+Another alternative is to ditch this assumption altogether and use permutation tests (e.g. with [`permuco`](https://cran.r-project.org/package=permuco)) or bootstrapped estimates (e.g. with [`boot`](https://cran.r-project.org/package=boot)).
+
+## Sphericity
+
+```{r}
+data("fhch2010", package = "afex")
+
+a1 <- aov_ez("id", "log_rt", fhch2010,
+             between = "task", 
+             within = c("density", "frequency", "length", "stimulus"))
+```
+
+We can use `test_sphericity()` to run Mauchly's test of sphericity:
+
+```{r}
+test_sphericity(a1)
+```
+We can see that both the error terms of the `length:stimulus` and `task:length:stimulus` interactions significantly violate the assumption of sphericity with *W* = 0.831, *p* = 0.021. Note that as `task` is a between-subjects factor, both these interaction terms share the same error term! (This is why other *w*-statistics and *p*-values also seem to be repeating in pairs of interactions.)
+
+### What to do when assumption is violated?
+
+- For ANOVA tables, a correction to the degrees of freedom can be used - `afex` offers both the Greenhouse-Geisser (which is used by default) and the Hyunh-Feldt corrections.  
+- For follow-up contrasts with `emmeans`, a multivariate model can be used, which does not assume sphericity.
+
+Both can be set globally with:
+```{r, eval = FALSE}
+afex_options(
+  correction_aov = "GG", # or "HF"
+  emmeans_model = "multivariate"
+)
+```
+
+
+## Normalicy of Residuals
+
+The normalicy of residuals assumption is concerned with the errors that make up the various error terms in the ANOVA. Although the Shapiro-Wilk test can be used to test for deviation from a normal distribution, [this test tends to have high type-I error rates](https://notstatschat.rbind.io/2019/02/09/what-have-i-got-against-the-shapiro-wilk-test/). Instead, one can visually inspect the residuals using quantile-quantile plots (AKA qq-plots). For example:
+
+```{r}
+data("stroop", package = "afex")
+
+stroop1 <- subset(stroop, study == 1)
+stroop1 <- na.omit(stroop1)
+
+s1 <- aov_ez("pno", "rt", stroop1,
+             within = c("condition", "congruency"))
+
+qqnorm(s1, qqbands = FALSE)
+```
+If the residuals were perfectly normally distributed, they quantile-quantile points would fall on the diagonal line. But nothing is perfect, so how much of a deviation is too much of a deviation? We can set `qqbands = TRUE` to get 95% confidence bands around the qq-line, to help us decide! (This is also the default behavior if `qqplotr` is installed.)
+
+```{r}
+qqnorm(s1, qqbands = TRUE)
+```
+We can further de-trend the plot, and show not the expected quantile, but the deviation from the expected quantile, which may help reducing visual bias.
+
+```{r}
+qqnorm(s1, qqbands = TRUE, detrend = TRUE)
+```
+
+Wow! The deviation from normalicy is now visually much more pronounced!
+
+However...
+
+The plotted residual are the prediction residuals (or marginal residuals), which are used to estimate the *MSE* in a fully-between-subjects design - but since our model has within-subjects effects, the various *MSE*s are computed using the within-subject errors. We can see these term-specific within-subject errors by setting `type = "univariate"`:
+
+```{r}
+qqnorm(s1, qqbands = TRUE, detrend = TRUE, type = "univariate")
+```
+Which in this case also shows a substantial deviation from normalicy. 
+
+Note that this term-based inspection assumes *sphericity*. But as seen above, we don't need to assumes sphericity in our modeling. Here we can specify this with `type = "multivariate"`:
+
+```{r}
+qqnorm(s1, qqbands = TRUE, detrend = TRUE, type = "multivariate")
+```
+
+### What to do when assumption is violated?
+
+As with the assumption of *homogeneity of variances*, we can resort to using permutation tests for ANOVA tables and bootstrap estimates / contrasts.
+
+Another popular solution is to apply a monotonic transformation to the dependent variable. This should not be done lightly, as it *changes* the Interpretability of the results (from the observed scale to the transformed scale). Luckily for us, it is common to *log* transform reaction times, which we can easily do^[But note ANOVA no longer tests if any differences between the means is significantly different from 0, but if any ratio between the means is significantly different from 1.]:
+
+```{r}
+s2 <- aov_ez("pno", "rt", stroop1,
+             transformation = "log",
+             within = c("condition", "congruency"))
+
+qqnorm(s2, qqbands = TRUE, detrend = TRUE, type = "multivariate")
+```
+
+Success - after the transformation, the residuals (on the log scale) do not deviate more than expected from errors sampled from a normal distribution (are mostly contained in the 95%CI bands)!
+
+# References 
+
+<!-- manual -->

@@ -6,8 +6,8 @@
 #' cell (in the multivariate model).
 #' 
 #' @param afex_aov \code{afex_aov} object.
-#' @param type Type of error to plot (ignored if model has only between subject
-#'   effects):
+#' @param type (ignored if model has only between subject effects.) Type of 
+#'   error to plot (can be abbreviated):
 #'   \describe{
 #'     \item{\code{"marginal}}{Plot the margianl residuals.}
 #'     \item{\code{"univariate}}{Plot the residuals for each error term used in
@@ -47,6 +47,7 @@ qqnorm.afex_aov <- function(afex_aov,
     wf <- lapply(within, function(x) c(NA, x))
     wf <- do.call(expand.grid, wf)
     wl <- apply(wf, 1, function(x) c(na.omit(x)))
+    wl <- wl[-1]
     
     fin_e <- vector("list", length = length(wl))
     

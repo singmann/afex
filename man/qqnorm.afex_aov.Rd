@@ -22,7 +22,7 @@ error to plot (can be abbreviated):
   \item{\code{"marginal}}{Plot the margianl residuals.}
   \item{\code{"univariate}}{Plot the residuals for each error term used in
   the ANOVA table.}
-  \item{\code{"multivariate}}{Plot the residuals for each cell in the
+  \item{\code{"multivariate"}}{Plot the residuals for each cell in the
   within-subjects effects.}
 }}
 

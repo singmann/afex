@@ -5,7 +5,7 @@
 \title{Plot Normal Quantile-Quantile Plots for \code{afex_aov} models}
 \usage{
 \method{qqnorm}{afex_aov}(
-  afex_aov,
+  y,
   type = c("marginal", "univariate", "multivariate"),
   qqbands = TRUE,
   detrend = FALSE,
@@ -14,7 +14,7 @@
 )
 }
 \arguments{
-\item{afex_aov}{\code{afex_aov} object.}
+\item{y}{\code{afex_aov} object.}
 
 \item{type}{(ignored if model has only between subject effects.) Type of 
 error to plot (can be abbreviated):

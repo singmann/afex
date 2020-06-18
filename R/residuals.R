@@ -16,6 +16,7 @@
 #' or if \code{append = TRUE} a data frame with an additional column of residualts/fitted values.
 #' 
 #' @export
+#' @importFrom stats residuals
 residuals.afex_aov <- function(object, append = FALSE, colname_residuals = ".residuals",...) {
   if (!append && attr(object, "data_changed")) {
     message("Data was changed during ANOVA calculation. ", 
@@ -29,6 +30,7 @@ residuals.afex_aov <- function(object, append = FALSE, colname_residuals = ".res
 
 #' @export
 #' @rdname residuals.afex_aov
+#' @importFrom stats fitted
 fitted.afex_aov <- function(object, append = FALSE, colname_fitted = ".fitted", ...) {
   if (!append && attr(object, "data_changed")) {
     message("Data was changed during ANOVA calculation. ", 

@@ -5,7 +5,7 @@
 #' be shown for each error term in the ANOVA table, or for each within-subject
 #' cell (in the multivariate model).
 #' 
-#' @param afex_aov \code{afex_aov} object.
+#' @param y \code{afex_aov} object.
 #' @param type (ignored if model has only between subject effects.) Type of 
 #'   error to plot (can be abbreviated):
 #'   \describe{
@@ -28,19 +28,22 @@
 #' @examples examples/examples.qqnorm.afex_aov.R
 #' 
 #' @export
-qqnorm.afex_aov <- function(afex_aov,
+#' @importFrom stats na.omit
+qqnorm.afex_aov <- function(y,
                             type = c("marginal", "univariate", "multivariate"),
                             qqbands = TRUE, 
                             detrend = FALSE, 
                             return = c("plot", "data"),
                             ...){
+  .data <- NULL
+  
   type <- match.arg(type)
   return <- match.arg(return)
   
-  within <- names(attr(afex_aov, "within"))
-  id <- attr(afex_aov, 'id')
+  within <- names(attr(y, "within"))
+  id <- attr(y, 'id')
   
-  e <- residuals(afex_aov, append = TRUE)
+  e <- residuals(y, append = TRUE)
   
   
   if (length(within) && type == "univariate") {

@@ -14,6 +14,8 @@
 \item{append}{If set to \code{TRUE} returns the residuals/fitted values appended as an additional column to the long data. 
 Recomended when data was aggragated across within conditions.}
 
+\item{colname_predict}{Name of the appended column when \code{append = TRUE}.}
+
 \item{...}{Not used.}
 }
 \value{

@@ -439,7 +439,8 @@ afex_plot.mixed <- function(object,
             paste(names(dots), collapse = ", "), call. = FALSE)
   }
   
-  if (attr(object, "type") %in% c("II", 2)) {
+  if (attr(object, "type") %in% c("II", 2) & 
+      attr(object, "method") %in% c("LRT", "nested-KR", "PB") ) {
     full_model <- object$full_model[[1]]
   } else (
     full_model <- object$full_model

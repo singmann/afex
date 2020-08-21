@@ -27,20 +27,20 @@ The data are lexical decision and word naming latencies for 300 words and 300 no
 
 ## Data and R Preperation
 
-We start with loading some packages we will need throughout this example. For data manipulation we will be using the `dplyr` and `tidyr` packages from the [`tidyverse`](http://tidyverse.org/). A thorough introduction to these packages is beyond this example, but well worth it, and can be found in ['R for Data Science'](http://r4ds.had.co.nz/) by Wickham and Grolemund. For plotting we will be diverging from the `tidyverse` and use `lattice` instead. At some later point in time I will change this to `ggplot2` plots. 
+We start with loading some packages we will need throughout this example. For data manipulation we will be using the `dplyr` and `tidyr` packages from the [`tidyverse`](http://tidyverse.org/). A thorough introduction to these packages is beyond this example, but well worth it, and can be found in ['R for Data Science'](http://r4ds.had.co.nz/) by Wickham and Grolemund. For plotting we will be using `ggplot2`, also part of the `tidyverse`.
 
 After loading the packages, we will load the data (which comes with `afex`), remove the errors, and take a look at the variables in the data.
 
 ```{r message=FALSE, warning=FALSE}
 library("afex") # needed for mixed() and attaches lme4 automatically.
-library("emmeans") # emmeans is needed for follow-up tests (and not anymore loaded automatically).
+library("emmeans") # emmeans is needed for follow-up tests 
 library("multcomp") # for advanced control for multiple testing/Type 1 errors.
 library("dplyr") # for working with data frames
 library("tidyr") # for transforming data frames from wide to long and the other way round.
-library("lattice") # for plots
-library("latticeExtra") # for combining lattice plots, etc.
-lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
-lattice.options(default.args = list(as.table = TRUE)) # better ordering
+library("ggplot2") # for plots
+theme_set(theme_bw(base_size = 15) + 
+            theme(legend.position="bottom", 
+                  panel.grid.major.x = element_blank()))
 
 data("fhch2010") # load 
 fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
@@ -76,32 +76,33 @@ fhch2010 %>% group_by(id, stimulus) %>%
 
 ```
 
-Before running the analysis we should make sure that our dependent variable looks roughly normal. To compare `rt` with `log_rt` within the same graph using `lattice` we first need to transform the data from the wide format (where both rt types occupy one column each) into the long format (in which the two rt types are combined into a single column with an additional indicator column). To do so we use `tidyr::gather`. Then we simply call the `histogram` function on the new `data.frame` and make a few adjustments to the defaults to obtain a nice looking output. The plot shows that `log_rt` looks clearly more normal than `rt`, although not perfectly so. An interesting exercise could be to rerun the analysis below using a transformation that provides an even better 'normalization'.
+Before running the analysis we should make sure that our dependent variable looks roughly normal. To compare `rt` with `log_rt` within the same figure we first need to transform the data from the wide format (where both rt types occupy one column each) into the long format (in which the two rt types are combined into a single column with an additional indicator column). To do so we use `tidyr::pivot_longer`. Then we simply call `ggplot` with `geom_histogram` and `facet_wrap(vars(rt_type))` on the new `tibble`. The plot shows that `log_rt` looks clearly more normal than `rt`, although not perfectly so. An interesting exercise could be to rerun the analysis below using a transformation that provides an even better 'normalization'.
 
 ```{r, fig.width=7, fig.height=4}
-fhch_long <- fhch %>% gather("rt_type", "rt", rt, log_rt)
-histogram(~rt|rt_type, fhch_long, breaks = "Scott", type = "density",
-          scale = list(x = list(relation = "free")))
+fhch_long <- fhch %>% 
+  pivot_longer(cols = c(rt, log_rt), names_to = "rt_type", values_to = "rt")
+ggplot(fhch_long, aes(rt)) +
+  geom_histogram(bins = 100) +
+  facet_wrap(vars(rt_type), scales = "free_x")
 ```
 
 ## Descriptive Analysis
 
 The main factors in the experiment were the between-subjects factor `task` (`naming` vs. `lexdec`), and the within-subjects factors `stimulus` (`word` vs. `nonword`), `density` (`low` vs. `high`), and `frequency` (`low` vs. `high`). Before running an analysis it is a good idea to visually inspect the data to gather some expectations regarding the results. Should the statistical results dramatically disagree with the expectations this suggests some type of error along the way (e.g., model misspecification) or at least encourages a thorough check to make sure everything is correct. We first begin by plotting the data aggregated by-participant. 
 
-In each plot we plot the raw data in the background. To make the individual data points visible we add some `jitter` on the x-axis and choose `pch` and `alpha` values such that we see where more data points are (i.e., where plot overlaps it is darker). Then we add the mean as a x in a circle. Both of this is done in the same call to `xyplot` using a custom panel function. Finally, we combine this plot with a simple boxplot using `bwplot`. 
+In each plot we plot the raw data in the background. To make the individual data points visible we use `ggbeeswarm::geom_quasirandom`  and `alpha = 0.5` for semi-transparency. On top of this we add a (transparent) boxplot as well as the mean and standard error.
 
 ```{r, fig.width=7, fig.height=6}
-agg_p <- fhch %>% group_by(id, task, stimulus, density, frequency) %>%
+agg_p <- fhch %>% 
+  group_by(id, task, stimulus, density, frequency) %>%
   summarise(mean = mean(log_rt)) %>%
   ungroup()
 
-xyplot(mean ~ density:frequency|task+stimulus, agg_p, jitter.x = TRUE, pch = 20, alpha = 0.5, 
-       panel = function(x, y, ...) {
-         panel.xyplot(x, y, ...)
-         tmp <- aggregate(y, by = list(x), mean)
-         panel.points(tmp$x, tmp$y, pch = 13, cex =1.5)
-       }) + 
-bwplot(mean ~ density:frequency|task+stimulus, agg_p, pch="|", do.out = FALSE)
+ggplot(agg_p, aes(x = interaction(density,frequency), y = mean)) +
+  ggbeeswarm::geom_quasirandom(alpha = 0.5) +
+  geom_boxplot(fill = "transparent") +
+  stat_summary(colour = "red") +
+  facet_grid(cols = vars(task), rows = vars(stimulus))
 ```
 
 Now we plot the same data but aggregated across items:
@@ -111,13 +112,11 @@ agg_i <- fhch %>% group_by(item, task, stimulus, density, frequency) %>%
   summarise(mean = mean(log_rt)) %>%
   ungroup()
 
-xyplot(mean ~ density:frequency|task+stimulus, agg_i, jitter.x = TRUE, pch = 20, alpha = 0.2, 
-       panel = function(x, y, ...) {
-         panel.xyplot(x, y, ...)
-         tmp <- aggregate(y, by = list(x), mean)
-         panel.points(tmp$x, tmp$y, pch = 13, cex =1.5)
-       }) + 
-bwplot(mean ~ density:frequency|task+stimulus, agg_i, pch="|", do.out = FALSE)
+ggplot(agg_i, aes(x = interaction(density,frequency), y = mean)) +
+  ggbeeswarm::geom_quasirandom(alpha = 0.5) +
+  geom_boxplot(fill = "transparent") +
+  stat_summary(colour = "red") +
+  facet_grid(cols = vars(task), rows = vars(stimulus))
 ```
 
 These two plots show a very similar pattern and suggest several things:
@@ -132,7 +131,7 @@ These two plots show a very similar pattern and suggest several things:
 
 To set up a mixed model it is important to identify which factors vary within which grouping factor generating random variability (i.e., grouping factors are sources of stochastic variability). The two grouping factors are participants (`id`) and items (`item`). The within-participant factors are `stimulus`, `density`, and `frequency`. The within-item factor is `task`. The 'maximal model' (Barr, Levy, Scheepers, and Tily, 2013) therefore is the model with by-participant random slopes for `stimulus`, `density`, and `frequency` and their interactions and by-item random slopes for `task`.
 
-Occasionally, the maximal model does not converge successfully. In this case a good first approach for dealing with this problem is to remove the corelations among the random terms. In our example, there are two sets of correlations, one for each random effect grouping variable. Consequently, we can build four model that have the maximal structure in terms of random-slopes and only differ in which correlations among random terms are calculated:
+It is not uncommon that the maximal model does not converge successfully. The best indicator of this is a "singular fit" warning. In case of a singular fit or other indicator of a convergence problem is removing the corelations among the random terms. In our example, there are two sets of correlations, one for each random effect grouping variable. Consequently, we can build four model that have the maximal structure in terms of random-slopes and only differ in which correlations among random terms are calculated:
 
 1. With all correlations.
 2. No correlation among by-item random effects (i.e., no correlation between random intercept and `task` random slope).
@@ -144,7 +143,7 @@ The next decision to be made is which method to use for obtaining $p$-values. Th
 ## Results 
 ### Satterthwaite Results
 
-The following code fits the four models using the Satterthwaite method. To suppress random effects we use the `||` notation. Note that it is necessary to set `expand_re=TRUE` when suppressing random effects among variables that are entered as factors and not as numerical variables (as done here). Also note that `mixed` automatically uses appropriate contrast codings if factors are included in interactions (`contr.sum`) in contrast to the `R` default (which is `contr.treatment`). To make sure the estimation does not end prematurely we set the allowed number of function evaluations to a very high value (using `lmerControl`).
+The following code fits the four models using the Satterthwaite method. To suppress random effects we use the `||` notation. Note that it is necessary to set `expand_re=TRUE` when suppressing random effects among variables that are entered as factors and not as numerical variables (all independent variables in the present case are factors). Also note that `mixed` automatically uses appropriate contrast codings if factors are included in interactions (`contr.sum`) in contrast to the `R` default (which is `contr.treatment`). To make sure the estimation does not end prematurely we set the allowed number of function evaluations to a very high value (using `lmerControl`).
 
 ```{r, eval = FALSE}
 

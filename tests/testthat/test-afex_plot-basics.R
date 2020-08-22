@@ -1,11 +1,11 @@
 context("afex_plot: basic functionality")
 
+data(obk.long, package = "afex")
+# estimate mixed ANOVA on the full design:
+a1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
+              data = obk.long, observed = "gender")
+
 test_that("all input type works and warnings are correct", {
-  data(obk.long, package = "afex")
-  # estimate mixed ANOVA on the full design:
-  a1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
-                data = obk.long, observed = "gender")
-  
   expect_warning(
     em1 <- afex_plot(a1, ~phase*hour, ~treatment+gender, return = "data"),
     "mixed within-between-design"
@@ -54,10 +54,6 @@ test_that("all input type works and warnings are correct", {
 })
 
 test_that("ANOVA plots are produced", {
-  data(obk.long, package = "afex")
-  a1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
-                data = obk.long, observed = "gender")
-  
   expect_is(afex_plot(a1, "hour", error = "within"), "ggplot")
   expect_is(afex_plot(a1, c("phase", "hour"), trace = "treatment", 
                       error = "none"), "ggplot")

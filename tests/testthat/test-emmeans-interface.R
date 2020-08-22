@@ -26,16 +26,6 @@ test_that("ANOVA functions work with emmeans, univariate & multivariate", {
     as.data.frame(summary(em2))$SE, 
     as.data.frame(summary(em1))$SE)))
   
-  em1 <- emmeans::emmeans(a1, ~ plausibility*inference, model = "univariate")
-  em2 <- emmeans::emmeans(a1, ~ plausibility*inference, model = "multivariate")
-  expect_is(em1, "emmGrid")
-  expect_is(em2, "emmGrid")
-  expect_equal(as.data.frame(summary(em2))$emmean, 
-               as.data.frame(summary(em1))$emmean)
-  expect_false(isTRUE(all.equal(
-    as.data.frame(summary(em2))$SE, 
-    as.data.frame(summary(em1))$SE)))
-  
   a1b <- aov_ez("id", "response", sk2011.1, between = "instruction", 
                within = c("plausibility", "inference"), fun_aggregate = mean)
   em1 <- emmeans::emmeans(a1b, ~ inference, model = "univariate")
@@ -167,24 +157,24 @@ test_that("mixed works with type=2 and all methods", {
   
   mixed_kr <- mixed(response ~ inference*type+(1|id), sk2_aff, type=2, 
                     method="KR", progress = FALSE)
-  expect_is(emmeans::emmeans(mixed_kr, specs = c("type"), data = sk2_aff), "emmGrid")
+  expect_is(emmeans::emmeans(mixed_kr, specs = c("type")), "emmGrid")
   
   mixed_s <- mixed(response ~ inference*type+(1|id), sk2_aff, type=2, 
                    method="S", progress = FALSE)
-  expect_is(emmeans::emmeans(mixed_s, specs = c("type"), data = sk2_aff), "emmGrid")
+  expect_is(emmeans::emmeans(mixed_s, specs = c("type")), "emmGrid")
   
-  mixed_lrt <- mixed(response ~ inference*type+(1|id), sk2_aff, type=2, 
+  mixed_lrt <- mixed(response ~ type+(1|id), sk2_aff, type=2, 
                      method="LRT", progress = FALSE)
-  expect_is(emmeans::emmeans(mixed_lrt, specs = c("type"), data = sk2_aff), "emmGrid")
+  expect_is(emmeans::emmeans(mixed_lrt, specs = c("type")), "emmGrid")
   
-  mixed_pb <- suppressWarnings(mixed(response ~ inference*type+(1|id), sk2_aff, 
+  mixed_pb <- suppressWarnings(mixed(response ~ type+(1|id), sk2_aff, 
                                      type=2, method="PB", progress = FALSE, 
                                      args_test = list(nsim = 10)))
-  expect_is(emmeans::emmeans(mixed_pb, specs = c("type"), data = sk2_aff), "emmGrid")
+  expect_is(emmeans::emmeans(mixed_pb, specs = c("type")), "emmGrid")
   
-  mixed_oldkr <- mixed(response ~ inference*type+(1|id), sk2_aff, type=2, 
+  mixed_oldkr <- mixed(response ~ type+(1|id), sk2_aff, type=2, 
                        method="nested-KR", progress = FALSE)
-  expect_is(emmeans::emmeans(mixed_oldkr, specs = c("type"), data = sk2_aff), "emmGrid")
+  expect_is(emmeans::emmeans(mixed_oldkr, specs = c("type")), "emmGrid")
 })
 
 test_that("emmeans works with mixed and expand_er = TRUE", {

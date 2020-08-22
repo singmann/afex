@@ -196,10 +196,12 @@ test_that("variable names longer", {
 
 test_that("works with dplyr data.frames (see https://github.com/singmann/afex/issues/6):", {
   if (getRversion() >= "3.1.2") {
-    require(dplyr)
+    skip_if_not_installed("dplyr")
     data(md_12.1)
-    md2 <- tbl_df(md_12.1)
-    expect_is(aov_ez("id", "rt", md2, within = c("angle", "noise"), anova_table=list(correction = "none", es = "none")), "afex_aov") 
+    md2 <- dplyr::as_tibble(md_12.1)
+    expect_is(aov_ez("id", "rt", md2, within = c("angle", "noise"), 
+                     anova_table=list(correction = "none", es = "none")), 
+              "afex_aov") 
   }
 })
 
@@ -245,8 +247,9 @@ test_that("aov_ez works with multiple covariates", {
 
 test_that("aov_car works with p.val adjustment == NA for HF as well as GG", {
   # see: https://github.com/singmann/afex/issues/36
-  skip_on_cran()
+  skip_on_cran() ## takes rather long
   load("anova_hf_error.rda")
+  #load("tests/testthat/anova_hf_error.rda")
   expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"))), 
             "nice_table")
   expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"), 

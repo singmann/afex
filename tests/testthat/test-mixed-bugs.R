@@ -120,7 +120,8 @@ test_that("nice.mixed, print.mixed, and anova.mixed can handle objects with full
 test_that("lmer_alt works with GLMMs", {
   skip_if_not_installed("mlmRev")
   if (require("mlmRev")) {
-    expect_that(lmer_alt(use ~ age*urban + (1 | district), family = binomial, data = Contraception, progress=FALSE), is_a("glmerMod"))
+    expect_that(lmer_alt(use ~ age*urban + (1 | district), family = binomial, 
+                         data = Contraception, progress=FALSE), is_a("glmerMod"))
   }
 })
 
@@ -133,7 +134,8 @@ test_that("lmer_alt works with NA in independent variables", {
   assign("sk2_aff", sk2_aff, envir = .GlobalEnv)
   
   # set up model with maximal by-participant random slopes 
-  sk_m1 <- suppressWarnings(lmer_alt(response ~ instruction*inference*type+(inference*type||id), sk2_aff, expand_re = TRUE))
+  sk_m1 <- suppressWarnings(lmer_alt(response ~ instruction*type+(type||id), 
+                                     sk2_aff, expand_re = TRUE))
   expect_true(inherits(sk_m1, "merModLmerTest") || inherits(sk_m1, "lmerModLmerTest"))
 })
 

@@ -744,27 +744,6 @@ mixed <- function(formula,
     ### Part IIb: likelihood checks and refitting (refitting is DISABLED for the time being!)
     ####################
     
-    check_likelihood <- function(fits) {
-      if (type == 3 | type == "III") {
-        logLik_full <- as.numeric(logLik(fits[[1]]))
-        logLik_restricted <- as.numeric(vapply(fits[2:length(fits)], logLik, 0))
-        if(any(logLik_restricted > logLik_full)) 
-          return(fixed.effects[logLik_restricted > logLik_full])
-      } else if (type == 2 | type == "II") {
-        logLik_full <- as.numeric(vapply(fits[1:max.effect.order],logLik, 0))
-        logLik_restricted <- 
-          as.numeric(vapply(fits[(max.effect.order+1):length(fits)], logLik, 0))
-        warn_logLik <- c()
-        for (c in seq_along(fixed.effects)) {
-          order.c <- effect.order[c]
-          if(logLik_restricted[[c]] > logLik_full[[order.c]]) 
-            warn_logLik <- c(warn_logLik, fixed.effects[c])
-        }
-        if(length(warn_logLik)>0) return(warn_logLik)
-      }
-      return(TRUE)    
-    }
-    
     # check for smaller likelihood of nested model and refit if test fails:
     if (FALSE) {
       if(!isTRUE(check_likelihood(fits))) {

@@ -12,7 +12,7 @@
 
 <meta name="author" content="Henrik Singmann" />
 
-<meta name="date" content="2020-05-07" />
+<meta name="date" content="2020-08-22" />
 
 <title>Analysis of Accuracy Data using ANOVA and binomial GLMMs</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Analysis of Accuracy Data using ANOVA and binomial GLMMs</h1>
 <h4 class="author">Henrik Singmann</h4>
-<h4 class="date">2020-05-07</h4>
+<h4 class="date">2020-08-22</h4>
 
 
 <div id="TOC">
@@ -364,7 +364,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="overview" class="section level1">
 <h1>Overview</h1>
-<p>This vignette shows how accuracy data can be analysed with <code>afex</code> using either ANOVA or a binomial generalized linear mixed model (i.e., a mixed model that uses the appropriate distributional family for such data). Accuracy data means data where each observations can be categorized as either a 0, which indicates failure, miss, or an erroneous response, or 1 which indicates success or a correct response.</p>
+<p>This vignette shows how accuracy data can be analysed with <code>afex</code> using either ANOVA or a binomial generalized linear mixed model (i.e., a mixed model that uses the appropriate distributional family for such data). Accuracy data means data where each observation can be categorized as either a 0, which indicates failure, miss, or an erroneous response, or 1 which indicates success or a correct response.</p>
 <p>We begin by loading the packages needed here and set a somewhat nicer <code>ggplot2</code> theme.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">library</span>(<span class="st">&quot;afex&quot;</span>)</a>
 <a class="sourceLine" id="cb1-2" title="2"><span class="kw">library</span>(<span class="st">&quot;emmeans&quot;</span>)</a>
@@ -484,7 +484,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" title="1">stroop_e1_agg &lt;-<span class="st"> </span>stroop_e1 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb10-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(condition, congruency, pno) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb10-3" title="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">acc =</span> <span class="kw">mean</span>(acc), </a>
-<a class="sourceLine" id="cb10-4" title="4">            <span class="dt">n =</span> <span class="kw">n</span>())</a></code></pre></div>
+<a class="sourceLine" id="cb10-4" title="4">            <span class="dt">n =</span> <span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb10-5" title="5"><span class="co">#&gt; `summarise()` regrouping output by &#39;condition&#39;, &#39;congruency&#39; (override with `.groups` argument)</span></a></code></pre></div>
 <p>Then, we can set up the model. Note that we need to pass the total number of trials as the weight argument here. When using <code>glmer</code> compared to <code>mixed</code> we could simply pass the unquoted column name, <code>weight = n</code>. However, because of the way <code>mixed</code> deals with the data internally, we instead need to pass the full vector of weights here, in the present case <code>weight = stroop_e1_agg$n</code>. Whereas this works, it could lead to problem if there are any <code>NA</code>s in the data (which would be removed from the data, but not from the weights vector). So make sure all <code>NA</code>s are removed before specifying a model in this manner.</p>
 <p>The call to <code>mixed</code> is then pretty much the same as above, the only differences are that we have to use the <code>data.frame</code> with the aggregated data, potentially a new name of response variable (here I decided to use the same name, <code>acc</code> for the aggregated accuracy), and the <code>weight</code> argument.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" title="1">e1_mixed1_v2 &lt;-<span class="st"> </span><span class="kw">mixed</span>(</a>
@@ -690,16 +691,18 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb39-1" title="1">stroop_e12 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb39-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(study) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb39-3" title="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">n =</span> <span class="kw">length</span>(<span class="kw">unique</span>(pno)))</a>
-<a class="sourceLine" id="cb39-4" title="4"><span class="co">#&gt; # A tibble: 2 x 2</span></a>
-<a class="sourceLine" id="cb39-5" title="5"><span class="co">#&gt;   study     n</span></a>
-<a class="sourceLine" id="cb39-6" title="6"><span class="co">#&gt;   &lt;fct&gt; &lt;int&gt;</span></a>
-<a class="sourceLine" id="cb39-7" title="7"><span class="co">#&gt; 1 1       253</span></a>
-<a class="sourceLine" id="cb39-8" title="8"><span class="co">#&gt; 2 2       132</span></a></code></pre></div>
+<a class="sourceLine" id="cb39-4" title="4"><span class="co">#&gt; `summarise()` ungrouping output (override with `.groups` argument)</span></a>
+<a class="sourceLine" id="cb39-5" title="5"><span class="co">#&gt; # A tibble: 2 x 2</span></a>
+<a class="sourceLine" id="cb39-6" title="6"><span class="co">#&gt;   study     n</span></a>
+<a class="sourceLine" id="cb39-7" title="7"><span class="co">#&gt;   &lt;fct&gt; &lt;int&gt;</span></a>
+<a class="sourceLine" id="cb39-8" title="8"><span class="co">#&gt; 1 1       253</span></a>
+<a class="sourceLine" id="cb39-9" title="9"><span class="co">#&gt; 2 2       132</span></a></code></pre></div>
 <p>But first, we aggregate the data for analysing it using the second variant introduced above as it is dramatically faster.</p>
 <div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb40-1" title="1">stroop_e12_agg &lt;-<span class="st"> </span>stroop_e12 <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb40-2" title="2"><span class="st">  </span><span class="kw">group_by</span>(study, condition, congruency, pno) <span class="op">%&gt;%</span><span class="st"> </span></a>
 <a class="sourceLine" id="cb40-3" title="3"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">acc =</span> <span class="kw">mean</span>(acc), </a>
-<a class="sourceLine" id="cb40-4" title="4">            <span class="dt">n =</span> <span class="kw">n</span>())</a></code></pre></div>
+<a class="sourceLine" id="cb40-4" title="4">            <span class="dt">n =</span> <span class="kw">n</span>())</a>
+<a class="sourceLine" id="cb40-5" title="5"><span class="co">#&gt; `summarise()` regrouping output by &#39;study&#39;, &#39;condition&#39;, &#39;congruency&#39; (override with `.groups` argument)</span></a></code></pre></div>
 <p>We are now ready to fit the model. However, because we now have to fit 8 models in total and we also have more data at hand, fitting will take quite a bit longer even when using the aggregated data. Especially, because based on our experience with the data from Experiment 1, it makes sense to set <code>all_fit = TRUE</code> here.</p>
 <div id="estimating-models-in-parallel" class="section level2">
 <h2>Estimating Models in Parallel</h2>

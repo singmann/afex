@@ -56,7 +56,7 @@ theme_set(theme_bw(base_size = 15) +
 #  ggsave("my_plot.pdf", device = "pdf",
 #         width = 9, height = 8, units = "cm")
 
-## ----fig.width=8.5, fig.height=12, dpi = 125--------------------------------------------
+## ----fig.width=8.5, fig.height=16, dpi = 125--------------------------------------------
 p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                 data_arg = list(
                   position = 
@@ -67,20 +67,25 @@ p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                     ),
                   color = "darkgrey"))
 p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+                data_geom = geom_count)
+p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+                data_geom = geom_violin, 
+                data_arg = list(width = 0.5))
+p4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+                data_geom = geom_boxplot, 
+                data_arg = list(width = 0.3, linetype = 1))
+p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                 data_geom = ggbeeswarm::geom_beeswarm,
                 data_arg = list(
                   dodge.width = 0.5,  ## needs to be same as dodge
                   cex = 0.8,
                   color = "darkgrey"))
-p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
-                data_geom = geom_count)
-p4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-                data_geom = ggplot2::geom_violin, 
-                data_arg = list(width = 0.5))
-p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-                data_geom = ggplot2::geom_boxplot, 
-                data_arg = list(width = 0.3, linetype = 1))
-p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7, 
+p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+                data_geom = ggbeeswarm::geom_quasirandom,
+                data_arg = list(
+                  dodge.width = 0.5,  ## needs to be same as dodge
+                  color = "darkgrey"))
+p7 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7, 
                 data_geom = ggpol::geom_boxjitter, 
                 data_arg = list(
                   width = 0.5, 
@@ -88,7 +93,7 @@ p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
                   outlier.intersect = TRUE),
                 point_arg = list(size = 2.5), 
                 error_arg = list(size = 1.5, width = 0))
-plot_grid(p1, p2, p3, p4, p5, p6, ncol = 2, labels = 1:6)  
+plot_grid(p1, p2, p3, p4, p5, p6, p7, ncol = 2, labels = 1:7)  
 
 ## ----fig.width=8.5, fig.height=8, dpi = 125---------------------------------------------
 p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
@@ -166,63 +171,85 @@ plot_grid(
   po2 + geom_line(aes(group = 1))
 ) 
 
-## ---- eval=FALSE, echo=FALSE, results='hide'--------------------------------------------
-#  data("fhch2010") # load
-#  fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
-#  ### following model should take less than a minute to fit:
-#  mrt <- mixed(log_rt ~ task*stimulus*frequency + (stimulus*frequency||id)+
-#                 (task||item), fhch, method = "S", expand_re = TRUE)
-#  save(mrt, file = "../inst/extdata/freeman_reduced_model.rda", compress = "xz")
+## ---- echo=FALSE------------------------------------------------------------------------
+load(system.file("extdata/", "output_afex_plot_mixed_vignette.rda", package = "afex"))
 
 ## ---- eval=FALSE------------------------------------------------------------------------
 #  data("fhch2010") # load
 #  fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
-#  ### following model should take less than a minute to fit:
-#  mrt <- mixed(log_rt ~ task*stimulus*frequency + (stimulus*frequency||id)+
-#                 (task||item), fhch, method = "S", expand_re = TRUE)
+#  m9s <- mixed(log_rt ~ task*stimulus*density*frequency +
+#                 (stimulus+frequency||id)+
+#                 (task|item), fhch, method = "S",
+#               control = lmerControl(optCtrl = list(maxfun = 1e6)),
+#               expand_re = TRUE)
 
 ## ---------------------------------------------------------------------------------------
-load(system.file("extdata/", "freeman_reduced_model.rda", package = "afex"))
 emmeans::emm_options(lmer.df = "asymptotic")
 
-## ---------------------------------------------------------------------------------------
-mrt
+## ---- eval=FALSE------------------------------------------------------------------------
+#  m9s
 
-## ----fig.width=7, fig.height=3.5--------------------------------------------------------
-afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task") 
+## ---- echo=FALSE------------------------------------------------------------------------
+cat(aout_1$output, sep = "\n")
 
-## ----fig.width=7, fig.height=3.5--------------------------------------------------------
-plot_grid( 
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            id = "id"), 
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            id = "item"), 
-  labels = c("ID", "Item") 
-)
+## ----fig.width=7, fig.height=3.5, eval=FALSE--------------------------------------------
+#  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task")
 
-## ----fig.width=7, fig.height=3.5--------------------------------------------------------
-plot_grid( 
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            id = "item", dodge = 0.8,
-            data_geom = geom_violin, 
-            data_arg = list(width = 0.5)), 
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            id = "item", dodge = 0.8,
-            data_geom = geom_boxplot, 
-            data_arg = list(width = 0.5),
-            error_arg = list(size = 1.5, width = 0, linetype = 1))
-)
+## ----fig.width=7, fig.height=3.5, echo=FALSE--------------------------------------------
+message("Aggregating data over: item, id")
+message("NOTE: Results may be misleading due to involvement in interactions")
+ap1
 
-## ---------------------------------------------------------------------------------------
-pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
+## ----fig.width=7, fig.height=3.5, eval=FALSE--------------------------------------------
+#  plot_grid(
+#    afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task",
+#              id = "id"),
+#    afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task",
+#              id = "item"),
+#    labels = c("ID", "Item")
+#  )
 
-## ----fig.width=7, fig.height=3.5--------------------------------------------------------
-plot_grid( 
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            id = "id", error = "within"),
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
-            id = "item", dodge = 0.8, error = "within",
-            data_geom = geom_violin, 
-            data_arg = list(width = 0.5))
-)
+## ----fig.width=7, fig.height=3.5, echo=FALSE--------------------------------------------
+message("NOTE: Results may be misleading due to involvement in interactions")
+message("NOTE: Results may be misleading due to involvement in interactions")
+ap2
+
+## ----fig.width=7, fig.height=3.5, eval=FALSE--------------------------------------------
+#  plot_grid(
+#    afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task",
+#              id = "item", dodge = 0.8,
+#              data_geom = geom_violin,
+#              data_arg = list(width = 0.5)),
+#    afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task",
+#              id = "item", dodge = 0.8,
+#              data_geom = geom_boxplot,
+#              data_arg = list(width = 0.5),
+#              error_arg = list(size = 1.5, width = 0, linetype = 1))
+#  )
+
+## ----fig.width=7, fig.height=3.5, echo=FALSE--------------------------------------------
+message("NOTE: Results may be misleading due to involvement in interactions")
+message("NOTE: Results may be misleading due to involvement in interactions")
+ap3
+
+## ---- eval=FALSE------------------------------------------------------------------------
+#  pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
+
+## ---- echo=FALSE------------------------------------------------------------------------
+cat(aout_2$output, sep = "\n")
+
+## ----fig.width=7, fig.height=3.5, eval=FALSE--------------------------------------------
+#  plot_grid(
+#    afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task",
+#              id = "id", error = "within"),
+#    afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task",
+#              id = "item", dodge = 0.8, error = "within",
+#              data_geom = geom_violin,
+#              data_arg = list(width = 0.5))
+#  )
+
+## ----fig.width=7, fig.height=3.5, echo=FALSE--------------------------------------------
+message("NOTE: Results may be misleading due to involvement in interactions")
+message("NOTE: Results may be misleading due to involvement in interactions")
+ap4
 

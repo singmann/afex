@@ -12,7 +12,7 @@
 
 <meta name="author" content="Henrik Singmann" />
 
-<meta name="date" content="2020-05-07" />
+<meta name="date" content="2020-08-22" />
 
 <title>ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)</title>
 
@@ -339,7 +339,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)</h1>
 <h4 class="author">Henrik Singmann</h4>
-<h4 class="date">2020-05-07</h4>
+<h4 class="date">2020-08-22</h4>
 
 
 <div id="TOC">
@@ -541,8 +541,8 @@ How valid is the conclusion/How likely is it that the person fell into a swimmin
 </table>
 <p>Alternatively, the <code>anova</code> method for <code>afex_aov</code> objects returns a <code>data.frame</code> of class <code>anova</code> that can be passed to, for example, <code>xtable</code> for nice formatting:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" title="1"><span class="kw">print</span>(xtable<span class="op">::</span><span class="kw">xtable</span>(<span class="kw">anova</span>(a1), <span class="dt">digits =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">2</span>, <span class="dv">5</span>), <span class="dv">3</span>, <span class="dv">4</span>)), <span class="dt">type =</span> <span class="st">&quot;html&quot;</span>)</a></code></pre></div>
-<!-- html table generated in R 4.0.0 by xtable 1.8-4 package -->
-<!-- Thu May 07 08:31:10 2020 -->
+<!-- html table generated in R 4.0.2 by xtable 1.8-4 package -->
+<!-- Sat Aug 22 14:15:25 2020 -->
 <table border="1">
 <tr>
 <th>
@@ -766,12 +766,12 @@ instruction:inference:plausibility
 ## 
 ## Linear Hypotheses:
 ##              Estimate Std. Error t value Pr(&gt;|t|)   
-## MP - MT == 0   10.831      4.331   2.501  0.05909 . 
-## MP - AC == 0   18.100      5.018   3.607  0.00482 **
+## MP - MT == 0   10.831      4.331   2.501  0.05871 . 
+## MP - AC == 0   18.100      5.018   3.607  0.00438 **
 ## MP - DA == 0    4.556      4.196   1.086  0.31350   
-## MT - AC == 0    7.269      3.984   1.825  0.19420   
+## MT - AC == 0    7.269      3.984   1.825  0.19400   
 ## MT - DA == 0   -6.275      4.703  -1.334  0.31350   
-## AC - DA == 0  -13.544      5.299  -2.556  0.05909 . 
+## AC - DA == 0  -13.544      5.299  -2.556  0.05871 . 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## (Adjusted p values reported -- free method)</code></pre>
@@ -838,34 +838,34 @@ instruction:inference:plausibility
 ## Confidence level used: 0.95</code></pre>
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" title="1"><span class="kw">pairs</span>(m3)</a></code></pre></div>
 <pre><code>##  contrast                            estimate   SE df t.ratio p.value
-##  MP,deductive - MT,deductive            26.89 6.13 38  4.389  0.0020 
-##  MP,deductive - AC,deductive            35.80 7.10 38  5.045  0.0003 
-##  MP,deductive - DA,deductive            15.47 5.93 38  2.608  0.1848 
-##  MP,deductive - MP,probabilistic        19.55 3.59 38  5.439  0.0001 
-##  MP,deductive - MT,probabilistic        14.32 6.29 38  2.279  0.3310 
-##  MP,deductive - AC,probabilistic        19.95 7.21 38  2.767  0.1342 
-##  MP,deductive - DA,probabilistic        13.19 5.99 38  2.201  0.3741 
-##  MT,deductive - AC,deductive             8.91 5.63 38  1.582  0.7577 
-##  MT,deductive - DA,deductive           -11.41 6.65 38 -1.716  0.6772 
-##  MT,deductive - MP,probabilistic        -7.34 6.29 38 -1.167  0.9363 
-##  MT,deductive - MT,probabilistic       -12.56 8.13 38 -1.545  0.7783 
-##  MT,deductive - AC,probabilistic        -6.94 8.86 38 -0.783  0.9931 
-##  MT,deductive - DA,probabilistic       -13.70 7.91 38 -1.733  0.6666 
-##  AC,deductive - DA,deductive           -20.32 7.49 38 -2.712  0.1501 
-##  AC,deductive - MP,probabilistic       -16.25 7.21 38 -2.254  0.3446 
-##  AC,deductive - MT,probabilistic       -21.48 8.86 38 -2.423  0.2600 
-##  AC,deductive - AC,probabilistic       -15.85 9.54 38 -1.661  0.7111 
-##  AC,deductive - DA,probabilistic       -22.61 8.66 38 -2.611  0.1834 
-##  DA,deductive - MP,probabilistic         4.08 5.99 38  0.680  0.9971 
-##  DA,deductive - MT,probabilistic        -1.15 7.91 38 -0.145  1.0000 
-##  DA,deductive - AC,probabilistic         4.47 8.66 38  0.517  0.9995 
-##  DA,deductive - DA,probabilistic        -2.29 7.68 38 -0.298  1.0000 
-##  MP,probabilistic - MT,probabilistic    -5.22 6.13 38 -0.853  0.9885 
-##  MP,probabilistic - AC,probabilistic     0.40 7.10 38  0.056  1.0000 
-##  MP,probabilistic - DA,probabilistic    -6.36 5.93 38 -1.072  0.9588 
-##  MT,probabilistic - AC,probabilistic     5.62 5.63 38  0.998  0.9719 
-##  MT,probabilistic - DA,probabilistic    -1.14 6.65 38 -0.171  1.0000 
-##  AC,probabilistic - DA,probabilistic    -6.76 7.49 38 -0.902  0.9840 
+##  MP deductive - MT deductive            26.89 6.13 38  4.389  0.0020 
+##  MP deductive - AC deductive            35.80 7.10 38  5.045  0.0003 
+##  MP deductive - DA deductive            15.47 5.93 38  2.608  0.1848 
+##  MP deductive - MP probabilistic        19.55 3.59 38  5.439  0.0001 
+##  MP deductive - MT probabilistic        14.32 6.29 38  2.279  0.3310 
+##  MP deductive - AC probabilistic        19.95 7.21 38  2.767  0.1342 
+##  MP deductive - DA probabilistic        13.19 5.99 38  2.201  0.3741 
+##  MT deductive - AC deductive             8.91 5.63 38  1.582  0.7577 
+##  MT deductive - DA deductive           -11.41 6.65 38 -1.716  0.6772 
+##  MT deductive - MP probabilistic        -7.34 6.29 38 -1.167  0.9363 
+##  MT deductive - MT probabilistic       -12.56 8.13 38 -1.545  0.7783 
+##  MT deductive - AC probabilistic        -6.94 8.86 38 -0.783  0.9931 
+##  MT deductive - DA probabilistic       -13.70 7.91 38 -1.733  0.6666 
+##  AC deductive - DA deductive           -20.32 7.49 38 -2.712  0.1501 
+##  AC deductive - MP probabilistic       -16.25 7.21 38 -2.254  0.3446 
+##  AC deductive - MT probabilistic       -21.48 8.86 38 -2.423  0.2600 
+##  AC deductive - AC probabilistic       -15.85 9.54 38 -1.661  0.7111 
+##  AC deductive - DA probabilistic       -22.61 8.66 38 -2.611  0.1834 
+##  DA deductive - MP probabilistic         4.08 5.99 38  0.680  0.9971 
+##  DA deductive - MT probabilistic        -1.15 7.91 38 -0.145  1.0000 
+##  DA deductive - AC probabilistic         4.47 8.66 38  0.517  0.9995 
+##  DA deductive - DA probabilistic        -2.29 7.68 38 -0.298  1.0000 
+##  MP probabilistic - MT probabilistic    -5.22 6.13 38 -0.853  0.9885 
+##  MP probabilistic - AC probabilistic     0.40 7.10 38  0.056  1.0000 
+##  MP probabilistic - DA probabilistic    -6.36 5.93 38 -1.072  0.9588 
+##  MT probabilistic - AC probabilistic     5.62 5.63 38  0.998  0.9719 
+##  MT probabilistic - DA probabilistic    -1.14 6.65 38 -0.171  1.0000 
+##  AC probabilistic - DA probabilistic    -6.76 7.49 38 -0.902  0.9840 
 ## 
 ## Results are averaged over the levels of: plausibility 
 ## P value adjustment: tukey method for comparing a family of 8 estimates</code></pre>
@@ -1063,14 +1063,14 @@ instruction:inference:plausibility
 ## 
 ## Linear Hypotheses:
 ##                Estimate Std. Error t value Pr(&gt;|t|)    
-## diff_1 == 0       4.175      1.641   2.543   0.0648 .  
-## diff_2 == 0      34.925      7.082   4.931 7.94e-05 ***
-## diff_3 == 0     -23.600      9.830  -2.401   0.0709 .  
-## diff_4 == 0      -8.100     11.275  -0.718   0.6882    
-## val_ded == 0     35.800      7.096   5.045 7.37e-05 ***
-## val_prob == 0     0.400      7.096   0.056   0.9553    
-## plau_ded == 0    -3.275      3.065  -1.068   0.6036    
-## plau_prob == 0   30.775      4.992   6.164 1.85e-06 ***
+## diff_1 == 0       4.175      1.641   2.543 0.064979 .  
+## diff_2 == 0      34.925      7.082   4.931 0.000103 ***
+## diff_3 == 0     -23.600      9.830  -2.401 0.070893 .  
+## diff_4 == 0      -8.100     11.275  -0.718 0.688158    
+## val_ded == 0     35.800      7.096   5.045 5.67e-05 ***
+## val_prob == 0     0.400      7.096   0.056 0.955346    
+## plau_ded == 0    -3.275      3.065  -1.068 0.603571    
+## plau_prob == 0   30.775      4.992   6.164 1.60e-06 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## (Adjusted p values reported -- free method)
@@ -1082,14 +1082,14 @@ instruction:inference:plausibility
 ## 
 ## Linear Hypotheses:
 ##                Estimate Std. Error t value Pr(&gt;|t|)    
-## diff_1 == 0     -22.425      8.742  -2.565  0.08180 .  
-## diff_2 == 0      -2.700      8.987  -0.300  0.98491    
-## diff_3 == 0      -0.925      7.522  -0.123  0.98491    
-## diff_4 == 0      -3.650      9.358  -0.390  0.98491    
-## val_ded == 0    -11.412      6.651  -1.716  0.37918    
-## val_prob == 0    -1.137      6.651  -0.171  0.98491    
-## plau_ded == 0    -4.562      4.115  -1.109  0.72582    
-## plau_prob == 0   13.363      2.957   4.519  0.00045 ***
+## diff_1 == 0     -22.425      8.742  -2.565 0.080703 .  
+## diff_2 == 0      -2.700      8.987  -0.300 0.984924    
+## diff_3 == 0      -0.925      7.522  -0.123 0.984924    
+## diff_4 == 0      -3.650      9.358  -0.390 0.984924    
+## val_ded == 0    -11.412      6.651  -1.716 0.379666    
+## val_prob == 0    -1.137      6.651  -0.171 0.984924    
+## plau_ded == 0    -4.562      4.115  -1.109 0.725779    
+## plau_prob == 0   13.363      2.957   4.519 0.000507 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## (Adjusted p values reported -- free method)</code></pre>

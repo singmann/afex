@@ -13,8 +13,12 @@ vignette: >
 ---
 
 ```{r set-options, echo=FALSE, cache=FALSE}
-options(width = 90)
+op <- options(width = 110, dplyr.summarise.inform = FALSE)
 knitr::opts_chunk$set(dpi=72)
+```
+
+```{r, echo=FALSE}
+load(system.file("extdata/", "output_mixed_vignette.rda", package = "afex"))
 ```
 
 ## Overview
@@ -27,20 +31,20 @@ The data are lexical decision and word naming latencies for 300 words and 300 no
 
 ## Data and R Preperation
 
-We start with loading some packages we will need throughout this example. For data manipulation we will be using the `dplyr` and `tidyr` packages from the [`tidyverse`](http://tidyverse.org/). A thorough introduction to these packages is beyond this example, but well worth it, and can be found in ['R for Data Science'](http://r4ds.had.co.nz/) by Wickham and Grolemund. For plotting we will be diverging from the `tidyverse` and use `lattice` instead. At some later point in time I will change this to `ggplot2` plots. 
+We start with loading some packages we will need throughout this example. For data manipulation we will be using the `dplyr` and `tidyr` packages from the [`tidyverse`](http://tidyverse.org/). A thorough introduction to these packages is beyond this example, but well worth it, and can be found in ['R for Data Science'](http://r4ds.had.co.nz/) by Wickham and Grolemund. For plotting we will be using `ggplot2`, also part of the `tidyverse`.
 
 After loading the packages, we will load the data (which comes with `afex`), remove the errors, and take a look at the variables in the data.
 
 ```{r message=FALSE, warning=FALSE}
 library("afex") # needed for mixed() and attaches lme4 automatically.
-library("emmeans") # emmeans is needed for follow-up tests (and not anymore loaded automatically).
+library("emmeans") # emmeans is needed for follow-up tests 
 library("multcomp") # for advanced control for multiple testing/Type 1 errors.
 library("dplyr") # for working with data frames
 library("tidyr") # for transforming data frames from wide to long and the other way round.
-library("lattice") # for plots
-library("latticeExtra") # for combining lattice plots, etc.
-lattice.options(default.theme = standard.theme(color = FALSE)) # black and white
-lattice.options(default.args = list(as.table = TRUE)) # better ordering
+library("ggplot2") # for plots
+theme_set(theme_bw(base_size = 15) + 
+            theme(legend.position="bottom", 
+                  panel.grid.major.x = element_blank()))
 
 data("fhch2010") # load 
 fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
@@ -76,48 +80,47 @@ fhch2010 %>% group_by(id, stimulus) %>%
 
 ```
 
-Before running the analysis we should make sure that our dependent variable looks roughly normal. To compare `rt` with `log_rt` within the same graph using `lattice` we first need to transform the data from the wide format (where both rt types occupy one column each) into the long format (in which the two rt types are combined into a single column with an additional indicator column). To do so we use `tidyr::gather`. Then we simply call the `histogram` function on the new `data.frame` and make a few adjustments to the defaults to obtain a nice looking output. The plot shows that `log_rt` looks clearly more normal than `rt`, although not perfectly so. An interesting exercise could be to rerun the analysis below using a transformation that provides an even better 'normalization'.
+Before running the analysis we should make sure that our dependent variable looks roughly normal. To compare `rt` with `log_rt` within the same figure we first need to transform the data from the wide format (where both rt types occupy one column each) into the long format (in which the two rt types are combined into a single column with an additional indicator column). To do so we use `tidyr::pivot_longer`. Then we simply call `ggplot` with `geom_histogram` and `facet_wrap(vars(rt_type))` on the new `tibble`. The plot shows that `log_rt` looks clearly more normal than `rt`, although not perfectly so. An interesting exercise could be to rerun the analysis below using a transformation that provides an even better 'normalization'.
 
 ```{r, fig.width=7, fig.height=4}
-fhch_long <- fhch %>% gather("rt_type", "rt", rt, log_rt)
-histogram(~rt|rt_type, fhch_long, breaks = "Scott", type = "density",
-          scale = list(x = list(relation = "free")))
+fhch_long <- fhch %>% 
+  pivot_longer(cols = c(rt, log_rt), names_to = "rt_type", values_to = "rt")
+ggplot(fhch_long, aes(rt)) +
+  geom_histogram(bins = 100) +
+  facet_wrap(vars(rt_type), scales = "free_x")
 ```
 
 ## Descriptive Analysis
 
 The main factors in the experiment were the between-subjects factor `task` (`naming` vs. `lexdec`), and the within-subjects factors `stimulus` (`word` vs. `nonword`), `density` (`low` vs. `high`), and `frequency` (`low` vs. `high`). Before running an analysis it is a good idea to visually inspect the data to gather some expectations regarding the results. Should the statistical results dramatically disagree with the expectations this suggests some type of error along the way (e.g., model misspecification) or at least encourages a thorough check to make sure everything is correct. We first begin by plotting the data aggregated by-participant. 
 
-In each plot we plot the raw data in the background. To make the individual data points visible we add some `jitter` on the x-axis and choose `pch` and `alpha` values such that we see where more data points are (i.e., where plot overlaps it is darker). Then we add the mean as a x in a circle. Both of this is done in the same call to `xyplot` using a custom panel function. Finally, we combine this plot with a simple boxplot using `bwplot`. 
+In each plot we plot the raw data in the background. To make the individual data points visible we use `ggbeeswarm::geom_quasirandom`  and `alpha = 0.5` for semi-transparency. On top of this we add a (transparent) boxplot as well as the mean and standard error.
 
-```{r, fig.width=7, fig.height=6}
-agg_p <- fhch %>% group_by(id, task, stimulus, density, frequency) %>%
+```{r, fig.width=7, fig.height=6, message=FALSE, out.width="90%"}
+agg_p <- fhch %>% 
+  group_by(id, task, stimulus, density, frequency) %>%
   summarise(mean = mean(log_rt)) %>%
   ungroup()
 
-xyplot(mean ~ density:frequency|task+stimulus, agg_p, jitter.x = TRUE, pch = 20, alpha = 0.5, 
-       panel = function(x, y, ...) {
-         panel.xyplot(x, y, ...)
-         tmp <- aggregate(y, by = list(x), mean)
-         panel.points(tmp$x, tmp$y, pch = 13, cex =1.5)
-       }) + 
-bwplot(mean ~ density:frequency|task+stimulus, agg_p, pch="|", do.out = FALSE)
+ggplot(agg_p, aes(x = interaction(density,frequency), y = mean)) +
+  ggbeeswarm::geom_quasirandom(alpha = 0.5) +
+  geom_boxplot(fill = "transparent") +
+  stat_summary(colour = "red") +
+  facet_grid(cols = vars(task), rows = vars(stimulus))
 ```
 
 Now we plot the same data but aggregated across items:
 
-```{r, fig.width=7, fig.height=6}
+```{r, fig.width=7, fig.height=6, message=FALSE, out.width="90%"}
 agg_i <- fhch %>% group_by(item, task, stimulus, density, frequency) %>%
   summarise(mean = mean(log_rt)) %>%
   ungroup()
 
-xyplot(mean ~ density:frequency|task+stimulus, agg_i, jitter.x = TRUE, pch = 20, alpha = 0.2, 
-       panel = function(x, y, ...) {
-         panel.xyplot(x, y, ...)
-         tmp <- aggregate(y, by = list(x), mean)
-         panel.points(tmp$x, tmp$y, pch = 13, cex =1.5)
-       }) + 
-bwplot(mean ~ density:frequency|task+stimulus, agg_i, pch="|", do.out = FALSE)
+ggplot(agg_i, aes(x = interaction(density,frequency), y = mean)) +
+  ggbeeswarm::geom_quasirandom(alpha = 0.3) +
+  geom_boxplot(fill = "transparent") +
+  stat_summary(colour = "red") +
+  facet_grid(cols = vars(task), rows = vars(stimulus))
 ```
 
 These two plots show a very similar pattern and suggest several things:
@@ -132,7 +135,9 @@ These two plots show a very similar pattern and suggest several things:
 
 To set up a mixed model it is important to identify which factors vary within which grouping factor generating random variability (i.e., grouping factors are sources of stochastic variability). The two grouping factors are participants (`id`) and items (`item`). The within-participant factors are `stimulus`, `density`, and `frequency`. The within-item factor is `task`. The 'maximal model' (Barr, Levy, Scheepers, and Tily, 2013) therefore is the model with by-participant random slopes for `stimulus`, `density`, and `frequency` and their interactions and by-item random slopes for `task`.
 
-Occasionally, the maximal model does not converge successfully. In this case a good first approach for dealing with this problem is to remove the corelations among the random terms. In our example, there are two sets of correlations, one for each random effect grouping variable. Consequently, we can build four model that have the maximal structure in terms of random-slopes and only differ in which correlations among random terms are calculated:
+It is rather common that a maximal model with a complicated random effect structure, such as the present one, does not converge successfully. The best indicator of this is a "singular fit" warning. A model with a singular fit warning should not be reported or used. Instead, one should make sure that qualitatively the same results are also observed with a model without singular fit warnings. If the maximal model that does not converge and a reduced model without a singular fit warning (i.e., the final model) diverge in their results, results should only be interpreted cautiously.
+
+In case of a singular fit or another indicator of a convergence problem, the usual first step is removing the corelations among the random terms. In our example, there are two sets of correlations, one for each random effect grouping variable. Consequently, we can build four model that have the maximal structure in terms of random-slopes and only differ in which correlations among random terms are calculated:
 
 1. With all correlations.
 2. No correlation among by-item random effects (i.e., no correlation between random intercept and `task` random slope).
@@ -141,139 +146,282 @@ Occasionally, the maximal model does not converge successfully. In this case a g
 
 The next decision to be made is which method to use for obtaining $p$-values. The default method is `KR` (=Kenward-Roger) which provides the best control against anti-conservative results. However, `KR` needs quite a lot of RAM, especially with complicated random effect structures and large data sets. As in this case we have both, relatively large data (i.e., many levels on each random effect, especially the item random effect) and a complicated random effect structure, it seems a reasonable decision to choose another method. The second 'best' method (in terms of controlling for Type I errors)  is the 'Satterthwaite' approximation, `method='S'`. It provides a similar control of Type I errors as the Kenward-Roger approximation and needs less RAM, however one downside is that it simply fails in some cases.
 
-## Results 
-### Satterthwaite Results
+## Finding the Final Model
 
-The following code fits the four models using the Satterthwaite method. To suppress random effects we use the `||` notation. Note that it is necessary to set `expand_re=TRUE` when suppressing random effects among variables that are entered as factors and not as numerical variables (as done here). Also note that `mixed` automatically uses appropriate contrast codings if factors are included in interactions (`contr.sum`) in contrast to the `R` default (which is `contr.treatment`). To make sure the estimation does not end prematurely we set the allowed number of function evaluations to a very high value (using `lmerControl`).
+The following code fits the four models using the Satterthwaite method. To suppress random effects we use the `||` notation. Note that it is necessary to set `expand_re=TRUE` when suppressing random effects among variables that are entered as factors and not as numerical variables (all independent variables in the present case are factors). Also note that `mixed` automatically uses appropriate contrast codings if factors are included in interactions (`contr.sum`) in contrast to the `R` default (which is `contr.treatment`). To make sure the estimation does not end prematurely we set the allowed number of function evaluations to a very high value (using `lmerControl`).
+
+However, because fitting the models in R might take quite a while, you should also be able to load the fitted binary files them from [this url](https://raw.githubusercontent.com/singmann/afex/master/development/freeman_models.rda) and then load them in R with `load("freeman_models.rda")`.
+
 
 ```{r, eval = FALSE}
-
-m1s <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency|id)+
+m1s <- mixed(log_rt ~ task*stimulus*density*frequency + 
+               (stimulus*density*frequency|id)+
                (task|item), fhch, method = "S", 
              control = lmerControl(optCtrl = list(maxfun = 1e6)))
-m2s <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency|id)+
-               (task||item), fhch, method = "S", 
-             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
-m3s <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency||id)+
-               (task|item), fhch, method = "S", 
-             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
-m4s <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency||id)+
-               (task||item), fhch, method = "S", 
-             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+```
+```{r, echo=FALSE}
+message("boundary (singular) fit: see ?isSingular")
 ```
 
-As the estimation of these model may take some time, `afex` inlcudes the estimated models which can be loaded with the following code. Note that when using the `print` or `anova` method for `mixed` objects, the `warnings` emitted during estimation of the model by `lmer` will be printed again. So there is no downside of loading the already estimated models. We then inspect the four results.
-
-```{r}
-load(system.file("extdata/", "freeman_models.rda", package = "afex"))
-m1s
-m2s
-m3s
-m4s
-```
-
-Before looking at the results we can see that for models 1 and 2, `lmer` emmited a warning that the model failed to converge. These warnings do not necessarily mean that the results cannot be used. As we will see below, model 2 (`m2s`) produces essentially the same results as models 3 and 4 suggesting that this warning is indeed a false positive. However, the results also show that estimating the Satterthwaite approximation failed for `m1s`, we have no denominator degrees of freedom and no $p$-values. If this happens, we can only try another method or a reduced model. 
-
-Models 2 to 4 produce results and the results are extremely similar across models. A total of 9 or 10 effects reached significance. We found main effects for `task` and `stimulus`, two-way interactions of `task:stimulus`, `task:density`, `task:frequency`, and `stimulus:frequency`, three-way interactions of `task:stimulus:density`, `task:stimulus:frequency`, and `task:density:frequency`, a marginal three-way interaction (for two of three models) of `stimulus:density:frequency`, and the four-way interaction of `task:stimulus:density:frequency`. Additionally, all $F$ and $p$ values are very similar to each other across the three models.
-
-The only difference in terms of significant versus non-significant effects between the three models is the three-way interaction of `stimulus:density:frequency` which is only significant for model 3 with $F(1, 88.40) = 4.16$, $p = .04$, and only reaches marginal significance for the other two models with $p > .05$ and a very similar $F$-value.
-
-### LRT Results
-
-It is instructive to compare those results with results obtained using the comparatively 'worst' method for obtaining $p$-value simplmeneted in `afex`, likelihood ratio tests. Likelihood ratio-tests should in principle deliver reasonable results for large data sets such as the current one, so we should expect not too many deviations. We again fit all four models, this time using `method='LRT'`. 
 
 ```{r, eval = FALSE}
-m1lrt <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency|id)+
-                 (task|item), fhch, method = "LRT", 
-               control = lmerControl(optCtrl = list(maxfun = 1e6)))
-m2lrt <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency|id)+
-                 (task||item), fhch, method = "LRT", 
-               control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
-m3lrt <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency||id)+
-                 (task|item), fhch, method = "LRT", 
-               control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
-m4lrt <- mixed(log_rt ~ task*stimulus*density*frequency + (stimulus*density*frequency||id)+
-                 (task||item), fhch, method = "LRT", 
-               control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+m2s <- mixed(log_rt ~ task*stimulus*density*frequency + 
+               (stimulus*density*frequency|id)+
+               (task||item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+```
+```{r, echo=FALSE}
+message("boundary (singular) fit: see ?isSingular")
 ```
 
-Because the resulting `mixed` objects are of considerable size, we do not include the full objects, but only the resulting ANOVA tables and `data.frames` (`nice_lrt` is a list containing the result from calling `nice` on the objects, `anova_lrt` contains the result from calling `anova`). 
 
-Before considering the results, we again first consider the warnings emitted when fitting the models. Because methods `'LRT'` and `'PB'` fit one `full_model` and one `restricted_model` for each effect (i.e., term), there can be more warnings than for methods `'KR'` and `'S'` which only fit one model (the `full_model`). And this is exactly what happens. For `m1lrt` there are 11 convergence warnings, almost one per fitted model. However, none of those immediately invalidates the results. This is different for models 2 and 3 for both of which warnings indicate that `nested model(s) provide better fit than full model`. What this warning means is that the `full_model` does not provide a better fit than at least one of the `restricted_model`, which is mathematically impossible as the `restricted_models` are nested within the full model (i.e., they result from setting one or several parameters equal to 0, so the `full_model` can always provide an at least as good account as the `restricted_models`). Model 4 finally shows no warnings.
-
-The following code produces a single output comparing models 1 and 4 next to each other. The results show basically the same pattern as obtained with the Satterthwaite approximation. Even the $p$-values are extremely similar to the $p$-values of the Satterthwaite models. The only 'difference' is that the `stimulus:density:frequency` three-way interaction is significant in each case now, although only barely so.
-
-```{r}
-res_lrt <- cbind(nice_lrt[[1]], "  " = " ", 
-                 nice_lrt[[4]][,-(1:2)])
-colnames(res_lrt)[c(3,4,6,7)] <- paste0(
-  rep(c("m1_", "m4_"), each =2), colnames(res_lrt)[c(3,4)])
-res_lrt
+```{r, eval = FALSE}
+m3s <- mixed(log_rt ~ task*stimulus*density*frequency +
+               (stimulus*density*frequency||id)+
+               (task|item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+```
+```{r, echo=FALSE}
+message("boundary (singular) fit: see ?isSingular")
 ```
 
-We can also compare this with the results from model 3. Although the `full_model` cannot be the maximum-likelihood estimate (as it provides a worse than the `density:frequency` model), the difference seems to be minimal as it also shows exactly the same pattern as the other models.
-
-```{r}
-nice_lrt[[2]]
+```{r, eval = FALSE}
+m4s <- mixed(log_rt ~ task*stimulus*density*frequency + 
+               (stimulus*density*frequency||id)+
+               (task||item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+```
+```{r, echo=FALSE}
+message("boundary (singular) fit: see ?isSingular")
 ```
 
-### Summary of Results
+We can see that fitting each of these models emits the "singular fit" message (it is technially a `message` and not a `warning`) indicating that the model is oberparameterized and did not converge succesfully. In particular, this message indicates that the model is specified with more random effect parameters than can be estimated given the current data. 
 
-Fortunately, the results from all models that actually produced results and converged without a critical warning (e.g., one critical warning is that a `restricted_model` provides a better fit than the `full_model`) agreed very strongly providing a high degree of confidence in the results. This might not be too surprising given the comparatively large number of total data points and the fact that each random effect grouping factor has a considerable number of levels (way above 20 for both participants and items). This also suggests that the convergence warnings are likely false positives; the models seem to have converged successfully to the maximum likelihood estimate, or at least to a value very near the maximum likelihood estimate. How further reducing the random effects structure (e.g., removing the random slopes for the highest interaction) affects the results is left as an exercise for the reader.
+It is instructive to see that even with a comparatively large number of observations, `r nrow(fhch)`, a set of seven random slopes for the by-participant term and one random slope for the by-item term cannot be estimated succesfully. And this holds even after removing all correaltions. Thus, it shoul dnot be surprising that similar sized models regularaly do not converge with smaller numbers of observations. Furthermore, we are here in the fortunate situation that each factor has only two levels. A factor with more levels corresponds to more parameters of the random effect terms.
 
-In terms of the significant findings, there are many that seem to be in line with the descriptive results described above. For example, the highly significant effect of `task:stimulus:frequency` with $F(1, 190.61) = 109.33$, $p < .0001$ (values from `m2s`), appears to be in line with the observation that the frequency effect appears to change its sign depending on the `task:stimulus` cell (with `nonword` and `naming` showing the opposite patterns than the other three conditions). Consequently, we start by investigating this interaction further below.
+Before deciding what to do next, we take a look at the estimated random effect estimates. We do so for the model without any correlations. Note that for `afex` models we usually do not want to use the `summary` method as it prints the results on the level of the model coefficients and not model terms. But for the random effects we have to do so. However, we are only interested in the random effect terms so we only print those using `summary(model)$varcor`.
+
+```{r, eval=FALSE}
+summary(m4s)$varcor 
+```
+```{r, echo=FALSE}
+cat(outp_m4s_vc$output, sep = "\n")
+```
+
+The outpus shows that the estimated SDs of the random slopes of the two-way interactions are all zero. However, because we cannot remove the random slopes for the two way interaction while retainin gthe three-way interaction, we start by removing the three-way interaction first.
+
+```{r, eval=FALSE}
+m5s <- mixed(log_rt ~ task*stimulus*density*frequency + 
+               ((stimulus+density+frequency)^2||id)+
+               (task||item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+```
+```{r, echo=FALSE}
+message("boundary (singular) fit: see ?isSingular")
+```
+```{r, eval=FALSE}
+summary(m5s)$varcor 
+```
+```{r, echo=FALSE}
+cat(outp_m5s_vc$output, sep = "\n")
+```
+
+Not soo surprisingly, this model also produces a singular fit. Inspection of the estimates shows that the two-way interaction of the slopes are still estimated to be zero. So we remove those in the next step.
+
+```{r, eval=FALSE}
+m6s <- mixed(log_rt ~ task*stimulus*density*frequency + 
+               (stimulus+density+frequency||id)+
+               (task||item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), 
+             expand_re = TRUE)
+```
+```{r, echo=FALSE}
+message("boundary (singular) fit: see ?isSingular")
+```
+
+This model still shows a singular fit warning. The random effect estimates below show a potential culprit. 
+
+```{r, eval=FALSE}
+summary(m6s)$varcor 
+```
+```{r, echo=FALSE}
+cat(outp_m6s_vc$output, sep = "\n")
+```
+
+As in `m4s` above, the random effect SD for the density term is estimated to be zero. Thus, we remove this as well in the next step.
+
+```{r, eval=FALSE}
+m7s <- mixed(log_rt ~ task*stimulus*density*frequency + 
+               (stimulus+frequency||id)+
+               (task||item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+```
+
+This model finally does not emit a singular fit warning. Is this our final model? Before deciding on this, we see whether we can add the correlation terms again without runninginto any problems. We begin by adding the correlation to the by-participant term.
+
+```{r, eval=FALSE}
+m8s <- mixed(log_rt ~ task*stimulus*density*frequency + 
+               (stimulus+frequency|id)+
+               (task||item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+```
+```{r, echo=FALSE}
+warning(fit_m8s$warnings, call. = FALSE)
+```
+
+This model does not show a singular fit message but emits another warning. Specifically, a warning that the absolute maximal gradient at the final solution is too high. This warning is not necessarily critical (i.e., it can be a false positive), but can also indicate serious problems. Consequently, we try adding the correlartion ebtween the by-item random terms instead:
+
+```{r, eval=FALSE}
+m9s <- mixed(log_rt ~ task*stimulus*density*frequency + 
+               (stimulus+frequency||id)+
+               (task|item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
+```
+
+This model also does not show any warnings. Thus, we have arrived at the end of the model selection process. 
+
+## Results of Maximal and FInal Model
+
+We now have the following two relevant models.
+
+- `m1s`: The maximal random effect structure justified by the design (i.e., the maximal model)
+- `m9s`: The final model
+
+Robust results are those that hold irregadless across maximal and final (i.e., reduced) model. Therefore, let us compare the pattern of significant and non-significant effects.
+
+```{r, eval=FALSE}
+left_join(nice(m1s), nice(m9s), by = "Effect", 
+          suffix = c("_full", "_final")) 
+```
+```{r, echo=FALSE}
+cat(outp_comb_anova$output, sep = "\n")
+```
+
+What this shows is that the pattern of significant and non-significant effect is the same for both models. The only significant effect for which the evidence is not that strong is the 3-way interaction between `stimulus:density:frequency`. It is only just below .05 for the full model and has a somewhat lower value for the final model.
+
+We can also see that one of the most noticeable differences between the maximal and the final model is the number of denominator degrees of freedom. This is highly influenced by the random effect stsructure and thus considerable larger in the final (i.e., reduced) model. The difference in the other statistics is lower.
+
+## LRT Results
+
+It is instructive to compare those results with results obtained using the comparatively 'worst' method for obtaining $p$-value simplmeneted in `afex`, likelihood ratio tests. Likelihood ratio-tests should in principle deliver reasonable results for large data sets such as the current one (i.e., data sets for which the number of levels for each random effect grouping factor is large, e.g., > 30). Consequently, we should expect not too many deviations. We therefore fit the final model using `method='LRT'`. 
+
+```{r, eval = FALSE}
+m9lrt <- mixed(log_rt ~ task*stimulus*density*frequency + 
+               (stimulus+frequency||id)+
+               (task|item), fhch, method = "LRT", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), 
+             expand_re = TRUE)
+m9lrt
+```
+```{r, echo=FALSE}
+cat(outp_m9lrt$output, sep = "\n")
+```
+
+As expected, the results in this case match the results of the Satterthwaite method. With lower numbers of levels of the groupin gfactor this would not necessarily be expected.
+
+## Summary of Results
+
+Fortunately, the results from all models converged on the same pattern of significant and non-significant effects providing a high degree of confidence in the results. This might not be too surprising given the comparatively large number of total data points and the fact that each random effect grouping factor has a considerable number of levels (above 30 for both participants and items). In the following we focus on the final model using the Satterthwaite method, `m9s`.
+
+In terms of the significant findings, there are many that seem to be in line with the descriptive results described above. For example, the highly significant effect of `task:stimulus:frequency` with $F(1, 578.91) = 124.16$, $p < .001$, appears to be in line with the observation that the frequency effect appears to change its sign depending on the `task:stimulus` cell (with `nonword` and `naming` showing the opposite patterns than the other three conditions). Consequently, we start by investigating this interaction further below.
 
 ## Follow-Up Analyses
 
 Before investigating the significant interaction in detail it is a good idea to remind oneself what a significant interaction represents on a conceptual level; that one or multiple of the variables in the interaction moderate (i.e., affect) the effect of the other variable or variables. Consequently, there are several ways to investigate a significant interaction. Each of the involved variables can be seen as the moderating variables and each of the variables can be seen as the effect of interest. Which one of those possible interpretations is of interest in a given situation highly depends on the actual data and research question and multiple views can be 'correct' in a given situation.
 
-In addition to this conceptual issue, there are also multiple technical ways to investigate a significant interaction. One approach not followed here is to split the data according to the moderating variables and compute the statistical model again for the splitted data sets with the effect variable(s) as remaining fixed effect. This approach, also called _simple effects_ analysis, is, for example, recommended by Maxwell and Delaney (2004) as it does not assume variance homogeneity and is faithful to the data at each level. The approach taken here is to simply perform the test on the fitted full model. This approach assumes variance homogeneity (i.e., that the variances in all groups are homogeneous) and has the added benefit that it is computationally relatively simple. In addition, it can all be achieved using the framework provided by [`emmeans`](https://cran.r-project.org/package=emmeans) (Lenth, 2017).
+In addition to this conceptual issue, there are also multiple technical ways to investigate a significant interaction. One approach not followed here is to split the data according to the moderating variables and compute the statistical model again for the splitted data sets with the effect variable(s) as remaining fixed effect. This approach, also called _simple effects_ analysis, is, for example, recommended by Maxwell and Delaney (2004) as it does not assume variance homogeneity and is faithful to the data at each level. The approach taken here is to simply perform the test on the estimated final model. This approach assumes variance homogeneity (i.e., that the variances in all groups are homogeneous) and has the added benefit that it is computationally relatively simple. In addition, it can all be achieved using the framework provided by [`emmeans`](https://cran.r-project.org/package=emmeans) (Lenth, 2017).
 
 ### task:stimulus:frequency Interaction
 
 Our interest in the beginning is on the effect of `frequency` by `task:stimulus` combination. So let us first look at the estimated marginal means os this effect. In `emmeans` parlance these estimated means are called 'least-square means' because of historical reasons, but because of the lack of least-square estimation in mixed models we prefer the term estimated marginal means, or EMMs for short. Those can be obtained in the following way. To prevent `emmeans` from calculating the *df* for the EMMs (which can be quite costly), we use asymptotic *df*s (i.e., $z$ values and tests). `emmeans` requires to first specify the variable(s) one wants to treat as the effect variable(s) (here `frequency`) and then allows to specify condition variables. 
 
-```{r}
+```{r, eval=FALSE}
 emm_options(lmer.df = "asymptotic") # also possible: 'satterthwaite', 'kenward-roger'
-emm_i1 <- emmeans(m2s, "frequency", by = c("stimulus", "task"))
+emm_i1 <- emmeans(m9s, "frequency", by = c("stimulus", "task"))
 emm_i1
+```
+```{r, echo=FALSE}
+message("NOTE: Results may be misleading due to involvement in interactions")
+cat(emm_o1$output, sep = "\n")
 ```
 
 The returned values are in line with our observation that the `nonword` and `naming` condition diverges from the other three. But is there actual evidence that the effect flips? We can test this using additional `emmeans` functionality. Specifically, we first use the `pairs` function which provides us with a pairwise test of the effect of `frequency` in each `task:stimulus` combination. Then we need to combine the four tests within one object to obtain a familywise error rate correction which we do via `update(..., by = NULL)` (i.e., we revert the effect of the `by` statement from the earlier `emmeans` call) and finally we select the `holm` method for controlling for family wise error rate (the Holm method is uniformly more powerful than the Bonferroni). 
 
-```{r}
+```{r, eval=FALSE}
 update(pairs(emm_i1), by = NULL, adjust = "holm")
 ```
+```{r, echo=FALSE}
+message("NOTE: Results may be misleading due to involvement in interactions")
+cat(emm_o2$output, sep = "\n")
+```
 
-We could also use a slightly more powerful method than the Holm method, method `free` from package `multcomp`, which takes the correlation of the model parameters into account (note that due a bug in the current emmenas version this is currently deactivated):
+We could also use a slightly more powerful method than the Holm method, method `free` from package `multcomp`. This method takes the correlation of the model parameters into account. Howerver, results do not differ much here:
 
 ```{r, eval=FALSE}
 summary(as.glht(update(pairs(emm_i1), by = NULL)), test = adjusted("free"))
 ```
+```{r, echo=FALSE}
+cat(emm_o3$output, sep = "\n")
+```
 
-We see that the results are exactly as expected. In the `nonword` and `naming` condition we have a clear negative effect of frequency while in the other three conditions it is clearly positive. We could now also use the EMMs and retransform them onto the response scale (i.e., RTs) which we could use for plotting. Note that the $p$-values in this ouput are for the $z$ test of whether or not a value is significantly above 0 on the `log_rt`-scale (i.e., above 1 second on the response scale). That seems not the most interesting test, but the output is interesting because of the EMMs and standard errors that could be used for printing.
+We see that the results are exactly as expected. In the `nonword` and `naming` condition we have a clear negative effect of frequency while in the other three conditions it is clearly positive. 
 
-```{r}
-emm_i1b <- summary(contrast(emm_i1, by = NULL))
-emm_i1b[,c("estimate", "SE")] <- exp(emm_i1b[,c("estimate", "SE")])
+We could now also use `emmeans` and retransform the estimates back onto the original RT response scale. For this, we can again `update` the `emmeans` object by using `tran = "log"` to specify the transformation and then indicating we want the means on the response scale with `type = "response"`. These values might be used for plotting.
+
+```{r, eval=FALSE}
+emm_i1b <- update(emm_i1, tran = "log", type = "response", by = NULL)
 emm_i1b
 ```
+```{r, echo=FALSE}
+cat(emm_o4$output, sep = "\n")
+```
+
+A more direct approach for plotting the interaction is via `afex_plot`. For a plot that is not too busy it makes sense to specify across which grouping factor the individual level data should be aggregated. We use the participant variable `"id"` here. We also use `ggbeeswarm::geom_quasirandom` as the geom for the data in the background following the example in [the `afex_plot` vignette](afex_plot_introduction.html).
+
+```{r, eval=FALSE}
+afex_plot(m9s, "frequency", "stimulus", "task", id = "id",
+          data_geom = ggbeeswarm::geom_quasirandom, 
+          data_arg = list(
+            dodge.width = 0.5,  ## needs to be same as dodge
+            cex = 0.8,
+            color = "darkgrey"))
+```
+```{r, echo=FALSE, fig.width=5, fig.height=4, out.width="90%"}
+p1
+```
+
 
 ### task:stimulus:density:frequency Interaction
 
-As the last example, let us take a look at the significant four-way interaction of `task:stimulus:density:frequency`, $F(1, 111.32) = 10.07$, $p = .002$. Here we might be interested in a slightly more difficult question namely whether the `density:frequency` interaction varies across `task:stimulus` conditions. If we again look at the figures above, it appears that there is a difference between `low:low` and `high:low` in the `nonword` and `lexdec` condition, but not in the other conditions. We again first begin by obtaining the EMMs. However, the actual values are not interesting at the moment, we are basically only interested in the interaction for each `task:stimulus` condition. Therefore, we use the EMMs to create two consecutive contrasts, the first one for `density` and then for `frequency` using the fist contrast. Then we run a joint test conditional on the `task:stimulus` conditions.
+As the last example, let us take a look at the significant four-way interaction of `task:stimulus:density:frequency`, $F(1, 578.77) = 11.72$, $p < .001$. Here we might be interested in a slightly more difficult question namely whether the `density:frequency` interaction varies across `task:stimulus` conditions. If we again look at the figures above, it appears that there is a difference between `low:low` and `high:low` in the `nonword` and `lexdec` condition, but not in the other conditions. 
 
-```{r}
-emm_i2 <- emmeans(m2s, c("density", "frequency"), by = c("stimulus", "task"))
-con1 <- contrast(emm_i2, "trt.vs.ctrl1", by = c("frequency", "stimulus", "task")) # density
-con2 <- contrast(con1, "trt.vs.ctrl1", by = c("contrast", "stimulus", "task")) 
-test(con2, joint = TRUE, by = c("stimulus", "task"))
+Looking at the 2-way interaction of `density:frequency` by the `task:stimulus` interaction can be done using `emmeans` using the `joint_test` function. We simply need to specify the appropriate `by` variables and get conditional tests this way.
+
+```{r, eval=FALSE}
+joint_tests(m9s, by = c("stimulus", "task"))
+```
+```{r, echo=FALSE}
+cat(emm_o5$output, sep = "\n")
 ```
 
-This test indeed shows that the `density:frequency` interaction is only significant in the `nonword` and `lexdec` condition. Next, let's see if we can unpack this interaction in a meaningful manner. For this we compare `low:low` and `high:low` in each of the four groups. And just for the sake of making the example more complex, we also compare `low:high` and `high:high`. This can simply be done by specifying a list of custom contrasts on the EMMs (or reference grid in `emmeans` parlance) which can be passed again to the `contrast` function. The contrasts are a `list` where each element should sum to one (i.e., be a proper contrast) and be of length equal to the number of EMMs (although we have 16 EMMs in total, we only need to specify it for a length of four due to conditiong by `c("stimulus", "task")`). To control for the family wise error rate across all tests, we again use `update(..., by = NULL)` on the result this time again specifying `by = NULL` to revert the effect of conditiong. Note that although we entered the variables into `emmeans` in the same order as into our plot call above, the order of the four EMMs differs.
+This test indeed shows that the `density:frequency` interaction is only significant in the `nonword` and `lexdec` condition. Next, let's see if we can unpack this interaction in a meaningful manner. For this we compare `low:low` and `high:low` in each of the four groups. And just for the sake of making the example more complex, we also compare `low:high` and `high:high`. 
 
-```{r}
+To do so, we first need to setup a new set of EMMs. Specifically, we get the EMMs of the two variables of interest, density and frequency, using the same `by` specification as the `joint_test` call. We can then setup custom contrasts that tests our hypotheses. 
+
+
+```{r, eval=FALSE}
+emm_i2 <- emmeans(m2s, c("density", "frequency"), by = c("stimulus", "task"))
 emm_i2
+```
+```{r, echo=FALSE}
+cat(emm_o6$output, sep = "\n")
+```
+
+These contrasts can be specified via a list of custom contrasts on the EMMs (or reference grid in `emmeans` parlance) which can be passed to the `contrast` function. The contrasts are a `list` where each element should sum to one (i.e., be a proper contrast) and be of length equal to the number of EMMs (although we have 16 EMMs in total, we only need to specify it for a length of four due to conditiong by `c("stimulus", "task")`). 
+
+To control for the family wise error rate across all tests, we again use `update(..., by = NULL)` on the result to revert the effect of conditiong. 
+
+```{r, eval=FALSE}
 # desired contrats:
 des_c <- list(
   ll_hl = c(1, -1, 0, 0),
@@ -281,8 +429,11 @@ des_c <- list(
   )
 update(contrast(emm_i2, des_c), by = NULL, adjust = "holm")
 ```
+```{r, echo=FALSE}
+cat(emm_o7$output, sep = "\n")
+```
 
-In contrast to our expectation, the results show two significant effects and not only one. In line with our expectations, in the `nonword` and `lexdec` condition the EMM of `low:high` is smaller than the EMM for `high:high`, $z = -6.30$, $p < .0001$. However, in the `nonword` and `naming` condition we found the opposite pattern; the EMM of `low:high` is larger than the EMM for `high:high`, $z = 3.65$, $p = .002$. For all other effects $|z| < 1.3$, $p > .99$. In addition, there is no difference between `low:high` and `high:high` in any condition. 
+In contrast to our expectation, the results show two significant effects and not only one. In line with our expectations, in the `nonword` and `lexdec` condition the EMM of `low:low` is smaller than the EMM for `high:low`, $z = -5.63$, $p < .0001$. However, in the `nonword` and `naming` condition we found the opposite pattern; the EMM of `low:low` is larger than the EMM for `high:low`, $z = 3.53$, $p = .003$. For all other effects $|z| < 1.4$, $p > .98$. In addition, there is no difference between `low:high` and `high:high` in any condition. 
 
 ## References 
 
@@ -292,45 +443,8 @@ In contrast to our expectation, the results show two significant effects and not
 * Lenth, R. (2017). _emmeans: Estimated Marginal Means, aka Least-Squares Means_. R package version 0.9.1. https://CRAN.R-project.org/package=emmeans
 * Maxwell, S. E., & Delaney, H. D. (2004). _Designing experiments and analyzing data: a model-comparisons perspective_. Mahwah, N.J.: Lawrence Erlbaum Associates.
 
-
-```{r, echo=FALSE, eval = FALSE}
-### OLD STUFF BELOW. PLEASE IGNORE.
-load("freeman_models.rda")
-load("../freeman_models_all.rda")
-m1lrt$restricted_models <- list(NULL)
-m2lrt$restricted_models <- list(NULL)
-m3lrt$restricted_models <- list(NULL)
-m4lrt$restricted_models <- list(NULL)
-
-save(m1lrt, file = "freeman_models1.rda", compress = "xz")
-save(m1s, m2s, m3s, m4s, m1lrt, m2lrt, m3lrt, m4lrt, file = "freeman_models.rda", compress = "xz")
-
-anovas_lrt <- lapply(list(m1lrt, m2lrt, m3lrt, m4lrt), anova)
-nice_lrt <- lapply(list(m1lrt, m2lrt, m3lrt, m4lrt), nice)
-
-res_lrt <- cbind(nice_lrt[[1]], "  " = " ", 
-                 nice_lrt[[2]][,-(1:2)], "  " = " ", 
-                 nice_lrt[[3]][,-(1:2)], "  " = " ", 
-                 nice_lrt[[4]][,-(1:2)])
-colnames(res_lrt)[c(3,4,6,7, 9,10, 12,13)] <- paste0(
-  rep(c("m1_", "m2_", "m3_","m4_"), each =2), colnames(res_lrt)[c(3,4)])
-
-## warnings:
-m1s # fails and 1 warning
-m2s # 1 warning
-m3s # 0 warnings
-m4s # 0 warnings
-
-m1lrt # 11 warnings
-m2lrt # 1 nested model(s) provide better, 7 other warnings
-m3lrt # 7 nested models provide better fit, 9 other warnings
-m4lrt # 0 warnings
-
-cbind(nice_lrt[[1]]$Effect, do.call("cbind", lapply(nice_lrt, function(x) x[,3:4])))
-
-save(m1s, m2s, m3s, m4s, anovas_lrt, nice_lrt,file = "freeman_models.rda", compress = "xz")
-save(m1s, m2s, m3s, m4s, m1lrt, m2lrt, m3lrt, m4lrt, file = "freeman_models2.rda", compress = "bzip2")
-tools::resaveRdaFiles("freeman_models1.rda")
-
+```{r, include=FALSE}
+options(op)
 ```
+
 

@@ -3,7 +3,7 @@
                     *************************
                     
                     Changes in afex Version 0.28-x
-                    Released June 2020
+                    Released August 2020
                     
     Significant User Visible Changes and New Features
     
@@ -20,6 +20,11 @@
     o   afex_plot introduction vignette and help page now refer to 
         ggbeeswarm::geom_quasirandom as a good alternative to the bee swarm 
         plot.
+        
+    o   Updated the mixed model vignette which now discusses going from the 
+        maximal to the final model, singular fits, and is based on latest lme4.
+        
+    o   Mixed model chapter uses better layout and added final reference.
 
     Bugfixes (most bugs in this updated were reported by Frantisek Bartos)
 

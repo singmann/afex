@@ -6,6 +6,7 @@ test_that("all_fit = TRUE works with emmeans", {
   testthat::skip_on_cran()
   skip_if_not_installed("MEMSS")
   skip_if_not_installed("emmeans")
+  skip_on_os("windows")
   data("Machines", package = "MEMSS") 
   m1 <- mixed(score ~ Machine + (1|Worker), data=Machines, all_fit = TRUE)
   expect_is(emmeans::emmeans(m1, "Machine"), "emmGrid")

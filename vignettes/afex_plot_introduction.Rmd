@@ -300,56 +300,65 @@ plot_grid(
 
 ## Data and Model
 
-```{r, eval=FALSE, echo=FALSE, results='hide'}
-data("fhch2010") # load 
-fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
-### following model should take less than a minute to fit:
-mrt <- mixed(log_rt ~ task*stimulus*frequency + (stimulus*frequency||id)+
-               (task||item), fhch, method = "S", expand_re = TRUE)
-save(mrt, file = "../inst/extdata/freeman_reduced_model.rda", compress = "xz")
+```{r, echo=FALSE}
+load(system.file("extdata/", "output_afex_plot_mixed_vignette.rda", package = "afex"))
 ```
 
-To exemplify the support for linear mixed models, we will use the data from Freeman and colleagues also discussed in the [mixed model vignette](https://cran.r-project.org/package=afex/vignettes/afex_mixed_example.html). These data are lexical decision and word naming latencies for 300 words and 300 nonwords from 45 participants presented in Freeman et al. (2010). The dependent variable we are interested in is `log` RTs. Here, we are only looking at a reduced design with factors `task` (between participants, but within items), `stimulus`, and `frequency` (within participants, but between items), for a total of almost 13,000 observations. We fit the model with crossed-random effects for participants (`id`) and `item`s with maximal random-slopes. To reduce computation time we suppress the correlations among random-effects parameters.
+To exemplify the support for linear mixed models, we will use the data from Freeman and colleagues also discussed in the [mixed model vignette](https://cran.r-project.org/package=afex/vignettes/afex_mixed_example.html). These data are lexical decision and word naming latencies for 300 words and 300 nonwords from 45 participants presented in Freeman et al. (2010). The dependent variable we are interested in is `log` RTs. 
+
+We look at the same model also discussed in the vignette with factors `task` (between participants, but within items), `stimulus` (within participants, but between items), `density` (within participants, but between items), and `frequency` (within participants, but between items), for a total of almost 13,000 observations. We fit the model with crossed-random effects for participants (`id`) and `item`s using the final model, `m9s`, as discussed in the mixed model vignette.
 
 ```{r, eval=FALSE}
 data("fhch2010") # load 
 fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
-### following model should take less than a minute to fit:
-mrt <- mixed(log_rt ~ task*stimulus*frequency + (stimulus*frequency||id)+
-               (task||item), fhch, method = "S", expand_re = TRUE)
+m9s <- mixed(log_rt ~ task*stimulus*density*frequency + 
+               (stimulus+frequency||id)+
+               (task|item), fhch, method = "S", 
+             control = lmerControl(optCtrl = list(maxfun = 1e6)), 
+             expand_re = TRUE)
 ```
 
-Instead of fitting the model, you can also load the fitted model. We also disable calculation of degrees of freedom for `emmeans` as this speeds up computation and/or avoids messages we are currently not interested in.
-
+Note that going forward, we disable calculation of degrees of freedom for `emmeans` as this speeds up computation and/or avoids messages we are currently not interested in.
 ```{r}
-load(system.file("extdata/", "freeman_reduced_model.rda", package = "afex"))
 emmeans::emm_options(lmer.df = "asymptotic")
 ```
 
-The ANOVA table of the mixed model indicates that the three-way interaction is significant on which we focus in the following.
-```{r}
-mrt
+The ANOVA table of the mixed model indicates that the three-way interaction `task:stimulus:frequency` is significant on which we focus in the following.
+```{r, eval=FALSE}
+m9s
 ```
-
+```{r, echo=FALSE}
+cat(aout_1$output, sep = "\n")
+```
 
 ## Which Data to Plot in the Background
 
 For mixed models, one important decision is the random-effects grouping factor(s) based on which the raw data plotted in the background is aggregated. This decision is necessary, because without such a factor, there would only be one observation for each cell of the design (unless the full design is considered). In the default setting, with `id` missing, the combination of all random-effects grouping factor is used.
 
-```{r fig.width=7, fig.height=3.5}
-afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task") 
+```{r fig.width=7, fig.height=3.5, eval=FALSE}
+afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task") 
+```
+```{r fig.width=7, fig.height=3.5, echo=FALSE}
+message("Aggregating data over: item, id")
+message("NOTE: Results may be misleading due to involvement in interactions")
+ap1
 ```
 
 In the present case, a message informs us that the data is aggregated over both random-effects grouping factors. However, this leads to way too many data points in the background. Let us compare this plot with plots in which we use each of the two random-effects grouping factors in turn.
 
-```{r fig.width=7, fig.height=3.5}
+```{r fig.width=7, fig.height=3.5, eval=FALSE}
 plot_grid( 
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
+  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "id"), 
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
+  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "item"), 
   labels = c("ID", "Item") 
 )
+```
+```{r fig.width=7, fig.height=3.5, echo=FALSE}
+message("NOTE: Results may be misleading due to involvement in interactions")
+message("NOTE: Results may be misleading due to involvement in interactions")
+ap2
 ```
 
 The by-id plot looks usable. However, the by-item plot has still way too many data-points to be informative. Some other ways of displaying the raw data, such as violin plots or box plots, seems preferable for it. 
@@ -358,18 +367,23 @@ The by-id plot looks usable. However, the by-item plot has still way too many da
 
 We compare violin plots or box plots for the by-item data in the next plot. For the box plot, we increase the width of the error bars and use a consistent line type to distinguish them more easily from the graphical elements of the box plot. We could probably further improve these plots by, for example, adding colors or using some of the other customizations discussed above for the ANOVA example.
 
-```{r fig.width=7, fig.height=3.5}
+```{r fig.width=7, fig.height=3.5, eval=FALSE}
 plot_grid( 
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
+  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "item", dodge = 0.8,
             data_geom = geom_violin, 
             data_arg = list(width = 0.5)), 
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
+  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "item", dodge = 0.8,
             data_geom = geom_boxplot, 
             data_arg = list(width = 0.5),
             error_arg = list(size = 1.5, width = 0, linetype = 1))
 )
+```
+```{r fig.width=7, fig.height=3.5, echo=FALSE}
+message("NOTE: Results may be misleading due to involvement in interactions")
+message("NOTE: Results may be misleading due to involvement in interactions")
+ap3
 ```
 
 ## Error Bars for Mixed Models
@@ -378,21 +392,28 @@ The default error bars for `afex_plot()` are based on the statistical model (i.e
 
 This is also easy to see when looking at all pairwise comparisons between means for each of the panels/tasks. This shows that for the `naming` task all comparisons are significant. In visual contrast with that, the two error bars for the `low` versus `high` `word`s are overlapping very strongly. 
 
-```{r}
+```{r, eval=FALSE}
 pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
 ```
-
+```{r, echo=FALSE}
+cat(aout_2$output, sep = "\n")
+```
 An alternative in the present situation would be using within-subjects error bars and aggregating the data by-id (i.e., `error = "within"`), as done in the left panel below. This is somewhat appropriate here as the factors within each panel are all within-subject factors. In contrast, using by-item within-subjects error bars, as done in the right panel below, seems not appropriate as the only within-item factor, `task`, is spread across panels. Unfortunately, it is not immediately clear if these error bars allow one to correctly detect, which means do not differ from each other. 
 
-```{r fig.width=7, fig.height=3.5}
+```{r fig.width=7, fig.height=3.5, eval=FALSE}
 plot_grid( 
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
+  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "id", error = "within"),
-  afex_plot(mrt, x = "stimulus", trace = "frequency", panel = "task", 
+  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "item", dodge = 0.8, error = "within",
             data_geom = geom_violin, 
             data_arg = list(width = 0.5))
 )
+```
+```{r fig.width=7, fig.height=3.5, echo=FALSE}
+message("NOTE: Results may be misleading due to involvement in interactions")
+message("NOTE: Results may be misleading due to involvement in interactions")
+ap4
 ```
 
 In sum, using error bars for performing "inference by eye" - that is, using overlap or non-overlap of error bars to judge which means differ or do not differ from each other - is highly problematic for mixed models, due to the potentially complex dependency structures between the means. It would be best to avoid comparisons between means altogether. Instead, it is perhaps a good idea to plot the model-based error bars (which is the default) and use them for their intended purpose; judging which values of the estimated means are likely given what we have learned from the model (however, note that one cannot interpret a 95% confidence interval as having a 95% probability of containing the population mean).

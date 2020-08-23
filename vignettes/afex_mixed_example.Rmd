@@ -13,7 +13,7 @@ vignette: >
 ---
 
 ```{r set-options, echo=FALSE, cache=FALSE}
-op <- options(width = 110, dplyr.summarise.inform = FALSE)
+op <- options(width = 90, dplyr.summarise.inform = FALSE)
 knitr::opts_chunk$set(dpi=72)
 ```
 

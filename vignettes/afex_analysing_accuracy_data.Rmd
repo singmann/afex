@@ -12,9 +12,9 @@ vignette: >
   %\VignetteEncoding{UTF-8} 
 ---
 ```{r, include = FALSE}
+op <- options(width = 90, dplyr.summarise.inform = FALSE)
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+  collapse = TRUE
 )
 ```
 
@@ -750,4 +750,7 @@ pp_e12_inter_t2_red
 - Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects structure for confirmatory hypothesis testing: Keep it maximal. *Journal of Memory and Language*, 68(3), 255–278. https://doi.org/10.1016/j.jml.2012.11.001
 - Lin, H., Saunders, B., Friese, M., Evans, N. J., & Inzlicht, M. (2020). Strong Effort Manipulations Reduce Response Caution: A Preregistered Reinvention of the Ego-Depletion Paradigm. *Psychological Science*. https://doi.org/10.1177/0956797620904990
 - Singmann, H., & Kellen, D. (2019). An Introduction to Mixed Models for Experimental Psychology. In D. H. Spieler & E. Schumacher (Eds.), *New Methods in Cognitive Psychology* (pp. 4–31). Psychology Press.
- 
+
+```{r, include=FALSE}
+options(op)
+```

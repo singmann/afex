@@ -602,14 +602,14 @@ afex_plot(aw, x = "angle", panel = "noise", error = "within",
 
 ## relabel factor levels via factor_levels (with message)
 afex_plot(aw, x = "noise", trace = "angle", 
-          factor_levels = list(angle = c("0Â°", "4Â°", "8Â°"),
+          factor_levels = list(angle = c("0°", "4°", "8°"),
                                noise = c("Absent", "Present")))
 
 ## factor_levels allows named vectors which enable reordering the factor levels 
 ### and renaming subsets of levels:
 afex_plot(aw, x = "noise", trace = "angle", 
           factor_levels = list(
-            angle = c(X8 = "8Â°", X4 = "4Â°", X0 = "0Â°"),
+            angle = c(X8 = "8°", X4 = "4°", X0 = "0°"),
             noise = c(present = "Present")
           )
 )

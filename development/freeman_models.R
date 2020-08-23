@@ -73,7 +73,7 @@ save(outp_m4s_vc, outp_m5s_vc, outp_m6s_vc,
 #save(m9s, file = "inst/extdata/freeman_final.rda", compress = "xz")
 
 ### afex_plot vignette
-
+library("cowplot")
 emmeans::emm_options(lmer.df = "asymptotic")
 aout_1 <- capture_call(m9s)
 aout_2 <- capture_call(

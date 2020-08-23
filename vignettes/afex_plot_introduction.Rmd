@@ -358,7 +358,12 @@ plot_grid(
 ```{r fig.width=7, fig.height=3.5, echo=FALSE}
 message("NOTE: Results may be misleading due to involvement in interactions")
 message("NOTE: Results may be misleading due to involvement in interactions")
-ap2
+plot_grid( 
+  ap2a, 
+  ap2b, 
+  labels = c("ID", "Item") 
+)
+
 ```
 
 The by-id plot looks usable. However, the by-item plot has still way too many data-points to be informative. Some other ways of displaying the raw data, such as violin plots or box plots, seems preferable for it. 
@@ -383,7 +388,7 @@ plot_grid(
 ```{r fig.width=7, fig.height=3.5, echo=FALSE}
 message("NOTE: Results may be misleading due to involvement in interactions")
 message("NOTE: Results may be misleading due to involvement in interactions")
-ap3
+plot_grid(ap3a, ap3b)
 ```
 
 ## Error Bars for Mixed Models
@@ -413,7 +418,7 @@ plot_grid(
 ```{r fig.width=7, fig.height=3.5, echo=FALSE}
 message("NOTE: Results may be misleading due to involvement in interactions")
 message("NOTE: Results may be misleading due to involvement in interactions")
-ap4
+plot_grid(ap4a, ap4b)
 ```
 
 In sum, using error bars for performing "inference by eye" - that is, using overlap or non-overlap of error bars to judge which means differ or do not differ from each other - is highly problematic for mixed models, due to the potentially complex dependency structures between the means. It would be best to avoid comparisons between means altogether. Instead, it is perhaps a good idea to plot the model-based error bars (which is the default) and use them for their intended purpose; judging which values of the estimated means are likely given what we have learned from the model (however, note that one cannot interpret a 95% confidence interval as having a 95% probability of containing the population mean).

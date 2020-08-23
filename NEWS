@@ -78,7 +78,7 @@
     o   mixed(): check_contrasts = TRUE now works when the formula is not a 
         formula (but e.g., a character string).
         
-    o   Better error message when ANOVA formula does not include an errror term.
+    o   Better error message when ANOVA formula does not include an error term.
     
     o   Should work with both lme4 1.1-22 and later.
 

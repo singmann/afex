@@ -1,5 +1,5 @@
 ## ----set-options, echo=FALSE, cache=FALSE-----------------------------------------------
-options(width = 90)
+op <- options(width = 90)
 knitr::opts_chunk$set(dpi=72)
 
 ## ----message=FALSE, warning=FALSE-------------------------------------------------------
@@ -117,4 +117,7 @@ contrast(m4, c2, adjust = "holm")
 
 ## ---------------------------------------------------------------------------------------
 summary(as.glht(contrast(m4, c2)), test = adjusted("free"))
+
+## ---- include=FALSE-----------------------------------------------------------
+options(op)
 

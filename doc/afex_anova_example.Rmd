@@ -13,7 +13,7 @@ vignette: >
 ---
 
 ```{r set-options, echo=FALSE, cache=FALSE}
-options(width = 90)
+op <- options(width = 90)
 knitr::opts_chunk$set(dpi=72)
 ```
 
@@ -281,4 +281,6 @@ The pattern for the affirmation problems is in line with the expectations: We fi
 * Singmann, H., & Klauer, K. C. (2011). Deductive and inductive conditional inferences: Two modes of reasoning. _Thinking & Reasoning_, 17(3), 247-281. doi: 10.1080/13546783.2011.572718
 * Lenth, R. (2017). _emmeans: Estimated Marginal Means, aka Least-Squares Means_. R package version 0.9.1.   https://CRAN.R-project.org/package=emmeans
 
-
+```{r, include=FALSE}
+options(op)
+```

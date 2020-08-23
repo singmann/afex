@@ -9,7 +9,20 @@ capture_call <- function(call) {
     messages = messages
   )
 }
+
 load("development/freeman_models.rda")
+library("emmeans") # emmeans is needed for follow-up tests 
+library("multcomp") # for advanced control for multiple testing/Type 1 errors.
+library("dplyr") # for working with data frames
+library("tidyr") # for transforming data frames from wide to long and the other way round.
+library("ggplot2") # for plots
+theme_set(theme_bw(base_size = 15) + 
+            theme(legend.position="bottom", 
+                  panel.grid.major.x = element_blank()))
+
+data("fhch2010") # load 
+fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
+str(fhch2010) # structure of the data
 
 ### outputs
 outp_m4s_vc <- capture_call(summary(m4s)$varcor )
@@ -73,7 +86,7 @@ save(outp_m4s_vc, outp_m5s_vc, outp_m6s_vc,
 #save(m9s, file = "inst/extdata/freeman_final.rda", compress = "xz")
 
 ### afex_plot vignette
-
+library("cowplot")
 emmeans::emm_options(lmer.df = "asymptotic")
 aout_1 <- capture_call(m9s)
 aout_2 <- capture_call(
@@ -81,35 +94,28 @@ aout_2 <- capture_call(
 )
 
 ap1 <- afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task") 
-ap2 <- plot_grid( 
-  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
-            id = "id"), 
-  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
-            id = "item"), 
-  labels = c("ID", "Item") 
-)
-ap3 <- plot_grid( 
-  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
+ap2a <- afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
+            id = "id")
+ap2b <- afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
+            id = "item")
+ap3a <- afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "item", dodge = 0.8,
             data_geom = geom_violin, 
-            data_arg = list(width = 0.5)), 
-  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
+            data_arg = list(width = 0.5))
+ap3b <- afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "item", dodge = 0.8,
             data_geom = geom_boxplot, 
             data_arg = list(width = 0.5),
             error_arg = list(size = 1.5, width = 0, linetype = 1))
-)
-ap4 <- plot_grid( 
-  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
-            id = "id", error = "within"),
-  afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
+ap4a <- afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
+            id = "id", error = "within")
+ap4b <- afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "item", dodge = 0.8, error = "within",
             data_geom = geom_violin, 
             data_arg = list(width = 0.5))
-)
 
 save(aout_1, aout_2,
-     ap1, ap2, ap3, ap4,
+     ap1, ap2a, ap2b, ap3a, ap3b, ap4a, ap4b,
      file = "inst/extdata/output_afex_plot_mixed_vignette.rda", 
      compress = "xz")
 

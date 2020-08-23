@@ -1,5 +1,5 @@
 ## ----set-options, echo=FALSE, cache=FALSE-----------------------------------------------
-options(width = 90)
+op <- options(width = 90)
 knitr::opts_chunk$set(dpi=72)
 
 ## ----message=FALSE, warning=FALSE-------------------------------------------------------
@@ -212,7 +212,12 @@ ap1
 ## ----fig.width=7, fig.height=3.5, echo=FALSE--------------------------------------------
 message("NOTE: Results may be misleading due to involvement in interactions")
 message("NOTE: Results may be misleading due to involvement in interactions")
-ap2
+plot_grid( 
+  ap2a, 
+  ap2b, 
+  labels = c("ID", "Item") 
+)
+
 
 ## ----fig.width=7, fig.height=3.5, eval=FALSE--------------------------------------------
 #  plot_grid(
@@ -230,7 +235,7 @@ ap2
 ## ----fig.width=7, fig.height=3.5, echo=FALSE--------------------------------------------
 message("NOTE: Results may be misleading due to involvement in interactions")
 message("NOTE: Results may be misleading due to involvement in interactions")
-ap3
+plot_grid(ap3a, ap3b)
 
 ## ---- eval=FALSE------------------------------------------------------------------------
 #  pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
@@ -251,5 +256,8 @@ cat(aout_2$output, sep = "\n")
 ## ----fig.width=7, fig.height=3.5, echo=FALSE--------------------------------------------
 message("NOTE: Results may be misleading due to involvement in interactions")
 message("NOTE: Results may be misleading due to involvement in interactions")
-ap4
+plot_grid(ap4a, ap4b)
+
+## ---- include=FALSE-----------------------------------------------------------
+options(op)
 

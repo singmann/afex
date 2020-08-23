@@ -168,7 +168,7 @@ For LMMs with \code{method="KR"} or \code{method="S"} the following further
 columns are returned (note: the Kenward-Roger correction does two separate
 things: (1) it computes an effective number for the denominator df; (2) it
 scales the statistic by a calculated amount, see also
-\url{http://stackoverflow.com/a/25612960/289572}):
+\url{https://stackoverflow.com/a/25612960/289572}):
 \enumerate{
   \item \code{F} computed F statistic
   \item \code{ndf} numerator degrees of freedom (number of parameters used
@@ -738,7 +738,7 @@ Baayen, R. H. (2008). \emph{Analyzing linguistic data: a
 
   Bates, D., Kliegl, R., Vasishth, S., & Baayen, H. (2015).
   \emph{Parsimonious Mixed Models}. arXiv:1506.04967 [stat]. Retrieved from
-  \url{http://arxiv.org/abs/1506.04967}
+  \url{https://arxiv.org/abs/1506.04967}
 
   Dalal, D. K., & Zickar, M. J. (2012). Some Common Myths About Centering
   Predictor Variables in Moderated Multiple Regression and Polynomial
@@ -760,7 +760,7 @@ Baayen, R. H. (2008). \emph{Analyzing linguistic data: a
 }
 \seealso{
 \code{\link{aov_ez}} and \code{\link{aov_car}} for convenience
-  functions to analyze experimental deisgns with classical ANOVA or ANCOVA
+  functions to analyze experimental desIgns with classical ANOVA or ANCOVA
   wrapping \code{\link[car]{Anova}}.
 
   see the following for the data sets from Maxwell and Delaney (2004) used
@@ -769,6 +769,6 @@ Baayen, R. H. (2008). \emph{Analyzing linguistic data: a
 }
 \author{
 Henrik Singmann with contributions from
-  \href{http://stackoverflow.com/q/11335923/289572}{Ben Bolker and Joshua
+  \href{https://stackoverflow.com/q/11335923/289572}{Ben Bolker and Joshua
   Wiley}.
 }

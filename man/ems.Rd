@@ -40,9 +40,9 @@ ems(r ~ S*W*T, nested="T/W", random="S")
 
 }
 \seealso{
-A detailed description with explanation of the example can be found \href{http://www.talkstats.com/showthread.php/18603-Share-your-functions-amp-code?p=82050&viewfull=1\#post82050}{elsewhere} (note that the \code{design} argument of the function described at the link behaves slightly different).
+A detailed description with explanation of the example can be found \href{http://www.talkstats.com/threads/share-your-functions-code.18603/page-9#post-82050}{elsewhere} (note that the \code{design} argument of the function described at the link behaves slightly different).
 
-Example applications of this function can be found here: \url{http://stats.stackexchange.com/a/122662/442}.
+Example applications of this function can be found here: \url{https://stats.stackexchange.com/a/122662/442}.
 }
 \author{
 Jake Westfall

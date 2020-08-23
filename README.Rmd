@@ -17,8 +17,8 @@ afex: Analysis of Factorial EXperiments
 
 <!-- badges: start -->
 [![CRAN status](https://www.r-pkg.org/badges/version/afex)](https://CRAN.R-project.org/package=afex)
-[![monthly downloads](http://cranlogs.r-pkg.org/badges/afex)](http://cranlogs.r-pkg.org/badges/afex)
-[![total downloads](http://cranlogs.r-pkg.org/badges/grand-total/afex)](http://cranlogs.r-pkg.org/badges/grand-total/afex)
+[![monthly downloads](https://cranlogs.r-pkg.org:443/badges/afex)](https://cranlogs.r-pkg.org:443/badges/afex)
+[![total downloads](https://cranlogs.r-pkg.org:443/badges/grand-total/afex)](https://cranlogs.r-pkg.org:443/badges/grand-total/afex)
 [![Research software impact](http://depsy.org/api/package/cran/afex/badge.svg)](http://depsy.org/package/r/afex)
 [![Travis-CI Build Status](https://travis-ci.org/singmann/afex.svg?branch=master)](https://travis-ci.org/singmann/afex)
 [![R build status](https://github.com/singmann/afex/workflows/R-CMD-check/badge.svg)](https://github.com/singmann/afex/actions)
@@ -39,7 +39,7 @@ For `afex` support visit: [afex.singmann.science](http://afex.singmann.science/)
 - `afex` is available from CRAN so the current stable version can be installed directly via: 
   `install.packages("afex")`
 
-- To install the latest development version you will need the [`devtools`](https://github.com/hadley/devtools) package: 
+- To install the latest development version you will need the [`devtools`](https://github.com/r-lib/devtools) package: 
   `devtools::install_github("singmann/afex@master")`
 
 

@@ -243,18 +243,18 @@ are the default in many commercial statistical application such as SPSS or
 SAS. Furthermore, statisticians with an applied perspective recommend type 3
 tests (e.g., Maxwell and Delaney, 2004). Consequently, they are the default
 for the ANOVA functions described here. For some more discussion on this
-issue see \href{http://stats.stackexchange.com/q/6208/442}{here}.
+issue see \href{https://stats.stackexchange.com/q/6208/442}{here}.
 
 Note that lower order effects (e.g., main effects) in type 3 ANOVAs are only
 meaningful with
-\href{http://www.ats.ucla.edu/stat/mult_pkg/faq/general/effect.htm}{effects
+\href{https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faqwhat-is-effect-coding/}{effects
 coding}. That is, contrasts should be set to \code{\link{contr.sum}} to
 obtain meaningful results. This is imposed automatically for the functions
 discussed here as long as \code{check_contrasts} is \code{TRUE} (the
 default). I nevertheless recommend to set the contrasts globally to
 \code{contr.sum} via running \code{\link{set_sum_contrasts}}. For a
 discussion of the other (non-recommended) coding schemes see
-\href{http://www.ats.ucla.edu/stat/r/library/contrast_coding.htm}{here}. }
+\href{https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/}{here}. }
 
 \subsection{Follow-Up Contrasts and Post-Hoc Tests}{ The S3 object returned
 per default can be directly passed to \code{emmeans::emmeans} for further
@@ -568,7 +568,7 @@ Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever,
   H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015).
   Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.
   \emph{Psychonomic Bulletin & Review}, 1-8.
-  doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
+  doi:\href{https://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
   
   
   Maxwell, S. E., & Delaney, H. D. (2004). \emph{Designing Experiments and

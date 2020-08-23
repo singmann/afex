@@ -112,7 +112,7 @@ sphericity corrected or uncorrected degrees of freedom can be reported.
 The returned \code{data.frame} is print-ready when adding to a
   document with proper methods. Either directly via \pkg{knitr} or similar
   approaches such as via package \pkg{xtable} (nowadays \pkg{knitr} is
-  probably the best approach, see \href{http://yihui.name/knitr/}{here}).
+  probably the best approach, see \href{https://yihui.org/knitr/}{here}).
   \pkg{xtable} converts a \code{data.frame} into LaTeX code with many
   possible options (e.g., allowing for \code{"longtable"} or
   \code{"sidewaystable"}), see \code{\link[xtable]{xtable}} and
@@ -189,7 +189,7 @@ Bakeman, R. (2005). Recommended effect size statistics for
   Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden
   multiplicity in exploratory multiway ANOVA: Prevalence and remedies.
   \emph{Psychonomic Bulletin & Review}, 1-8.
-  doi:\href{http://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
+  doi:\href{https://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
 
 
   Olejnik, S., & Algina, J. (2003). Generalized Eta and Omega Squared

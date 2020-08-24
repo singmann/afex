@@ -7,8 +7,11 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/afex)](https://CRAN.R-project.org/package=afex)
-<http://cranlogs.r-pkg.org/badges/afex>
-<http://cranlogs.r-pkg.org/badges/grand-total/afex> [![Research software
+[![monthly
+downloads](https://cranlogs.r-pkg.org/badges/last-month/afex)](https://github.com/singmann/afex)
+[![total
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/afex)](https://r-pkg.org/pkg/afex)
+[![Research software
 impact](http://depsy.org/api/package/cran/afex/badge.svg)](http://depsy.org/package/r/afex)
 [![Travis-CI Build
 Status](https://travis-ci.org/singmann/afex.svg?branch=master)](https://travis-ci.org/singmann/afex)
@@ -44,7 +47,7 @@ For `afex` support visit:
     installed directly via: `install.packages("afex")`
 
   - To install the latest development version you will need the
-    [`devtools`](https://github.com/hadley/devtools) package:
+    [`devtools`](https://github.com/r-lib/devtools) package:
     `devtools::install_github("singmann/afex@master")`
 
 ## ANOVA functionality
@@ -235,8 +238,8 @@ here we use the same example data as above, the lexical decision and
 word naming latencies collected by Freeman et al. (2010). To avoid long
 computation times we only consider the two factors `task` and `length`
 (omitting `stimulus` is probably not a fully sensible model). Because
-mixed models easily allow it, we will consider crossed-random effects of
-participants (`id`) and items (`tem`).
+mixed models easily allow it, we will consider crossed-random effects
+for participants (`id`) and items (`tem`).
 
 ``` r
 library("afex")
@@ -257,9 +260,9 @@ str(fhch2010) # structure of the data
 #>  $ correct  : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
 ```
 
-Because the data has plenty of levels of the random-effects grouping
+Because the data has plenty of levels of the random effect grouping
 factors we use the Satterthwaite method. For the random-effects grouping
-factors we begin with the maximal random-effects structure justified by
+factors we begin with the maximal random effect structure justified by
 the design (see Barr, Levy, Scheepers, & Tily, 2013). In this case this
 is by-subject random intercepts and by-subjects random slopes for
 `stimulus` and by-item random intercepts and by-item random slopes for
@@ -278,9 +281,11 @@ m1 <- mixed(log_rt ~ task * length +
 
 Fitting this model produces a critical convergence warning, that the fit
 is singular. This warning usually indicates that the data does not
-provide enough information for the request random effects parameters.
-When seeing this warning it is usually indicated to reduce the
-random-effects structure.
+provide enough information for the request random effect parameters. In
+a real analysis it would therefore be a good idea to iteratively reduce
+the random effect structure until the warning disappears. A good first
+step would be to remove the correlations among random effect terms as
+shown below.
 
 This warning is also shown if we simply print the model object, but not
 if we call the `nice()` method.
@@ -387,9 +392,9 @@ summary(m1)
 #> boundary (singular) fit: see ?isSingular
 ```
 
-### Reducing the Random-Effects Structure
+### Reducing the Random Effect Structure
 
-Because of the singular fit warning, we reduce the random effects
+Because of the singular fit warning, we reduce the random effect
 structure. Usually a good starting point is removing the correlations
 among the random effects parameters. This can be done in `afex::mixed`
 even for factors by combining the double bar notation `||` with
@@ -407,7 +412,7 @@ m2 <- mixed(log_rt ~ task * length +
 ```
 
 However, the singular fit warning remains. We therefore inspect the
-random-effects estimates to see which random-effects parameter is
+random effect estimates to see which random effect parameter is
 estimated to be near to zero.
 
 ``` r
@@ -423,7 +428,7 @@ summary(m2)$varcor
 
 As shown above, one parameter of the by-participant random slope for
 `length` is estimated to be almost zero, `re1.length2`. We therefore
-remove the by-participant random slopes for `length` in the next model
+remove the by-participant random slope for `length` in the next model
 which does not show any convergence warnings.
 
 ``` r

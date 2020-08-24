@@ -12,7 +12,7 @@
 
 <meta name="author" content="Henrik Singmann" />
 
-<meta name="date" content="2020-08-23" />
+<meta name="date" content="2020-08-24" />
 
 <title>ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)</title>
 
@@ -357,7 +357,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">ANOVA and Post-Hoc Contrasts: Reanalysis of Singmann and Klauer (2011)</h1>
 <h4 class="author">Henrik Singmann</h4>
-<h4 class="date">2020-08-23</h4>
+<h4 class="date">2020-08-24</h4>
 
 
 <div id="TOC">
@@ -560,7 +560,7 @@ How valid is the conclusion/How likely is it that the person fell into a swimmin
 <p>Alternatively, the <code>anova</code> method for <code>afex_aov</code> objects returns a <code>data.frame</code> of class <code>anova</code> that can be passed to, for example, <code>xtable</code> for nice formatting:</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a><span class="kw">print</span>(xtable<span class="op">::</span><span class="kw">xtable</span>(<span class="kw">anova</span>(a1), <span class="dt">digits =</span> <span class="kw">c</span>(<span class="kw">rep</span>(<span class="dv">2</span>, <span class="dv">5</span>), <span class="dv">3</span>, <span class="dv">4</span>)), <span class="dt">type =</span> <span class="st">&quot;html&quot;</span>)</span></code></pre></div>
 <!-- html table generated in R 4.0.2 by xtable 1.8-4 package -->
-<!-- Sun Aug 23 18:24:33 2020 -->
+<!-- Mon Aug 24 09:58:49 2020 -->
 <table border="1">
 <tr>
 <th>
@@ -784,12 +784,12 @@ instruction:inference:plausibility
 ## 
 ## Linear Hypotheses:
 ##              Estimate Std. Error t value Pr(&gt;|t|)   
-## MP - MT == 0   10.831      4.331   2.501  0.05890 . 
-## MP - AC == 0   18.100      5.018   3.607  0.00465 **
-## MP - DA == 0    4.556      4.196   1.086  0.31350   
-## MT - AC == 0    7.269      3.984   1.825  0.19406   
-## MT - DA == 0   -6.275      4.703  -1.334  0.31350   
-## AC - DA == 0  -13.544      5.299  -2.556  0.05890 . 
+## MP - MT == 0   10.831      4.331   2.501   0.0592 . 
+## MP - AC == 0   18.100      5.018   3.607   0.0048 **
+## MP - DA == 0    4.556      4.196   1.086   0.3135   
+## MT - AC == 0    7.269      3.984   1.825   0.1941   
+## MT - DA == 0   -6.275      4.703  -1.334   0.3135   
+## AC - DA == 0  -13.544      5.299  -2.556   0.0592 . 
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## (Adjusted p values reported -- free method)</code></pre>
@@ -1066,6 +1066,10 @@ instruction:inference:plausibility
 
 ## Warning in tmp$pfunction(&quot;adjusted&quot;, ...): Completion with error &gt; abseps
 
+## Warning in tmp$pfunction(&quot;adjusted&quot;, ...): Completion with error &gt; abseps
+
+## Warning in tmp$pfunction(&quot;adjusted&quot;, ...): Completion with error &gt; abseps
+
 ## Warning in tmp$pfunction(&quot;adjusted&quot;, ...): Completion with error &gt; abseps</code></pre>
 <pre><code>## $`what = affirmation`
 ## 
@@ -1074,13 +1078,13 @@ instruction:inference:plausibility
 ## Linear Hypotheses:
 ##                Estimate Std. Error t value Pr(&gt;|t|)    
 ## diff_1 == 0       4.175      1.641   2.543   0.0648 .  
-## diff_2 == 0      34.925      7.082   4.931 9.59e-05 ***
-## diff_3 == 0     -23.600      9.830  -2.401   0.0708 .  
+## diff_2 == 0      34.925      7.082   4.931 9.27e-05 ***
+## diff_3 == 0     -23.600      9.830  -2.401   0.0710 .  
 ## diff_4 == 0      -8.100     11.275  -0.718   0.6882    
-## val_ded == 0     35.800      7.096   5.045 5.78e-05 ***
+## val_ded == 0     35.800      7.096   5.045 6.24e-05 ***
 ## val_prob == 0     0.400      7.096   0.056   0.9553    
 ## plau_ded == 0    -3.275      3.065  -1.068   0.6036    
-## plau_prob == 0   30.775      4.992   6.164 2.04e-06 ***
+## plau_prob == 0   30.775      4.992   6.164 1.64e-06 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## (Adjusted p values reported -- free method)
@@ -1092,14 +1096,14 @@ instruction:inference:plausibility
 ## 
 ## Linear Hypotheses:
 ##                Estimate Std. Error t value Pr(&gt;|t|)    
-## diff_1 == 0     -22.425      8.742  -2.565 0.080943 .  
-## diff_2 == 0      -2.700      8.987  -0.300 0.984918    
-## diff_3 == 0      -0.925      7.522  -0.123 0.984918    
-## diff_4 == 0      -3.650      9.358  -0.390 0.984918    
-## val_ded == 0    -11.412      6.651  -1.716 0.379314    
-## val_prob == 0    -1.137      6.651  -0.171 0.984918    
-## plau_ded == 0    -4.562      4.115  -1.109 0.725878    
-## plau_prob == 0   13.363      2.957   4.519 0.000479 ***
+## diff_1 == 0     -22.425      8.742  -2.565 0.080871 .  
+## diff_2 == 0      -2.700      8.987  -0.300 0.984916    
+## diff_3 == 0      -0.925      7.522  -0.123 0.984916    
+## diff_4 == 0      -3.650      9.358  -0.390 0.984916    
+## val_ded == 0    -11.412      6.651  -1.716 0.379475    
+## val_prob == 0    -1.137      6.651  -0.171 0.984916    
+## plau_ded == 0    -4.562      4.115  -1.109 0.725909    
+## plau_prob == 0   13.363      2.957   4.519 0.000388 ***
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## (Adjusted p values reported -- free method)</code></pre>

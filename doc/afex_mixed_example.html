@@ -12,7 +12,7 @@
 
 <meta name="author" content="Henrik Singmann" />
 
-<meta name="date" content="2020-08-23" />
+<meta name="date" content="2020-08-24" />
 
 <title>Mixed Model Reanalysis of RT data</title>
 
@@ -357,7 +357,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <h1 class="title toc-ignore">Mixed Model Reanalysis of RT data</h1>
 <h4 class="author">Henrik Singmann</h4>
-<h4 class="date">2020-08-23</h4>
+<h4 class="date">2020-08-24</h4>
 
 
 <div id="TOC">
@@ -389,7 +389,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="data-and-r-preparation" class="section level2">
 <h2>Data and R Preparation</h2>
-<p>We start with loading some packages we will need throughout this example. For data manipulation we will be using the <code>dplyr</code> and <code>tidyr</code> packages from the <a href="http://tidyverse.org/"><code>tidyverse</code></a>. A thorough introduction to these packages is beyond this example, but well worth it, and can be found in <a href="http://r4ds.had.co.nz/">‘R for Data Science’</a> by Wickham and Grolemund. For plotting we will be using <code>ggplot2</code>, also part of the <code>tidyverse</code>.</p>
+<p>We start with loading some packages we will need throughout this example. For data manipulation we will be using the <code>dplyr</code> and <code>tidyr</code> packages from the <a href="https://www.tidyverse.org/"><code>tidyverse</code></a>. A thorough introduction to these packages is beyond this example, but well worth it, and can be found in <a href="https://r4ds.had.co.nz/">‘R for Data Science’</a> by Wickham and Grolemund. For plotting we will be using <code>ggplot2</code>, also part of the <code>tidyverse</code>.</p>
 <p>After loading the packages, we will load the data (which comes with <code>afex</code>), remove the errors, and take a look at the variables in the data.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(<span class="st">&quot;afex&quot;</span>) <span class="co"># needed for mixed() and attaches lme4 automatically.</span></span>
 <span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(<span class="st">&quot;emmeans&quot;</span>) <span class="co"># emmeans is needed for follow-up tests </span></span>

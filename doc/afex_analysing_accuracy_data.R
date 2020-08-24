@@ -262,11 +262,11 @@ pp2a_inter_v1
 #  outp_e12_mixed1_t2_red <- capture_call(print(e12_mixed1_t2_red))
 #  
 #  emm_e12_inter_out <- capture_call(print(emmeans(e12_mixed1,
-#                                      c("condition", "congruency"),
+#                                      c("congruency", "condition"),
 #                                      type = "response")))
 #  
 #  emm_e12_t2_inter_out <- capture_call(print(emmeans(e12_mixed1_t2,
-#                                      c("condition", "congruency"),
+#                                      c("congruency", "condition"),
 #                                      type = "response")))
 #  
 #  emm_e12_t2_red_inter_out <- capture_call(print(emmeans(e12_mixed1_t2_red,
@@ -282,10 +282,8 @@ pp2a_inter_v1
 #    emmeans(e12_mixed1_t2, "congruency",
 #                                  by = "condition", type = "response"))))
 #  
-#  emm_e12_t2_pairs_p_out <- capture_call(print(pairs(
-#    emmeans(e12_mixed1_t2, "congruency",
-#                                  by = "condition", type = "response",
-#                                  weights = "proportional"))))
+#  emm_e12_t2_pairs_p_out <- capture_call(print(pairs(emmeans(e12_mixed1_t2, "congruency", by = "condition", type = "response",
+#          submodel = "minimal"))))
 #  
 #  pp_e12_inter_t3 <- afex_plot(e12_mixed1, "condition", "congruency",
 #                               data_geom = geom_violin)
@@ -394,18 +392,18 @@ message("NOTE: Results may be misleading due to involvement in interactions")
 pp_e12_inter_t2
 
 ## ---- eval=FALSE------------------------------------------------------------------------
-#  emmeans(e12_mixed1, c("condition", "congruency"), type = "response")
+#  emmeans(e12_mixed1, c("congruency", "condition"), type = "response")
 
 ## ---- echo=FALSE------------------------------------------------------------------------
 message("NOTE: Results may be misleading due to involvement in interactions")
-cat(emm_2a_cond_out$output, sep = "\n")
+cat(emm_e12_inter_out$output, sep = "\n")
 
 ## ---- eval=FALSE------------------------------------------------------------------------
-#  emmeans(e12_mixed1_t2, c("condition", "congruency"), type = "response")
+#  emmeans(e12_mixed1_t2, c("congruency", "condition"), type = "response")
 
 ## ---- echo=FALSE------------------------------------------------------------------------
 message("NOTE: Results may be misleading due to involvement in interactions")
-cat(emm_2a_cond_out$output, sep = "\n")
+cat(emm_e12_t2_inter_out$output, sep = "\n")
 
 ## ---- eval = FALSE----------------------------------------------------------------------
 #  e12_mixed1_t2_red <- mixed(
@@ -452,7 +450,7 @@ cat(emm_e12_t2_pairs_out$output, sep = "\n")
 
 ## ---- eval=FALSE------------------------------------------------------------------------
 #  emmeans(e12_mixed1_t2, "congruency", by = "condition", type = "response",
-#          weights = "proportional") %>%
+#          submodel = "minimal") %>%
 #    pairs()
 
 ## ---- echo=FALSE------------------------------------------------------------------------

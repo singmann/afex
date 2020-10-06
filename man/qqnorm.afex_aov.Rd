@@ -18,7 +18,7 @@
 
 \item{type}{(ignored if model has only between subject effects.) Type of 
 error to plot (can be abbreviated): \describe{
-  \item{\code{"marginal"}} {Plot the margianl residuals.}  
+  \item{\code{"marginal"}}{Plot the margianl residuals.}  
   \item{\code{"univariate"}}{Plot the residuals for each error term used in the ANOVA table.}  
   \item{\code{"multivariate"}}{Plot the residuals for each cell in the within-subjects effects.}  
 }}

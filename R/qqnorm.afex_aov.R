@@ -7,15 +7,12 @@
 #' 
 #' @param y \code{afex_aov} object.
 #' @param type (ignored if model has only between subject effects.) Type of 
-#'   error to plot (can be abbreviated):
-#'   \describe{
-#'     \item{\code{"marginal}}{Plot the margianl residuals.}
-#'     \item{\code{"univariate}}{Plot the residuals for each error term used in
-#'     the ANOVA table.}
-#'     \item{\code{"multivariate"}}{Plot the residuals for each cell in the
-#'     within-subjects effects.}
+#'   error to plot (can be abbreviated): \describe{
+#'     \item{\code{"marginal"}} {Plot the margianl residuals.}  
+#'     \item{\code{"univariate"}}{Plot the residuals for each error term used in the ANOVA table.}  
+#'     \item{\code{"multivariate"}}{Plot the residuals for each cell in the within-subjects effects.}  
 #'   }
-#' @param qqbands Should 95% confidence bands be plotted? (requires
+#' @param qqbands Should 95\% confidence bands be plotted? (requires
 #'   \code{qqplotr}).
 #' @param detrend Should the plot objects be detrended? This may help reducing
 #'   visual bias. (requires \code{qqplotr}).
@@ -25,7 +22,7 @@
 #' 
 #' @author Mattan S. Ben-Shachar
 #' 
-#' @examples examples/examples.qqnorm.afex_aov.R
+#' @example examples/examples.qqnorm.afex_aov.R
 #' 
 #' @export
 #' @importFrom stats na.omit
@@ -79,14 +76,17 @@ qqnorm.afex_aov <- function(y,
   
   
   ## Plot
-  if ((detrend || qqbands) && requireNamespace("qqplotr")) {
-    qq_stuff <- list(if (qqbands) qqplotr::stat_qq_band(detrend = detrend) else NULL,
-                     qqplotr::stat_qq_line(detrend = detrend),
-                     qqplotr::stat_qq_point(detrend = detrend))
-  } else {
-    message("'qqbands' and 'detrend' require 'qqplotr'.")
-    qq_stuff <- list(ggplot2::stat_qq(),
-                     ggplot2::stat_qq_line())
+  qq_stuff <- list(ggplot2::stat_qq(),
+                   ggplot2::stat_qq_line())
+  
+  if (qqbands || detrend) {
+    if (requireNamespace("qqplotr")) {
+      qq_stuff <- list(if (qqbands) qqplotr::stat_qq_band(detrend = detrend) else NULL,
+                       qqplotr::stat_qq_line(detrend = detrend),
+                       qqplotr::stat_qq_point(detrend = detrend))  
+    } else {
+      message("'qqbands' and 'detrend' require 'qqplotr'.")
+    }
   }
   
   ggplot2::ggplot(e, ggplot2::aes(sample = .data$.residuals)) +

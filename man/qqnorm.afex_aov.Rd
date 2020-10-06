@@ -17,16 +17,13 @@
 \item{y}{\code{afex_aov} object.}
 
 \item{type}{(ignored if model has only between subject effects.) Type of 
-error to plot (can be abbreviated):
-\describe{
-  \item{\code{"marginal}}{Plot the margianl residuals.}
-  \item{\code{"univariate}}{Plot the residuals for each error term used in
-  the ANOVA table.}
-  \item{\code{"multivariate"}}{Plot the residuals for each cell in the
-  within-subjects effects.}
+error to plot (can be abbreviated): \describe{
+  \item{\code{"marginal"}} {Plot the margianl residuals.}  
+  \item{\code{"univariate"}}{Plot the residuals for each error term used in the ANOVA table.}  
+  \item{\code{"multivariate"}}{Plot the residuals for each cell in the within-subjects effects.}  
 }}
 
-\item{qqbands}{Should 95% confidence bands be plotted? (requires
+\item{qqbands}{Should 95\% confidence bands be plotted? (requires
 \code{qqplotr}).}
 
 \item{detrend}{Should the plot objects be detrended? This may help reducing
@@ -44,8 +41,19 @@ be shown for each error term in the ANOVA table, or for each within-subject
 cell (in the multivariate model).
 }
 \examples{
-examples/examples.qqnorm.afex_aov.R
 
+data(obk.long, package = "afex")
+
+
+m1 <- aov_car(value ~ treatment * gender + Error(id / (phase * hour)),
+              data = obk.long,
+              observed = "gender")
+
+qqnorm(m1, type = "marginal")
+qqnorm(m1, type = "univariate")
+qqnorm(m1, type = "multivariate")
+
+if (require(qqplotr)) qqnorm(m1, type = "univariate", detrend = TRUE)
 }
 \author{
 Mattan S. Ben-Shachar

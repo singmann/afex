@@ -22,15 +22,15 @@ test_that("glmmTMB object", {
   
   p1o <- afex_plot(tmb, "spp")
   p1n <- afex_plot(tmb2, "spp")
-  expect_equivalent(p1o, p1n)
+  expect_equivalent(p1o, p1n, check.environment = FALSE)
   
   p2o <- afex_plot(tmb, "spp", data_geom = geom_violin)
   p2n <- afex_plot(tmb2, "spp", data_geom = geom_violin)
-  expect_equivalent(p2o, p2n)
+  expect_equivalent(p2o, p2n, check.environment = FALSE)
   
   p3o <- afex_plot(tmb, "spp", id = "site", data = Salamanders)
   p3n <- afex_plot(tmb2, "spp", id = "site", data = Salamanders)
-  expect_equivalent(p3o, p3n)
+  expect_equivalent(p3o, p3n, check.environment = FALSE)
   
 })
 

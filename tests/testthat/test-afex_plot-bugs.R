@@ -82,5 +82,5 @@ test_that("binomial models plot data correctly with factor DVs", {
   
   
   p2 <- afex_plot(fitLong2, "dose")
-  expect_equivalent(p1, p2)
+  expect_equivalent(p1, p2, check.environment=FALSE)
 })

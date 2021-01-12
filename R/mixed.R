@@ -351,19 +351,19 @@
 #'
 #'   Baayen, R. H., Davidson, D. J., & Bates, D. M. (2008). Mixed-effects
 #'   modeling with crossed random effects for subjects and items. \emph{Journal
-#'   of Memory and Language}, 59(4), 390-412. doi:10.1016/j.jml.2007.12.005
+#'   of Memory and Language}, 59(4), 390-412. \doi{10.1016/j.jml.2007.12.005}
 #'
 #'   Baayen, R. H., & Milin, P. (2010). Analyzing Reaction Times.
 #'   \emph{International Journal of Psychological Research}, 3(2), 12-28.
 #'
 #'   Barr, D. J. (2013). Random effects structure for testing interactions in
 #'   linear mixed-effects models. \emph{Frontiers in Quantitative Psychology and
-#'   Measurement}, 328. doi:10.3389/fpsyg.2013.00328
+#'   Measurement}, 328. \doi{10.3389/fpsyg.2013.00328}
 #'
 #'   Barr, D. J., Levy, R., Scheepers, C., & Tily, H. J. (2013). Random effects
 #'   structure for confirmatory hypothesis testing: Keep it maximal.
 #'   \emph{Journal of Memory and Language}, 68(3), 255-278.
-#'   doi:10.1016/j.jml.2012.11.001
+#'   \doi{10.1016/j.jml.2012.11.001}
 #'
 #'   Bates, D., Kliegl, R., Vasishth, S., & Baayen, H. (2015).
 #'   \emph{Parsimonious Mixed Models}. arXiv:1506.04967 [stat]. Retrieved from
@@ -372,16 +372,16 @@
 #'   Dalal, D. K., & Zickar, M. J. (2012). Some Common Myths About Centering
 #'   Predictor Variables in Moderated Multiple Regression and Polynomial
 #'   Regression. \emph{Organizational Research Methods}, 15(3), 339-362.
-#'   doi:10.1177/1094428111430540
+#'   \doi{10.1177/1094428111430540}
 #'
 #'   Judd, C. M., Westfall, J., & Kenny, D. A. (2012). Treating stimuli as a
 #'   random factor in social psychology: A new and comprehensive solution to a
 #'   pervasive but largely ignored problem. \emph{Journal of Personality and
-#'   Social Psychology}, 103(1), 54-69. doi:10.1037/a0028347
+#'   Social Psychology}, 103(1), 54-69. \doi{10.1037/a0028347}
 #'
 #'   Luke, S. (2017). Evaluating significance in linear mixed-effects models in
 #'   R. \emph{Behavior Research Methods}.
-#'   \url{https://doi.org/10.3758/s13428-016-0809-y}
+#'   \doi{10.3758/s13428-016-0809-y}
 #'
 #'   Maxwell, S. E., & Delaney, H. D. (2004). \emph{Designing experiments and
 #'   analyzing data: a model-comparisons perspective.} Mahwah, N.J.: Lawrence

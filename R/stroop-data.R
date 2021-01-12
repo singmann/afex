@@ -1,10 +1,27 @@
 #' Stroop data from Lin et al. (2020, Psych. Science)
 #'
 #' 
-#' Lin, Saunders, Friese, Evans, and Inzlicht (2020) investigated ego depletion. An initial high-demand task was followed by a Stroop task. The data of the Stroop task from all 4 of their studies is included here. 
-#' 
-#' Their abstract: People feel tired or depleted after exerting mental effort. But even preregistered studies often fail to find effects of exerting effort on behavioral performance in the laboratory or elucidate the underlying psychology. We tested a new paradigm in four preregistered within-subjects studies (N = 686). An initial high-demand task reliably elicited very strong effort phenomenology compared with a low-demand task. Afterward, participants completed a Stroop task. We used drift-diffusion modeling to obtain the boundary (response caution) and drift-rate (information-processing speed) parameters. Bayesian analyses indicated that the high-demand manipulation reduced boundary but not drift rate. Increased effort sensations further predicted reduced boundary. However, our demand manipulation did not affect subsequent inhibition, as assessed with traditional Stroop behavioral measures and additional diffusion-model analyses for conflict tasks. Thus, effort exertion reduced response caution rather than inhibitory control, suggesting that after exerting effort, people disengage and become uninterested in exerting further effort.
+#' Lin, Saunders, Friese, Evans, and Inzlicht (2020) investigated ego depletion.
+#' An initial high-demand task was followed by a Stroop task. The data of the
+#' Stroop task from all 4 of their studies is included here.
 #'
+#' Their abstract: People feel tired or depleted after exerting mental effort.
+#' But even preregistered studies often fail to find effects of exerting effort
+#' on behavioral performance in the laboratory or elucidate the underlying
+#' psychology. We tested a new paradigm in four preregistered within-subjects
+#' studies (N = 686). An initial high-demand task reliably elicited very strong
+#' effort phenomenology compared with a low-demand task. Afterward, participants
+#' completed a Stroop task. We used drift-diffusion modeling to obtain the
+#' boundary (response caution) and drift-rate (information-processing speed)
+#' parameters. Bayesian analyses indicated that the high-demand manipulation
+#' reduced boundary but not drift rate. Increased effort sensations further
+#' predicted reduced boundary. However, our demand manipulation did not affect
+#' subsequent inhibition, as assessed with traditional Stroop behavioral
+#' measures and additional diffusion-model analyses for conflict tasks. Thus,
+#' effort exertion reduced response caution rather than inhibitory control,
+#' suggesting that after exerting effort, people disengage and become
+#' uninterested in exerting further effort.
+#' 
 #'
 #'
 #' @docType data
@@ -21,7 +38,10 @@
 #'   \item{acc}{accuracy (0: error, 1: correct)}
 #'   \item{rt}{reaction time (seconds)}
 #' }
-#' @source Lin, H., Saunders, B., Friese, M., Evans, N. J., & Inzlicht, M. (2020). Strong Effort Manipulations Reduce Response Caution: A Preregistered Reinvention of the Ego-Depletion Paradigm. *Psychological Science*, \url{https://doi.org/10.1177/0956797620904990}
+#' @source Lin, H., Saunders, B., Friese, M., Evans, N. J., & Inzlicht, M.
+#'   (2020). Strong Effort Manipulations Reduce Response Caution: A
+#'   Preregistered Reinvention of the Ego-Depletion Paradigm. *Psychological
+#'   Science*, \doi{10.1177/0956797620904990}
 #'
 #' @encoding UTF-8
 #'

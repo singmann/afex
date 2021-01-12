@@ -119,7 +119,7 @@ theme_set(theme_bw(base_size = 15) +
 
 ## Saving Plots and Plot Sizes  
 
-To get our plot into a publication, we need to export it as a graphics file. I would generally advise against exporting plots via the `RStudio` interface as this is not reproducible. Instead I would use some of the following functions which save the document in the current working directory. Note that following [Elsevier guidelines](https://www.elsevier.com/authors/author-schemas/artwork-and-media-instructions/artwork-sizing), a single column figure should have a width of 9 cm (~ 3 inch) and a two column figure should have a width of 19 cm (~ 7.5 inch).
+To get our plot into a publication, we need to export it as a graphics file. I would generally advise against exporting plots via the `RStudio` interface as this is not reproducible. Instead I would use some of the following functions which save the document in the current working directory. Note that following [Elsevier guidelines](https://www.elsevier.com/authors/policies-and-guidelines/artwork-and-media-instructions/artwork-sizing), a single column figure should have a width of 9 cm (~ 3 inch) and a two column figure should have a width of 19 cm (~ 7.5 inch).
 
 For Word or similar documents I would export the plot as a `png` (never `jpg`):
 ```{r, eval=FALSE}

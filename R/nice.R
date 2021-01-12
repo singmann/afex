@@ -90,18 +90,18 @@
 #'
 #' @references Bakeman, R. (2005). Recommended effect size statistics for
 #'   repeated measures designs. \emph{Behavior Research Methods}, 37(3),
-#'   379-384. doi:10.3758/BF03192707
+#'   379-384. \doi{10.3758/BF03192707}
 #'
 #'   Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever, H.,
 #'   Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015). Hidden
 #'   multiplicity in exploratory multiway ANOVA: Prevalence and remedies.
 #'   \emph{Psychonomic Bulletin & Review}, 1-8.
-#'   doi:\href{https://doi.org/10.3758/s13423-015-0913-5}{10.3758/s13423-015-0913-5}
-#'
+#'   \doi{10.3758/s13423-015-0913-5}
 #'
 #'   Olejnik, S., & Algina, J. (2003). Generalized Eta and Omega Squared
 #'   Statistics: Measures of Effect Size for Some Common Research Designs.
-#'   \emph{Psychological Methods}, 8(4), 434-447. doi:10.1037/1082-989X.8.4.434
+#'   \emph{Psychological Methods}, 8(4), 434-447.
+#'   \doi{10.1037/1082-989X.8.4.434}
 #'   
 #' @name nice
 #' @importFrom stats anova

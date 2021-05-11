@@ -10,7 +10,10 @@
     o   ANOVA objects do not by default contain the aov slot any more
     
     o   emmeans() for ANOVA now uses multivariate model as default
-
+    
+    o   New data set:
+        -  Urry et al. (2021, Psych Science): laptop
+        
 
                     *************************
                     ** afex VERSION 0.28-x **

@@ -49,6 +49,9 @@ for (f in list.files("man/", full.names = TRUE)) {
   tools::showNonASCIIfile(f)
 }
 
+### add new data sets:
+usethis::use_data(laptop)
+
 ## resave extdata:
 rda_files <- list.files("inst/extdata/", full.names = TRUE)
 for (i in rda_files) tools::resaveRdaFiles(i)

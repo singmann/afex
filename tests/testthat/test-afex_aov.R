@@ -74,7 +74,8 @@ test_that("within plus covariate produces afex_aov objects without error", {
 test_that("afex_aov object contains the right things", {
   data(obk.long, package = "afex")
   out1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
-                  data = obk.long, observed = "gender", return = "afex_aov")
+                  data = obk.long, observed = "gender", return = "afex_aov", 
+                  include_aov = TRUE)
 
   expect_that(out1[["anova_table"]], is_a(c("anova", "data.frame")))  
   expect_that(out1[["aov"]], is_a(c("aovlist", "listof")))  
@@ -86,6 +87,9 @@ test_that("afex_aov object contains the right things", {
 
 test_that("afex_aov objects works without aov object", {
   data(obk.long, package = "afex")
+  aop <- afex_options()
+  afex_options(emmeans_model = "univariate")
+  afex_options(include_aov = TRUE)
   
   a1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
         data = obk.long, observed = "gender", include_aov = FALSE)
@@ -106,7 +110,6 @@ test_that("afex_aov objects works without aov object", {
   expect_identical(as.data.frame(summary(em1))$df[1], 
                    as.data.frame(summary(em2))$df[2])
   
-  op <- afex_options()
   ad <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
         data = obk.long, observed = "gender")
   afex_options(include_aov = FALSE)
@@ -117,7 +120,7 @@ test_that("afex_aov objects works without aov object", {
   em3 <- emmeans::emmeans(ad, c("phase", "hour"))
   expect_message(em4 <- emmeans::emmeans(a1, c("phase", "hour")), "multivariate")
   expect_false(any(as.data.frame(summary(em3))$df == as.data.frame(summary(em4))$df))
-  afex_options(op)
+  afex_options(aop) # reset options
 })
 
 test_that("better error message in case of all data having NAs", {

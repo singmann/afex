@@ -1,4 +1,18 @@
                     *************************
+                    ** afex VERSION 1.0-x **
+                    *************************
+                    
+                    Changes in afex Version 1.0-x
+                    Released July 2021
+                    
+    Significant User Visible Changes and New Features
+    
+    o   ANOVA objects do not by default contain the aov slot any more
+    
+    o   emmeans() for ANOVA now uses multivariate model as default
+
+
+                    *************************
                     ** afex VERSION 0.28-x **
                     *************************
                     

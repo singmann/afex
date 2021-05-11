@@ -5,7 +5,8 @@ test_that("ANOVA functions work with emmeans, univariate & multivariate", {
   skip_if_not_installed("emmeans")
   data(sk2011.1)
   a1 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
-               within = c("inference", "plausibility"), fun_aggregate = mean)
+               within = c("inference", "plausibility"), fun_aggregate = mean, 
+               include_aov = TRUE)
   em1 <- emmeans::emmeans(a1, ~ inference, model = "univariate")
   em2 <- emmeans::emmeans(a1, ~ inference, model = "multivariate")
   expect_is(em1, "emmGrid")
@@ -27,7 +28,8 @@ test_that("ANOVA functions work with emmeans, univariate & multivariate", {
     as.data.frame(summary(em1))$SE)))
   
   a1b <- aov_ez("id", "response", sk2011.1, between = "instruction", 
-               within = c("plausibility", "inference"), fun_aggregate = mean)
+               within = c("plausibility", "inference"), fun_aggregate = mean, 
+               include_aov = TRUE)
   em1 <- emmeans::emmeans(a1b, ~ inference, model = "univariate")
   em2 <- emmeans::emmeans(a1b, ~ inference, model = "multivariate")
   expect_is(em1, "emmGrid")
@@ -39,7 +41,8 @@ test_that("ANOVA functions work with emmeans, univariate & multivariate", {
     as.data.frame(summary(em1))$SE)))
   
   a2 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
-               within = c("inference"), fun_aggregate = mean)
+               within = c("inference"), fun_aggregate = mean, 
+               include_aov = TRUE)
   em1 <- emmeans::emmeans(a2, ~ inference, model = "univariate")
   em2 <- emmeans::emmeans(a2, ~ inference, model = "multivariate")
   expect_is(em1, "emmGrid")
@@ -52,7 +55,7 @@ test_that("ANOVA functions work with emmeans, univariate & multivariate", {
   
   
   a3 <- aov_ez("id", "response", sk2011.1, within = c("inference"), 
-               fun_aggregate = mean)
+               fun_aggregate = mean, include_aov = TRUE)
   em1 <- emmeans::emmeans(a3, ~ inference, model = "univariate")
   em2 <- emmeans::emmeans(a3, ~ inference, model = "multivariate")
   expect_is(em1, "emmGrid")
@@ -64,7 +67,7 @@ test_that("ANOVA functions work with emmeans, univariate & multivariate", {
     as.data.frame(summary(em1))$SE)))
   
   a4 <- aov_ez("id", "response", sk2011.1, between = "instruction", 
-               fun_aggregate = mean)
+               fun_aggregate = mean, include_aov = TRUE)
   em1 <- emmeans::emmeans(a4, ~ instruction, model = "univariate")
   em2 <- emmeans::emmeans(a4, ~ instruction, model = "multivariate")
   expect_is(em1, "emmGrid")
@@ -78,7 +81,8 @@ test_that("ANOVA functions work with emmeans, univariate & multivariate", {
   #### 
   data("sk2011.2")
   ab1 <- aov_ez("id", "response", sk2011.2, between = "instruction", 
-               within = c("what", "validity", "type"), fun_aggregate = mean)
+               within = c("what", "validity", "type"), fun_aggregate = mean, 
+               include_aov = TRUE)
   em1 <- emmeans::emmeans(ab1, ~ what*validity*type, model = "univariate")
   em2 <- emmeans::emmeans(ab1, ~ what*validity*type, model = "multivariate")
   expect_is(em1, "emmGrid")
@@ -127,7 +131,8 @@ test_that("ANCOVA with emmeans is correct for univariate & multivariate", {
   
   a2 <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
                covariate = "age", fun_aggregate = mean,
-               observed = c("gender", "age"), factorize = FALSE)
+               observed = c("gender", "age"), factorize = FALSE, 
+               include_aov = TRUE)
   
   em1 <- emmeans::emmeans(a2, ~ treatment, model = "univariate")
   em2 <- emmeans::emmeans(a2, ~ treatment, model = "multivariate")

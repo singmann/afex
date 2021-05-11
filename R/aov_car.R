@@ -558,11 +558,11 @@ aov_car <- function(formula,
              dots, 
              value.var = dv))
   colnames(dat.ret)[length(colnames(dat.ret))] <- dv
-  if (!isTRUE(
+  if (suppressWarnings(!isTRUE(
     all.equal(target = data[,c(id, between, within, dv)], 
               current = dat.ret[,c(id, between, within, dv)], 
               check.attributes = FALSE)
-  )) {
+  ))) {
     data_changed <- TRUE
   } else {
     data_changed <- FALSE

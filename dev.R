@@ -9,6 +9,11 @@ devtools::build(args = "--compact-vignettes='both'",
 document()
 check()
 
+## works better on windows:
+devtools::test(filter = "plot", invert = TRUE)
+devtools::test(filter = "plot")
+
+
 test_package("afex", filter = "aov")
 test_package("afex", filter = "mixed")
 test_package("afex", filter = "mixed-structure")

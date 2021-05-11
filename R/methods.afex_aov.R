@@ -244,7 +244,7 @@ recover_data.afex_aov = function(object, ...,
                                  model = afex_options("emmeans_model")) {
   model <- match.arg(model, c("univariate", "multivariate"))
   if (model == "univariate" & is.null(object$aov)) {
-    message("Substituting multivariate/lm model, as aov object missing.")
+    message("aov object missing, substituting multivariate/lm model.\nto get univariate tests, refit ANOVA with include_aov = TRUE")
     model <- "multivariate"
   }
   if (model == "univariate") {

@@ -241,8 +241,11 @@ test_that("aov_ez works with multiple covariates", {
   msq2$TOD <- msq2$TOD-mean(msq2$TOD)
   msq2$MSQ_Time <- msq2$MSQ_Time-mean(msq2$MSQ_Time)
   msq2$condition <- msq2$condition-mean(msq2$condition) # that is somewhat stupid
-  expect_is(aov_ez(data=msq2, dv="Extraversion", id = "ID", between = "condition", 
-    covariate=c("TOD", "MSQ_Time"), factorize=FALSE, fun_aggregate = mean), "afex_aov")
+  mulcov <- aov_ez(data=msq2, dv="Extraversion", id = "ID", 
+                   between = "condition", 
+                   covariate=c("TOD", "MSQ_Time"), 
+                   factorize=FALSE, fun_aggregate = mean)
+  expect_is(mulcov, "afex_aov")
 })
 
 test_that("aov_car works with p.val adjustment == NA for HF as well as GG", {

@@ -20,7 +20,7 @@ addons:
       - libgdal-dev
       - libproj-dev
 
-r_packages: ## should be r_binary_packages
+r_binary_packages: ## should be r_binary_packages
  - ez
  - shiny
  - rstanarm

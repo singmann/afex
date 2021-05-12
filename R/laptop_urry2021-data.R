@@ -27,8 +27,8 @@
 #'
 #' @docType data
 #' @keywords dataset
-#' @name laptop
-#' @usage laptop
+#' @name laptop_urry2021 
+#' @usage laptop_urry2021 
 #' @format A data frame with 142 rows and 4 variables:
 #' \describe{
 #'   \item{pid}{participant id, factor with 142 levels}
@@ -48,7 +48,7 @@
 #'
 #' @encoding UTF-8
 #'
-"laptop"
+"laptop_urry2021"
 
 
 

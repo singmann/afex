@@ -50,7 +50,7 @@ for (f in list.files("man/", full.names = TRUE)) {
 }
 
 ### add new data sets:
-usethis::use_data(laptop)
+usethis::use_data(laptop_urry2021)
 
 ## resave extdata:
 rda_files <- list.files("inst/extdata/", full.names = TRUE)

@@ -27,6 +27,7 @@ What follows is a brief review of these assumptions and their tests.
 
 ```{r, message=FALSE}
 library(afex)
+library(performance) # for assumption checks
 ```
 
 
@@ -42,7 +43,7 @@ data(obk.long, package = "afex")
 o1 <- aov_ez("id", "value", obk.long, 
              between = c("treatment", "gender"))
 
-test_levene(o1)
+check_homogeneity(o1)
 ```
 These results indicate that homogeneity is not significantly violated.
 
@@ -63,12 +64,12 @@ a1 <- aov_ez("id", "log_rt", fhch2010,
              within = c("density", "frequency", "length", "stimulus"))
 ```
 
-We can use `test_sphericity()` to run Mauchly's test of sphericity:
+We can use `check_sphericity()` to run Mauchly's test of sphericity:
 
 ```{r}
-test_sphericity(a1)
+check_sphericity(a1)
 ```
-We can see that both the error terms of the `length:stimulus` and `task:length:stimulus` interactions significantly violate the assumption of sphericity with *W* = 0.831, *p* = 0.021. Note that as `task` is a between-subjects factor, both these interaction terms share the same error term! (This is why other *w*-statistics and *p*-values also seem to be repeating in pairs of interactions.)
+We can see that both the error terms of the `length:stimulus` and `task:length:stimulus` interactions significantly violate the assumption of sphericity at *p* = 0.021. Note that as `task` is a between-subjects factor, both these interaction terms share the same error term!
 
 ### What to do when assumption is violated?
 
@@ -97,48 +98,36 @@ stroop1 <- na.omit(stroop1)
 s1 <- aov_ez("pno", "rt", stroop1,
              within = c("condition", "congruency"))
 
-qqnorm(s1, qqbands = FALSE)
-```
-If the residuals were perfectly normally distributed, they quantile-quantile points would fall on the diagonal line. But nothing is perfect, so how much of a deviation is too much of a deviation? We can set `qqbands = TRUE` to get 95% confidence bands around the qq-line, to help us decide! (This is also the default behavior if `qqplotr` is installed.)
+is_norm <- check_normality(s1)
 
-```{r}
-qqnorm(s1, qqbands = TRUE)
+plot(is_norm)
+
+plot(is_norm, type = "qq")
 ```
+If the residuals were normally distributed, we would see them falling close to the diagonal line, inside the 95% confidence bands around the qq-line.
+
 We can further de-trend the plot, and show not the expected quantile, but the deviation from the expected quantile, which may help reducing visual bias.
 
 ```{r}
-qqnorm(s1, qqbands = TRUE, detrend = TRUE)
+plot(is_norm, type = "qq", detrend = TRUE)
 ```
 
 Wow! The deviation from normalicy is now visually much more pronounced!
-
-However...
-
-The plotted residual are the prediction residuals (or marginal residuals), which are used to estimate the *MSE* in a fully-between-subjects design - but since our model has within-subjects effects, the various *MSE*s are computed using the within-subject errors. We can see these term-specific within-subject errors by setting `type = "univariate"`:
-
-```{r}
-qqnorm(s1, qqbands = TRUE, detrend = TRUE, type = "univariate")
-```
-Which in this case also shows a substantial deviation from normalicy. 
-
-Note that this term-based inspection assumes *sphericity*. But as seen above, we don't need to assumes sphericity in our modeling. Here we can specify this with `type = "multivariate"`:
-
-```{r}
-qqnorm(s1, qqbands = TRUE, detrend = TRUE, type = "multivariate")
-```
 
 ### What to do when assumption is violated?
 
 As with the assumption of *homogeneity of variances*, we can resort to using permutation tests for ANOVA tables and bootstrap estimates / contrasts.
 
-Another popular solution is to apply a monotonic transformation to the dependent variable. This should not be done lightly, as it *changes* the Interpretability of the results (from the observed scale to the transformed scale). Luckily for us, it is common to *log* transform reaction times, which we can easily do^[But note ANOVA no longer tests if any differences between the means is significantly different from 0, but if any ratio between the means is significantly different from 1.]:
+Another popular solution is to apply a monotonic transformation to the dependent variable. This should not be done lightly, as it *changes* the interpretability of the results (from the observed scale to the transformed scale). Luckily for us, it is common to *log* transform reaction times, which we can easily do^[But note ANOVA no longer tests if any differences between the means is significantly different from 0, but if any ratio between the means is significantly different from 1.]:
 
 ```{r}
 s2 <- aov_ez("pno", "rt", stroop1,
              transformation = "log",
              within = c("condition", "congruency"))
 
-qqnorm(s2, qqbands = TRUE, detrend = TRUE, type = "multivariate")
+is_norm <- check_normality(s2)
+
+plot(is_norm, type = "qq", detrend = TRUE)
 ```
 
 Success - after the transformation, the residuals (on the log scale) do not deviate more than expected from errors sampled from a normal distribution (are mostly contained in the 95%CI bands)!

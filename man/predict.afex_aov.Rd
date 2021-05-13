@@ -9,18 +9,21 @@
 \arguments{
 \item{object}{\code{afex_aov} object.}
 
-\item{newdata}{An optional data frame in which to look for variables with which to predict. If omitted, the fitted values are used.}
+\item{newdata}{An optional data frame in which to look for variables with
+which to predict. If omitted, the fitted values are used.}
 
-\item{append}{If set to \code{TRUE} returns the residuals/fitted values appended as an additional column to the long data. 
-Recomended when data was aggragated across within conditions.}
+\item{append}{If set to \code{TRUE} returns the residuals/fitted values
+appended as an additional column to the long data. Recommended when data
+was aggregated across within conditions.}
 
 \item{colname_predict}{Name of the appended column when \code{append = TRUE}.}
 
 \item{...}{Not used.}
 }
 \value{
-A vector of predicted values corresponding to the data in \code{object$data$long} or to \code{newdata},
-or if \code{append = TRUE} a data frame with an additional column of predicted values.
+A vector of predicted values corresponding to the data in
+  \code{object$data$long} or to \code{newdata}, or if \code{append = TRUE} a
+  data frame with an additional column of predicted values.
 }
 \description{
 Predicted values based on \code{afex_aov} objects.

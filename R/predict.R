@@ -6,13 +6,15 @@
 #'
 #' @example examples/examples.predict.R
 #'
-#' @param newdata An optional data frame in which to look for variables with which to predict. If omitted, the fitted values are used.
+#' @param newdata An optional data frame in which to look for variables with
+#'   which to predict. If omitted, the fitted values are used.
 #' @param colname_predict Name of the appended column when \code{append = TRUE}.
 #' @inheritParams residuals.afex_aov
 #' @param ... Not used.
 #'
-#' @return A vector of predicted values corresponding to the data in \code{object$data$long} or to \code{newdata},
-#' or if \code{append = TRUE} a data frame with an additional column of predicted values.
+#' @return A vector of predicted values corresponding to the data in
+#'   \code{object$data$long} or to \code{newdata}, or if \code{append = TRUE} a
+#'   data frame with an additional column of predicted values.
 #'
 #' @export
 #' @importFrom stats predict fitted

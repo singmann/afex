@@ -19,9 +19,9 @@ knitr::opts_chunk$set(dpi=72)
 
 `afex` comes with a set of built-in functions to help in the testing of the assumptions of ANOVA design. Generally speaking, the testable assumptions of ANOVA are^[There is also the assumptions that (a) the model is correctly specified and that (b) errors are independent, but there is no "hard" test for these assumptions.]:
 
-1. ***Homogeneity of Variances***: the variances across all the groups (cells) of between-subject effects are the same. This can be tested with `test_levene()`.  
-2. ***Sphericity***: For within-subjects effects, sphericity is the condition where the variances of the differences between all possible pairs of within-subject conditions (i.e., levels of the independent variable) are equal. This can be thought of as a within-subjects' version of the *Homogeneity of Variances* assumption, and can be tested with `test_sphericity()`.   
-3. ***Normality of residuals***: The errors used for the estimation of the error term(s) (*MSE*) are normally distributed. This can be inferred using `qqnorm()`.
+1. ***Homogeneity of Variances***: the variances across all the groups (cells) of between-subject effects are the same. This can be tested with `performance::check_homogeneity()`.  
+2. ***Sphericity***: For within-subjects effects, sphericity is the condition where the variances of the differences between all possible pairs of within-subject conditions (i.e., levels of the independent variable) are equal. This can be thought of as a within-subjects' version of the *Homogeneity of Variances* assumption, and can be tested with `performance::check_sphericity()`.   
+3. ***Normality of residuals***: The errors used for the estimation of the error term(s) (*MSE*) are normally distributed. This can be inferred using `performance::check_normality()`.
 
 What follows is a brief review of these assumptions and their tests.
 

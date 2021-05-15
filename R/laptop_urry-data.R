@@ -18,23 +18,27 @@
 #' 15 minutes lectures (TED talks) during which they were asked to take notes
 #' either on a laptop or with pen and paper. Participants were randomly assigned
 #' to either the laptop (N = 68) or longhand condition (N = 74). After a 30
-#' minutes delay, participants were quizzed on the content of the lecture. The
-#' answers from each participant were then independently rated from several
-#' raters (which agreed very strongly with each other) using a standardised
-#' scoring key resulting in one memory performance score per participant ranging
-#' from 0 (= no memory) to 100 (= perfect memory).
+#' minutes delay, participants were quizzed on the content of the lecture. There
+#' were two types of questions, factual and conceptual questions. The answers
+#' from each participant were then independently rated from several raters
+#' (which agreed very strongly with each other) using a standardised scoring key
+#' producing one memory score per participant and questions type ranging from 0
+#' (= no memory) to 100 (= perfect memory). We also aggregated the two different
+#' scores into one overall memory score.
 #'
 #'
 #' @docType data
 #' @keywords dataset
-#' @name laptop_urry2021 
-#' @usage laptop_urry2021 
-#' @format A data frame with 142 rows and 4 variables:
+#' @name laptop_urry 
+#' @usage laptop_urry 
+#' @format A data frame with 142 rows and 6 variables:
 #' \describe{
 #'   \item{pid}{participant id, factor with 142 levels}
 #'   \item{condition}{experimental condition (laptop, longhand), factor with 2 levels}
 #'   \item{talk}{TED talk seen by participant, factor with 5 levels}
-#'   \item{performance}{performance score ranging from 0 (= no memory) to 100 (= perfect memory).}
+#'   \item{overall}{overall memory score ranging from 0 (= no memory) to 100 (= perfect memory).}
+#'   \item{factual}{memory score on the factual questions ranging from 0 (= no memory) to 100 (= perfect memory).}
+#'   \item{factual}{memory score on the conceptual questions ranging from 0 (= no memory) to 100 (= perfect memory).}
 #' }
 #' @source Urry, H. L., Crittle, C. S., Floerke, V. A., Leonard, M. Z., Perry,
 #'   C. S., Akdilek, N., Albert, E. R., Block, A. J., Bollinger, C. A., Bowers,
@@ -44,11 +48,10 @@
 #'   and Oppenheimer’s (2014) Study 1 Plus Mini Meta-Analyses Across Similar
 #'   Studies. *Psychological Science*, 0956797620965541.
 #'   \doi{10.1177/0956797620965541}
-
 #'
 #' @encoding UTF-8
 #'
-"laptop_urry2021"
+"laptop_urry"
 
 
 

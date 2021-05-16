@@ -38,7 +38,7 @@
 #'   \item{talk}{TED talk seen by participant, factor with 5 levels}
 #'   \item{overall}{overall memory score ranging from 0 (= no memory) to 100 (= perfect memory).}
 #'   \item{factual}{memory score on the factual questions ranging from 0 (= no memory) to 100 (= perfect memory).}
-#'   \item{factual}{memory score on the conceptual questions ranging from 0 (= no memory) to 100 (= perfect memory).}
+#'   \item{conceptual}{memory score on the conceptual questions ranging from 0 (= no memory) to 100 (= perfect memory).}
 #' }
 #' @source Urry, H. L., Crittle, C. S., Floerke, V. A., Leonard, M. Z., Perry,
 #'   C. S., Akdilek, N., Albert, E. R., Block, A. J., Bollinger, C. A., Bowers,

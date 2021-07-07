@@ -109,10 +109,10 @@ e1_anova
 
 The observed pattern of effects is in line with most recent failures to replicate ego depletion. The main effect of `condition` suggests there be some general effect, such as more errors after a demanding task, but not the predicted interaction of condition with the congruency effect. The original prediction of ego-depletion is that it reduces self-control, thus resulting in attenuated Stroop effects after depletion. This pattern would result in a significant interaction.
 
-We can look at the effects in turn using `emmeans`. Because it is a repeated-measures design we use the multivariate model for those tests. We begin by looking at the Stroop effect, that is the effect of `congruency`.
+We can look at the effects in turn using `emmeans`. We begin by looking at the Stroop effect, that is the effect of `congruency`.
 
 ```{r}
-emmeans(e1_anova, "congruency", model = "multivariate")
+emmeans(e1_anova, "congruency")
 ```
 
 We can see the usual Stroop effect. Accuracy is higher for congruent compared to incongruent items.
@@ -120,7 +120,7 @@ We can see the usual Stroop effect. Accuracy is higher for congruent compared to
 We also look at the effect of condition.
 
 ```{r}
-emmeans(e1_anova, "condition", model = "multivariate")
+emmeans(e1_anova, "condition")
 ```
 
 We see that accuracy is roughly 1% lower in the ego-depletion compared to the control condition.

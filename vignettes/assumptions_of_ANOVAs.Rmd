@@ -97,7 +97,7 @@ We can see that both the error terms of the `length:stimulus` and `task:length:s
 ### What to do when assumption is violated?
 
 - For ANOVA tables, a correction to the degrees of freedom can be used - `afex` offers both the Greenhouse-Geisser (which is used by default) and the Hyunh-Feldt corrections.  
-- For follow-up contrasts with `emmeans`, a multivariate model can be used, which does not assume sphericity.
+- For follow-up contrasts with `emmeans`, a multivariate model can be used, which does not assume sphericity (this is used by default since `afex` 1.0).
 
 Both can be set globally with:
 ```{r, eval = FALSE}

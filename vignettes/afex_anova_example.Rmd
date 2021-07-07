@@ -58,10 +58,7 @@ library("afex")     # needed for ANOVA functions.
 library("emmeans")  # emmeans must now be loaded explicitly for follow-up tests.
 library("multcomp") # for advanced control for multiple testing/Type 1 errors.
 library("ggplot2")  # for customizing plots.
-afex_options(emmeans_model = "multivariate") # use multivariate model for all follow-up tests.
 ```
-
-Note that for ANOVAs involving repeated-measures factors, follow-up tests based on the multivariate model are generally preferrably to univariate follow-up tests. Consequently, we set this option globally. Future versions of `afex` will likely use the multivariate model as the default.
 
 ```{r}
 data(sk2011.1)
@@ -109,7 +106,7 @@ print(xtable::xtable(anova(a1), digits = c(rep(2, 5), 3, 4)), type = "html")
 
 # Post-Hoc Contrasts and Plotting
 
-To further analyze the data we need to pass it to package `emmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `emmeans` can be obtained in [its vignettes](https://cran.r-project.org/package=emmeans) and [faq](https://CRAN.R-project.org/package=emmeans/vignettes/FAQs.html). `emmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `emmeans`. When using the `multivariate` options as described above, `emmeans` uses the ANOVA model estimated via base R's `lm` method (which in the case of a multivariate response is an object of class `c("mlm", "lm")`). In the default setting (i.e., `emmeans_model = "univariate"`), `emmeans` uses the object created by base R's `aov` function, which for now is also part of an `afex_aov` object.
+To further analyze the data we need to pass it to package `emmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `emmeans` can be obtained in [its vignettes](https://cran.r-project.org/package=emmeans) and [faq](https://CRAN.R-project.org/package=emmeans/vignettes/FAQs.html). `emmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `emmeans`. When using the default `multivariate` option for follow-up tests, `emmeans` uses the ANOVA model estimated via base R's `lm` method (which in the case of a multivariate response is an object of class `c("mlm", "lm")`). `afex` also supports a univariate model (i.e., `emmeans_model = "univariate"`, which requires that `include_aov = TRUE` in the ANOVA call) in which case `emmeans` uses the object created by base R's `aov` function (this was the previous default but is not recommended).
 
 ## Some First Contrasts
 

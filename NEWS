@@ -11,8 +11,21 @@
     
     o   emmeans() for ANOVA now uses multivariate model as default
     
-    o   New data set:
-        -  Urry et al. (2021, Psych Science): laptop
+    o   New data set, Urry et al. (2021, Psych Science): laptop_urry
+    
+    The following changes are thanks to Mattan S. Ben-Shachar:
+    
+    o   Added new vignette: "Testing the Assumptions of ANOVAs"
+    
+    o   Added predict() method for afex_aov objects.
+    
+    o   Deprecated functions test_levene() and test_sphercitiy(), which are now
+        part of the performance package as performance::check_homogeneity() and
+        performance::check_sphericity(), respectively.
+    
+    Bugfixes
+
+    o   All vignettes should run without suggested packages present.
         
 
                     *************************

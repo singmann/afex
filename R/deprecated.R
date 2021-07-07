@@ -1,9 +1,11 @@
 #' Deprecated functions
 #'
-#' These functions have been renamed and deprecated in \pkg{afex}:
+#' These functions have been renamed or moved and deprecated in \pkg{afex}:
 #' \code{aov.car()} (use \code{\link{aov_car}()}), 
 #' \code{ez.glm()} (use \code{\link{aov_ez}()}),
-#' \code{aov4()} (use \code{\link{aov_4}()}).
+#' \code{aov4()} (use \code{\link{aov_4}()}),
+#' \code{test_levene()} (use \code{\link[performance]{check_homogeneity}()}),
+#' \code{test_sphericity()} (use \code{\link[performance]{check_sphericity}()}).
 #' @rdname deprecated
 #' @keywords internal
 #' @aliases afex-deprecated
@@ -27,9 +29,25 @@ aov4 <- function(...) {
   aov_4(...)
 }
 
+#' @rdname deprecated
+#' @export
+test_levene <- function(...){
+  .Deprecated("check_homogeneity", "afex", "Functionality has moved to the 'performance' package.\nCalling 'performance::check_homogeneity()'.")
+  performance::check_homogeneity(...)
+}
+
+#' @rdname deprecated
+#' @export
+test_sphericity<- function(...){
+  .Deprecated("check_sphericity", "afex", "Functionality has moved to the 'performance' package.\nCalling 'performance::check_sphericity()'.")
+  performance::check_sphericity(...)
+}
+
+
 
 warn_deprecated_arg <- function(name, instead) {
   warning(gettextf("'%s' is deprecated; use '%s' instead", name, instead),
           call.=FALSE, domain=NA)
 }
         
+

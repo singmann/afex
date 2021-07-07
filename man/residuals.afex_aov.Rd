@@ -12,16 +12,20 @@
 \arguments{
 \item{object}{\code{afex_aov} object.}
 
-\item{append}{If set to \code{TRUE} returns the residuals/fitted values appended as an additional column to the long data. 
-Recomended when data was aggragated across within conditions.}
+\item{append}{If set to \code{TRUE} returns the residuals/fitted values
+appended as an additional column to the long data. Recommended when data
+was aggregated across within conditions.}
 
-\item{colname_residuals, colname_fitted}{Name of the appended column when \code{append = TRUE}.}
+\item{colname_residuals, colname_fitted}{Name of the appended column when
+\code{append = TRUE}.}
 
-\item{...}{Additional arguments passed to \code{residuals.lm}/\code{fitted.lm}.}
+\item{...}{Additional arguments passed to
+\code{residuals.lm}/\code{fitted.lm}.}
 }
 \value{
-A vector of residualts/fitted values corresponding to the data in \code{object$data$long}, 
-or if \code{append = TRUE} a data frame with an additional column of residualts/fitted values.
+A vector of residuals/fitted values corresponding to the data in
+  \code{object$data$long}, or if \code{append = TRUE} a data frame with an
+  additional column of residuals/fitted values.
 }
 \description{
 Extract Residuals and Fitted Values from \code{afex_aov} objects.

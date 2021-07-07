@@ -75,7 +75,7 @@ test_that("mixed, mlmRev: type 3 and 2 LRTs for GLMMs", {
                                   family = binomial, data = Contraception, 
                                   method = "LRT", type = 2, progress=FALSE))
     expect_that(gm1, is_a("mixed"))
-    expect_that(gm1, is_a("mixed"))  
+    expect_that(gm2, is_a("mixed"))  
   }
 })
 

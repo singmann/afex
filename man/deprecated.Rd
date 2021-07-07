@@ -5,6 +5,8 @@
 \alias{afex-deprecated}
 \alias{ez.glm}
 \alias{aov4}
+\alias{test_levene}
+\alias{test_sphericity}
 \title{Deprecated functions}
 \usage{
 aov.car(...)
@@ -12,15 +14,21 @@ aov.car(...)
 ez.glm(...)
 
 aov4(...)
+
+test_levene(...)
+
+test_sphericity(...)
 }
 \arguments{
 \item{...}{arguments passed from the old functions of the style
 \code{foo.bar()} to the new functions \code{foo_bar()}}
 }
 \description{
-These functions have been renamed and deprecated in \pkg{afex}:
+These functions have been renamed or moved and deprecated in \pkg{afex}:
 \code{aov.car()} (use \code{\link{aov_car}()}), 
 \code{ez.glm()} (use \code{\link{aov_ez}()}),
-\code{aov4()} (use \code{\link{aov_4}()}).
+\code{aov4()} (use \code{\link{aov_4}()}),
+\code{test_levene()} (use \code{\link[performance]{check_homogeneity}()}),
+\code{test_sphericity()} (use \code{\link[performance]{check_sphericity}()}).
 }
 \keyword{internal}

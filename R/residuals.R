@@ -7,17 +7,21 @@
 #' @example examples/examples.residuals.R
 #' 
 #' @param object \code{afex_aov} object.
-#' @param append If set to \code{TRUE} returns the residuals/fitted values appended as an additional column to the long data. 
-#'   Recomended when data was aggragated across within conditions.
-#' @param colname_residuals,colname_fitted Name of the appended column when \code{append = TRUE}.
-#' @param ... Additional arguments passed to \code{residuals.lm}/\code{fitted.lm}.
+#' @param append If set to \code{TRUE} returns the residuals/fitted values
+#'   appended as an additional column to the long data. Recommended when data
+#'   was aggregated across within conditions.
+#' @param colname_residuals,colname_fitted Name of the appended column when
+#'   \code{append = TRUE}.
+#' @param ... Additional arguments passed to
+#'   \code{residuals.lm}/\code{fitted.lm}.
 #' 
-#' @return A vector of residualts/fitted values corresponding to the data in \code{object$data$long}, 
-#' or if \code{append = TRUE} a data frame with an additional column of residualts/fitted values.
+#' @return A vector of residuals/fitted values corresponding to the data in
+#'   \code{object$data$long}, or if \code{append = TRUE} a data frame with an
+#'   additional column of residuals/fitted values.
 #' 
 #' @export
 #' @importFrom stats fitted reshape residuals
-residuals.afex_aov <- function(object, append = FALSE, colname_residuals = ".residuals",...) {
+residuals.afex_aov <- function(object, append = FALSE, colname_residuals = ".residuals", ...) {
   if (!append && attr(object, "data_changed")) {
     message("Data was changed during ANOVA calculation. ", 
             "Thus, residuals cannot be added to original data.", 

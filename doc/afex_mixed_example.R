@@ -1,3 +1,14 @@
+## ----echo=FALSE---------------------------------------------------------------
+req_suggested_packages <- c("emmeans", "multcomp", 
+                            "dplyr", "tidyr","ggplot2")
+pcheck <- lapply(req_suggested_packages, require, 
+                 quietly = TRUE, character.only = TRUE, 
+                 warn.conflicts = FALSE)
+if (any(!unlist(pcheck))) {
+   message("Required package(s) for this vignette are not available/installed and code will not be executed.")
+   knitr::opts_chunk$set(eval = FALSE)
+}
+
 ## ----set-options, echo=FALSE, cache=FALSE-----------------------------------------------
 op <- options(width = 90, dplyr.summarise.inform = FALSE)
 knitr::opts_chunk$set(dpi=72)

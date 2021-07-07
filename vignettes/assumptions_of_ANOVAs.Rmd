@@ -36,7 +36,7 @@ If the main goal of an ANOVA is the significance test, then the assumption of no
 
 Finally, the default `afex` behaviour is to correct for violations of sphericity using the Greenhouse-Geisser correction. Whereas this default may in some situation produce a small loss in statistical power, this seems preferable to a situation in which violations of sphericity are overlooked and tests become anti-conservative (i.e., more false positive results). 
 
-Thus, my position as the `afex` developer is that an appropriate exploratory data analysis is often better than just blindly applying statistical assumption tests. Nevertheless, assumption tests are of course an important tool in the statistical toolbox and can be helpful in many situations. Thus, I am thankful to Mattan S. Ben-Shachar who has provided them for ANOVAs in `afex`. The following text provides his introduction to the assumption tests based on the [`performance`](https://cran.r-project.org/package=performance) package.
+Thus, my position as the `afex` developer is that an appropriate exploratory data analysis is often better than just blindly applying statistical assumption tests. Nevertheless, assumption tests are of course an important tool in the statistical toolbox and can be helpful in many situations. Thus, I am thankful to Mattan S. Ben-Shachar who has provided them for ANOVAs in `afex`. The following text provides his introduction to the assumption tests based on the [`performance`](https://cran.r-project.org/package=performance) and [`see`](https://cran.r-project.org/package=see) packages.
 
 ## Testing the Empirically Testable Assumptions
 

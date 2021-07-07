@@ -13,8 +13,9 @@ aov_ez("id", "rt", md_12.1, within = c("angle", "noise"),
 aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))       
 
 
-# examples using obk.long (see ?obk.long), a long version of the OBrienKaiser dataset (car package).
-# Data is a split-plot or mixed design: contains both within- and between-subjects factors.
+# examples using obk.long (see ?obk.long), a long version of the OBrienKaiser
+# dataset (car package). Data is a split-plot or mixed design: contains both
+# within- and between-subjects factors.
 data(obk.long, package = "afex")
 
 # estimate mixed ANOVA on the full design:
@@ -52,7 +53,8 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
 # 
 # Sphericity correction method: GG 
 
-# "numeric" variables are per default converted to factors (as long as factorize = TRUE):
+# "numeric" variables are per default converted to factors (as long as factorize
+# = TRUE):
 obk.long$hour2 <- as.numeric(as.character(obk.long$hour))
 
 # gives same results as calls before
@@ -73,15 +75,20 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
 
 
 # aggregating over one within-subjects factor (phase), with warning:
-aov_car(value ~ treatment * gender + Error(id/hour), data = obk.long, observed = "gender")
+aov_car(value ~ treatment * gender + Error(id/hour), data = obk.long, 
+        observed = "gender")
 
-aov_ez("id", "value", obk.long, c("treatment", "gender"), "hour", observed = "gender")
+aov_ez("id", "value", obk.long, c("treatment", "gender"), "hour", 
+       observed = "gender")
 
 # aggregating over both within-subjects factors (again with warning),
 # only between-subjects factors:
-aov_car(value ~ treatment * gender + Error(id), data = obk.long, observed = c("gender"))
-aov_4(value ~ treatment * gender + (1|id), data = obk.long, observed = c("gender"))
-aov_ez("id", "value", obk.long, between = c("treatment", "gender"), observed = "gender")
+aov_car(value ~ treatment * gender + Error(id), data = obk.long, 
+        observed = c("gender"))
+aov_4(value ~ treatment * gender + (1|id), data = obk.long, 
+      observed = c("gender"))
+aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
+       observed = "gender")
 
 # only within-subject factors (ignoring between-subjects factors)
 aov_car(value ~ Error(id/(phase*hour)), data = obk.long)
@@ -121,12 +128,17 @@ if (requireNamespace("ggplot2") & requireNamespace("emmeans")) {
 # 1b. plot data using afex_plot function, for more see: 
 ## vignette("afex_plot_introduction", package = "afex")
 
-## default plot uses univariate model-based CIs
+## default plot uses multivariate model-based CIs
 afex_plot(a1, "hour", "gender", c("treatment", "phase"))
 
-## you can use multivairate model and CIs
-afex_plot(a1, "hour", "gender", c("treatment", "phase"), 
-          emmeans_arg = list(model = "multivariate"))
+  
+a1b <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
+        within = c("phase", "hour"), observed = "gender", 
+        include_aov = TRUE)
+## you can use a univariate model and CIs if you refit the model with the aov
+## slot
+afex_plot(a1b, "hour", "gender", c("treatment", "phase"), 
+          emmeans_arg = list(model = "univariate"))
 
 ## in a mixed between-within designs, no error-bars might be preferrable:
 afex_plot(a1, "hour", "gender", c("treatment", "phase"), error = "none")
@@ -135,14 +147,9 @@ afex_plot(a1, "hour", "gender", c("treatment", "phase"), error = "none")
 if (requireNamespace("emmeans")) {
 library("emmeans")  # package emmeans needs to be attached for follow-up tests.
 
-# 2. obtain reference grid object (default uses univariate model):
+# 2. obtain reference grid object (default uses multivariate model):
 r1 <- emmeans(a1, ~treatment +phase)
 r1
-
-# multivariate model may be more appropriate
-r1 <- emmeans(a1, ~treatment +phase, model = "multivariate")
-r1
-
 
 # 3. create list of contrasts on the reference grid:
 c1 <- list(
@@ -160,10 +167,7 @@ contrast(r1, c1)
 contrast(r1, c1, adjust = "holm")
 
 # 2. (alternative): all pairwise comparisons of treatment:
-emmeans(a1, "treatment", contr = "pairwise", model = "multivariate")
-
-## set multivariate models globally:
-# afex_options(emmeans_model = "multivariate")
+emmeans(a1, "treatment", contr = "pairwise")
 }
 
 #######################

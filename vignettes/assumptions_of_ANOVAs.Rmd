@@ -1,5 +1,5 @@
 ---
-title: "Testing the Aassumptions of ANOVAs"
+title: "Testing the Assumptions of ANOVAs"
 author: "Mattan S. Ben-Shachar"
 date: "`r Sys.Date()`"
 show_toc: true
@@ -7,7 +7,7 @@ output:
   knitr:::html_vignette:
     toc: yes
 vignette: >
-  %\VignetteIndexEntry{Testing the Aassumptions of ANOVAs}
+  %\VignetteIndexEntry{Testing the Assumptions of ANOVAs}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8} 
 ---

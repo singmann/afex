@@ -26,7 +26,10 @@
     Bugfixes
 
     o   All vignettes should run without suggested packages present.
-        
+    
+    o   Added ez to suggests, to avoid NOTE on CRAN solaris.
+
+
 
                     *************************
                     ** afex VERSION 0.28-x **

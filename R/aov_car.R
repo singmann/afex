@@ -79,11 +79,12 @@
 #'   class \code{afex_aov} is created by invoking the \code{anova} method
 #'   directly.
 #' @param include_aov Boolean. Allows suppressing the calculation of the aov
-#'   object, which is per default part of the returned \code{afex_aov} object.
-#'   \code{FALSE} prevents this potentially costly calculation. Especially for
-#'   designs with larger N and within-subjects factors, this is highly
-#'   advisable. Follow-up analyses using \pkg{emmeans} are then always based on
-#'   the multivariate or \code{lm} model.
+#'   object. If TRUE the aov model is part of the returned \code{afex_aov}
+#'   object. \code{FALSE} (the default) prevents this potentially costly
+#'   calculation. Especially for designs with larger N and within-subjects
+#'   factors, this is highly advisable. Follow-up analyses using \pkg{emmeans}
+#'   using the \code{univariate} model (which is not recommended) require the
+#'   aov model and TRUE.
 #' @param ... Further arguments passed to \code{fun_aggregate}.
 #' @param return What should be returned? The default is given by
 #'   \code{afex_options("return_aov")}, which is initially \code{"afex_aov"},
@@ -213,17 +214,12 @@
 #'  accompanying vignettes (see
 #'  \href{https://CRAN.R-project.org/package=emmeans}{here}).
 #'  
-#'  A caveat regarding the use of \pkg{emmeans} concerns the assumption of
-#'  sphericity for ANOVAs including within-subjects/repeated-measures factors
-#'  (with more than two levels). The current default for follow-up tests uses a
-#'  univariate model (\code{model = "univariate"} in the call to
-#'  \code{emmeans}), which does not adequately control for violations of
-#'  sphericity. This may result in anti-conservative tests and contrasts
-#'  somewhat with the default ANOVA table which reports results based on the
-#'  Greenhousse-Geisser correction. An alternative is to use a multivariate
-#'  model (\code{model = "multivariate"} in the call to \code{emmeans}) which
-#'  should handle violations of sphericity better. The default will likely
-#'  change to multivariate tests in one of the next versions of the package.
+#'  Since version 1.0, \pkg{afex} per default uses the \code{multivariate} model
+#'  (i.e., the \code{lm} slot of the \code{afex_aov} object) for follow-up tests
+#'  with \pkg{emmeans}. Compared to the \code{univariate} model (i.e., the
+#'  \code{aov} slot), this can handle unbalanced data and addresses sphericity
+#'  better. To use the older (and not recommended) \code{model = "univariate"}
+#'  make sure to set \code{include_aov = TRUE} when estimating the ANOVA.
 #'  
 #'  Starting with \pkg{afex} version 0.22, \pkg{emmeans} is \emph{not}
 #'  loaded/attached automatically when loading \pkg{afex}. Therefore,

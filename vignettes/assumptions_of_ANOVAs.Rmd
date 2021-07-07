@@ -32,7 +32,7 @@ The other assumptions can be tested empirically, either graphically or using sta
 
 Let us take a look at all three empirically testable assumptions in detail. ANOVAs are often robust to light violations to the homogeneity of variances assumption. If this assumption is clearly violated, we have learned something important about the data, namely variance heterogeneity, that requires further study. Some further statistical solutions are discussed below. 
 
-If the main goal of an ANOVA is the significance test, then the assumption of normality of the residuals only is requires for small samples, thanks to the central limit theorem. As shown by Lumley et al. (2002), with sample sizes of a few hundred participants even extreme violations of the normality assumptions are unproblematic. So mild violations of this assumptions are usually no problem with sample sizes exceeding 30 participants. 
+If the main goal of an ANOVA is to see whether or not certain effects are significant, then the assumption of normality of the residuals is only required for small samples, thanks to the central limit theorem. As shown by Lumley et al. (2002), with sample sizes of a few hundred participants even extreme violations of the normality assumptions are unproblematic. So mild violations of this assumptions are usually no problem with sample sizes exceeding 30.
 
 Finally, the default `afex` behaviour is to correct for violations of sphericity using the Greenhouse-Geisser correction. Whereas this default may in some situation produce a small loss in statistical power, this seems preferable to a situation in which violations of sphericity are overlooked and tests become anti-conservative (i.e., more false positive results). 
 

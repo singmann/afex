@@ -34,17 +34,16 @@
 #' @param type type of test on which effects are based. Default is to use type 3
 #'   tests, taken from \code{\link{afex_options}}.
 #' @param method character vector indicating which methods for obtaining
-#'   p-values should be used: \code{"KR"} corresponds to the Kenward-Roger
-#'   approximation for degrees of freedom (only LMMs), \code{"S"} corresponds to
-#'   the Satterthwaite approximation for degrees of freedom (via
-#'   \code{\link{lmerTest}}, only LMMs), \code{"PB"} calculates p-values based
-#'   on parametric bootstrap, \code{"LRT"} calculates p-values via the
-#'   likelihood ratio tests implemented in the \code{anova} method for
-#'   \code{merMod} objects (only recommended for models with many [i.e., > 50]
-#'   levels for the random factors). The default (currently \code{"KR"}) is
-#'   taken from \code{\link{afex_options}}. For historical compatibility
-#'   \code{"nested-KR"} is also supported which was the default KR-method in
-#'   previous versions.
+#'   p-values should be used: \code{"S"} corresponds to the Satterthwaite
+#'   approximation for degrees of freedom (via \code{\link{lmerTest}}, only
+#'   LMMs), \code{"KR"} corresponds to the Kenward-Roger approximation for
+#'   degrees of freedom (only LMMs), \code{"PB"} calculates p-values based on
+#'   parametric bootstrap, \code{"LRT"} calculates p-values via the likelihood
+#'   ratio tests implemented in the \code{anova} method for \code{merMod}
+#'   objects (only recommended for models with many [i.e., > 50] levels for the
+#'   random factors). The default (currently \code{"S"}) is taken from
+#'   \code{\link{afex_options}}. For historical compatibility \code{"nested-KR"}
+#'   is also supported which was the default KR-method in previous versions.
 #' @param per_parameter \code{character} vector specifying for which variable
 #'   tests should be run for each parameter (instead for the overall effect).
 #'   Can be useful e.g., for testing ordered factors. Uses \code{\link{grep}}
@@ -212,7 +211,7 @@
 #'
 #'  \subsection{p-value Calculations}{
 #'
-#'  When \code{method = "KR"} (the default, implemented via
+#'  When \code{method = "KR"} (implemented via
 #'  \code{\link[pbkrtest]{KRmodcomp}}), the Kenward-Roger approximation for
 #'  degrees-of-freedom is calculated using \code{\link[lmerTest]{lmerTest}} (if
 #'  \code{test_intercept=FALSE}) or \code{\link[car]{Anova}} (if

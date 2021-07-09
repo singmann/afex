@@ -4,7 +4,7 @@ load_all()
 
 options(error = NULL)
 devtools::test()
-devtools::build(args = "--compact-vignettes='both'", 
+devtools::build(args = "--compact-vignettes=both", 
                 path = "development/") # R CMD build afex --compact-vignettes="gs+qpdf"
 document()
 check()

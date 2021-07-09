@@ -38,17 +38,16 @@ variables present in \code{fixed}, \code{random}, and \code{dv} as columns.}
 tests, taken from \code{\link{afex_options}}.}
 
 \item{method}{character vector indicating which methods for obtaining
-p-values should be used: \code{"KR"} corresponds to the Kenward-Roger
-approximation for degrees of freedom (only LMMs), \code{"S"} corresponds to
-the Satterthwaite approximation for degrees of freedom (via
-\code{\link{lmerTest}}, only LMMs), \code{"PB"} calculates p-values based
-on parametric bootstrap, \code{"LRT"} calculates p-values via the
-likelihood ratio tests implemented in the \code{anova} method for
-\code{merMod} objects (only recommended for models with many [i.e., > 50]
-levels for the random factors). The default (currently \code{"KR"}) is
-taken from \code{\link{afex_options}}. For historical compatibility
-\code{"nested-KR"} is also supported which was the default KR-method in
-previous versions.}
+p-values should be used: \code{"S"} corresponds to the Satterthwaite
+approximation for degrees of freedom (via \code{\link{lmerTest}}, only
+LMMs), \code{"KR"} corresponds to the Kenward-Roger approximation for
+degrees of freedom (only LMMs), \code{"PB"} calculates p-values based on
+parametric bootstrap, \code{"LRT"} calculates p-values via the likelihood
+ratio tests implemented in the \code{anova} method for \code{merMod}
+objects (only recommended for models with many [i.e., > 50] levels for the
+random factors). The default (currently \code{"S"}) is taken from
+\code{\link{afex_options}}. For historical compatibility \code{"nested-KR"}
+is also supported which was the default KR-method in previous versions.}
 
 \item{per_parameter}{\code{character} vector specifying for which variable
 tests should be run for each parameter (instead for the overall effect).
@@ -256,7 +255,7 @@ For an introduction to mixed-modeling for experimental designs see
 
  \subsection{p-value Calculations}{
 
- When \code{method = "KR"} (the default, implemented via
+ When \code{method = "KR"} (implemented via
  \code{\link[pbkrtest]{KRmodcomp}}), the Kenward-Roger approximation for
  degrees-of-freedom is calculated using \code{\link[lmerTest]{lmerTest}} (if
  \code{test_intercept=FALSE}) or \code{\link[car]{Anova}} (if
@@ -438,8 +437,9 @@ cl <- makeCluster(rep("localhost", nc)) # make cluster
 data("Machines", package = "MEMSS") 
 ## There are two ways to use multicore:
 
-# 1. Obtain fits with multicore:
-mixed(score ~ Machine + (Machine|Worker), data=Machines, cl = cl)
+# 1. Obtain fits with multicore (e.g. for likelihood ratio tests, LRT):
+mixed(score ~ Machine + (Machine|Worker), data=Machines, cl = cl, 
+      method = "LRT")
 
 # 2. Obtain PB samples via multicore: 
 mixed(score ~ Machine + (Machine|Worker), data=Machines,
@@ -456,14 +456,14 @@ sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
 
 require(optimx) # uses two more algorithms
 sk2_aff_b <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
-               expand_re = TRUE, all_fit = TRUE)
+               expand_re = TRUE, all_fit = TRUE, method = "LRT")
 attr(sk2_aff_b, "all_fit_selected")
 attr(sk2_aff_b, "all_fit_logLik")
 
 # considerably faster with multicore:
 clusterEvalQ(cl, library(optimx)) # need to load optimx in cluster
 sk2_aff_b2 <- mixed(response ~ instruction*type+(inference*type||id), sk2_aff,
-               expand_re = TRUE, all_fit = TRUE, cl=cl)
+               expand_re = TRUE, all_fit = TRUE, cl=cl, method = "LRT")
 attr(sk2_aff_b2, "all_fit_selected")
 attr(sk2_aff_b2, "all_fit_logLik")
 
@@ -522,7 +522,8 @@ md_16.4b <- within(md_16.4, cond <- C(cond, contr.treatment, base = 2))
 str(md_16.4b)
 
 # p-value stays identical:
-(mixed2_orig <- mixed(induct ~ cond + (1|room:cond), md_16.4b, check_contrasts=FALSE))
+(mixed2_orig <- mixed(induct ~ cond + (1|room:cond), md_16.4b, 
+                      check_contrasts=FALSE))
 summary(mixed2_orig$full_model) # replicates parameters
 
 
@@ -531,7 +532,8 @@ summary(mixed2_orig$full_model) # replicates parameters
 (mixed3 <- mixed(induct ~ cond + skill + (1|room:cond), md_16.4))
 
 # however, parameters are perfectly recovered when using the original contrasts:
-mixed3_orig <- mixed(induct ~ cond + skill + (1|room:cond), md_16.4b, check_contrasts=FALSE)
+mixed3_orig <- mixed(induct ~ cond + skill + (1|room:cond), md_16.4b, 
+                     check_contrasts=FALSE)
 summary(mixed3_orig)
 
 
@@ -542,7 +544,8 @@ md_16.4b$cog <- scale(md_16.4b$cog, scale=FALSE)
 # F-values and p-values are relatively off:
 (mixed4 <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b))
 # contrast has a relatively important influence on cog
-(mixed4_orig <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, check_contrasts=FALSE))
+(mixed4_orig <- mixed(induct ~ cond*cog + (cog|room:cond), md_16.4b, 
+                      check_contrasts=FALSE))
 
 # parameters are again almost perfectly recovered:
 summary(mixed4_orig)
@@ -570,16 +573,16 @@ nice(sk_m1)  # returns the same but without printing potential warnings
 anova(sk_m1) # returns and prints numeric ANOVA table (i.e., not-rounded)
 summary(sk_m1) # lmer summary of full model
 
-# same model but using Satterthwaite approximation of df
-# very similar results but faster
+# same model but using Kenward-Roger approximation of df
+# very similar results but slower
 sk_m1b <- mixed(response ~ instruction*inference*type+(inference*type|id), 
-                sk2_aff, method="S")
+                sk2_aff, method="KR")
 nice(sk_m1b)
 # identical results as:
 anova(sk_m1$full_model)
 
-# suppressing correlation among random slopes:
-# very similar results, but significantly faster and often less convergence warnings. 
+# suppressing correlation among random slopes: very similar results, but
+# significantly faster and often less convergence warnings.
 sk_m2 <- mixed(response ~ instruction*inference*type+(inference*type||id), sk2_aff,
                expand_re = TRUE)
 sk_m2
@@ -643,32 +646,32 @@ mixed(value ~ treatment*phase*hour +(1|id), per_parameter = "hour",
 mixed(value ~ treatment*phase*hour +(1|id), per_parameter = ".", 
       data = obk.long, method = "nested-KR", check_contrasts = FALSE)
 
-# example data from package languageR:
-# Lexical decision latencies elicited from 21 subjects for 79 English concrete nouns, 
-# with variables linked to subject or word. 
+# example data from package languageR: Lexical decision latencies elicited from
+# 21 subjects for 79 English concrete nouns, with variables linked to subject or
+# word.
 data(lexdec, package = "languageR")
 
 # using the simplest model
 m1 <- mixed(RT ~ Correct + Trial + PrevType * meanWeight + 
     Frequency + NativeLanguage * Length + (1|Subject) + (1|Word), data = lexdec)
 m1
-# Mixed Model Anova Table (Type 3 tests, KR-method)
+# Mixed Model Anova Table (Type 3 tests, S-method)
 # 
 # Model: RT ~ Correct + Trial + PrevType * meanWeight + Frequency + NativeLanguage * 
 # Model:     Length + (1 | Subject) + (1 | Word)
 # Data: lexdec
 #                  Effect         df         F p.value
-# 1               Correct 1, 1627.73   8.15 **    .004
-# 2                 Trial 1, 1592.43   7.57 **    .006
-# 3              PrevType 1, 1605.39      0.17     .68
-# 4            meanWeight   1, 75.39 14.85 ***   .0002
-# 5             Frequency   1, 76.08 56.53 ***  <.0001
-# 6        NativeLanguage   1, 27.11      0.70     .41
-# 7                Length   1, 75.83   8.70 **    .004
-# 8   PrevType:meanWeight 1, 1601.18    6.18 *     .01
-# 9 NativeLanguage:Length 1, 1555.49 14.24 ***   .0002
+# 1               Correct 1, 1627.67   8.16 **    .004
+# 2                 Trial 1, 1591.92   7.58 **    .006
+# 3              PrevType 1, 1605.05      0.17    .680
+# 4            meanWeight   1, 74.37 14.85 ***   <.001
+# 5             Frequency   1, 75.06 56.54 ***   <.001
+# 6        NativeLanguage   1, 27.12      0.70    .412
+# 7                Length   1, 74.80   8.70 **    .004
+# 8   PrevType:meanWeight 1, 1600.79    6.19 *    .013
+# 9 NativeLanguage:Length 1, 1554.49 14.24 ***   <.001
 # ---
-# Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
+# Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘+’ 0.1 ‘ ’ 1
 
 # Fitting a GLMM using parametric bootstrap:
 require("mlmRev") # for the data, see ?Contraception

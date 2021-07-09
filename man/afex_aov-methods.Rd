@@ -77,12 +77,13 @@ default is given by \code{afex_options("sig_symbols")}.}
 \item{...}{further arguments passed through, see description of return value
 for details.}
 
-\item{model}{argument for \code{\link[emmeans]{emmeans}()} and rlated
+\item{model}{argument for \code{\link[emmeans]{emmeans}()} and related
 functions that allows to choose on which model the follow-up tests for
-ANOVAs with repeated-measures factors are based. \code{"univariate"} uses
-the \code{aov} model and \code{"multivariate"} uses the \code{lm} model.
-Default given by \code{afex_options("emmeans_mode")}. Multivariate tests
-likely provide a better correction for violations of sphericity.}
+ANOVAs with repeated-measures factors are based. \code{"multivariate"} (the
+default) uses the \code{lm} model and \code{"univariate"} uses the
+\code{aov} model. Default given by \code{afex_options("emmeans_mode")}.
+Multivariate tests likely work better for unbalanced data and provide a
+better correction for violations of sphericity.}
 
 \item{trms, xlev, grid}{same as for \code{\link[emmeans]{emm_basis}}.}
 }

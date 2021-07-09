@@ -101,11 +101,12 @@ class \code{afex_aov} is created by invoking the \code{anova} method
 directly.}
 
 \item{include_aov}{Boolean. Allows suppressing the calculation of the aov
-object, which is per default part of the returned \code{afex_aov} object.
-\code{FALSE} prevents this potentially costly calculation. Especially for
-designs with larger N and within-subjects factors, this is highly
-advisable. Follow-up analyses using \pkg{emmeans} are then always based on
-the multivariate or \code{lm} model.}
+object. If TRUE the aov model is part of the returned \code{afex_aov}
+object. \code{FALSE} (the default) prevents this potentially costly
+calculation. Especially for designs with larger N and within-subjects
+factors, this is highly advisable. Follow-up analyses using \pkg{emmeans}
+using the \code{univariate} model (which is not recommended) require the
+aov model and TRUE.}
 
 \item{return}{What should be returned? The default is given by
 \code{afex_options("return_aov")}, which is initially \code{"afex_aov"},
@@ -280,17 +281,12 @@ example):
  accompanying vignettes (see
  \href{https://CRAN.R-project.org/package=emmeans}{here}).
  
- A caveat regarding the use of \pkg{emmeans} concerns the assumption of
- sphericity for ANOVAs including within-subjects/repeated-measures factors
- (with more than two levels). The current default for follow-up tests uses a
- univariate model (\code{model = "univariate"} in the call to
- \code{emmeans}), which does not adequately control for violations of
- sphericity. This may result in anti-conservative tests and contrasts
- somewhat with the default ANOVA table which reports results based on the
- Greenhousse-Geisser correction. An alternative is to use a multivariate
- model (\code{model = "multivariate"} in the call to \code{emmeans}) which
- should handle violations of sphericity better. The default will likely
- change to multivariate tests in one of the next versions of the package.
+ Since version 1.0, \pkg{afex} per default uses the \code{multivariate} model
+ (i.e., the \code{lm} slot of the \code{afex_aov} object) for follow-up tests
+ with \pkg{emmeans}. Compared to the \code{univariate} model (i.e., the
+ \code{aov} slot), this can handle unbalanced data and addresses sphericity
+ better. To use the older (and not recommended) \code{model = "univariate"}
+ make sure to set \code{include_aov = TRUE} when estimating the ANOVA.
  
  Starting with \pkg{afex} version 0.22, \pkg{emmeans} is \emph{not}
  loaded/attached automatically when loading \pkg{afex}. Therefore,
@@ -369,8 +365,9 @@ aov_ez("id", "rt", md_12.1, within = c("angle", "noise"),
 aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))       
 
 
-# examples using obk.long (see ?obk.long), a long version of the OBrienKaiser dataset (car package).
-# Data is a split-plot or mixed design: contains both within- and between-subjects factors.
+# examples using obk.long (see ?obk.long), a long version of the OBrienKaiser
+# dataset (car package). Data is a split-plot or mixed design: contains both
+# within- and between-subjects factors.
 data(obk.long, package = "afex")
 
 # estimate mixed ANOVA on the full design:
@@ -408,7 +405,8 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
 # 
 # Sphericity correction method: GG 
 
-# "numeric" variables are per default converted to factors (as long as factorize = TRUE):
+# "numeric" variables are per default converted to factors (as long as factorize
+# = TRUE):
 obk.long$hour2 <- as.numeric(as.character(obk.long$hour))
 
 # gives same results as calls before
@@ -429,15 +427,20 @@ aov_ez("id", "value", obk.long, between = c("treatment", "gender"),
 
 
 # aggregating over one within-subjects factor (phase), with warning:
-aov_car(value ~ treatment * gender + Error(id/hour), data = obk.long, observed = "gender")
+aov_car(value ~ treatment * gender + Error(id/hour), data = obk.long, 
+        observed = "gender")
 
-aov_ez("id", "value", obk.long, c("treatment", "gender"), "hour", observed = "gender")
+aov_ez("id", "value", obk.long, c("treatment", "gender"), "hour", 
+       observed = "gender")
 
 # aggregating over both within-subjects factors (again with warning),
 # only between-subjects factors:
-aov_car(value ~ treatment * gender + Error(id), data = obk.long, observed = c("gender"))
-aov_4(value ~ treatment * gender + (1|id), data = obk.long, observed = c("gender"))
-aov_ez("id", "value", obk.long, between = c("treatment", "gender"), observed = "gender")
+aov_car(value ~ treatment * gender + Error(id), data = obk.long, 
+        observed = c("gender"))
+aov_4(value ~ treatment * gender + (1|id), data = obk.long, 
+      observed = c("gender"))
+aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
+       observed = "gender")
 
 # only within-subject factors (ignoring between-subjects factors)
 aov_car(value ~ Error(id/(phase*hour)), data = obk.long)
@@ -477,12 +480,17 @@ if (requireNamespace("ggplot2") & requireNamespace("emmeans")) {
 # 1b. plot data using afex_plot function, for more see: 
 ## vignette("afex_plot_introduction", package = "afex")
 
-## default plot uses univariate model-based CIs
+## default plot uses multivariate model-based CIs
 afex_plot(a1, "hour", "gender", c("treatment", "phase"))
 
-## you can use multivairate model and CIs
-afex_plot(a1, "hour", "gender", c("treatment", "phase"), 
-          emmeans_arg = list(model = "multivariate"))
+  
+a1b <- aov_ez("id", "value", obk.long, between = c("treatment", "gender"), 
+        within = c("phase", "hour"), observed = "gender", 
+        include_aov = TRUE)
+## you can use a univariate model and CIs if you refit the model with the aov
+## slot
+afex_plot(a1b, "hour", "gender", c("treatment", "phase"), 
+          emmeans_arg = list(model = "univariate"))
 
 ## in a mixed between-within designs, no error-bars might be preferrable:
 afex_plot(a1, "hour", "gender", c("treatment", "phase"), error = "none")
@@ -491,14 +499,9 @@ afex_plot(a1, "hour", "gender", c("treatment", "phase"), error = "none")
 if (requireNamespace("emmeans")) {
 library("emmeans")  # package emmeans needs to be attached for follow-up tests.
 
-# 2. obtain reference grid object (default uses univariate model):
+# 2. obtain reference grid object (default uses multivariate model):
 r1 <- emmeans(a1, ~treatment +phase)
 r1
-
-# multivariate model may be more appropriate
-r1 <- emmeans(a1, ~treatment +phase, model = "multivariate")
-r1
-
 
 # 3. create list of contrasts on the reference grid:
 c1 <- list(
@@ -516,10 +519,7 @@ contrast(r1, c1)
 contrast(r1, c1, adjust = "holm")
 
 # 2. (alternative): all pairwise comparisons of treatment:
-emmeans(a1, "treatment", contr = "pairwise", model = "multivariate")
-
-## set multivariate models globally:
-# afex_options(emmeans_model = "multivariate")
+emmeans(a1, "treatment", contr = "pairwise")
 }
 
 #######################

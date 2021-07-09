@@ -638,7 +638,7 @@ afex_plot(a1, ~phase*hour, ~treatment) +
 afex_plot(a1, ~hour, ~treatment, ~phase) +
   ggplot2::theme_light()
 
-## even better and different model-based standard errors
+## even better
 afex_plot(a1, ~hour, ~treatment, ~phase, 
           dodge = 0.65, 
           data_arg = list(
@@ -648,8 +648,7 @@ afex_plot(a1, ~hour, ~treatment, ~phase,
                 jitter.height = 0.2, 
                 dodge.width = 0.65  ## needs to be same as dodge
                 ),
-            color = "darkgrey"),
-          emmeans_arg = list(model = "multivariate")) +
+            color = "darkgrey")) +
   ggplot2::theme_classic()
 
 # with color instead of linetype to separate trace factor
@@ -662,8 +661,7 @@ afex_plot(a1, ~hour, ~treatment, ~phase,
                 jitter.width = 0, 
                 jitter.height = 0.2, 
                 dodge.width = 0.65  ## needs to be same as dodge
-                )),
-          emmeans_arg = list(model = "multivariate")) +
+                ))) +
   ggplot2::theme_light()
 
 # only color to separate trace factor
@@ -676,8 +674,7 @@ afex_plot(a1, ~hour, ~treatment, ~phase,
                 jitter.width = 0, 
                 jitter.height = 0.2, 
                 dodge.width = 0.65  ## needs to be same as dodge
-                )),
-          emmeans_arg = list(model = "multivariate")) +
+                ))) +
   ggplot2::theme_classic()
 
 
@@ -691,8 +688,7 @@ afex_plot(a1, ~hour, ~treatment, ~gender+phase,
                 jitter.height = 0.2, 
                 dodge.width = 0.65  ## needs to be same as dodge
                 ),
-            color = "darkgrey"),
-          emmeans_arg = list(model = "multivariate")) +
+            color = "darkgrey")) +
   ggplot2::theme_bw()
 
 
@@ -704,8 +700,7 @@ afex_plot(a1, ~hour, ~treatment, ~gender+phase,
 cbind(
   afex_plot(a1, ~phase, ~hour, 
             error = "model", return = "data")$means[,c("phase", "hour", "y", "SE")],
-  multivariate = afex_plot(a1, ~phase, ~hour, 
-                           emmeans_arg = list(model = "multivariate"),
+  multivariate = afex_plot(a1, ~phase, ~hour,
                            error = "model", return = "data")$means$error,
   mean = afex_plot(a1, ~phase, ~hour, 
                     error = "mean", return = "data")$means$error,
@@ -717,8 +712,7 @@ cbind(
 cbind(
   afex_plot(a1, ~phase, ~treatment, 
             error = "model", return = "data")$means[,c("phase", "treatment", "y", "SE")],
-  multivariate = afex_plot(a1, ~phase, ~treatment, 
-                           emmeans_arg = list(model = "multivariate"),
+  multivariate = afex_plot(a1, ~phase, ~treatment,
                            error = "model", return = "data")$means$error,
   mean = afex_plot(a1, ~phase, ~treatment, 
                     error = "mean", return = "data")$means$error,

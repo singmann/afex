@@ -13,9 +13,8 @@ vignette: >
 ---
 ```{r echo=FALSE}
 req_suggested_packages <- c("emmeans", "multcomp", "ggplot2")
-pcheck <- lapply(req_suggested_packages, require, 
-                 quietly = TRUE, character.only = TRUE, 
-                 warn.conflicts = FALSE)
+pcheck <- lapply(req_suggested_packages, requireNamespace, 
+                 quietly = TRUE)
 if (any(!unlist(pcheck))) {
    message("Required package(s) for this vignette are not available/installed and code will not be executed.")
    knitr::opts_chunk$set(eval = FALSE)
@@ -106,7 +105,7 @@ print(xtable::xtable(anova(a1), digits = c(rep(2, 5), 3, 4)), type = "html")
 
 # Post-Hoc Contrasts and Plotting
 
-To further analyze the data we need to pass it to package `emmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `emmeans` can be obtained in [its vignettes](https://cran.r-project.org/package=emmeans) and [faq](https://CRAN.R-project.org/package=emmeans/vignettes/FAQs.html). `emmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `emmeans`. When using the default `multivariate` option for follow-up tests, `emmeans` uses the ANOVA model estimated via base R's `lm` method (which in the case of a multivariate response is an object of class `c("mlm", "lm")`). `afex` also supports a univariate model (i.e., `emmeans_model = "univariate"`, which requires that `include_aov = TRUE` in the ANOVA call) in which case `emmeans` uses the object created by base R's `aov` function (this was the previous default but is not recommended).
+To further analyze the data we need to pass it to package `emmeans`, a package that offers great functionality for both plotting and contrasts of all kind. A lot of information on `emmeans` can be obtained in [its vignettes](https://cran.r-project.org/package=emmeans) and [faq](https://CRAN.R-project.org/package=emmeans/vignettes/FAQs.html). `emmeans` can work with `afex_aov` objects directly as __afex__ comes with the necessary methods for the generic functions defined in `emmeans`. When using the default `multivariate` option for follow-up tests, `emmeans` uses the ANOVA model estimated via base R's `lm` method (which in the case of a multivariate response is an object of class `c("mlm", "lm")`). `afex` also supports a univariate model (i.e., `emmeans_model = "univariate"`, which requires that `include_aov = TRUE` in the ANOVA call) in which case `emmeans` uses the object created by base R's `aov` function (this was the previous default but is not recommended as it does not handle unbalanced data well).
 
 ## Some First Contrasts
 
@@ -277,10 +276,10 @@ Unfortunately, in the present case this function throws several warnings. Nevert
 
 The pattern for the affirmation problems is in line with the expectations: We find the predicted differences between the instruction types for valid and implausible (`diff_2`) and invalid and plausible (`diff_3`) and the predicted non-differences for the other two problems (`diff_1` and `diff_4`). Furthermore, we find a validity effect in the deductive but not in the probabilistic condition. Likewise, we find a plausibility effect in the probabilistic but not in the deductive condition.
 
-# Some Cautionary Notes
+# Final Note
 
-* Choosing the right correction for multiple testing can be difficult. In fact `multcomp` comes with an accompanying book (Bretz et al., 2011). If the degrees-of-freedom of all contrasts are identical using `multcomp`'s method `free` is more powerful than simply using the Bonferroni-Holm method. `free` is a generalization of the Bonferroni-Holm method that takes the correlations among the model parameters into account and uniformly more powerful.
-* For data sets with many within-subject factors, creating the `aov` object can take some time (i.e., compared to producing the ANOVA table which is usually very fast). Those objects are also comparatively large, often multiple MB. If speed is important and one is not interested in employing `emmeans` one can set `return = "nice"` in the call to the ANOVA function to only receive the ANOVA table (this can also be done globally: `afex_options(return_aov = "nice")`).
+Choosing the right correction for multiple testing can be difficult. In fact `multcomp` comes with an accompanying book (Bretz et al., 2011). If the degrees-of-freedom of all contrasts are identical using `multcomp`'s method `free` is more powerful than simply using the Bonferroni-Holm method. `free` is a generalization of the Bonferroni-Holm method that takes the correlations among the model parameters into account and uniformly more powerful.
+
 
 # References 
 

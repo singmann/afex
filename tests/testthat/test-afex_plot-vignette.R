@@ -1,6 +1,8 @@
 context("afex_plot vignette: saved objects replicate")
 
 test_that("glmmTMB object", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
   skip_on_cran()
   skip_if_not_installed("glmmTMB")
   library("glmmTMB")
@@ -36,6 +38,8 @@ test_that("glmmTMB object", {
 
 
 test_that("rstanarm plots", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
   skip_on_cran()
   skip_if_not_installed("rstanarm")
   library("rstanarm") ## requires resetting the ggplot2 theme
@@ -101,6 +105,8 @@ test_that("rstanarm plots", {
 })
 
 test_that("brms plots", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
   skip_on_cran()
   skip_on_travis()
   skip_if_not_installed("brms")

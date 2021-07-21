@@ -6,6 +6,8 @@ a1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)),
               data = obk.long, observed = "gender")
 
 test_that("all input type works and warnings are correct", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
   expect_warning(
     em1 <- afex_plot(a1, ~phase*hour, ~treatment+gender, return = "data"),
     "mixed within-between-design"
@@ -54,6 +56,8 @@ test_that("all input type works and warnings are correct", {
 })
 
 test_that("ANOVA plots are produced", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
   expect_is(afex_plot(a1, "hour", error = "within"), "ggplot")
   expect_is(afex_plot(a1, c("phase", "hour"), trace = "treatment", 
                       error = "none"), "ggplot")
@@ -62,6 +66,8 @@ test_that("ANOVA plots are produced", {
 })
 
 test_that("mixed plots are produced", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
   data("fhch2010") # load 
   fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
   ### reduced data.frame length
@@ -93,6 +99,8 @@ test_that("mixed plots are produced", {
 })
 
 test_that("lme4::merMod plots are produced", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
   Oats <- nlme::Oats
   Oats$VarBlock <- Oats$Variety:Oats$Block
   Oats.lmer <- lmer(yield ~ Variety * factor(nitro) + (1|VarBlock) + (1|Block),
@@ -126,6 +134,7 @@ test_that("afex_plot works with various geoms (from examples)", {
   testthat::skip_if_not_installed("ggplot2")
   testthat::skip_if_not_installed("ggpol")
   testthat::skip_if_not_installed("ggbeeswarm")
+  testthat::skip_if_not_installed("emmeans")
   data(md_12.1)
   aw <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
   p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
@@ -201,6 +210,8 @@ test_that("afex_plot works with various geoms (from examples)", {
 })
 
 test_that("relabeling of factors and legend works", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
   data(md_12.1)
   aw <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
   ## relabel factor levels via new_levels
@@ -280,6 +291,8 @@ test_that("relabeling of factors and legend works", {
 })
 
 test_that("labels are correct in case variables are of lenth > 1", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
   data(obk.long, package = "afex")
   # estimate mixed ANOVA on the full design:
   a1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 

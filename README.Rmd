@@ -127,7 +127,7 @@ contrast(em1, con, adjust = "holm")
 
 ## Mixed Models
 
-Function `mixed()` fits a mixed model with `lme4::lmer` (or `lme4::glmer` if a `family` argument is passed) and then calculates *p*-values for fixed effects model terms using a variety of methods. The formula to `mixed` needs to be the same as in a call to `lme4::lmer`. The default method for calculation of *p*-values is `'KR'` (Kenward-Roger) which only works for linear mixed models (i.e., no `family` argument) and can require considerable RAM and time, but provides the best control of Type I errors. Other methods are `'S'` (Satterthwaite, similar to `'KR'` but requires less RAM), `'PB'` (parametric bootstrap), and `'LRT'` (likelihood-ratio test). 
+Function `mixed()` fits a mixed model with `lme4::lmer` (or `lme4::glmer` if a `family` argument is passed) and then calculates *p*-values for fixed effects model terms using a variety of methods. The formula to `mixed` needs to be the same as in a call to `lme4::lmer`. The default method for calculation of *p*-values is `'S'` (Satterthwaite) which only works for linear mixed models (i.e., no `family` argument). A similar method that provides a somewhat better control of Type I errors for small data sets is  `'KR'` (Kenward-Roger), but it can require considerable RAM and time. Other methods are , similar to `'KR'` but requires less RAM), `'PB'` (parametric bootstrap), and `'LRT'` (likelihood-ratio test). 
 
 More examples are provided in the [vignette](https://cran.r-project.org/package=afex/vignettes/afex_mixed_example.html), here we use the same example data as above, the lexical decision and word naming latencies collected by Freeman et al. (2010). To avoid long computation times we only consider the two factors `task` and `length` (omitting `stimulus` is probably not a fully sensible model).  Because mixed models easily allow it, we will consider crossed-random effects for participants (`id`) and items (`tem`).
 
@@ -139,12 +139,11 @@ fhch <- fhch2010[ fhch2010$correct,] # remove errors
 str(fhch2010) # structure of the data
 ```
 
-Because the data has plenty of levels of the random effect grouping factors we use the Satterthwaite method. For the random-effects grouping factors we begin with the maximal random effect structure justified by the design (see Barr, Levy, Scheepers, & Tily, 2013). In this case this is by-subject random intercepts and by-subjects random slopes for `stimulus` and by-item random intercepts and by-item random slopes for `task`.
+For the random-effects grouping factors we begin with the maximal random effect structure justified by the design (see Barr, Levy, Scheepers, & Tily, 2013). In this case this is by-subject random intercepts and by-subjects random slopes for `stimulus` and by-item random intercepts and by-item random slopes for `task`.
 
 ```{r}
-m1 <- mixed(log_rt ~ task * length + 
-              (length | id) + (task | item), 
-            fhch, method = "S")
+m1 <- mixed(log_rt ~ task * length + (length | id) + (task | item), 
+            fhch)
 ```
 
 Fitting this model produces a critical convergence warning, that the fit is singular. This warning usually indicates that the data does not provide enough information for the request random effect parameters. In a real analysis it would therefore be a good idea to iteratively reduce the random effect structure until the warning disappears. A good first step would be to remove the correlations among random effect terms as shown below. 
@@ -174,9 +173,8 @@ summary(m1)
 Because of the singular fit warning, we reduce the random effect structure. Usually a good starting point is removing the correlations among the random effects parameters. This can be done in `afex::mixed` even for factors by combining the double bar notation `||` with `expand_re = TRUE`. We do so for both random effects terms.
 
 ```{r}
-m2 <- mixed(log_rt ~ task * length + 
-              (length || id) + (task || item), 
-            fhch, method = "S", expand_re = TRUE)
+m2 <- mixed(log_rt ~ task * length + (length || id) + (task || item), 
+            fhch, expand_re = TRUE)
 ```
 
 However, the singular fit warning remains. We therefore inspect the random effect estimates to see which random effect parameter is estimated to be near to zero. 
@@ -188,9 +186,8 @@ summary(m2)$varcor
 As shown above, one parameter of the by-participant random slope for `length` is estimated to be almost zero, `re1.length2`. We therefore remove the by-participant random slope for `length` in the next model which does not show any convergence warnings.
 
 ```{r}
-m3 <- mixed(log_rt ~ task * length + 
-              (1 | id) + (task || item), 
-            fhch, method = "S", expand_re = TRUE)
+m3 <- mixed(log_rt ~ task * length + (1 | id) + (task || item), 
+            fhch, expand_re = TRUE)
 m3
 ```
 

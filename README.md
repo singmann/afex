@@ -43,10 +43,10 @@ For `afex` support visit:
 
 ## Installation
 
-  - `afex` is available from CRAN so the current stable version can be
+-   `afex` is available from CRAN so the current stable version can be
     installed directly via: `install.packages("afex")`
 
-  - To install the latest development version you will need the
+-   To install the latest development version you will need the
     [`devtools`](https://github.com/r-lib/devtools) package:
     `devtools::install_github("singmann/afex@master")`
 
@@ -62,12 +62,12 @@ case there are multiple observations per participant and cell of the
 design, these multiple observations are aggregated (i.e., averaged) per
 default.
 
-  - In `aov_ez` the columns containing id variable, dependent variable,
+-   In `aov_ez` the columns containing id variable, dependent variable,
     and factors need to be specified as character vectors.
-  - `aov_car` behaves similar to standard `aov` and requires the ANOVA
+-   `aov_car` behaves similar to standard `aov` and requires the ANOVA
     to be specified as a formula containing an `Error` term (at least to
     identify the id variable).
-  - `aov_4` allows the ANOVA to be specified via a formula similar to
+-   `aov_4` allows the ANOVA to be specified via a formula similar to
     `lme4::lmer` (with one random effects term).
 
 A further overview is provided by the
@@ -178,29 +178,25 @@ Follow-up tests with `emmeans` need to be specified in two steps.
     contrasts as a `list` and using `contrast()` or a convenience
     function such as `pairs()`.
 
-<!-- end list -->
-
 ``` r
 library("emmeans")
 ## set up reference grid using only length
 em1 <- emmeans(a, "length")
-#> NOTE: Results may be misleading due to involvement in interactions
 em1
-#>  length  emmean     SE   df lower.CL upper.CL
-#>  X4     -0.0968 0.0293 44.8   -0.156 -0.03772
-#>  X5     -0.0810 0.0293 44.8   -0.140 -0.02186
-#>  X6     -0.0534 0.0293 44.8   -0.113  0.00572
+#>  length  emmean     SE df lower.CL upper.CL
+#>  X4     -0.1087 0.0299 43   -0.169 -0.04834
+#>  X5     -0.0929 0.0296 43   -0.153 -0.03310
+#>  X6     -0.0653 0.0290 43   -0.124 -0.00679
 #> 
 #> Results are averaged over the levels of: task, stimulus 
-#> Warning: EMMs are biased unless design is perfectly balanced 
 #> Confidence level used: 0.95
 
 ## test all pairwise comparisons on reference grid:
 pairs(em1)
 #>  contrast estimate      SE df t.ratio p.value
-#>  X4 - X5   -0.0159 0.00722 86 -2.197  0.0774 
-#>  X4 - X6   -0.0434 0.00722 86 -6.018  <.0001 
-#>  X5 - X6   -0.0276 0.00722 86 -3.821  0.0007 
+#>  X4 - X5   -0.0159 0.00768 43 -2.065  0.1092 
+#>  X4 - X6   -0.0434 0.00782 43 -5.555  <.0001 
+#>  X5 - X6   -0.0276 0.00602 43 -4.583  0.0001 
 #> 
 #> Results are averaged over the levels of: task, stimulus 
 #> P value adjustment: tukey method for comparing a family of 3 estimates
@@ -212,8 +208,8 @@ con <- list(
 )
 contrast(em1, con, adjust = "holm")
 #>  contrast estimate      SE df t.ratio p.value
-#>  4vs5       0.0159 0.00722 86 2.197   0.0307 
-#>  5vs6       0.0276 0.00722 86 3.821   0.0005 
+#>  4vs5       0.0159 0.00768 43 2.065   0.0449 
+#>  5vs6       0.0276 0.00602 43 4.583   0.0001 
 #> 
 #> Results are averaged over the levels of: task, stimulus 
 #> P value adjustment: holm method for 2 tests
@@ -225,12 +221,13 @@ Function `mixed()` fits a mixed model with `lme4::lmer` (or
 `lme4::glmer` if a `family` argument is passed) and then calculates
 *p*-values for fixed effects model terms using a variety of methods. The
 formula to `mixed` needs to be the same as in a call to `lme4::lmer`.
-The default method for calculation of *p*-values is `'KR'`
-(Kenward-Roger) which only works for linear mixed models (i.e., no
-`family` argument) and can require considerable RAM and time, but
-provides the best control of Type I errors. Other methods are `'S'`
-(Satterthwaite, similar to `'KR'` but requires less RAM), `'PB'`
-(parametric bootstrap), and `'LRT'` (likelihood-ratio test).
+The default method for calculation of *p*-values is `'S'`
+(Satterthwaite) which only works for linear mixed models (i.e., no
+`family` argument). A similar method that provides a somewhat better
+control of Type I errors for small data sets is `'KR'` (Kenward-Roger),
+but it can require considerable RAM and time. Other methods are ,
+similar to `'KR'` but requires less RAM), `'PB'` (parametric bootstrap),
+and `'LRT'` (likelihood-ratio test).
 
 More examples are provided in the
 [vignette](https://cran.r-project.org/package=afex/vignettes/afex_mixed_example.html),
@@ -260,18 +257,15 @@ str(fhch2010) # structure of the data
 #>  $ correct  : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
 ```
 
-Because the data has plenty of levels of the random effect grouping
-factors we use the Satterthwaite method. For the random-effects grouping
-factors we begin with the maximal random effect structure justified by
-the design (see Barr, Levy, Scheepers, & Tily, 2013). In this case this
-is by-subject random intercepts and by-subjects random slopes for
-`stimulus` and by-item random intercepts and by-item random slopes for
-`task`.
+For the random-effects grouping factors we begin with the maximal random
+effect structure justified by the design (see Barr, Levy, Scheepers, &
+Tily, 2013). In this case this is by-subject random intercepts and
+by-subjects random slopes for `stimulus` and by-item random intercepts
+and by-item random slopes for `task`.
 
 ``` r
-m1 <- mixed(log_rt ~ task * length + 
-              (length | id) + (task | item), 
-            fhch, method = "S")
+m1 <- mixed(log_rt ~ task * length + (length | id) + (task | item), 
+            fhch)
 #> Contrasts set to contr.sum for the following variables: task, length, id, item
 #> Fitting one lmer() model.
 #> boundary (singular) fit: see ?isSingular
@@ -299,9 +293,9 @@ m1
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>        Effect        df         F p.value
-#> 1        task  1, 44.80 13.47 ***   <.001
-#> 2      length 2, 325.78   6.03 **    .003
-#> 3 task:length 2, 303.23      0.33    .722
+#> 1        task  1, 44.79 13.47 ***   <.001
+#> 2      length 2, 325.75   6.03 **    .003
+#> 3 task:length 2, 303.20      0.33    .722
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 nice(m1)
@@ -310,9 +304,9 @@ nice(m1)
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>        Effect        df         F p.value
-#> 1        task  1, 44.80 13.47 ***   <.001
-#> 2      length 2, 325.78   6.03 **    .003
-#> 3 task:length 2, 303.23      0.33    .722
+#> 1        task  1, 44.79 13.47 ***   <.001
+#> 2      length 2, 325.75   6.03 **    .003
+#> 3 task:length 2, 303.20      0.33    .722
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 ```
@@ -330,9 +324,9 @@ anova(m1)
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>             num Df  den Df       F    Pr(>F)    
-#> task             1  44.797 13.4692 0.0006426 ***
-#> length           2 325.775  6.0255 0.0026940 ** 
-#> task:length      2 303.227  0.3263 0.7218472    
+#> task             1  44.789 13.4676 0.0006431 ***
+#> length           2 325.751  6.0252 0.0026948 ** 
+#> task:length      2 303.203  0.3263 0.7218281    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -341,8 +335,8 @@ We can also get the default `lme4` output if we call the `summary`
 method. However, note that in contrast to the previous methods, results
 are shown for factor-levels and not model-terms which is usually not
 interpretable for factors with more than two levels. This is the case
-for `length` here. The problem is that factors with \(k\) levels are
-mapped to \(k-1\) parameters and at the same time the intercept
+for `length` here. The problem is that factors with *k* levels are
+mapped to *k* − 1 parameters and at the same time the intercept
 represent the (unweighted) grand mean. This means that factor-levels
 cannot be mapped in a 1-to-1 manner to the parameters and thus cannot be
 uniquely interpreted.
@@ -362,22 +356,22 @@ summary(m1)
 #> 
 #> Random effects:
 #>  Groups   Name        Variance  Std.Dev. Corr       
-#>  item     (Intercept) 0.0115702 0.10756             
-#>           task1       0.0104587 0.10227  0.47       
-#>  id       (Intercept) 0.0374050 0.19340             
-#>           length1     0.0003297 0.01816   0.16      
-#>           length2     0.0001009 0.01005   0.11 -0.96
-#>  Residual             0.0925502 0.30422             
+#>  item     (Intercept) 0.0115697 0.10756             
+#>           task1       0.0104578 0.10226  0.47       
+#>  id       (Intercept) 0.0374095 0.19342             
+#>           length1     0.0003298 0.01816   0.16      
+#>           length2     0.0001008 0.01004   0.11 -0.96
+#>  Residual             0.0925503 0.30422             
 #> Number of obs: 12960, groups:  item, 600; id, 45
 #> 
 #> Fixed effects:
 #>                 Estimate Std. Error         df t value Pr(>|t|)    
-#> (Intercept)    -0.089098   0.029468  44.989068  -3.024 0.004117 ** 
-#> task1          -0.108035   0.029437  44.797243  -3.670 0.000643 ***
-#> length1        -0.020756   0.007810 226.902599  -2.658 0.008425 ** 
-#> length2        -0.003746   0.007467 380.122063  -0.502 0.616214    
-#> task1:length1   0.005719   0.007569 206.633789   0.756 0.450736    
-#> task1:length2  -0.004627   0.007214 353.115359  -0.641 0.521661    
+#> (Intercept)    -0.089098   0.029470  44.980778  -3.023 0.004119 ** 
+#> task1          -0.108035   0.029439  44.788920  -3.670 0.000643 ***
+#> length1        -0.020756   0.007810 226.871782  -2.658 0.008425 ** 
+#> length2        -0.003746   0.007466 380.252651  -0.502 0.616203    
+#> task1:length1   0.005719   0.007568 206.598906   0.756 0.450727    
+#> task1:length2  -0.004627   0.007214 353.248363  -0.641 0.521640    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -388,7 +382,7 @@ summary(m1)
 #> length2      0.021  0.002 -0.526              
 #> tsk1:lngth1  0.007  0.058  0.329 -0.173       
 #> tsk1:lngth2  0.003  0.022 -0.174  0.349 -0.528
-#> convergence code: 0
+#> optimizer (nloptwrap) convergence code: 0 (OK)
 #> boundary (singular) fit: see ?isSingular
 ```
 
@@ -401,9 +395,8 @@ even for factors by combining the double bar notation `||` with
 `expand_re = TRUE`. We do so for both random effects terms.
 
 ``` r
-m2 <- mixed(log_rt ~ task * length + 
-              (length || id) + (task || item), 
-            fhch, method = "S", expand_re = TRUE)
+m2 <- mixed(log_rt ~ task * length + (length || id) + (task || item), 
+            fhch, expand_re = TRUE)
 #> Contrasts set to contr.sum for the following variables: task, length, id, item
 #> Fitting one lmer() model.
 #> boundary (singular) fit: see ?isSingular
@@ -417,13 +410,13 @@ estimated to be near to zero.
 
 ``` r
 summary(m2)$varcor
-#>  Groups   Name        Std.Dev.  
-#>  item     re2.task1   1.0119e-01
-#>  item.1   (Intercept) 1.0685e-01
-#>  id       re1.length2 3.1129e-06
-#>  id.1     re1.length1 1.2292e-02
-#>  id.2     (Intercept) 1.9340e-01
-#>  Residual             3.0437e-01
+#>  Groups   Name        Std.Dev.
+#>  item     re2.task1   0.101197
+#>  item.1   (Intercept) 0.106844
+#>  id       re1.length2 0.000000
+#>  id.1     re1.length1 0.012294
+#>  id.2     (Intercept) 0.193419
+#>  Residual             0.304373
 ```
 
 As shown above, one parameter of the by-participant random slope for
@@ -432,9 +425,8 @@ remove the by-participant random slope for `length` in the next model
 which does not show any convergence warnings.
 
 ``` r
-m3 <- mixed(log_rt ~ task * length + 
-              (1 | id) + (task || item), 
-            fhch, method = "S", expand_re = TRUE)
+m3 <- mixed(log_rt ~ task * length + (1 | id) + (task || item), 
+            fhch, expand_re = TRUE)
 #> Contrasts set to contr.sum for the following variables: task, length, id, item
 #> Fitting one lmer() model. [DONE]
 #> Calculating p-values. [DONE]
@@ -456,23 +448,22 @@ m3
 Objects returned by `mixed` can be used for plotting with `afex_plot`.
 However, two things need to be considered.
 
-  - The `id` argument of `afex_plot` allows specifying over which random
+-   The `id` argument of `afex_plot` allows specifying over which random
     effects grouping factors the data plotted in the background should
     be averaged over. Per default this uses all random effects grouping
     factors. In the present case this would mean that all data points
     are shown resulting in a very busy plot. When choosing only one of
     the random effects grouping factor, data points in the background
     show average response for each level of that factor. For example,
-    when setting `id = "id"` here each data point in the background
+    when setting `id =  "id"` here each data point in the background
     shows the mean `log_rt` of one participant (i.e., level of `id`).
-  - Estimated marginal means in the foreground are estimated via
+-   Estimated marginal means in the foreground are estimated via
     `emmeans` which per default attempts to estimate the degrees of
     freedom using the expensive Kenward-Roger method unless the number
     of data points is high (as here). This can produce quite some status
-    messages (not shown here). Use `emmeans::emm_options(lmer.df =
-    "asymptotic")` to suppress this calculation.
-
-<!-- end list -->
+    messages (not shown here). Use
+    `emmeans::emm_options(lmer.df = "asymptotic")` to suppress this
+    calculation.
 
 ``` r
 library("ggplot2")

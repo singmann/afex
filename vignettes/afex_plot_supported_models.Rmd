@@ -12,7 +12,7 @@ vignette: >
   %\VignetteEncoding{UTF-8} 
 ---
 
-```{r echo=FALSE}
+```{r, echo=FALSE}
 req_suggested_packages <- c("emmeans", "ggplot2", "cowplot",
                             "ggbeeswarm", "ggpol", 
                             "nlme", "glmmTMB", "rstanarm", "brms", 
@@ -175,7 +175,7 @@ data(Salamanders, package = "glmmTMB")
 load(system.file("extdata/", "tmb_example_fit.rda", package = "afex"))
 ```
 
-`afex_plot` does not automatically detect the random-effect for `site`. This means that per default all `r nrow(Salamanders)` data points are shown. When plotting only one variable, in which the default `data_geom` is `ggbeeswarm::geom_beeswarm`, this can lead to rather ugly plots due to the zero inflation. This is shon in panel A below. In panel B, we address this by changing the geom to a violin plot. In panel C, we address this by aggregating the data within site, but still use the beeswarm plot. Note that for panel C it is necessary to pass the data via the `data` argument as otherwise `site` cannot be found for aggregation.
+`afex_plot` does not automatically detect the random-effect for `site`. This means that per default all 644 data points are shown. When plotting only one variable, in which the default `data_geom` is `ggbeeswarm::geom_beeswarm`, this can lead to rather ugly plots due to the zero inflation. This is shon in panel A below. In panel B, we address this by changing the geom to a violin plot. In panel C, we address this by aggregating the data within site, but still use the beeswarm plot. Note that for panel C it is necessary to pass the data via the `data` argument as otherwise `site` cannot be found for aggregation.
 
 ```{r fig.width=8, fig.height=3}
 plot_grid(

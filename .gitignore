@@ -14,3 +14,5 @@ vignettes/*.html
 # revdep folder
 revdep
 inst/doc
+/doc/
+/Meta/

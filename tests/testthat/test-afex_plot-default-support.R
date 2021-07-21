@@ -1,6 +1,7 @@
 context("afex_plot: default method supported models")
 
 test_that("lm works", {
+  testthat::skip_if_not_installed("emmeans")
   warp.lm <- lm(breaks ~ wool * tension, data = warpbreaks)
   p1 <- afex_plot(warp.lm, "tension")
   d1 <- afex_plot(warp.lm, "tension", return = "data")
@@ -13,6 +14,7 @@ test_that("lm works", {
 })
 
 test_that("poisson glm works", {
+  testthat::skip_if_not_installed("emmeans")
   ins <- data.frame(
     n = c(500, 1200, 100, 400, 500, 300),
     size = factor(rep(1:3,2), labels = c("S","M","L")),
@@ -27,6 +29,7 @@ test_that("poisson glm works", {
 })
 
 test_that("binomial glm works", {
+  testthat::skip_if_not_installed("emmeans")
   ldose <- factor(rep(0:5, 2))
   numdead <- c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16)
   sex <- factor(rep(c("M", "F"), c(6, 6)))
@@ -40,6 +43,7 @@ test_that("binomial glm works", {
 })
 
 test_that("nlme works", {
+  testthat::skip_if_not_installed("emmeans")
   skip_if_not_installed("nlme")
   data(Oats, package = "nlme")
   Oats$nitro <- factor(Oats$nitro)

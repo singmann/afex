@@ -3,6 +3,7 @@
 ## Simple Examples (from MEMSS) ##
 ##################################
 
+if (requireNamespace("MEMSS")) {
 data("Machines", package = "MEMSS") 
 
 # simple model with random-slopes for repeated-measures factor
@@ -39,7 +40,7 @@ afex_plot(m1, "Machine", error = "within")
 ## less differences between CIs for model without correlations:
 afex_plot(m2, "Machine")
 afex_plot(m2, "Machine", error = "within")
-}}
+}}}
 
 \dontrun{
 #######################

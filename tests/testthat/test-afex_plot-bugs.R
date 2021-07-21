@@ -63,6 +63,8 @@ test_that("merMod objects with missing data can be plotted", {
 
 
 test_that("binomial models plot data correctly with factor DVs", {
+  testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_if_not_installed("emmeans")
   ## long format binomial GLM (https://stats.stackexchange.com/q/322038/442):
   drc4 <- function(x, b =1.0, c = 0, d = 1, e = 0){
     (d - c)/ (1 + exp(-b * (log(x)  - log(e))))
@@ -79,8 +81,6 @@ test_that("binomial models plot data correctly with factor DVs", {
   dfLong$mortality <- factor(dfLong$mortality)
   fitLong2 <- glm( mortality ~ dose, data = dfLong, 
                    family = "binomial")
-  
-  
   p2 <- afex_plot(fitLong2, "dose")
   expect_equivalent(p1, p2, check.environment=FALSE)
 })

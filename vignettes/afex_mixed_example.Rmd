@@ -154,11 +154,11 @@ In case of a singular fit or another indicator of a convergence problem, the usu
 3. No correlation among by-participant random effect terms (i.e., no correlation among random slopes themselves and between the random slopes and the random intercept).
 4. No correlation among either random grouping factor.
 
-The next decision to be made is which method to use for obtaining $p$-values. The default method is `KR` (=Kenward-Roger) which provides the best control against anti-conservative results. However, `KR` needs quite a lot of RAM, especially with complicated random effect structures and large data sets. As in this case we have both, relatively large data (i.e., many levels on each random effect, especially the item random effect) and a complicated random effect structure, it seems a reasonable decision to choose another method. The second 'best' method (in terms of controlling for Type I errors)  is the 'Satterthwaite' approximation, `method='S'`. It provides a similar control of Type I errors as the Kenward-Roger approximation and needs less RAM, however one downside is that it simply fails in some cases.
+The next decision to be made is which method to use for obtaining $p$-values. The best control against anti-conservative results is provided by `method = "KR"` (=Kenward-Roger). However, `KR` needs quite a lot of RAM, especially with complicated random effect structures and large data sets. In this case we have both, relatively large data (i.e., many levels on each random effect, especially the item random effect) and a complicated random effect structure. Consequently, it seems a reasonable decision to choose another method. The second 'best' method (in terms of controlling for Type I errors)  is the 'Satterthwaite' approximation, `method = 'S'`. It provides a similar control of Type I errors as the Kenward-Roger approximation and needs less RAM. The Satterthwaite method is currently also the default method for calculating $p$-values so does not need to be set explicitly.
 
 ## Finding the Final Model
 
-The following code fits the four models using the Satterthwaite method. To suppress random effects we use the `||` notation. Note that it is necessary to set `expand_re=TRUE` when suppressing random effects among variables that are entered as factors and not as numerical variables (all independent variables in the present case are factors). Also note that `mixed` automatically uses appropriate contrast coding if factors are included in interactions (`contr.sum`) in contrast to the `R` default (which is `contr.treatment`). To make sure the estimation does not end prematurely we set the allowed number of function evaluations to a very high value (using `lmerControl`).
+The following code fits the four models using the Satterthwaite method. To suppress random effects we use the `||` notation. Note that it is necessary to set `expand_re = TRUE` when suppressing random effects among variables that are entered as factors and not as numerical variables (all independent variables in the present case are factors). Also note that `mixed` automatically uses appropriate contrast coding if factors are included in interactions (`contr.sum`) in contrast to the `R` default (which is `contr.treatment`). To make sure the estimation does not end prematurely we set the allowed number of function evaluations to a very high value (using `lmerControl`).
 
 However, because fitting the models in R might take quite a while, you should also be able to load the fitted binary files them from [this url](https://raw.githubusercontent.com/singmann/afex/master/development/freeman_models.rda) and then load them in R with `load("freeman_models.rda")`.
 
@@ -166,7 +166,7 @@ However, because fitting the models in R might take quite a while, you should al
 ```{r, eval = FALSE}
 m1s <- mixed(log_rt ~ task*stimulus*density*frequency + 
                (stimulus*density*frequency|id)+
-               (task|item), fhch, method = "S", 
+               (task|item), fhch, 
              control = lmerControl(optCtrl = list(maxfun = 1e6)))
 ```
 ```{r, echo=FALSE}
@@ -177,7 +177,7 @@ message("boundary (singular) fit: see ?isSingular")
 ```{r, eval = FALSE}
 m2s <- mixed(log_rt ~ task*stimulus*density*frequency + 
                (stimulus*density*frequency|id)+
-               (task||item), fhch, method = "S", 
+               (task||item), fhch, 
              control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
 ```
 ```{r, echo=FALSE}
@@ -188,7 +188,7 @@ message("boundary (singular) fit: see ?isSingular")
 ```{r, eval = FALSE}
 m3s <- mixed(log_rt ~ task*stimulus*density*frequency +
                (stimulus*density*frequency||id)+
-               (task|item), fhch, method = "S", 
+               (task|item), fhch, 
              control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
 ```
 ```{r, echo=FALSE}
@@ -198,7 +198,7 @@ message("boundary (singular) fit: see ?isSingular")
 ```{r, eval = FALSE}
 m4s <- mixed(log_rt ~ task*stimulus*density*frequency + 
                (stimulus*density*frequency||id)+
-               (task||item), fhch, method = "S", 
+               (task||item), fhch, 
              control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
 ```
 ```{r, echo=FALSE}
@@ -223,7 +223,7 @@ The output shows that the estimated SDs of the random slopes of the two-way inte
 ```{r, eval=FALSE}
 m5s <- mixed(log_rt ~ task*stimulus*density*frequency + 
                ((stimulus+density+frequency)^2||id)+
-               (task||item), fhch, method = "S", 
+               (task||item), fhch, 
              control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
 ```
 ```{r, echo=FALSE}
@@ -241,7 +241,7 @@ Not too surprisingly, this model also produces a singular fit. Inspection of the
 ```{r, eval=FALSE}
 m6s <- mixed(log_rt ~ task*stimulus*density*frequency + 
                (stimulus+density+frequency||id)+
-               (task||item), fhch, method = "S", 
+               (task||item), fhch, 
              control = lmerControl(optCtrl = list(maxfun = 1e6)), 
              expand_re = TRUE)
 ```
@@ -263,7 +263,7 @@ As in `m4s` above, the random effect SD for the density term is estimated to be 
 ```{r, eval=FALSE}
 m7s <- mixed(log_rt ~ task*stimulus*density*frequency + 
                (stimulus+frequency||id)+
-               (task||item), fhch, method = "S", 
+               (task||item), fhch, 
              control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
 ```
 
@@ -272,7 +272,7 @@ This model finally does not emit a singular fit warning. Is this our final model
 ```{r, eval=FALSE}
 m8s <- mixed(log_rt ~ task*stimulus*density*frequency + 
                (stimulus+frequency|id)+
-               (task||item), fhch, method = "S", 
+               (task||item), fhch, 
              control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
 ```
 ```{r, echo=FALSE}
@@ -284,7 +284,7 @@ This model does not show a singular fit message but emits another warning. Speci
 ```{r, eval=FALSE}
 m9s <- mixed(log_rt ~ task*stimulus*density*frequency + 
                (stimulus+frequency||id)+
-               (task|item), fhch, method = "S", 
+               (task|item), fhch, 
              control = lmerControl(optCtrl = list(maxfun = 1e6)), expand_re = TRUE)
 ```
 

@@ -725,12 +725,12 @@ cbind(
 ##################################################################
 ##                         Mixed Models                         ##
 ##################################################################
+if (requireNamespace("MEMSS") && 
+    requireNamespace("emmeans") && 
+    requireNamespace("ggplot2")) {
 
 data("Machines", package = "MEMSS") 
 m1 <- mixed(score ~ Machine + (Machine|Worker), data=Machines)
-
-if (requireNamespace("emmeans") && requireNamespace("ggplot2")) {
-
 pairs(emmeans::emmeans(m1, "Machine"))
 # contrast   estimate       SE df t.ratio p.value
 # A - B     -7.966667 2.420850  5  -3.291  0.0481

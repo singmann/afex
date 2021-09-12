@@ -276,3 +276,19 @@ test_that("aov_car: character variables and factorize = FALSE", {
   expect_equal(a1$anova_table, a2$anova_table)
   expect_equal(a1$anova_table, a3$anova_table)
 })
+
+test_that("additive design works without interaction and corresponding data", {
+  dat <- read.csv("skf_issue.csv")
+  dat[["ID"]] <- factor(1:nrow(dat))
+  
+  aov1 <- aov_car(formula = Y ~ A + B + C + D + E + F + G + Error(ID), 
+                  data = dat, type="3")
+  expect_is(aov1, "afex_aov")
+  
+  datFac <- dat
+  for(i in 1:7) 
+    datFac[[LETTERS[i]]] <- factor(ifelse(dat[[LETTERS[i]]] == -1, "a", "b"))
+  aov2 <- aov_car(formula = Y ~ A + B + C + D + E + F + G + Error(ID), 
+                  data = datFac, type="3")
+  expect_is(aov2, "afex_aov")
+})

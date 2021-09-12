@@ -484,19 +484,10 @@ aov_car <- function(formula,
   ## check for structurally missing data
   # within-subjects
   if ((length(within) > 0) && any(table(data[within]) == 0)) {
-    stop("Empty cells in within-subjects design ", 
+    stop("Empty cells in within-subjects design", 
          " (i.e., bad data structure).\n", 
          "", paste0("table(data[", deparse(within), "])"), "\n# ",
          paste(utils::capture.output(table(data[within])), collapse = "\n# "),
-         call. = FALSE)
-  }
-  # between-subjects
-  between_nn <- between[!vapply(data[between], is.numeric, NA)]
-  if (length(between_nn) > 0 && any(table(data[between_nn]) == 0)) {
-    stop("Empty cells in between-subjects design ", 
-         " (i.e., bad data structure).\n",  
-         "", paste0("table(data[", deparse(between_nn), "])"), "\n# ",
-         paste(utils::capture.output(table(data[between_nn])), collapse = "\n# "),
          call. = FALSE)
   }
   
@@ -505,7 +496,7 @@ aov_car <- function(formula,
     if (any(xtabs(
       as.formula(paste0("~", id.escaped, if (length(within) > 0) "+", rh1)), 
       data = data) > 1)) {
-      warning("More than one observation per cell, aggregating the data using mean (i.e, fun_aggregate = mean)!", 
+      warning("More than one observation per design cell, aggregating data using `fun_aggregate = mean`.\To turn off this warning, pass `fun_aggregate = mean` explicitly.", 
               call. = FALSE)
       fun_aggregate <- mean
     }
@@ -537,6 +528,13 @@ aov_car <- function(formula,
   } else {
     missing_ids <- NULL
   }
+  # if (length(between_nn) > 0 && any(table(data[between_nn]) == 0)) {
+  #   stop("Empty cells in between-subjects design ", 
+  #        " (i.e., bad data structure).\n",  
+  #        "", paste0("table(data[", deparse(between_nn), "])"), "\n# ",
+  #        paste(utils::capture.output(table(data[between_nn])), collapse = "\n# "),
+  #        call. = FALSE)
+  # }
 
   #   if (length(between) > 0) {
   #     n_data_points <- xtabs(as.formula(paste("~", paste(between, collapse = "+"))), data = tmp.dat)
@@ -572,6 +570,7 @@ aov_car <- function(formula,
       type = type
     )
   }
+  
   if (return %in% c("aov")) include_aov <- TRUE
   if(include_aov){
     if (check_contrasts) {
@@ -619,9 +618,8 @@ aov_car <- function(formula,
                               rh2)), 
            data = tmp.dat))
     if (any(is.na(coef(tmp.lm)))) 
-      stop("Some parameters are not estimable, most likely due to empty cells of the design (i.e., structural missings). Check your data.")
+      between_design_error(tmp.dat, between)
     if (return == "lm") return(tmp.lm)
-    
     Anova.out <- Anova(tmp.lm, 
                        idata = idata, 
                        idesign = as.formula(paste0("~", rh3)), 
@@ -633,6 +631,8 @@ aov_car <- function(formula,
     tmp.lm <- do.call("lm", 
                       list(formula = as.formula(paste0("dv ~ ", rh2)), 
                            data = tmp.dat))
+    if (any(is.na(coef(tmp.lm)))) 
+      between_design_error(tmp.dat, between)
     if (return == "lm") return(tmp.lm)
     Anova.out <- Anova(tmp.lm, type = type)
   }
@@ -806,4 +806,14 @@ aov_ez <- function(id,
           ...)
 }
 
+between_design_error <- function(data, between) {
+  ## check between-subjects design for completeness
+  ## select all factor variables
+  between_nn <- between[!vapply(data[between], is.numeric, NA)]
+  stop("Empty cells in between-subjects design ",
+       " (i.e., bad data structure).\n",
+       "", paste0("table(data[", deparse(between_nn), "])"), "\n# ",
+       paste(utils::capture.output(table(data[between_nn])), collapse = "\n# "),
+       call. = FALSE)
+}
 

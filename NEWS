@@ -1,4 +1,23 @@
                     *************************
+                    ** afex VERSION 1.1-x **
+                    *************************
+                    
+                    Changes in afex Version 1.1-x
+                    Released September 2021
+                    
+    Significant User Visible Changes and New Features
+    
+    o   
+    
+    Bugfixes
+    
+    o   Fixed overzealous data completeness check introduced in version 1.0 in 
+        aov_car() which prevented ANOVAs with additive factors and no cross over
+        data from working.
+
+
+
+                    *************************
                     ** afex VERSION 1.0-x **
                     *************************
                     

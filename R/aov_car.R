@@ -496,7 +496,7 @@ aov_car <- function(formula,
     if (any(xtabs(
       as.formula(paste0("~", id.escaped, if (length(within) > 0) "+", rh1)), 
       data = data) > 1)) {
-      warning("More than one observation per design cell, aggregating data using `fun_aggregate = mean`.\To turn off this warning, pass `fun_aggregate = mean` explicitly.", 
+      warning("More than one observation per design cell, aggregating data using `fun_aggregate = mean`.\nTo turn off this warning, pass `fun_aggregate = mean` explicitly.", 
               call. = FALSE)
       fun_aggregate <- mean
     }

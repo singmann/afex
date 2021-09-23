@@ -617,8 +617,13 @@ aov_car <- function(formula,
                               ") ~ ", 
                               rh2)), 
            data = tmp.dat))
-    if (any(is.na(coef(tmp.lm)))) 
-      between_design_error(tmp.dat, between)
+    if (any(is.na(coef(tmp.lm)))) {
+      between_design_error(
+        data = tmp.dat, 
+        between = between, 
+        bad_vars = names(which(apply(is.na(coef(tmp.lm)), 1, any)))
+      ) 
+    }
     if (return == "lm") return(tmp.lm)
     Anova.out <- Anova(tmp.lm, 
                        idata = idata, 
@@ -626,13 +631,18 @@ aov_car <- function(formula,
                        type = type)
     data.l <- c(data.l, idata = list(idata))
     
-  } else { # if NO within-subjetc factors are present (i.e., purley between ANOVA):
+  } else { # if NO within-subject factors are present (i.e., purely between ANOVA):
     colnames(tmp.dat)[ncol(tmp.dat)] <- "dv"
     tmp.lm <- do.call("lm", 
                       list(formula = as.formula(paste0("dv ~ ", rh2)), 
                            data = tmp.dat))
-    if (any(is.na(coef(tmp.lm)))) 
-      between_design_error(tmp.dat, between)
+if (any(is.na(coef(tmp.lm)))) {
+      between_design_error(
+        data = tmp.dat, 
+        between = between, 
+        bad_vars = names(which(is.na(coef(tmp.lm))))
+      ) 
+    }
     if (return == "lm") return(tmp.lm)
     Anova.out <- Anova(tmp.lm, type = type)
   }
@@ -806,12 +816,13 @@ aov_ez <- function(id,
           ...)
 }
 
-between_design_error <- function(data, between) {
+between_design_error <- function(data, between, bad_vars) {
   ## check between-subjects design for completeness
   ## select all factor variables
   between_nn <- between[!vapply(data[between], is.numeric, NA)]
-  stop("Empty cells in between-subjects design ",
-       " (i.e., bad data structure).\n",
+  stop("NA in model coefficient(s) ", paste(bad_vars, collapse = ", "), ".", 
+       "\nLikely empty cells in between-subjects design ",
+       "(i.e., bad data structure).\n",
        "", paste0("table(data[", deparse(between_nn), "])"), "\n# ",
        paste(utils::capture.output(table(data[between_nn])), collapse = "\n# "),
        call. = FALSE)

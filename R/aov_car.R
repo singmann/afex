@@ -820,11 +820,14 @@ between_design_error <- function(data, between, bad_vars) {
   ## check between-subjects design for completeness
   ## select all factor variables
   between_nn <- between[!vapply(data[between], is.numeric, NA)]
-  stop("NA in model coefficient(s) ", paste(bad_vars, collapse = ", "), ".", 
-       "\nLikely empty cells in between-subjects design ",
-       "(i.e., bad data structure).\n",
-       "", paste0("table(data[", deparse(between_nn), "])"), "\n# ",
-       paste(utils::capture.output(table(data[between_nn])), collapse = "\n# "),
-       call. = FALSE)
+  stop(
+    "Rank deficient model matrix; insufficient data to estimate full model.\n", 
+    "Model coefficient(s) estimated as NA: ", 
+    paste(bad_vars, collapse = ", "),
+    "\nLikely empty cells in between-subjects design ",
+    "(i.e., bad data structure).\n",
+    "", paste0("table(data[", deparse(between_nn), "])"), "\n# ",
+    paste(utils::capture.output(table(data[between_nn])), collapse = "\n# "),
+    call. = FALSE)
 }
 

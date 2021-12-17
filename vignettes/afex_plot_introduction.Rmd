@@ -28,7 +28,7 @@ knitr::opts_chunk$set(dpi=72)
 ```
 
 
-`afex_plot()` visualizes results from factorial experiments combining estimated marginal means and uncertainties associated with the estimated means in the foreground with a depiction of the raw data in the background. Currently, `afex_plots()` supports the following models:
+`afex_plot()` visualizes results from factorial experiments combining estimated marginal means and uncertainties associated with the estimated means in the foreground with a depiction of the raw data in the background. Currently, `afex_plot()` supports the following models:
 
 - ANOVAs estimated with `aov_car()`, `aov_ez()`, or `aov_4()` (i.e., objects of class `"afex_aov"`)
 - Linear mixed models estimated with `mixed()` (i.e., objects of class `"mixed"`)
@@ -37,14 +37,14 @@ knitr::opts_chunk$set(dpi=72)
 
 This document provides an overview of the plots possible with `afex_plot()`. It does so mostly using the `afex_plot()` examples, see `?afex_plot`. We begin by loading `afex` and [`ggplot2`](https://ggplot2.tidyverse.org/) which is the package `afex_plot()` uses for plotting. Loading `ggplot2` explicitly is not strictly necessary, but makes the following code nicer. Otherwise, we would need to prepend each call to a function from `ggplot2` needed for customization with `ggplot2::` (as is done in the examples in `?afex_plot`). 
 
-We also load the [`cowplot`](https://cran.r-project.org/package=cowplot) package ([introduction](https://cran.r-project.org/package=cowplot/vignettes/introduction.html))  which makes combining plots (with functions `plot_grid()` and `legend()`) very easy. However, loading `cowplot` sets a different theme for `ggplot2` plots than the default grey one. Although I am not a big fan of the default theme with its grey background, we reset the theme globally using `theme_set(theme_grey())` to start with the default behavior if `cowplot` it not attached. Note that `cowplot` also has the cool `draw_plot()` function which allows embedding plots within other plots. 
+We also load the [`cowplot`](https://cran.r-project.org/package=cowplot) package ([introduction](https://cran.r-project.org/package=cowplot/vignettes/introduction.html))  which makes combining plots (with functions `plot_grid()` and `legend()`) very easy. However, loading `cowplot` sets a different theme for `ggplot2` plots than the default grey one. Although I am not a big fan of the default theme with its grey background, we reset the theme globally using `theme_set(theme_grey())` to start with the default behavior if `cowplot` is not attached. Note that `cowplot` also has the cool `draw_plot()` function which allows embedding plots within other plots. 
 
 We furthermore will need the following packages, however, we will not attach them directly, but only call a few selected functions using the `package::function` notation.
 
 - [`jtools`](https://cran.r-project.org/package=jtools) for `theme_apa()`
 - [`ggpubr`](https://cran.r-project.org/package=jtools) for `theme_pubr()`
 - [`ggbeeswarm`](https://cran.r-project.org/package=ggbeeswarm) for producing bee swarm plots with `geom_beeswarm`
-- [`ggpol`](https://cran.r-project.org/package=ggpol) for producing combined box plots and jitter plots using `geom_boxjitter()`
+- [`ggpol`](https://cran.r-project.org/package=ggpol) for producing combined box plots and jitter plots using `geom_boxjitter`
 
 
 ```{r message=FALSE, warning=FALSE}
@@ -106,7 +106,7 @@ plot_grid(
 )  
 ```
 
-The first row, panels A to C, shows themes coming with `ggplot2` and the second row, panels D to F, shows themes from additional packages. In my opinion all of these plots are an improvement above the default grey theme. For the themes coming with `ggplot2`, I really like that those shown here have a reference grid in the background. This often makes it easier to judge the actual values the shown data points have. I know that many people find this distracting, so many of the contributed themes do not have this grid. One thing I really like about the last two themes is that they per default use larger font sizes for the axes labels. One way to achieve something similar for most themes is to change `base_size`.
+The first row, panels A to C, shows themes coming with `ggplot2` and the second row, panels D to F, shows themes from additional packages. In my opinion all of these plots are an improvement above the default grey theme. For the themes coming with `ggplot2`, I really like that those shown here have a reference grid in the background. This often makes it easier to judge the actual values the shown data points have. I know that many people find this distracting, so many of the contributed themes do not have this grid. One thing I really like about the last two themes is that they per default use larger font sizes for the axes labels. One way to achieve something similar for most themes is to change `base_size` (see example below).
 
 One general criticism I have with the current plots is that they show too many values on the y-axis. In the following I plot one more variant of this plot in which we change this to three values on the y-axis. We also increase the axes labels and remove the vertical grid lines.
 
@@ -118,7 +118,7 @@ p_an +
         panel.grid.major.x = element_blank())
 ```
 
-We can also set this theme for the reminder of the `R` session with `theme_set()`. 
+We can also set this theme for the remainder of the `R` session with `theme_set()`. 
 
 ```{r}
 theme_set(theme_bw(base_size = 15) + 
@@ -239,9 +239,9 @@ plot_grid(p2, p3, p4, p5, ncol = 2, labels = 2:5)
 
 ## Plotting Order and Error Bars
 
-For graphical element in the foreground, `afex_plot` first plots all graphical elements belonging to the same factor level before plotting graphical elements belonging to different factor levels. This provides a consistent graphical impression for each factor level that is particularly relevant in case color is mapped.
+For graphical elements in the foreground, `afex_plot()` first plots all graphical elements belonging to the same factor level before plotting graphical elements belonging to different factor levels. This provides a consistent graphical impression for each factor level that is particularly relevant in case color is mapped.
 
-In case we have overlapping lines and error bars or use thick lines, we sometimes do not want that the error bars also receives different line types. In this case, we can simply pass `linetype = 1` to `error_arg` to overwrite the corresponding mapping. This is shown in the right plot.
+In case we have overlapping lines and error bars or use thick lines, we sometimes do not want that the error bars also receive different line types. In this case, we can simply pass `linetype = 1` to `error_arg` to overwrite the corresponding mapping. This is shown in the right plot.
 
 ```{r fig.width=8.5, fig.height=4, dpi = 150}
 p1 <- afex_plot(aw, x = "noise", trace = "angle", mapping = "color", 
@@ -259,7 +259,7 @@ plot_grid(p1, p2, ncol = 2)
 
 ## One-way Plots Without Trace Factor
 
-If `afex_plot` is called without a trace factor, a one-way plot is created. We can customize this plot in very much the same way. Per default a one-way plot contains a legend if `mapping` is not empty (i.e., `""`). We show this legend for the left plot, but suppress it for the right one.
+If `afex_plot()` is called without a trace factor, a one-way plot is created. We can customize this plot in very much the same way. Per default a one-way plot contains a legend if `mapping` is not empty (i.e., `""`). We show this legend for the left plot, but suppress it for the right one via `theme(legend.position="none")`.
 
 ```{r fig.width=7, fig.height=3.5, message=FALSE}
 po1 <- afex_plot(aw, x = "angle", mapping = "color", error = "within", 
@@ -296,7 +296,7 @@ afex_plot(aw, x = "angle", panel = "noise", error = "within",
   theme(legend.position="none")
 ```
 
-Sometimes we still want to add a line connecting the estimated marginal means. As `afex_plot` returns a `ggplot2` object, we can do this easily by adding a `geom_line()` object to the call. As we want to add a line through all of the shown points in the foreground, we need to add the corresponding groups aesthetics to this call: `geom_line(aes(group = 1))`. We can add further arguments to this call, as shown in the left panel below.
+Sometimes we still want to add a line connecting the estimated marginal means. As `afex_plot()` returns a `ggplot2` object, we can do this easily by adding a `geom_line` object to the call. As we want to add a line through all of the shown points in the foreground, we need to add the corresponding groups aesthetics to this call: `geom_line(aes(group = 1))`. We can add further arguments to this call, as shown in the left panel below.
 
 ```{r fig.width=7, fig.height=3.5, message=FALSE}
 plot_grid(
@@ -316,7 +316,7 @@ load(system.file("extdata/", "output_afex_plot_mixed_vignette.rda", package = "a
 
 To exemplify the support for linear mixed models, we will use the data from Freeman and colleagues also discussed in the [mixed model vignette](https://cran.r-project.org/package=afex/vignettes/afex_mixed_example.html). These data are lexical decision and word naming latencies for 300 words and 300 nonwords from 45 participants presented in Freeman et al. (2010). The dependent variable we are interested in is `log` RTs. 
 
-We look at the same model also discussed in the vignette with factors `task` (between participants, but within items), `stimulus` (within participants, but between items), `density` (within participants, but between items), and `frequency` (within participants, but between items), for a total of almost 13,000 observations. We fit the model with crossed-random effects for participants (`id`) and `item`s using the final model, `m9s`, as discussed in the mixed model vignette.
+We look at the same model also discussed in the vignette, with factors `task` (between participants, but within items), `stimulus` (within participants, but between items), `density` (within participants, but between items), and `frequency` (within participants, but between items), for a total of almost 13,000 observations. We fit the model with crossed-random effects for participants (`id`) and `item`s using the final model, `m9s`, as discussed in the mixed model vignette.
 
 ```{r, eval=FALSE}
 data("fhch2010") # load 
@@ -343,7 +343,7 @@ cat(aout_1$output, sep = "\n")
 
 ## Which Data to Plot in the Background
 
-For mixed models, one important decision is the random-effects grouping factor(s) based on which the raw data plotted in the background is aggregated. This decision is necessary, because without such a factor, there would only be one observation for each cell of the design (unless the full design is considered). In the default setting, with `id` missing, the combination of all random-effects grouping factor is used.
+For mixed models, one important decision is the random-effects grouping factor(s) based on which the raw data plotted in the background is aggregated. This decision is necessary, because without such a factor, there would only be one observation for each cell of the design (unless the full design is considered). In the default setting, with `id` missing, the combination of all random-effects grouping factors is used.
 
 ```{r fig.width=7, fig.height=3.5, eval=FALSE}
 afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task") 
@@ -413,7 +413,7 @@ pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
 ```{r, echo=FALSE}
 cat(aout_2$output, sep = "\n")
 ```
-An alternative in the present situation would be using within-subjects error bars and aggregating the data by-id (i.e., `error = "within"`), as done in the left panel below. This is somewhat appropriate here as the factors within each panel are all within-subject factors. In contrast, using by-item within-subjects error bars, as done in the right panel below, seems not appropriate as the only within-item factor, `task`, is spread across panels. Unfortunately, it is not immediately clear if these error bars allow one to correctly detect, which means do not differ from each other. 
+An alternative in the present situation would be using within-subjects error bars and aggregating the data by-id (i.e., `error = "within"`), as done in the left panel below. This is somewhat appropriate here as the factors within each panel are all within-subject factors. In contrast, using by-item within-subjects error bars, as done in the right panel below, seems not appropriate as the only within-item factor, `task`, is spread across panels. Unfortunately, it is not immediately clear if these error bars allow one to correctly detect which means do not differ from each other. 
 
 ```{r fig.width=7, fig.height=3.5, eval=FALSE}
 plot_grid( 

@@ -77,7 +77,8 @@
 #'   work better with \code{FALSE}. Default is given by
 #'   afex_options("set_data_arg").
 #' @param progress  if \code{TRUE}, shows progress with a text progress bar and
-#'   other status messages during estimation
+#'   other status messages during estimation. The default is to set \code{TRUE}
+#'   for interactive usage and \code{FALSE} for non-interactive usage.
 #' @param cl  A vector identifying a cluster; used for distributing the
 #'   estimation of the different models using several cores (if seveal models
 #'   are calculated). See examples. If \code{ckeck_contrasts = TRUE}, mixed sets

@@ -5,7 +5,7 @@
 #' between-within or split-plot ANOVAs) for data in the \strong{long} format
 #' (i.e., one observation per row). If the data has more than one observation
 #' per individual and cell of the design (e.g., multiple responses per
-#' condition), the data will by automatically aggregated. The default settings
+#' condition), the data will be automatically aggregated. The default settings
 #' reproduce results from commercial statistical packages such as SPSS or SAS.
 #' \code{aov_ez} is called specifying the factors as character vectors,
 #' \code{aov_car} is called using a formula similar to \code{\link{aov}}

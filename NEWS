@@ -17,6 +17,9 @@
     o   Fixed overzealous data completeness check introduced in version 1.0 in 
         aov_car() which prevented ANOVAs with additive factors and no cross over
         data from working.
+        
+    o   mixed(..., method = "LRT") and similar nested methdos should work with
+        empty factor levels: https://github.com/singmann/afex/issues/96
 
 
 

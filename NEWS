@@ -12,6 +12,11 @@
     
     o   Nicer error message about missing variables for ANOVAs.
     
+    o   Removed check_contrasts() argument for ANOVAs, which did not work as 
+        described for designs with repeated-measures factors: 
+        https://github.com/singmann/afex/issues/109
+        
+    
     Bugfixes
     
     o   Fixed overzealous data completeness check introduced in version 1.0 in 

@@ -64,10 +64,6 @@
 #'   \code{afex_options("factorize")}, which is initially \code{TRUE}. If one
 #'   wants to run an ANCOVA, this needs to be set to \code{FALSE} (in which case
 #'   centering on 0 is checked on numeric variables).
-#' @param check_contrasts \code{logical}. Should contrasts for between-subject
-#'   factors be checked and (if necessary) changed to be \code{"contr.sum"}. See
-#'   details. The default is given by \code{afex_options("check_contrasts")},
-#'   which is initially \code{TRUE}.
 #' @param print.formula \code{aov_ez} and \code{aov_4} are wrapper for
 #'   \code{aov_car}. This boolean argument indicates whether the formula in the
 #'   call to \code{car.aov} should be printed.
@@ -165,10 +161,10 @@
 #' (partial eta-squared) or \code{"none"} via \code{anova_table} this becomes
 #' unnecessary.
 #' 
-#' If \code{check_contrasts = TRUE}, contrasts will be set to \code{"contr.sum"}
-#' for all between-subject factors if default contrasts are not equal to
-#' \code{"contr.sum"} or \code{attrib(factor, "contrasts") != "contr.sum"}.
-#' (within-subject factors are hard-coded \code{"contr.sum"}.) }
+#' Factor contrasts will be set to \code{"contr.sum"} for all between-subject
+#' factors if default contrasts are not equal to \code{"contr.sum"} or
+#' \code{attrib(factor, "contrasts") != "contr.sum"}. (within-subject factors
+#' are hard-coded \code{"contr.sum"}.) }
 #' 
 #' \subsection{Statistical Issues}{ \strong{Type 3 sums of squares are default
 #' in \pkg{afex}.} While some authors argue that so-called type 3 sums of
@@ -182,13 +178,11 @@
 #' Note that lower order effects (e.g., main effects) in type 3 ANOVAs are only
 #' meaningful with
 #' \href{https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faqwhat-is-effect-coding/}{effects
-#' coding}. That is, contrasts should be set to \code{\link{contr.sum}} to
-#' obtain meaningful results. This is imposed automatically for the functions
-#' discussed here as long as \code{check_contrasts} is \code{TRUE} (the
-#' default). I nevertheless recommend to set the contrasts globally to
-#' \code{contr.sum} via running \code{\link{set_sum_contrasts}}. For a
-#' discussion of the other (non-recommended) coding schemes see
-#' \href{https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/}{here}. }
+#' coding}. Therefore, contrasts are set to \code{\link{contr.sum}} which
+#' ensures meaningful results. For a discussion of the other (non-recommended)
+#' coding schemes see
+#' \href{https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/}{here}.
+#' }
 #' 
 #' \subsection{Follow-Up Contrasts and Post-Hoc Tests}{ The S3 object returned
 #' per default can be directly passed to \code{emmeans::emmeans} for further
@@ -318,7 +312,6 @@ aov_car <- function(formula,
                     fun_aggregate = NULL, 
                     type = afex_options("type"), 
                     factorize = afex_options("factorize"), 
-                    check_contrasts = afex_options("check_contrasts"), 
                     observed = NULL, 
                     anova_table = list(), 
                     include_aov = afex_options("include_aov"),
@@ -330,11 +323,6 @@ aov_car <- function(formula,
   dots <- list(...)
   
   ### deprercate old argument names:
-  if("check.contrasts" %in% names(dots)) {  
-    warn_deprecated_arg("check.contrasts", "check_contrasts")
-    check_contrasts <- dots$check.contrasts
-    dots <- dots[names(dots) != "check.contrasts"]
-  }
   if("fun.aggregate" %in% names(dots)) { 
     warn_deprecated_arg("fun.aggregate", "fun_aggregate")
     fun_aggregate <- dots$fun.aggregate
@@ -576,14 +564,14 @@ aov_car <- function(formula,
     tmp.dat <- check_contrasts(
       data = tmp.dat,
       factors = between,
-      check_contrasts = check_contrasts,
+      check_contrasts = TRUE,
       type = type
     )
   }
   
   if (return %in% c("aov")) include_aov <- TRUE
   if(include_aov){
-    if (check_contrasts) {
+    if (TRUE) { ## was: check_contrasts
       factor_vars <- 
         vapply(dat.ret[,c(within, between), drop = FALSE], is.factor, NA)
       contrasts <- as.list(rep("contr.sum", sum(factor_vars)))
@@ -726,7 +714,6 @@ aov_4 <- function(formula,
                   fun_aggregate = NULL, 
                   type = afex_options("type"), 
                   factorize = afex_options("factorize"), 
-                  check_contrasts = afex_options("check_contrasts"), 
                   return = afex_options("return_aov"), 
                   anova_table = list(), 
                   include_aov = afex_options("include_aov"),
@@ -763,7 +750,6 @@ aov_4 <- function(formula,
           type = type, 
           return = return, 
           factorize = factorize, 
-          check_contrasts = check_contrasts, 
           observed = observed, 
           anova_table = anova_table, 
           include_aov = include_aov,
@@ -784,7 +770,6 @@ aov_ez <- function(id,
                    transformation,
                    type = afex_options("type"), 
                    factorize = afex_options("factorize"), 
-                   check_contrasts = afex_options("check_contrasts"), 
                    return = afex_options("return_aov"), 
                    anova_table = list(), 
                    include_aov = afex_options("include_aov"),
@@ -819,7 +804,6 @@ aov_ez <- function(id,
           type = type, 
           return = return, 
           factorize = factorize, 
-          check_contrasts = check_contrasts, 
           observed = observed, 
           anova_table = anova_table, 
           include_aov = include_aov,

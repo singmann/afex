@@ -360,6 +360,16 @@ aov_car <- function(formula,
   }
   
   vars <- all.vars(formula)
+  ### check for missing variables
+  if (any(!(vars %in% colnames(data)))) {
+    mc <- match.call()
+    missing_vars <- vars[!(vars %in% colnames(data))]
+    stop(
+      "variable(s) `", paste(missing_vars, collapse = "`, `"), "` not in `", 
+      deparse(mc[["data"]]), "`", call. = FALSE
+    )
+  }
+  
   #--- Russ Lenth added/modified code to detect transformed responses:
   lhs <- all.names(formula[[2]])
   transf <- setdiff(lhs, all.vars(formula[[2]]))

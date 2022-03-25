@@ -3,11 +3,11 @@
                     *************************
                     
                     Changes in afex Version 1.1-x
-                    Released September 2021
+                    Released March 2022
                     
     Significant User Visible Changes and New Features
     
-    o   
+    o   Nicer error message about missing variables for ANOVAs.
     
     Bugfixes
     

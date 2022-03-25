@@ -13,7 +13,6 @@ aov_car(
   fun_aggregate = NULL,
   type = afex_options("type"),
   factorize = afex_options("factorize"),
-  check_contrasts = afex_options("check_contrasts"),
   observed = NULL,
   anova_table = list(),
   include_aov = afex_options("include_aov"),
@@ -28,7 +27,6 @@ aov_4(
   fun_aggregate = NULL,
   type = afex_options("type"),
   factorize = afex_options("factorize"),
-  check_contrasts = afex_options("check_contrasts"),
   return = afex_options("return_aov"),
   anova_table = list(),
   include_aov = afex_options("include_aov"),
@@ -48,7 +46,6 @@ aov_ez(
   transformation,
   type = afex_options("type"),
   factorize = afex_options("factorize"),
-  check_contrasts = afex_options("check_contrasts"),
   return = afex_options("return_aov"),
   anova_table = list(),
   include_aov = afex_options("include_aov"),
@@ -82,11 +79,6 @@ note) before running the analysis. The default is given by
 \code{afex_options("factorize")}, which is initially \code{TRUE}. If one
 wants to run an ANCOVA, this needs to be set to \code{FALSE} (in which case
 centering on 0 is checked on numeric variables).}
-
-\item{check_contrasts}{\code{logical}. Should contrasts for between-subject
-factors be checked and (if necessary) changed to be \code{"contr.sum"}. See
-details. The default is given by \code{afex_options("check_contrasts")},
-which is initially \code{TRUE}.}
 
 \item{observed}{\code{character} vector indicating which of the variables are
 observed (i.e, measured) as compared to experimentally manipulated. The
@@ -187,7 +179,7 @@ purely within-subjects ANOVAs, purely between-subjects ANOVAs, and mixed
 between-within or split-plot ANOVAs) for data in the \strong{long} format
 (i.e., one observation per row). If the data has more than one observation
 per individual and cell of the design (e.g., multiple responses per
-condition), the data will by automatically aggregated. The default settings
+condition), the data will be automatically aggregated. The default settings
 reproduce results from commercial statistical packages such as SPSS or SAS.
 \code{aov_ez} is called specifying the factors as character vectors,
 \code{aov_car} is called using a formula similar to \code{\link{aov}}
@@ -232,10 +224,10 @@ obtain correct results. When changing the effect size to \code{"pes"}
 (partial eta-squared) or \code{"none"} via \code{anova_table} this becomes
 unnecessary.
 
-If \code{check_contrasts = TRUE}, contrasts will be set to \code{"contr.sum"}
-for all between-subject factors if default contrasts are not equal to
-\code{"contr.sum"} or \code{attrib(factor, "contrasts") != "contr.sum"}.
-(within-subject factors are hard-coded \code{"contr.sum"}.) }
+Factor contrasts will be set to \code{"contr.sum"} for all between-subject
+factors if default contrasts are not equal to \code{"contr.sum"} or
+\code{attrib(factor, "contrasts") != "contr.sum"}. (within-subject factors
+are hard-coded \code{"contr.sum"}.) }
 
 \subsection{Statistical Issues}{ \strong{Type 3 sums of squares are default
 in \pkg{afex}.} While some authors argue that so-called type 3 sums of
@@ -249,13 +241,11 @@ issue see \href{https://stats.stackexchange.com/q/6208/442}{here}.
 Note that lower order effects (e.g., main effects) in type 3 ANOVAs are only
 meaningful with
 \href{https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faqwhat-is-effect-coding/}{effects
-coding}. That is, contrasts should be set to \code{\link{contr.sum}} to
-obtain meaningful results. This is imposed automatically for the functions
-discussed here as long as \code{check_contrasts} is \code{TRUE} (the
-default). I nevertheless recommend to set the contrasts globally to
-\code{contr.sum} via running \code{\link{set_sum_contrasts}}. For a
-discussion of the other (non-recommended) coding schemes see
-\href{https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/}{here}. }
+coding}. Therefore, contrasts are set to \code{\link{contr.sum}} which
+ensures meaningful results. For a discussion of the other (non-recommended)
+coding schemes see
+\href{https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/}{here}.
+}
 
 \subsection{Follow-Up Contrasts and Post-Hoc Tests}{ The S3 object returned
 per default can be directly passed to \code{emmeans::emmeans} for further

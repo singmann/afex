@@ -7,6 +7,9 @@
                     
     Significant User Visible Changes and New Features
     
+    o   Fitting messages for mixed() are now only shown per default in 
+        interactive mode, thanks to Marius Barth (#111).
+    
     o   Nicer error message about missing variables for ANOVAs.
     
     Bugfixes

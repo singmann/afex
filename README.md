@@ -39,7 +39,7 @@ The main functionalities provided by `afex` are:
     analysis.
 
 For `afex` support visit:
-[afex.singmann.science](http://afex.singmann.science/)
+[afex.singmann.science](https://afex.singmann.science/)
 
 ## Installation
 
@@ -115,8 +115,8 @@ aov_4(log_rt ~ task * stimulus * length + (stimulus * length|id), data = fhch)
 # the three calls return the same ANOVA table:
 ```
 
-    #> Warning: More than one observation per cell, aggregating the data using mean
-    #> (i.e, fun_aggregate = mean)!
+    #> Warning: More than one observation per design cell, aggregating data using `fun_aggregate = mean`.
+    #> To turn off this warning, pass `fun_aggregate = mean` explicitly.
     #> Contrasts set to contr.sum for the following variables: task
     #> Anova Table (Type 3 tests)
     #> 
@@ -140,8 +140,8 @@ ANOVA models can be used for plotting via `afex_plot`:
 
 ``` r
 a <- aov_ez("id", "log_rt", fhch, between = "task", within = c("stimulus", "length"))
-#> Warning: More than one observation per cell, aggregating the data using mean
-#> (i.e, fun_aggregate = mean)!
+#> Warning: More than one observation per design cell, aggregating data using `fun_aggregate = mean`.
+#> To turn off this warning, pass `fun_aggregate = mean` explicitly.
 ```
 
 ``` r
@@ -194,9 +194,9 @@ em1
 ## test all pairwise comparisons on reference grid:
 pairs(em1)
 #>  contrast estimate      SE df t.ratio p.value
-#>  X4 - X5   -0.0159 0.00768 43 -2.065  0.1092 
-#>  X4 - X6   -0.0434 0.00782 43 -5.555  <.0001 
-#>  X5 - X6   -0.0276 0.00602 43 -4.583  0.0001 
+#>  X4 - X5   -0.0159 0.00768 43  -2.065  0.1092
+#>  X4 - X6   -0.0434 0.00782 43  -5.555  <.0001
+#>  X5 - X6   -0.0276 0.00602 43  -4.583  0.0001
 #> 
 #> Results are averaged over the levels of: task, stimulus 
 #> P value adjustment: tukey method for comparing a family of 3 estimates
@@ -208,8 +208,8 @@ con <- list(
 )
 contrast(em1, con, adjust = "holm")
 #>  contrast estimate      SE df t.ratio p.value
-#>  4vs5       0.0159 0.00768 43 2.065   0.0449 
-#>  5vs6       0.0276 0.00602 43 4.583   0.0001 
+#>  4vs5       0.0159 0.00768 43   2.065  0.0449
+#>  5vs6       0.0276 0.00602 43   4.583  0.0001
 #> 
 #> Results are averaged over the levels of: task, stimulus 
 #> P value adjustment: holm method for 2 tests
@@ -267,10 +267,7 @@ and by-item random slopes for `task`.
 m1 <- mixed(log_rt ~ task * length + (length | id) + (task | item), 
             fhch)
 #> Contrasts set to contr.sum for the following variables: task, length, id, item
-#> Fitting one lmer() model.
-#> boundary (singular) fit: see ?isSingular
-#> [DONE]
-#> Calculating p-values. [DONE]
+#> boundary (singular) fit: see help('isSingular')
 ```
 
 Fitting this model produces a critical convergence warning, that the fit
@@ -287,7 +284,7 @@ if we call the `nice()` method.
 ``` r
 m1
 #> Warning: lme4 reported (at least) the following warnings for 'full':
-#>   * boundary (singular) fit: see ?isSingular
+#>   * boundary (singular) fit: see help('isSingular')
 #> Mixed Model Anova Table (Type 3 tests, S-method)
 #> 
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
@@ -318,7 +315,7 @@ shown again.
 ``` r
 anova(m1)
 #> Warning: lme4 reported (at least) the following warnings for 'full':
-#>   * boundary (singular) fit: see ?isSingular
+#>   * boundary (singular) fit: see help('isSingular')
 #> Mixed Model Anova Table (Type 3 tests, S-method)
 #> 
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
@@ -335,11 +332,13 @@ We can also get the default `lme4` output if we call the `summary`
 method. However, note that in contrast to the previous methods, results
 are shown for factor-levels and not model-terms which is usually not
 interpretable for factors with more than two levels. This is the case
-for `length` here. The problem is that factors with *k* levels are
-mapped to *k* − 1 parameters and at the same time the intercept
-represent the (unweighted) grand mean. This means that factor-levels
-cannot be mapped in a 1-to-1 manner to the parameters and thus cannot be
-uniquely interpreted.
+for `length` here. The problem is that factors with
+![k](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;k "k")
+levels are mapped to
+![k-1](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;k-1 "k-1")
+parameters and at the same time the intercept represent the (unweighted)
+grand mean. This means that factor-levels cannot be mapped in a 1-to-1
+manner to the parameters and thus cannot be uniquely interpreted.
 
 ``` r
 summary(m1)
@@ -383,7 +382,7 @@ summary(m1)
 #> tsk1:lngth1  0.007  0.058  0.329 -0.173       
 #> tsk1:lngth2  0.003  0.022 -0.174  0.349 -0.528
 #> optimizer (nloptwrap) convergence code: 0 (OK)
-#> boundary (singular) fit: see ?isSingular
+#> boundary (singular) fit: see help('isSingular')
 ```
 
 ### Reducing the Random Effect Structure
@@ -398,10 +397,7 @@ even for factors by combining the double bar notation `||` with
 m2 <- mixed(log_rt ~ task * length + (length || id) + (task || item), 
             fhch, expand_re = TRUE)
 #> Contrasts set to contr.sum for the following variables: task, length, id, item
-#> Fitting one lmer() model.
-#> boundary (singular) fit: see ?isSingular
-#> [DONE]
-#> Calculating p-values. [DONE]
+#> boundary (singular) fit: see help('isSingular')
 ```
 
 However, the singular fit warning remains. We therefore inspect the
@@ -428,8 +424,6 @@ which does not show any convergence warnings.
 m3 <- mixed(log_rt ~ task * length + (1 | id) + (task || item), 
             fhch, expand_re = TRUE)
 #> Contrasts set to contr.sum for the following variables: task, length, id, item
-#> Fitting one lmer() model. [DONE]
-#> Calculating p-values. [DONE]
 m3
 #> Mixed Model Anova Table (Type 3 tests, S-method)
 #> 
@@ -525,9 +519,9 @@ em2
 ## test all pairwise comparisons on reference grid:
 pairs(em2)
 #>  contrast estimate     SE  df z.ratio p.value
-#>  4 - 5     -0.0175 0.0126 Inf -1.384  0.3495 
-#>  4 - 6     -0.0457 0.0126 Inf -3.618  0.0009 
-#>  5 - 6     -0.0282 0.0126 Inf -2.238  0.0649 
+#>  4 - 5     -0.0175 0.0126 Inf  -1.384  0.3495
+#>  4 - 6     -0.0457 0.0126 Inf  -3.618  0.0009
+#>  5 - 6     -0.0282 0.0126 Inf  -2.238  0.0649
 #> 
 #> Results are averaged over the levels of: task 
 #> Degrees-of-freedom method: asymptotic 
@@ -540,8 +534,8 @@ con <- list(
 )
 contrast(em2, con, adjust = "holm")
 #>  contrast estimate     SE  df z.ratio p.value
-#>  4vs5       0.0175 0.0126 Inf 1.384   0.1665 
-#>  5vs6       0.0282 0.0126 Inf 2.238   0.0504 
+#>  4vs5       0.0175 0.0126 Inf   1.384  0.1665
+#>  5vs6       0.0282 0.0126 Inf   2.238  0.0504
 #> 
 #> Results are averaged over the levels of: task 
 #> Degrees-of-freedom method: asymptotic 

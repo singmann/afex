@@ -27,6 +27,13 @@ options(error = NULL)
 options(warn = 2)
 options(warn = 0)
 
+#####
+
+rhub::validate_email("singmann@gmail.com")
+rhub::check_for_cran("development/afex_1.1-1.tar.gz")
+
+####
+
 usethis::use_data(stroop, internal = FALSE, overwrite = TRUE)
 usethis::use_vignette("afex_analysing_accuracy_data")
 usethis::use_github_action_check_standard()

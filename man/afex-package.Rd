@@ -17,7 +17,7 @@ The DESCRIPTION file:
 \seealso{
 Useful links:
 \itemize{
-  \item \url{http://afex.singmann.science/}
+  \item \url{https://afex.singmann.science/}
   \item \url{https://github.com/singmann/afex}
   \item Report bugs at \url{https://github.com/singmann/afex/issues}
 }

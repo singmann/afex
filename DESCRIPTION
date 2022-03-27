@@ -55,7 +55,7 @@ Description: Convenience functions for analyzing factorial experiments using ANO
          afex_plot() provides a high-level interface for interaction or one-way 
          plots using ggplot2, combining raw data and model estimates. afex uses 
          type 3 sums of squares as default (imitating commercial statistical software).
-URL: http://afex.singmann.science/, https://github.com/singmann/afex
+URL: https://afex.singmann.science/, https://github.com/singmann/afex
 BugReports: https://github.com/singmann/afex/issues
 License: GPL (>=2)
 Encoding: UTF-8

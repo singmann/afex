@@ -240,11 +240,11 @@ issue see \href{https://stats.stackexchange.com/q/6208/442}{here}.
 
 Note that lower order effects (e.g., main effects) in type 3 ANOVAs are only
 meaningful with
-\href{https://stats.idre.ucla.edu/other/mult-pkg/faq/general/faqwhat-is-effect-coding/}{effects
+\href{https://stats.oarc.ucla.edu/other/mult-pkg/faq/general/faqwhat-is-effect-coding/}{effects
 coding}. Therefore, contrasts are set to \code{\link{contr.sum}} which
 ensures meaningful results. For a discussion of the other (non-recommended)
 coding schemes see
-\href{https://stats.idre.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/}{here}.
+\href{https://stats.oarc.ucla.edu/r/library/r-library-contrast-coding-systems-for-categorical-variables/}{here}.
 }
 
 \subsection{Follow-Up Contrasts and Post-Hoc Tests}{ The S3 object returned
@@ -264,7 +264,7 @@ example):
  }
  
  Note that \pkg{emmeans} allows for a variety of advanced settings and
- simplifiations, for example: all pairwise comparison of a single factor
+ simplifications, for example: all pairwise comparison of a single factor
  using one command (e.g., \code{emmeans(x, "a", contr = "pairwise")}) or
  advanced control for multiple testing by passing objects to \pkg{multcomp}.
  A comprehensive overview of the functionality is provided in the

@@ -31,7 +31,7 @@ The main functionalities provided by `afex` are:
 3. `afex_plot()` visualizes results from factorial experiments combining estimated marginal means and uncertainties associated with the estimated means in the foreground with a depiction of the raw data in the background.  
 4. All `afex` model objects (i.e., ANOVA and mixed models) can be passed to `emmeans` for follow-up/post-hoc/planned contrast analysis.
 
-For `afex` support visit: [afex.singmann.science](http://afex.singmann.science/)
+For `afex` support visit: [afex.singmann.science](https://afex.singmann.science/)
 
 
 ## Installation

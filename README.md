@@ -15,8 +15,7 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/afex)](https://r-pkg.or
 impact](http://depsy.org/api/package/cran/afex/badge.svg)](http://depsy.org/package/r/afex)
 [![Travis-CI Build
 Status](https://travis-ci.org/singmann/afex.svg?branch=master)](https://travis-ci.org/singmann/afex)
-[![R build
-status](https://github.com/singmann/afex/workflows/R-CMD-check/badge.svg)](https://github.com/singmann/afex/actions)
+[![R-CMD-check](https://github.com/singmann/afex/workflows/R-CMD-check/badge.svg)](https://github.com/singmann/afex/actions)
 <!-- badges: end -->
 
 The main functionalities provided by `afex` are:

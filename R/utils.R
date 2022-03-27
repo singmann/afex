@@ -3,6 +3,7 @@ check_contrasts <- function(data, factors,
                             check_contrasts, type, 
                             warn = TRUE) {
   if (check_contrasts) {
+    data <- droplevels(data)
     resetted <- NULL
     for (i in factors) {
       if (is.character(data[,i])) {
@@ -11,13 +12,11 @@ check_contrasts <- function(data, factors,
       if (is.factor(data[,i])) {
         if (is.null(attr(data[,i], "contrasts")) & 
             (options("contrasts")[[1]][1] != "contr.sum")) {
-          data[,i] <- droplevels(data[,i])
           contrasts(data[,i]) <- "contr.sum"
           resetted  <- c(resetted, i)
         }
         else if (!is.null(attr(data[,i], "contrasts")) && 
                  attr(data[,i], "contrasts") != "contr.sum") {
-          data[,i] <- droplevels(data[,i])
           contrasts(data[,i]) <- "contr.sum"
           resetted  <- c(resetted, i)
         }

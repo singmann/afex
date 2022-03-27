@@ -30,7 +30,7 @@ options(warn = 0)
 #####
 
 rhub::validate_email("singmann@gmail.com")
-rhub::check_for_cran("development/afex_1.1-1.tar.gz")
+rhub::check_for_cran("development/afex_1.1-0.tar.gz")
 
 ####
 

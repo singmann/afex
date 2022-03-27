@@ -13,8 +13,6 @@ downloads](https://cranlogs.r-pkg.org/badges/last-month/afex)](https://github.co
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/afex)](https://r-pkg.org/pkg/afex)
 [![Research software
 impact](http://depsy.org/api/package/cran/afex/badge.svg)](http://depsy.org/package/r/afex)
-[![Travis-CI Build
-Status](https://travis-ci.org/singmann/afex.svg?branch=master)](https://travis-ci.org/singmann/afex)
 [![R-CMD-check](https://github.com/singmann/afex/workflows/R-CMD-check/badge.svg)](https://github.com/singmann/afex/actions)
 <!-- badges: end -->
 

@@ -104,7 +104,7 @@
 #'   \item{\code{"anova_table"}}{An ANOVA table of class \code{c("anova",
 #'    "data.frame")}.}
 #'   \item{\code{"aov"}}{\code{aov} object returned from \code{\link{aov}} 
-#'    (should not be used to evaluate significance of effects, but can be passed 
+#'    (should not be used to evaluate significance of effects, but can be passed
 #'    to \code{emmeans} for post-hoc tests).}
 #'   \item{\code{"Anova"}}{object returned from \code{\link[car]{Anova}}, an 
 #'   object of class \code{"Anova.mlm"} (if within-subjects factors are present)

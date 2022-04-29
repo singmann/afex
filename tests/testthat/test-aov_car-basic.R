@@ -139,7 +139,13 @@ test_that("afex_aov printing", {
   
   load("afex_aov_16_1.rda")
   expect_output(print(out1), "Anova")
-  expect_output(print(anova(out1)), "Signif. codes")
-  expect_output(print(nice(out1)), "Anova")
+  skip_if_not(packageVersion("car") >= '3.0.13')
+  ## only throws error with car version '3.0.13' or larger, the
+  expect_error(anova(out1),
+               regexp = "summary.Anova.mlm() failed for 'afex_aov' object.",
+               fixed = TRUE)
+  expect_error(nice(out1),
+               regexp = "summary.Anova.mlm() failed for 'afex_aov' object.",
+               fixed = TRUE)
 })
 

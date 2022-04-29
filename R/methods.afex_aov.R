@@ -88,7 +88,13 @@ anova.afex_aov <- function(object,
   es <- match.arg(es, c("none", "ges", "pes"), several.ok = TRUE)
   correction <- match.arg(correction, c("GG", "HF", "none"))
   if (inherits(object$Anova, "Anova.mlm")) {
-    tmp <- suppressWarnings(summary(object$Anova, multivariate = FALSE))
+    tmp <- tryCatch(
+      expr = suppressWarnings(summary(object$Anova, multivariate = FALSE)), 
+      error = function(e) 
+        stop("summary.Anova.mlm() failed for 'afex_aov' object.", 
+             "\nPossible reason, car package updated.", 
+             "\nTry refitting model with afex ANOVA function.", call. = FALSE)
+    )              
     t.out <- tmp[["univariate.tests"]]
     #browser()
     #t.out <- cbind(t.out, orig_den_df =  t.out[, "den Df"])

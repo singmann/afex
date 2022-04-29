@@ -149,7 +149,7 @@ incorporated in the left-hand side of \code{formula}.}
   \item{\code{"anova_table"}}{An ANOVA table of class \code{c("anova",
    "data.frame")}.}
   \item{\code{"aov"}}{\code{aov} object returned from \code{\link{aov}} 
-   (should not be used to evaluate significance of effects, but can be passed 
+   (should not be used to evaluate significance of effects, but can be passed
    to \code{emmeans} for post-hoc tests).}
   \item{\code{"Anova"}}{object returned from \code{\link[car]{Anova}}, an 
   object of class \code{"Anova.mlm"} (if within-subjects factors are present)
@@ -524,8 +524,8 @@ obk_anova <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)),
 
 str(obk_anova, 1, give.attr = FALSE)
 # List of 5
-#  $ anova_table:Classes 'anova' and 'data.frame':	15 obs. of  6 variables:
-#  $ aov        :List of 5
+#  $ anova_table:Classes ‘anova’ and 'data.frame':	15 obs. of  6 variables:
+#  $ aov        : NULL
 #  $ Anova      :List of 14
 #  $ lm         :List of 13
 #  $ data       :List of 3

@@ -207,9 +207,9 @@ the error bar.}
 \item{data_plot}{\code{logical}. Should raw data be plotted in the 
 background? Default is \code{TRUE}.}
 
-\item{data_geom}{Geom \code{function} used for plotting data in background.
-The default (missing) uses \code{\link[ggplot2]{geom_point}} if
-\code{trace} is specified, otherwise
+\item{data_geom}{Geom \code{function} or \code{list} of geom functions used
+for plotting data in background. The default (missing) uses
+\code{\link[ggplot2]{geom_point}} if \code{trace} is specified, otherwise
 \code{\link[ggbeeswarm]{geom_beeswarm}} (a good alternative is
 \code{ggbeeswarm::geom_quasirandom}) . See examples fo further options.}
 
@@ -218,9 +218,11 @@ The default (missing) uses \code{\link[ggplot2]{geom_point}} if
 data points in the background such that overlapping data points are plotted
 darker.}
 
-\item{data_arg}{A \code{list} of further arguments passed to 
+\item{data_arg}{A \code{list} of further arguments passed to
 \code{data_geom}. Default is \code{list(color = "darkgrey")}, which plots
-points in the background in grey.}
+points in the background in grey. Can also be a \code{list} of
+\code{list}s, in case \code{data_geom} is a \code{list}, to have separate
+argument lists per \code{data_geom}.}
 
 \item{point_arg, line_arg}{A \code{list} of further arguments passed to 
 \code{\link[ggplot2]{geom_point}} or \code{\link[ggplot2]{geom_line}} which
@@ -537,6 +539,31 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
           point_arg = list(size = 2.5), 
           line_arg = list(linetype = 0),
           error_arg = list(size = 1.5, width = 0))
+
+### we can also use multiple geoms for the background by passing a list of geoms
+afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+          data_geom = list(
+            ggplot2::geom_violin, 
+            ggplot2::geom_point
+          ))
+
+## with separate extra arguments:
+
+afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+          dodge = 0.5,
+          data_geom = list(
+            ggplot2::geom_violin, 
+            ggplot2::geom_point
+          ), 
+          data_arg = list(
+            list(width = 0.4, color = "darkgrey"),
+            list(position = 
+                   ggplot2::position_jitterdodge(
+                     jitter.width = 0, 
+                     jitter.height = 5, 
+                     dodge.width = 0.5  ## needs to be same as dodge
+                   ), color = "darkgrey"))
+          )
 }
 
 
@@ -569,6 +596,14 @@ afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter,
 ## we can add a line connecting the means using geom_point(aes(group = 1)):
 afex_plot(aw, x = "angle", error = "within") +
   ggplot2::geom_line(ggplot2::aes(group = 1))
+
+## we can use multiple geoms with separate argument lists:
+afex_plot(aw, x = "angle", error = "within", 
+          data_geom = 
+            list(ggplot2::geom_violin, ggplot2::geom_boxplot), 
+          data_arg = list(
+            list(width = 0.7, color = "darkgrey"), 
+            list(width = 0.2, color = "darkgrey")))
 
 ## One-way plots also supports panels:
 afex_plot(aw, x = "angle", panel = "noise", error = "within")

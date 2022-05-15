@@ -101,6 +101,31 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
           point_arg = list(size = 2.5), 
           line_arg = list(linetype = 0),
           error_arg = list(size = 1.5, width = 0))
+
+### we can also use multiple geoms for the background by passing a list of geoms
+afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+          data_geom = list(
+            ggplot2::geom_violin, 
+            ggplot2::geom_point
+          ))
+
+## with separate extra arguments:
+
+afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+          dodge = 0.5,
+          data_geom = list(
+            ggplot2::geom_violin, 
+            ggplot2::geom_point
+          ), 
+          data_arg = list(
+            list(width = 0.4, color = "darkgrey"),
+            list(position = 
+                   ggplot2::position_jitterdodge(
+                     jitter.width = 0, 
+                     jitter.height = 5, 
+                     dodge.width = 0.5  ## needs to be same as dodge
+                   ), color = "darkgrey"))
+          )
 }
 
 
@@ -133,6 +158,14 @@ afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter,
 ## we can add a line connecting the means using geom_point(aes(group = 1)):
 afex_plot(aw, x = "angle", error = "within") +
   ggplot2::geom_line(ggplot2::aes(group = 1))
+
+## we can use multiple geoms with separate argument lists:
+afex_plot(aw, x = "angle", error = "within", 
+          data_geom = 
+            list(ggplot2::geom_violin, ggplot2::geom_boxplot), 
+          data_arg = list(
+            list(width = 0.7, color = "darkgrey"), 
+            list(width = 0.2, color = "darkgrey")))
 
 ## One-way plots also supports panels:
 afex_plot(aw, x = "angle", panel = "noise", error = "within")

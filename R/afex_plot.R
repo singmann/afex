@@ -69,13 +69,16 @@
 #'   \code{\link[ggplot2]{geom_point}} if \code{trace} is specified, otherwise
 #'   \code{\link[ggbeeswarm]{geom_beeswarm}} (a good alternative is
 #'   \code{ggbeeswarm::geom_quasirandom}) . See examples fo further options.
-#' @param data_alpha numeric \code{alpha} value between 0 and 1 passed to 
+#' @param data_alpha numeric \code{alpha} value between 0 and 1 passed to
 #'   \code{data_geom}. Default is \code{0.5} which correspond to semitransparent
 #'   data points in the background such that overlapping data points are plotted
-#'   darker.
+#'   darker. If \code{NULL} it is not passed to \code{data_geom}, and can be set
+#'   via \code{data_arg}.
+#' @param data_colour color that should be used for the data in the background.
+#'   Default is \code{"darkgrey"}. If \code{NULL} it is not passed to
+#'   \code{data_geom}, and can be set via \code{data_arg}.
 #' @param data_arg A \code{list} of further arguments passed to
-#'   \code{data_geom}. Default is \code{list(color = "darkgrey")}, which plots
-#'   points in the background in grey. Can also be a \code{list} of
+#'   \code{data_geom}. Can also be a \code{list} of
 #'   \code{list}s, in case \code{data_geom} is a \code{list}, to have separate
 #'   argument lists per \code{data_geom}.
 #' @param point_arg,line_arg A \code{list} of further arguments passed to 
@@ -294,6 +297,7 @@ afex_plot.afex_aov <- function(object,
                                data_plot = TRUE,
                                data_geom,
                                data_alpha = 0.5,
+                               data_color = "darkgrey",
                                data_arg = list(color = "darkgrey"),
                                point_arg = list(),
                                line_arg = list(),
@@ -392,6 +396,7 @@ afex_plot.afex_aov <- function(object,
                             data_plot = data_plot,
                             data_geom = data_geom,
                             data_alpha = data_alpha,
+                            data_color = data_color,
                             data_arg = data_arg,
                             point_arg = point_arg,
                             line_arg = line_arg,
@@ -419,6 +424,7 @@ afex_plot.mixed <- function(object,
                             data_plot = TRUE,
                             data_geom,
                             data_alpha = 0.5,
+                            data_color = "darkgrey",
                             data_arg = list(color = "darkgrey"),
                             point_arg = list(),
                             line_arg = list(),
@@ -523,6 +529,7 @@ afex_plot.mixed <- function(object,
                             data_plot = data_plot,
                             data_geom = data_geom,
                             data_alpha = data_alpha,
+                            data_color = data_color,
                             data_arg = data_arg,
                             point_arg = point_arg,
                             line_arg = line_arg,
@@ -549,6 +556,7 @@ afex_plot.merMod <- function(object,
                             data_plot = TRUE,
                             data_geom,
                             data_alpha = 0.5,
+                            data_color = "darkgrey",
                             data_arg = list(color = "darkgrey"),
                             point_arg = list(),
                             line_arg = list(),
@@ -652,6 +660,7 @@ afex_plot.merMod <- function(object,
                             data_plot = data_plot,
                             data_geom = data_geom,
                             data_alpha = data_alpha,
+                            data_color = data_color,
                             data_arg = data_arg,
                             point_arg = point_arg,
                             line_arg = line_arg,
@@ -680,6 +689,7 @@ afex_plot.default <- function(object,
                               data_plot = TRUE,
                               data_geom,
                               data_alpha = 0.5,
+                              data_color = "darkgrey",
                               data_arg = list(color = "darkgrey"),
                               point_arg = list(),
                               line_arg = list(),
@@ -811,6 +821,7 @@ afex_plot.default <- function(object,
                             data_plot = data_plot,
                             data_geom = data_geom,
                             data_alpha = data_alpha,
+                            data_color = data_color,
                             data_arg = data_arg,
                             point_arg = point_arg,
                             line_arg = line_arg,

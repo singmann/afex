@@ -1,4 +1,25 @@
                     *************************
+                    ** afex VERSION 1.2-x **
+                    *************************
+                    
+                    Changes in afex Version 1.2-x
+                    Released XXX 2022
+                    
+    Significant User Visible Changes and New Features
+    
+    o   Multiple geoms for data in the background can now be passed to 
+        afex_plot() as a list. Likewise, for each geom, a separate list of 
+        additional arguments can be passed as a list of lists to data_arg.
+        
+    o   afex_plot() gets a new argument, data_color with default "darkgrey". 
+        Like data_alpha for alpha, data_color sets the colour for the geom 
+        (or now geoms) used to plot the data in the background. 
+        
+    o   Both data_color and data_alpha can now be set to NULL, in which case 
+        they will not be set but should be set by the user through data_arg.
+        
+
+                    *************************
                     ** afex VERSION 1.1-x **
                     *************************
                     

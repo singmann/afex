@@ -44,16 +44,14 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                 jitter.width = 0, 
                 jitter.height = 5, 
                 dodge.width = 0.3  ## needs to be same as dodge
-                ),
-            color = "darkgrey"))
+                )))
 
 # 2. using ggbeeswarm::geom_beeswarm
 afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggbeeswarm::geom_beeswarm,
           data_arg = list(
             dodge.width = 0.5,  ## needs to be same as dodge
-            cex = 0.8,
-            color = "darkgrey"))
+            cex = 0.8))
 
 # 3. do not display points, but use a violinplot: ggplot2::geom_violin
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
@@ -95,8 +93,7 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(
             width = 0.5, 
-            jitter.width = 0,
-            jitter.height = 10,
+            jitter.params = list(width = 0, height = 10),
             outlier.intersect = TRUE),
           point_arg = list(size = 2.5), 
           line_arg = list(linetype = 0),
@@ -118,13 +115,13 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within",
             ggplot2::geom_point
           ), 
           data_arg = list(
-            list(width = 0.4, color = "darkgrey"),
+            list(width = 0.4),
             list(position = 
                    ggplot2::position_jitterdodge(
                      jitter.width = 0, 
                      jitter.height = 5, 
                      dodge.width = 0.5  ## needs to be same as dodge
-                   ), color = "darkgrey"))
+                   )))
           )
 }
 
@@ -148,24 +145,31 @@ afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter,
           mapping = "fill", data_alpha = 0.7, 
           data_arg = list(
             width = 0.6, 
-            jitter.width = 0.07,
-            jitter.height = 10,
+            jitter.params = list(width = 0.07, height = 10),
             outlier.intersect = TRUE
           ),
           point_arg = list(size = 2.5), 
           error_arg = list(size = 1.5, width = 0.05))
 
-## we can add a line connecting the means using geom_point(aes(group = 1)):
-afex_plot(aw, x = "angle", error = "within") +
-  ggplot2::geom_line(ggplot2::aes(group = 1))
-
 ## we can use multiple geoms with separate argument lists:
 afex_plot(aw, x = "angle", error = "within", 
           data_geom = 
             list(ggplot2::geom_violin, ggplot2::geom_boxplot), 
-          data_arg = list(
-            list(width = 0.7, color = "darkgrey"), 
-            list(width = 0.2, color = "darkgrey")))
+          data_arg = 
+            list(list(width = 0.7), list(width = 0.1)))
+
+## we can add a line connecting the means using geom_point(aes(group = 1)):
+afex_plot(aw, x = "angle", error = "within") +
+  ggplot2::geom_line(ggplot2::aes(group = 1))
+
+## we can also add lines connecting the individual data-point in the bg.
+# to deal with overlapping points, we use geom_count and make means larger
+afex_plot(aw, x = "angle", error = "within", 
+          data_geom = list(ggplot2::geom_count, ggplot2::geom_line), 
+          data_arg = list(list(), list(mapping = ggplot2::aes(group = id))), 
+          point_arg = list(size = 2.5), 
+          error_arg = list(width = 0, size = 1.5)) +
+  ggplot2::geom_line(ggplot2::aes(group = 1), size = 1.5)
 
 ## One-way plots also supports panels:
 afex_plot(aw, x = "angle", panel = "noise", error = "within")
@@ -263,8 +267,9 @@ afex_plot(a1, ~hour, ~treatment, ~phase,
 
 # only color to separate trace factor
 afex_plot(a1, ~hour, ~treatment, ~phase, 
-          mapping = "color",
+          mapping = c("color"),
           dodge = 0.65, 
+          data_color = NULL,  ## needs to be set to NULL to avoid error
           data_arg = list(
             position = 
               ggplot2::position_jitterdodge(
@@ -365,7 +370,7 @@ pairs(emmeans::emmeans(mrt, c("stimulus", "frequency"), by = "task"))
 afex_plot(mrt, "stimulus", "frequency", "task", id = "item")
 ## within-item error bars are misleading here. task is sole within-items factor.
 afex_plot(mrt, "stimulus", "frequency", "task", id = "item", error = "within")
-## CIs based on stanard error of mean look small, but not unreasonable given results.
+## CIs based on standard error of mean look small, but not unreasonable given results.
 afex_plot(mrt, "stimulus", "frequency", "task", id = "item", error = "mean")
 
 ### compare distribution of individual data for different random effects:

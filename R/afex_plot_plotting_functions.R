@@ -9,7 +9,8 @@ interaction_plot <- function(means,
                              data_plot = TRUE,
                              data_geom = ggplot2::geom_point,
                              data_alpha = 0.5,
-                             data_arg = list(color = "darkgrey"),
+                             data_color = "darkgrey",
+                             data_arg = list(),
                              point_arg = list(),
                              line_arg = list(),
                              dodge = 0.5, 
@@ -51,7 +52,8 @@ interaction_plot <- function(means,
       data_geom <- ggplot2::geom_point
     }
     if (is.function(data_geom)) {
-      data_arg$alpha <- data_alpha
+      if (!is.null(data_alpha)) data_arg$alpha <- data_alpha
+      if (!is.null(data_color)) data_arg$color <- data_color
       if (!("position" %in% names(data_arg)) & 
           ("position" %in% names(formals(data_geom)))) {
         data_arg$position = ggplot2::position_dodge(width = dodge)
@@ -79,7 +81,8 @@ interaction_plot <- function(means,
                  as.numeric(all(as.logical(sapply(this, depth)))), 0L)
       }
       if (depth(data_arg) == 1) {
-        data_arg$alpha <- data_alpha
+        if (!is.null(data_alpha)) data_arg$alpha <- data_alpha
+        if (!is.null(data_color)) data_arg$color <- data_color
         if (!("position" %in% names(data_arg)) & 
             ("position" %in% 
              unlist(sapply(data_geom, function(x) names(formals(x)))))) {
@@ -105,7 +108,8 @@ interaction_plot <- function(means,
         }
       } else {
         for (i in seq_along(data_arg)) {
-          data_arg[[i]]$alpha <- data_alpha
+          if (!is.null(data_alpha)) data_arg[[i]]$alpha <- data_alpha
+          if (!is.null(data_color)) data_arg[[i]]$color <- data_color
           if (!("position" %in% names(data_arg[[i]])) & 
               ("position" %in% names(formals(data_geom[[i]])))) {
             data_arg[[i]]$position = ggplot2::position_dodge(width = dodge)
@@ -218,7 +222,8 @@ oneway_plot <- function(means,
                         data_plot = TRUE,
                         data_geom = ggbeeswarm::geom_beeswarm,
                         data_alpha = 0.5,
-                        data_arg = list(color = "darkgrey"),
+                        data_color = "darkgrey",
+                        data_arg = list(),
                         point_arg = list(),
                         legend_title,
                         col_x = "x",
@@ -264,7 +269,8 @@ oneway_plot <- function(means,
       data_geom <- ggbeeswarm::geom_beeswarm
     }
     if (is.function(data_geom)) {
-      data_arg$alpha <- data_alpha
+      if (!is.null(data_alpha)) data_arg$alpha <- data_alpha
+      if (!is.null(data_color)) data_arg$color <- data_color
       plot_out <- plot_out +
         do.call(what = data_geom,
                 args = c(
@@ -279,7 +285,8 @@ oneway_plot <- function(means,
                  as.numeric(all(as.logical(sapply(this, depth)))), 0L)
       }
       if (depth(data_arg) == 1) {
-        data_arg$alpha <- data_alpha
+        if (!is.null(data_alpha)) data_arg$alpha <- data_alpha
+        if (!is.null(data_color)) data_arg$color <- data_color
         for (i in seq_along(data_geom)) {
           plot_out <- plot_out +
             do.call(what = data_geom[[i]],
@@ -291,7 +298,8 @@ oneway_plot <- function(means,
         }
       } else {
         for (i in seq_along(data_arg)) {
-          data_arg[[i]]$alpha <- data_alpha
+          if (!is.null(data_alpha)) data_arg[[i]]$alpha <- data_alpha
+          if (!is.null(data_color)) data_arg[[i]]$color <- data_color
         }
         data_arg$alpha <- data_alpha
         for (i in seq_along(data_geom)) {

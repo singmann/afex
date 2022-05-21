@@ -916,7 +916,7 @@ mixed <- function(formula,
     paste0("Mixed Model Anova Table (Type ", type , " tests, ", method, 
            "-method)\n"), 
     paste0("Model: ", deparse(formula.f)),
-    paste0("Data: " ,mc[["data"]]),
+    paste0("Data: " , deparse(mc[["data"]])),
     anova_tab_addition
     )
   attr(anova_table, "sig_symbols") <- sig_symbols

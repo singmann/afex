@@ -18,6 +18,11 @@
     o   Both data_color and data_alpha can now be set to NULL, in which case 
         they will not be set but should be set by the user through data_arg.
         
+    Bugfixes
+    
+    o  Data in mixed() output is shown nicer (#113)
+
+    
 
                     *************************
                     ** afex VERSION 1.1-x **

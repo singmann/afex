@@ -74,7 +74,7 @@
 #'   data points in the background such that overlapping data points are plotted
 #'   darker. If \code{NULL} it is not passed to \code{data_geom}, and can be set
 #'   via \code{data_arg}.
-#' @param data_colour color that should be used for the data in the background.
+#' @param data_color color that should be used for the data in the background.
 #'   Default is \code{"darkgrey"}. If \code{NULL} it is not passed to
 #'   \code{data_geom}, and can be set via \code{data_arg}.
 #' @param data_arg A \code{list} of further arguments passed to

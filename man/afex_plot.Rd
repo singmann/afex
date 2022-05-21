@@ -225,6 +225,10 @@ data points in the background such that overlapping data points are plotted
 darker. If \code{NULL} it is not passed to \code{data_geom}, and can be set
 via \code{data_arg}.}
 
+\item{data_color}{color that should be used for the data in the background.
+Default is \code{"darkgrey"}. If \code{NULL} it is not passed to
+\code{data_geom}, and can be set via \code{data_arg}.}
+
 \item{data_arg}{A \code{list} of further arguments passed to
 \code{data_geom}. Can also be a \code{list} of
 \code{list}s, in case \code{data_geom} is a \code{list}, to have separate
@@ -304,10 +308,6 @@ the \code{data} \code{data.frame}.}
 \item{col_lower, col_upper}{A scalar \code{character} string specifying the 
 name of the columns containing lower and upper bounds for the error bars. 
 These columns need to exist in \code{means}.}
-
-\item{data_colour}{color that should be used for the data in the background.
-Default is \code{"darkgrey"}. If \code{NULL} it is not passed to
-\code{data_geom}, and can be set via \code{data_arg}.}
 }
 \value{
 Returns a \pkg{ggplot2} plot (i.e., object of class \code{c("gg",

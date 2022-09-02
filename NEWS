@@ -20,7 +20,10 @@
         
     Bugfixes
     
-    o  Data in mixed() output is shown nicer (#113)
+    o   Data in mixed() output is shown nicer (#113)
+    
+    o   afex_plot() should now work with factor_levels arguments even if 
+        corresponding variable is not a factor in the data.
 
     
 

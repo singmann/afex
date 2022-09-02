@@ -84,3 +84,21 @@ test_that("binomial models plot data correctly with factor DVs", {
   p2 <- afex_plot(fitLong2, "dose")
   expect_equivalent(p1, p2, check.environment=FALSE)
 })
+
+test_that("non-factor IVs work with factor_levels argument", {
+  testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("MEMSS")
+  data("Machines", package = "MEMSS") 
+  
+  ## transform Machine to character and disable check_contrasts
+  Machines$Machine <- as.character(Machines$Machine)
+  m2 <- mixed(score ~ Machine + (Machine||Worker), data=Machines, expand_re = TRUE,
+              check_contrasts = FALSE, progress = FALSE)
+  
+  df_out <- afex_plot(m2, "Machine", 
+            factor_levels = list(Machine = list("B" = "beta", "A" = "a", "C" = "c")), 
+            return = "data")
+  expect_s3_class(df_out$data$Machine, "factor")
+  expect_s3_class(df_out$means$Machine, "factor")
+})

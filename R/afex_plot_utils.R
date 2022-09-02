@@ -100,6 +100,9 @@ rename_factor_levels <- function(data, factor_levels,
         }
         names(factor_levels[[i]]) <- levels(data[[names(factor_levels)[i]]])
       }
+      if (!is.factor(data[[names(factor_levels)[i]]])) {
+        data[[names(factor_levels)[i]]] <- factor(data[[names(factor_levels)[i]]])
+      }
       factor_levels[[i]] <- factor_levels[[i]][ 
         names(factor_levels[[i]]) %in% levels(data[[names(factor_levels)[i]]]) ]
       if (status_message) {

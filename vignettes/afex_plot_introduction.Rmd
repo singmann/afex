@@ -149,31 +149,33 @@ ggsave("my_plot.pdf", device = "pdf",
 
 `afex_plot()` per default plots the raw data in the background. It does so using an [alpha blending](https://en.wikipedia.org/wiki/Alpha_compositing#Alpha_blending) of `0.5`. Thus, overlapping points appear darker. Examples of this can be seen in the previous graphs where some data points in the background appear clearly darker than others. The darker points indicate values for which several data points lie exactly on top of each other.
 
-`afex_plot()` provides the possibility to change or alter the graphical primitive, called `geom` in `ggplot2` parlance, used for plotting the points in the background. This offers a vast array of options for handling overlapping points or, more generally, how to display the raw data in the background. I show some of these examples in the following. 
+`afex_plot()` provides the possibility to change or alter the graphical primitive, called `geom` in `ggplot2` parlance, used for plotting the points in the background. This offers a vast array of options for handling overlapping points or, more generally, how to display the raw data in the background. Let's take a look at some of these examples in the following. 
 
-The first two variants display only points, whereas the remaining ones use different visualizations of the raw data. Note that depending on the specific variant we change a few further plot options to obtain a visually pleasing result. For example, the `dodge` argument controls the spread of points belonging to different levels of the `trace` factor at each x-axis position. 
+### Single Geom
 
+The simplest way for showing the data in the background is using a single geom, like in the default setting.
+
+The following figure shows eight different variants of a single geom. The plot in the top left shows the default variant. The first alternative variant adds vertical jitter to the points to make the overplotting clearer. The other alternatives use other geoms. Note that depending on the specific variant we change a few further plot options to obtain a visually pleasing result. For example, the `dodge` argument controls the spread of points belonging to different levels of the `trace` factor at each x-axis position. 
+
+1. Default background geom.
 1. Add jitter on the y-axis to points which avoids perfect overlap.
 3. Size of points show number of data points at a given y-axis position: `geom_count`. For this geom, adding a call to `scale_size_area()` can sometimes be beneficial.
 3. Violin plot: `geom_violin`
-4. Box plot: `geom_boxplot`. Note that for this plot we have added `linetype = 1` to `data_arg`, which avoids that the outline of the box plots is affected by the linetype mapping (this is in contrast with the violin plot).
+4. Box plot: `geom_boxplot`. Note that for this plot we have added `linetype = 1` to `data_arg`, which avoids that the outline of the box plots is affected by the `linetype` mapping (compare this with the violin plot where the outline of the violin differs across levels of the angle factor).
 2. Display points using a bee swarm plot, which displaces overlapping points on the x-axis: `ggbeeswarm::geom_beeswarm`
-2. Display points using a variant of the bee swarm plot that even works in case of many data points: `ggbeeswarm::geom_quasirandom`
+2. Display points using a variant of the bee swarm plot in which points are jittered horizontally to show the shape of the distribution in the same way as the violin plot:   `ggbeeswarm::geom_quasirandom`
 5. Combine box plot with jittered points: `ggpol::geom_boxjitter`
 
-
-
-
 ```{r fig.width=8.5, fig.height=16, dpi = 125}
+p0 <- afex_plot(aw, x = "noise", trace = "angle", error = "within")
 p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                 data_arg = list(
                   position = 
                     ggplot2::position_jitterdodge(
                       jitter.width = 0, 
-                      jitter.height = 10, 
+                      jitter.height = 25, 
                       dodge.width = 0.3  ## needs to be same as dodge
-                    ),
-                  color = "darkgrey"))
+                    )))
 p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                 data_geom = geom_count)
 p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
@@ -186,13 +188,11 @@ p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                 data_geom = ggbeeswarm::geom_beeswarm,
                 data_arg = list(
                   dodge.width = 0.5,  ## needs to be same as dodge
-                  cex = 0.8,
-                  color = "darkgrey"))
+                  cex = 0.8))
 p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                 data_geom = ggbeeswarm::geom_quasirandom,
                 data_arg = list(
-                  dodge.width = 0.5,  ## needs to be same as dodge
-                  color = "darkgrey"))
+                  dodge.width = 0.5))
 p7 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7, 
                 data_geom = ggpol::geom_boxjitter, 
                 data_arg = list(
@@ -201,12 +201,31 @@ p7 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
                   outlier.intersect = TRUE),
                 point_arg = list(size = 2.5), 
                 error_arg = list(size = 1.5, width = 0))
-plot_grid(p1, p2, p3, p4, p5, p6, p7, ncol = 2, labels = 1:7)  
+plot_grid(p0, p1, p2, p3, p4, p5, p6, p7, ncol = 2, labels = 1:8)  
 ```
+
+### Multiple Geoms
+
+We can also use multiple geoms to plot the data in the background. To do so, we need to pass a list of geoms to `data_geom`. We can then also set by-geom additional arguments by passing a list of arguments to `data_arg`. 
+
+For example, we can combine a violin plot, drawing the outline of the shape of the distribution, with `geom_quasirandom`, showing each individual data point in the same shape.
+
+```{r fig.width=3.5, fig.height=3, dpi = 100, out.width='50%'}
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+          data_geom = list(
+            geom_violin, 
+            ggbeeswarm::geom_quasirandom
+          ),
+          data_arg = list(
+            list(draw_quantiles = c(0.25, 0.5, 0.75)),
+            list(dodge.width = 0.5)
+          ))
+```
+
 
 ## Adding Color to Plots
 
-So far, all plots were shown in black and white only. However, it is easy to include color. We do so for plots 2 to 5 from above. To achieve this, we have to change the value of the `mapping` argument. 
+So far, all plots were shown in black and white only. However, it is easy to include color. We do so for some of the plots from above. To achieve this, we have to change the value of the `mapping` argument. 
 
 
 ```{r fig.width=8.5, fig.height=8, dpi = 125}
@@ -234,7 +253,7 @@ p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
                 point_arg = list(size = 2.5), 
                 line_arg = list(linetype = 0),
                 error_arg = list(size = 1.5, width = 0))
-plot_grid(p2, p3, p4, p5, ncol = 2, labels = 2:5) 
+plot_grid(p2, p3, p4, p5, ncol = 2) 
 ```
 
 ## Plotting Order and Error Bars
@@ -244,7 +263,7 @@ For graphical elements in the foreground, `afex_plot()` first plots all graphica
 In case we have overlapping lines and error bars or use thick lines, we sometimes do not want that the error bars also receive different line types. In this case, we can simply pass `linetype = 1` to `error_arg` to overwrite the corresponding mapping. This is shown in the right plot.
 
 ```{r fig.width=8.5, fig.height=4, dpi = 150}
-p1 <- afex_plot(aw, x = "noise", trace = "angle", mapping = "color", 
+p1 <- afex_plot(aw, x = "noise", trace = "angle", mapping = c("color"), 
                 error = "within", 
                 point_arg = list(size = 5), line_arg = list(size = 2),
                 error_arg = list(size = 2))
@@ -263,7 +282,6 @@ If `afex_plot()` is called without a trace factor, a one-way plot is created. We
 
 ```{r fig.width=7, fig.height=3.5, message=FALSE}
 po1 <- afex_plot(aw, x = "angle", mapping = "color", error = "within", 
-                 data_arg = list(),
                  point_arg = list(size = 2.5), 
                  error_arg = list(size = 1.5, width = 0.05)) 
 po2 <- afex_plot(aw, x = "angle", error = "within", 

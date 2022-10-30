@@ -53,7 +53,9 @@ interaction_plot <- function(means,
     }
     if (is.function(data_geom)) {
       if (!is.null(data_alpha)) data_arg$alpha <- data_alpha
-      if (!is.null(data_color)) data_arg$color <- data_color
+      if (!is.null(data_color) & !any(c("color", "colour") %in% mapping)) {
+        data_arg$color <- data_color
+      }
       if (!("position" %in% names(data_arg)) & 
           ("position" %in% names(formals(data_geom)))) {
         data_arg$position = ggplot2::position_dodge(width = dodge)
@@ -82,7 +84,9 @@ interaction_plot <- function(means,
       }
       if (depth(data_arg) == 1) {
         if (!is.null(data_alpha)) data_arg$alpha <- data_alpha
-        if (!is.null(data_color)) data_arg$color <- data_color
+        if (!is.null(data_color) & !any(c("color", "colour") %in% mapping)) {
+          data_arg$color <- data_color
+        }
         if (!("position" %in% names(data_arg)) & 
             ("position" %in% 
              unlist(sapply(data_geom, function(x) names(formals(x)))))) {
@@ -109,7 +113,9 @@ interaction_plot <- function(means,
       } else {
         for (i in seq_along(data_arg)) {
           if (!is.null(data_alpha)) data_arg[[i]]$alpha <- data_alpha
-          if (!is.null(data_color)) data_arg[[i]]$color <- data_color
+          if (!is.null(data_color) & !any(c("color", "colour") %in% mapping)) {
+            data_arg[[i]]$color <- data_color
+          } 
           if (!("position" %in% names(data_arg[[i]])) & 
               ("position" %in% names(formals(data_geom[[i]])))) {
             data_arg[[i]]$position = ggplot2::position_dodge(width = dodge)
@@ -270,7 +276,9 @@ oneway_plot <- function(means,
     }
     if (is.function(data_geom)) {
       if (!is.null(data_alpha)) data_arg$alpha <- data_alpha
-      if (!is.null(data_color)) data_arg$color <- data_color
+      if (!is.null(data_color) & !any(c("color", "colour") %in% mapping)) {
+        data_arg$color <- data_color
+      }
       plot_out <- plot_out +
         do.call(what = data_geom,
                 args = c(
@@ -286,7 +294,9 @@ oneway_plot <- function(means,
       }
       if (depth(data_arg) == 1) {
         if (!is.null(data_alpha)) data_arg$alpha <- data_alpha
-        if (!is.null(data_color)) data_arg$color <- data_color
+        if (!is.null(data_color) & !any(c("color", "colour") %in% mapping)) {
+          data_arg$color <- data_color
+        }
         for (i in seq_along(data_geom)) {
           plot_out <- plot_out +
             do.call(what = data_geom[[i]],
@@ -299,7 +309,9 @@ oneway_plot <- function(means,
       } else {
         for (i in seq_along(data_arg)) {
           if (!is.null(data_alpha)) data_arg[[i]]$alpha <- data_alpha
-          if (!is.null(data_color)) data_arg[[i]]$color <- data_color
+          if (!is.null(data_color) & !any(c("color", "colour") %in% mapping)) {
+            data_arg[[i]]$color <- data_color
+          } 
         }
         data_arg$alpha <- data_alpha
         for (i in seq_along(data_geom)) {

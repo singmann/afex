@@ -388,16 +388,19 @@ cat(emm_o4$output, sep = "\n")
 
 A more direct approach for plotting the interaction is via `afex_plot`. For a plot that is not too busy it makes sense to specify across which grouping factor the individual level data should be aggregated. We use the participant variable `"id"` here. We also use `ggbeeswarm::geom_quasirandom` as the geom for the data in the background following the example in [the `afex_plot` vignette](afex_plot_introduction.html).
 
-```{r, eval=FALSE}
+```{r, echo=FALSE}
+load(system.file("extdata/", "output_afex_plot_mixed_vignette_model.rda", package = "afex"))
+emm_options(lmer.df = "asymptotic") 
+```
+
+
+```{r, eval=TRUE, fig.width=5, fig.height=4, out.width="90%"}
 afex_plot(m9s, "frequency", "stimulus", "task", id = "id",
           data_geom = ggbeeswarm::geom_quasirandom, 
           data_arg = list(
             dodge.width = 0.5,  ## needs to be same as dodge
             cex = 0.8,
             color = "darkgrey"))
-```
-```{r, echo=FALSE, fig.width=5, fig.height=4, out.width="90%"}
-p1
 ```
 
 

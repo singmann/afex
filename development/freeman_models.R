@@ -93,6 +93,10 @@ aout_2 <- capture_call(
   pairs(emmeans::emmeans(m9s, c("stimulus", "frequency"), by = "task"))
 )
 
+save(m9s, aout_1, aout_2,
+     file = "inst/extdata/output_afex_plot_mixed_vignette_model.rda", 
+     compress = "xz")
+
 ap1 <- afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task") 
 ap2a <- afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "id")

@@ -26,7 +26,7 @@ afex_plot(object, ...)
   data_geom,
   data_alpha = 0.5,
   data_color = "darkgrey",
-  data_arg = list(color = "darkgrey"),
+  data_arg = list(),
   point_arg = list(),
   line_arg = list(),
   emmeans_arg = list(),
@@ -52,7 +52,7 @@ afex_plot(object, ...)
   data_geom,
   data_alpha = 0.5,
   data_color = "darkgrey",
-  data_arg = list(color = "darkgrey"),
+  data_arg = list(),
   point_arg = list(),
   line_arg = list(),
   emmeans_arg = list(),
@@ -78,7 +78,7 @@ afex_plot(object, ...)
   data_geom,
   data_alpha = 0.5,
   data_color = "darkgrey",
-  data_arg = list(color = "darkgrey"),
+  data_arg = list(),
   point_arg = list(),
   line_arg = list(),
   emmeans_arg = list(),
@@ -108,7 +108,7 @@ afex_plot(object, ...)
   data_geom,
   data_alpha = 0.5,
   data_color = "darkgrey",
-  data_arg = list(color = "darkgrey"),
+  data_arg = list(),
   point_arg = list(),
   line_arg = list(),
   emmeans_arg = list(),
@@ -227,12 +227,13 @@ via \code{data_arg}.}
 
 \item{data_color}{color that should be used for the data in the background.
 Default is \code{"darkgrey"}. If \code{NULL} it is not passed to
-\code{data_geom}, and can be set via \code{data_arg}.}
+\code{data_geom}, and can be set via \code{data_arg}. Ignored if
+\code{"color"} or \code{"colour"} in \code{mapping}.}
 
 \item{data_arg}{A \code{list} of further arguments passed to
-\code{data_geom}. Can also be a \code{list} of
-\code{list}s, in case \code{data_geom} is a \code{list}, to have separate
-argument lists per \code{data_geom}.}
+\code{data_geom}. Can also be a \code{list} of \code{list}s, in case
+\code{data_geom} is a \code{list} of multiple geoms, which allows having
+separate argument lists per \code{data_geom}.}
 
 \item{point_arg, line_arg}{A \code{list} of further arguments passed to 
 \code{\link[ggplot2]{geom_point}} or \code{\link[ggplot2]{geom_line}} which

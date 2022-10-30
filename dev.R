@@ -8,10 +8,12 @@ devtools::build(args = "--compact-vignettes=both",
                 path = "development/") # R CMD build afex --compact-vignettes="gs+qpdf"
 document()
 check()
+check_built(path = "development/afex_1.2-0.tar.gz")
 
 ## works better on windows:
 devtools::test(filter = "plot", invert = TRUE)
 devtools::test(filter = "plot")
+devtools::test(filter = "afex_plot-basics")
 
 
 test_package("afex", filter = "aov")
@@ -30,7 +32,7 @@ options(warn = 0)
 #####
 
 rhub::validate_email("singmann@gmail.com")
-rhub::check_for_cran("development/afex_1.1-1.tar.gz")
+rhub::check_for_cran("development/afex_1.2-0.tar.gz")
 
 ####
 

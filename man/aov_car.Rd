@@ -308,12 +308,12 @@ ANOVA table with different correction than the one initially specified. }
 }
 \section{Functions}{
 \itemize{
-\item \code{aov_4}: Allows definition of ANOVA-model using
+\item \code{aov_4()}: Allows definition of ANOVA-model using
 \code{lme4::lmer}-like Syntax (but still fits a standard ANOVA).
 
-\item \code{aov_ez}: Allows definition of ANOVA-model using character strings.
-}}
+\item \code{aov_ez()}: Allows definition of ANOVA-model using character strings.
 
+}}
 \note{
 Calculation of ANOVA models via \code{aov} (which is done per default)
   can be comparatively slow and produce comparatively large objects for

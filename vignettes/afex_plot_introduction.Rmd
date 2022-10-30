@@ -329,7 +329,7 @@ plot_grid(
 ## Data and Model
 
 ```{r, echo=FALSE}
-load(system.file("extdata/", "output_afex_plot_mixed_vignette.rda", package = "afex"))
+load(system.file("extdata/", "output_afex_plot_mixed_vignette_model.rda", package = "afex"))
 ```
 
 To exemplify the support for linear mixed models, we will use the data from Freeman and colleagues also discussed in the [mixed model vignette](https://cran.r-project.org/package=afex/vignettes/afex_mixed_example.html). These data are lexical decision and word naming latencies for 300 words and 300 nonwords from 45 participants presented in Freeman et al. (2010). The dependent variable we are interested in is `log` RTs. 
@@ -352,29 +352,21 @@ emmeans::emm_options(lmer.df = "asymptotic")
 ```
 
 The ANOVA table of the mixed model indicates that the three-way interaction `task:stimulus:frequency` is significant on which we focus in the following.
-```{r, eval=FALSE}
+```{r, eval=TRUE}
 m9s
-```
-```{r, echo=FALSE}
-cat(aout_1$output, sep = "\n")
 ```
 
 ## Which Data to Plot in the Background
 
 For mixed models, one important decision is the random-effects grouping factor(s) based on which the raw data plotted in the background is aggregated. This decision is necessary, because without such a factor, there would only be one observation for each cell of the design (unless the full design is considered). In the default setting, with `id` missing, the combination of all random-effects grouping factors is used.
 
-```{r fig.width=7, fig.height=3.5, eval=FALSE}
+```{r fig.width=7, fig.height=3.5, eval=TRUE}
 afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task") 
-```
-```{r fig.width=7, fig.height=3.5, echo=FALSE}
-message("Aggregating data over: item, id")
-message("NOTE: Results may be misleading due to involvement in interactions")
-ap1
 ```
 
 In the present case, a message informs us that the data is aggregated over both random-effects grouping factors. However, this leads to way too many data points in the background. Let us compare this plot with plots in which we use each of the two random-effects grouping factors in turn.
 
-```{r fig.width=7, fig.height=3.5, eval=FALSE}
+```{r fig.width=7, fig.height=3.5, eval=TRUE}
 plot_grid( 
   afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "id"), 
@@ -383,16 +375,6 @@ plot_grid(
   labels = c("ID", "Item") 
 )
 ```
-```{r fig.width=7, fig.height=3.5, echo=FALSE}
-message("NOTE: Results may be misleading due to involvement in interactions")
-message("NOTE: Results may be misleading due to involvement in interactions")
-plot_grid( 
-  ap2a, 
-  ap2b, 
-  labels = c("ID", "Item") 
-)
-
-```
 
 The by-id plot looks usable. However, the by-item plot has still way too many data-points to be informative. Some other ways of displaying the raw data, such as violin plots or box plots, seems preferable for it. 
 
@@ -400,7 +382,7 @@ The by-id plot looks usable. However, the by-item plot has still way too many da
 
 We compare violin plots or box plots for the by-item data in the next plot. For the box plot, we increase the width of the error bars and use a consistent line type to distinguish them more easily from the graphical elements of the box plot. We could probably further improve these plots by, for example, adding colors or using some of the other customizations discussed above for the ANOVA example.
 
-```{r fig.width=7, fig.height=3.5, eval=FALSE}
+```{r fig.width=7, fig.height=3.5, eval=TRUE}
 plot_grid( 
   afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "item", dodge = 0.8,
@@ -413,11 +395,7 @@ plot_grid(
             error_arg = list(size = 1.5, width = 0, linetype = 1))
 )
 ```
-```{r fig.width=7, fig.height=3.5, echo=FALSE}
-message("NOTE: Results may be misleading due to involvement in interactions")
-message("NOTE: Results may be misleading due to involvement in interactions")
-plot_grid(ap3a, ap3b)
-```
+
 
 ## Error Bars for Mixed Models
 
@@ -442,11 +420,6 @@ plot_grid(
             data_geom = geom_violin, 
             data_arg = list(width = 0.5))
 )
-```
-```{r fig.width=7, fig.height=3.5, echo=FALSE}
-message("NOTE: Results may be misleading due to involvement in interactions")
-message("NOTE: Results may be misleading due to involvement in interactions")
-plot_grid(ap4a, ap4b)
 ```
 
 In sum, using error bars for performing "inference by eye" - that is, using overlap or non-overlap of error bars to judge which means differ or do not differ from each other - is highly problematic for mixed models, due to the potentially complex dependency structures between the means. It would be best to avoid comparisons between means altogether. Instead, it is perhaps a good idea to plot the model-based error bars (which is the default) and use them for their intended purpose; judging which values of the estimated means are likely given what we have learned from the model (however, note that one cannot interpret a 95% confidence interval as having a 95% probability of containing the population mean).

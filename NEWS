@@ -8,6 +8,7 @@ Significant User Visible Changes and New Features
 Bugfixes
  o   Data in mixed() output is shown nicer (#113)
  o   afex_plot() should now work with factor_levels arguments even if corresponding variable is not a factor in the data.
+ o   Resaved plots for new version of ggbeeswarm (#117).
 
 Changes in afex Version 1.1-x (2022-03-30)
 

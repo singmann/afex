@@ -422,7 +422,7 @@ aov_car <- function(formula,
                .Machine$double.eps ^ 0.5]
       if (length(non.null) > 0) 
         warning(paste0(
-          "Numerical variables NOT centered on 0 (i.e., likely bogus results): ", 
+"Numerical variables NOT centered on 0 (matters if variable in interaction):\n   ", 
                       paste0(non.null, collapse = ", ")), call. = FALSE)
     }
   }
@@ -514,9 +514,16 @@ aov_car <- function(formula,
   if (any(is.na(tmp.dat))) {
     missing.values <- apply(tmp.dat, 1, function(x) any(is.na(x)))
     missing_ids <- unique(tmp.dat[missing.values,1])
-    warning(paste0("Missing values for following ID(s):\n", 
-                  paste0(missing_ids, collapse = ", "), 
-                  "\nRemoving those cases from the analysis."), call. = FALSE) 
+    warning(paste0("Missing values for ", length(missing_ids), " ID(s) removed from analysis:\n", 
+                  if (length(missing_ids) < 10) 
+                    paste0(missing_ids, collapse = ", ")
+                  else 
+                    paste0(paste0(missing_ids[1:10], collapse = ", "), 
+                           ", ... [showing first 10 only]"), 
+                  "\nBelow the first few rows of the removed cases with missing data.\n  ",
+                  paste(utils::capture.output(head(tmp.dat[missing.values,])),
+                  collapse = "\n# ")), 
+                  call. = FALSE) 
     tmp.dat <- tmp.dat[!missing.values,]
     data <- data[ !(data[,id] %in% missing_ids),]
     if ((nrow(data) == 0 ) | (nrow(tmp.dat) == 0)) {
@@ -634,7 +641,7 @@ aov_car <- function(formula,
     tmp.lm <- do.call("lm", 
                       list(formula = as.formula(paste0("dv ~ ", rh2)), 
                            data = tmp.dat))
-if (any(is.na(coef(tmp.lm)))) {
+    if (any(is.na(coef(tmp.lm)))) {
       between_design_error(
         data = tmp.dat, 
         between = between, 

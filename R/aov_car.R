@@ -514,13 +514,13 @@ aov_car <- function(formula,
   if (any(is.na(tmp.dat))) {
     missing.values <- apply(tmp.dat, 1, function(x) any(is.na(x)))
     missing_ids <- unique(tmp.dat[missing.values,1])
-    warning(paste0("Missing values for ", length(missing_ids), " ID(s) removed from analysis:\n", 
+    warning(paste0("Missing values for ", length(missing_ids), " ID(s), which were removed before analysis:\n", 
                   if (length(missing_ids) < 10) 
                     paste0(missing_ids, collapse = ", ")
                   else 
                     paste0(paste0(missing_ids[1:10], collapse = ", "), 
                            ", ... [showing first 10 only]"), 
-                  "\nBelow the first few rows of the removed cases with missing data.\n  ",
+                  "\nBelow the first few rows (in wide format) of the removed cases with missing data.\n  ",
                   paste(utils::capture.output(head(tmp.dat[missing.values,])),
                   collapse = "\n# ")), 
                   call. = FALSE) 

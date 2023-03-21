@@ -11,11 +11,10 @@
 #' \code{aov_car} is called using a formula similar to \code{\link{aov}}
 #' specifying an error strata for the within-subject factor(s), and \code{aov_4}
 #' is called with a \pkg{lme4}-like formula (all ANOVA functions return
-#' identical results). The returned object contains the ANOVA also fitted via
-#' base R's \code{\link{aov}} which can be passed to e.g., \pkg{emmeans} for
-#' further analysis (e.g., follow-up tests, contrasts, plotting, etc.). These
-#' functions employ \code{\link[car]{Anova}} (from the \pkg{car} package) to
-#' provide test of effects avoiding the somewhat unhandy format of
+#' identical results). The returned object can be passed to e.g., \pkg{emmeans}
+#' for further analysis (e.g., follow-up tests, contrasts, plotting, etc.).
+#' These functions employ \code{\link[car]{Anova}} (from the \pkg{car} package)
+#' to provide test of effects avoiding the somewhat unhandy format of
 #' \code{car::Anova}.
 #' 
 #'
@@ -37,7 +36,7 @@
 #' @param observed \code{character} vector indicating which of the variables are
 #'   observed (i.e, measured) as compared to experimentally manipulated. The
 #'   default effect size reported (generalized eta-squared) requires correct
-#'   specification of the obsered (in contrast to manipulated) variables.
+#'   specification of the observed (in contrast to manipulated) variables.
 #' @param formula A formula specifying the ANOVA model similar to
 #'   \code{\link{aov}} (for \code{aov_car} or similar to \code{lme4:lmer} for
 #'   \code{aov_4}). Must include an error term (i.e., \code{Error(id/...)} for

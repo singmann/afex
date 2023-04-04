@@ -20,7 +20,7 @@ afex: Analysis of Factorial EXperiments
 [![monthly downloads](https://cranlogs.r-pkg.org/badges/last-month/afex)](https://github.com/singmann/afex)
 [![total downloads](https://cranlogs.r-pkg.org/badges/grand-total/afex)](https://r-pkg.org/pkg/afex)
 [![Research software impact](http://depsy.org/api/package/cran/afex/badge.svg)](http://depsy.org/package/r/afex)
-[![R-CMD-check](https://github.com/singmann/afex/workflows/R-CMD-check/badge.svg)](https://github.com/singmann/afex/actions)
+[![R-CMD-check](https://github.com/singmann/afex/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/singmann/afex/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The main functionalities provided by `afex` are:

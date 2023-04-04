@@ -13,7 +13,7 @@ downloads](https://cranlogs.r-pkg.org/badges/last-month/afex)](https://github.co
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/afex)](https://r-pkg.org/pkg/afex)
 [![Research software
 impact](http://depsy.org/api/package/cran/afex/badge.svg)](http://depsy.org/package/r/afex)
-[![R-CMD-check](https://github.com/singmann/afex/workflows/R-CMD-check/badge.svg)](https://github.com/singmann/afex/actions)
+[![R-CMD-check](https://github.com/singmann/afex/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/singmann/afex/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The main functionalities provided by `afex` are:
@@ -40,12 +40,12 @@ For `afex` support visit:
 
 ## Installation
 
--   `afex` is available from CRAN so the current stable version can be
-    installed directly via: `install.packages("afex")`
+- `afex` is available from CRAN so the current stable version can be
+  installed directly via: `install.packages("afex")`
 
--   To install the latest development version you will need the
-    [`devtools`](https://github.com/r-lib/devtools) package:
-    `devtools::install_github("singmann/afex@master")`
+- To install the latest development version you will need the
+  [`devtools`](https://github.com/r-lib/devtools) package:
+  `devtools::install_github("singmann/afex@master")`
 
 ## ANOVA functionality
 
@@ -59,13 +59,13 @@ case there are multiple observations per participant and cell of the
 design, these multiple observations are aggregated (i.e., averaged) per
 default.
 
--   In `aov_ez` the columns containing id variable, dependent variable,
-    and factors need to be specified as character vectors.
--   `aov_car` behaves similar to standard `aov` and requires the ANOVA
-    to be specified as a formula containing an `Error` term (at least to
-    identify the id variable).
--   `aov_4` allows the ANOVA to be specified via a formula similar to
-    `lme4::lmer` (with one random effects term).
+- In `aov_ez` the columns containing id variable, dependent variable,
+  and factors need to be specified as character vectors.
+- `aov_car` behaves similar to standard `aov` and requires the ANOVA to
+  be specified as a formula containing an `Error` term (at least to
+  identify the id variable).
+- `aov_4` allows the ANOVA to be specified via a formula similar to
+  `lme4::lmer` (with one random effects term).
 
 A further overview is provided by the
 [vignette](https://cran.r-project.org/package=afex/vignettes/afex_anova_example.html).
@@ -287,9 +287,9 @@ m1
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>        Effect        df         F p.value
-#> 1        task  1, 44.79 13.47 ***   <.001
-#> 2      length 2, 325.75   6.03 **    .003
-#> 3 task:length 2, 303.20      0.33    .722
+#> 1        task  1, 44.80 13.47 ***   <.001
+#> 2      length 2, 325.78   6.03 **    .003
+#> 3 task:length 2, 303.23      0.33    .722
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 nice(m1)
@@ -298,9 +298,9 @@ nice(m1)
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>        Effect        df         F p.value
-#> 1        task  1, 44.79 13.47 ***   <.001
-#> 2      length 2, 325.75   6.03 **    .003
-#> 3 task:length 2, 303.20      0.33    .722
+#> 1        task  1, 44.80 13.47 ***   <.001
+#> 2      length 2, 325.78   6.03 **    .003
+#> 3 task:length 2, 303.23      0.33    .722
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 ```
@@ -318,9 +318,9 @@ anova(m1)
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>             num Df  den Df       F    Pr(>F)    
-#> task             1  44.789 13.4676 0.0006431 ***
-#> length           2 325.751  6.0252 0.0026948 ** 
-#> task:length      2 303.203  0.3263 0.7218281    
+#> task             1  44.797 13.4692 0.0006426 ***
+#> length           2 325.775  6.0255 0.0026940 ** 
+#> task:length      2 303.227  0.3263 0.7218472    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -329,13 +329,11 @@ We can also get the default `lme4` output if we call the `summary`
 method. However, note that in contrast to the previous methods, results
 are shown for factor-levels and not model-terms which is usually not
 interpretable for factors with more than two levels. This is the case
-for `length` here. The problem is that factors with
-![k](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;k "k")
-levels are mapped to
-![k-1](https://latex.codecogs.com/png.image?%5Cdpi%7B110%7D&space;%5Cbg_white&space;k-1 "k-1")
-parameters and at the same time the intercept represent the (unweighted)
-grand mean. This means that factor-levels cannot be mapped in a 1-to-1
-manner to the parameters and thus cannot be uniquely interpreted.
+for `length` here. The problem is that factors with $k$ levels are
+mapped to $k-1$ parameters and at the same time the intercept represent
+the (unweighted) grand mean. This means that factor-levels cannot be
+mapped in a 1-to-1 manner to the parameters and thus cannot be uniquely
+interpreted.
 
 ``` r
 summary(m1)
@@ -352,22 +350,22 @@ summary(m1)
 #> 
 #> Random effects:
 #>  Groups   Name        Variance  Std.Dev. Corr       
-#>  item     (Intercept) 0.0115697 0.10756             
-#>           task1       0.0104578 0.10226  0.47       
-#>  id       (Intercept) 0.0374095 0.19342             
-#>           length1     0.0003298 0.01816   0.16      
-#>           length2     0.0001008 0.01004   0.11 -0.96
-#>  Residual             0.0925503 0.30422             
+#>  item     (Intercept) 0.0115702 0.10756             
+#>           task1       0.0104587 0.10227  0.47       
+#>  id       (Intercept) 0.0374050 0.19340             
+#>           length1     0.0003297 0.01816   0.16      
+#>           length2     0.0001009 0.01005   0.11 -0.96
+#>  Residual             0.0925502 0.30422             
 #> Number of obs: 12960, groups:  item, 600; id, 45
 #> 
 #> Fixed effects:
 #>                 Estimate Std. Error         df t value Pr(>|t|)    
-#> (Intercept)    -0.089098   0.029470  44.980778  -3.023 0.004119 ** 
-#> task1          -0.108035   0.029439  44.788920  -3.670 0.000643 ***
-#> length1        -0.020756   0.007810 226.871782  -2.658 0.008425 ** 
-#> length2        -0.003746   0.007466 380.252651  -0.502 0.616203    
-#> task1:length1   0.005719   0.007568 206.598906   0.756 0.450727    
-#> task1:length2  -0.004627   0.007214 353.248363  -0.641 0.521640    
+#> (Intercept)    -0.089098   0.029468  44.989068  -3.024 0.004117 ** 
+#> task1          -0.108035   0.029437  44.797243  -3.670 0.000643 ***
+#> length1        -0.020756   0.007810 226.902599  -2.658 0.008425 ** 
+#> length2        -0.003746   0.007467 380.122063  -0.502 0.616214    
+#> task1:length1   0.005719   0.007569 206.633789   0.756 0.450736    
+#> task1:length2  -0.004627   0.007214 353.115359  -0.641 0.521661    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -403,13 +401,13 @@ estimated to be near to zero.
 
 ``` r
 summary(m2)$varcor
-#>  Groups   Name        Std.Dev.
-#>  item     re2.task1   0.101197
-#>  item.1   (Intercept) 0.106844
-#>  id       re1.length2 0.000000
-#>  id.1     re1.length1 0.012294
-#>  id.2     (Intercept) 0.193419
-#>  Residual             0.304373
+#>  Groups   Name        Std.Dev.  
+#>  item     re2.task1   1.0119e-01
+#>  item.1   (Intercept) 1.0685e-01
+#>  id       re1.length2 3.1129e-06
+#>  id.1     re1.length1 1.2292e-02
+#>  id.2     (Intercept) 1.9340e-01
+#>  Residual             3.0437e-01
 ```
 
 As shown above, one parameter of the by-participant random slope for
@@ -439,22 +437,21 @@ m3
 Objects returned by `mixed` can be used for plotting with `afex_plot`.
 However, two things need to be considered.
 
--   The `id` argument of `afex_plot` allows specifying over which random
-    effects grouping factors the data plotted in the background should
-    be averaged over. Per default this uses all random effects grouping
-    factors. In the present case this would mean that all data points
-    are shown resulting in a very busy plot. When choosing only one of
-    the random effects grouping factor, data points in the background
-    show average response for each level of that factor. For example,
-    when setting `id =  "id"` here each data point in the background
-    shows the mean `log_rt` of one participant (i.e., level of `id`).
--   Estimated marginal means in the foreground are estimated via
-    `emmeans` which per default attempts to estimate the degrees of
-    freedom using the expensive Kenward-Roger method unless the number
-    of data points is high (as here). This can produce quite some status
-    messages (not shown here). Use
-    `emmeans::emm_options(lmer.df = "asymptotic")` to suppress this
-    calculation.
+- The `id` argument of `afex_plot` allows specifying over which random
+  effects grouping factors the data plotted in the background should be
+  averaged over. Per default this uses all random effects grouping
+  factors. In the present case this would mean that all data points are
+  shown resulting in a very busy plot. When choosing only one of the
+  random effects grouping factor, data points in the background show
+  average response for each level of that factor. For example, when
+  setting `id =  "id"` here each data point in the background shows the
+  mean `log_rt` of one participant (i.e., level of `id`).
+- Estimated marginal means in the foreground are estimated via `emmeans`
+  which per default attempts to estimate the degrees of freedom using
+  the expensive Kenward-Roger method unless the number of data points is
+  high (as here). This can produce quite some status messages (not shown
+  here). Use `emmeans::emm_options(lmer.df = "asymptotic")` to suppress
+  this calculation.
 
 ``` r
 library("ggplot2")
@@ -515,10 +512,10 @@ em2
 
 ## test all pairwise comparisons on reference grid:
 pairs(em2)
-#>  contrast estimate     SE  df z.ratio p.value
-#>  4 - 5     -0.0175 0.0126 Inf  -1.384  0.3495
-#>  4 - 6     -0.0457 0.0126 Inf  -3.618  0.0009
-#>  5 - 6     -0.0282 0.0126 Inf  -2.238  0.0649
+#>  contrast          estimate     SE  df z.ratio p.value
+#>  length4 - length5  -0.0175 0.0126 Inf  -1.384  0.3495
+#>  length4 - length6  -0.0457 0.0126 Inf  -3.618  0.0009
+#>  length5 - length6  -0.0282 0.0126 Inf  -2.238  0.0649
 #> 
 #> Results are averaged over the levels of: task 
 #> Degrees-of-freedom method: asymptotic 

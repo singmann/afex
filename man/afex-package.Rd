@@ -4,9 +4,7 @@
 \name{afex-package}
 \alias{afex}
 \alias{afex-package}
-\title{\packageTitle{afex}
-
-Maintainer: \packageMaintainer{afex}}
+\title{\packageTitle{afex}}
 \description{
 \packageDescription{afex}
 }

@@ -299,6 +299,7 @@
 #' @importFrom reshape2 dcast
 #' @importFrom lme4 findbars nobars 
 #' @importFrom stats terms as.formula xtabs contrasts<- coef
+#' @importFrom utils head
 #' 
 #' @example examples/examples.aov_car.R
 #' 

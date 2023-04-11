@@ -1,9 +1,22 @@
-context("afex_plot: basic functionality")
-
 data(obk.long, package = "afex")
 # estimate mixed ANOVA on the full design:
 a1 <- aov_car(value ~ treatment * gender + Error(id/(phase*hour)), 
               data = obk.long, observed = "gender")
+data(md_12.1)
+aw <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
+
+test_that("ANOVA plots are produced", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_on_cran() ## uses only expect_doppelganger
+  expect_doppelganger("one-way within", afex_plot(a1, "hour", error = "within"))
+  expect_doppelganger("two-way", 
+                      afex_plot(a1, c("phase", "hour"), trace = "treatment", 
+                      error = "none"))
+  expect_doppelganger("x-trace-panel", 
+                      afex_plot(a1, "phase", trace = "hour",  panel = "treatment",
+                                error = "within"))
+})
 
 test_that("all input type works and warnings are correct", {
   testthat::skip_if_not_installed("emmeans")
@@ -55,19 +68,12 @@ test_that("all input type works and warnings are correct", {
   expect_equal(em7, em8)
 })
 
-test_that("ANOVA plots are produced", {
-  testthat::skip_if_not_installed("emmeans")
-  testthat::skip_if_not_installed("ggplot2")
-  expect_is(afex_plot(a1, "hour", error = "within"), "ggplot")
-  expect_is(afex_plot(a1, c("phase", "hour"), trace = "treatment", 
-                      error = "none"), "ggplot")
-  expect_is(afex_plot(a1, "phase", trace = "hour",  panel = "treatment",
-                      error = "within"), "ggplot")
-})
+
 
 test_that("mixed plots are produced", {
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_on_cran() ## uses only expect_doppelganger
   data("fhch2010") # load 
   fhch <- droplevels(fhch2010[ fhch2010$correct,]) # remove errors
   ### reduced data.frame length
@@ -78,24 +84,19 @@ test_that("mixed plots are produced", {
                fhch, method = "S", progress = FALSE)
   
   p1 <- afex_plot(mrt, "task", id = "id")
+  expect_doppelganger("mixed model 1", p1)
 
-  expect_is(p1, "ggplot")
-  expect_equal(p1$labels$y, "log_rt")
-  
   p2 <- afex_plot(mrt, x = "stimulus", panel = "task", 
                       id = "id")
-  expect_is(p2, "ggplot")
-  expect_equal(p2$labels$y, "log_rt")
+  expect_doppelganger("mixed model 2", p2)
   
   p3 <- afex_plot(mrt, x = "stimulus", trace = "task", 
                       id = "id")
-  expect_is(p3, "ggplot")
-  expect_equal(p3$labels$y, "log_rt")
+  expect_doppelganger("mixed model 3", p3)
   
   p4 <- afex_plot(mrt, x = "stimulus", trace =  "frequency", panel = "task", 
                       id = "id")
-  expect_is(p4, "ggplot")
-  expect_equal(p4$labels$y, "log_rt")
+  expect_doppelganger("mixed model 4", p4)
 })
 
 test_that("lme4::merMod plots are produced", {
@@ -107,13 +108,14 @@ test_that("lme4::merMod plots are produced", {
                     data = Oats)
   p1 <- afex_plot(Oats.lmer, "nitro", 
                       id = "VarBlock")
-  expect_is(p1, "ggplot")
-  expect_equal(p1$labels$y, "yield")
+  expect_doppelganger("lme4::merMod plot 1", p1)
   
-  expect_is(afex_plot(Oats.lmer, "nitro", "Variety", 
-                      id = "VarBlock"), "ggplot")
-  expect_is(afex_plot(Oats.lmer, "nitro", panel = "Variety", 
-                      id = "VarBlock"), "ggplot")
+  p2 <- afex_plot(Oats.lmer, "nitro", "Variety", 
+                      id = "VarBlock")
+  expect_doppelganger("lme4::merMod plot 2", p2)
+  p3 <- afex_plot(Oats.lmer, "nitro", panel = "Variety", 
+                      id = "VarBlock")
+  expect_doppelganger("lme4::merMod plot 3", p3)
   
   ## check that id argument works:
   d1 <- afex_plot(Oats.lmer, "nitro", 
@@ -135,85 +137,126 @@ test_that("afex_plot works with various geoms (from examples)", {
   testthat::skip_if_not_installed("ggpol")
   testthat::skip_if_not_installed("ggbeeswarm")
   testthat::skip_if_not_installed("emmeans")
-  data(md_12.1)
-  aw <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
-  p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
-                  data_arg = list(
-                    position = 
-                      ggplot2::position_jitterdodge(
-                        jitter.width = 0, 
-                        jitter.height = 5, 
-                        dodge.width = 0.3  ## needs to be same as dodge
-                      ),
-                    color = "darkgrey"))
-  expect_is(p1, "ggplot")
+  testthat::skip_on_cran() ## uses only expect_doppelganger
+  set.seed(1)
   
-  # 2. using ggbeeswarm::geom_beeswarm
-  p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
-                  data_geom = ggbeeswarm::geom_beeswarm,
-                  data_arg = list(
-                    dodge.width = 0.5,  ## needs to be same as dodge
-                    cex = 0.8,
-                    color = "darkgrey"))
-  expect_is(p2, "ggplot")
+  ### There are several ways to deal with overlapping points in the background besides alpha
+  # Using the default data geom and ggplot2::position_jitterdodge
+  g1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
+            data_arg = list(
+              position = 
+                ggplot2::position_jitterdodge(
+                  jitter.width = 0, 
+                  jitter.height = 5, 
+                  dodge.width = 0.3  ## needs to be same as dodge
+                )))
+  expect_doppelganger("geoms work: jitterdodge", g1)
   
-  # 3. do not display points, but use a violinplot: ggplot2::geom_violin
-  p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-                  data_geom = ggplot2::geom_violin, 
-                  data_arg = list(width = 0.5))
-  expect_is(p3, "ggplot")
+  # Overlapping points are shown as larger points using geom_count
+  g2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+            data_geom = ggplot2::geom_count)
+  expect_doppelganger("geoms work: geom_count", g2)
   
-  # 4. violinplots with color: ggplot2::geom_violin
-  p4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-                  mapping = c("linetype", "shape", "fill"),
-                  data_geom = ggplot2::geom_violin, 
-                  data_arg = list(width = 0.5))
-  expect_is(p4, "ggplot")
+  # Using ggbeeswarm::geom_quasirandom (overlapping points shown in violin shape)
+  g3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+            data_geom = ggbeeswarm::geom_quasirandom,
+            data_arg = list(
+              dodge.width = 0.5,  ## needs to be same as dodge
+              cex = 0.8))
+  expect_doppelganger("geoms work: ggbeeswarm::geom_quasirandom", g3)
   
-  # 5. do not display points, but use a boxplot: ggplot2::geom_boxplot
-  p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-                  data_geom = ggplot2::geom_boxplot, 
-                  data_arg = list(width = 0.3))
-  expect_is(p5, "ggplot")
   
-  # 6. combine points with boxplot: ggpol::geom_boxjitter
-  p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-                  data_geom = ggpol::geom_boxjitter, 
-                  data_arg = list(width = 0.3))
+  # Using ggbeeswarm::geom_beeswarm (overlapping points are adjacent on y-axis)
+  g4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+            data_geom = ggbeeswarm::geom_beeswarm,
+            data_arg = list(
+              dodge.width = 0.5,  ## needs to be same as dodge
+              cex = 0.8))
+  expect_doppelganger("geoms work: ggbeeswarm::geom_beeswarm", g4)
+  
+  # Do not display points, but use a violinplot: ggplot2::geom_violin
+  g5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+            data_geom = ggplot2::geom_violin, 
+            data_arg = list(width = 0.5))
+  expect_doppelganger("geoms work: violin", g5)
+  
+  # violinplots with color: ggplot2::geom_violin
+  g6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+            mapping = c("linetype", "shape", "fill"),
+            data_geom = ggplot2::geom_violin, 
+            data_arg = list(width = 0.5))
+  expect_doppelganger("geoms work: violin with colour", g6)
+  
+  # do not display points, but use a boxplot: ggplot2::geom_boxplot
+  g7 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+            data_geom = ggplot2::geom_boxplot, 
+            data_arg = list(width = 0.3))
+  expect_doppelganger("geoms work: box plot", g7)
+  
+  # combine points with boxplot: ggpol::geom_boxjitter
+  g8 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+            data_geom = ggpol::geom_boxjitter, 
+            data_arg = list(width = 0.3))
+  expect_doppelganger("geoms work: boxjitter 1", g8)
   ## hides error bars!
-  expect_is(p6, "ggplot")
   
-  # 7. nicer variant of ggpol::geom_boxjitter
-  p7 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-                  mapping = c("shape", "fill"),
-                  data_geom = ggpol::geom_boxjitter, 
-                  data_arg = list(
-                    width = 0.3, 
-                    jitter.params = list(width = 0, height = 10),
-                    outlier.intersect = TRUE),
-                  point_arg = list(size = 2.5), 
-                  error_arg = list(size = 1.5, width = 0))
-  expect_is(p7, "ggplot")
+  # nicer variant of ggpol::geom_boxjitter
+  g9 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+            mapping = c("shape", "fill"),
+            data_geom = ggpol::geom_boxjitter, 
+            data_arg = list(
+              width = 0.3, 
+              jitter.params = list(width = 0, height = 10),
+              outlier.intersect = TRUE),
+            point_arg = list(size = 2.5), 
+            error_arg = list(linewidth = 1.5, width = 0))
+  expect_doppelganger("geoms work: boxjitter 2", g9)
   
-  # 8. nicer variant of ggpol::geom_boxjitter without lines
-  p8 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
-                  mapping = c("shape", "fill"),
-                  data_geom = ggpol::geom_boxjitter, 
-                  data_arg = list(
-                    width = 0.5, 
-                    jitter.params = list(width = 0, height = 10),
-                    outlier.intersect = TRUE),
-                  point_arg = list(size = 2.5), 
-                  line_arg = list(linetype = 0),
-                  error_arg = list(size = 1.5, width = 0))
-  expect_is(p8, "ggplot")
+  # nicer variant of ggpol::geom_boxjitter without lines
+  g10 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
+            mapping = c("shape", "fill"),
+            data_geom = ggpol::geom_boxjitter, 
+            data_arg = list(
+              width = 0.5, 
+              jitter.params = list(width = 0, height = 10),
+              outlier.intersect = TRUE),
+            point_arg = list(size = 2.5), 
+            line_arg = list(linetype = 0),
+            error_arg = list(linewidth = 1.5, width = 0))
+  expect_doppelganger("geoms work: boxjitter 3", g10)
+  
+  ### we can also use multiple geoms for the background by passing a list of geoms
+  g11 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+            data_geom = list(
+              ggplot2::geom_violin, 
+              ggplot2::geom_point
+            ))
+  expect_doppelganger("multiple geoms work 1", g11)
+  
+  ## with separate extra arguments:
+  
+  g12 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+            dodge = 0.5,
+            data_geom = list(
+              ggplot2::geom_violin, 
+              ggplot2::geom_point
+            ), 
+            data_arg = list(
+              list(width = 0.4),
+              list(position = 
+                     ggplot2::position_jitterdodge(
+                       jitter.width = 0, 
+                       jitter.height = 5, 
+                       dodge.width = 0.5  ## needs to be same as dodge
+                     )))
+  )
+  expect_doppelganger("multiple geoms work 2", g12)
 })
 
 test_that("relabeling of factors and legend works", {
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("ggplot2")
-  data(md_12.1)
-  aw <- aov_ez("id", "rt", md_12.1, within = c("angle", "noise"))
+
   ## relabel factor levels via new_levels
   p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
                   factor_levels = list(angle = c("0", "4", "8"),
@@ -289,6 +332,21 @@ test_that("relabeling of factors and legend works", {
   expect_equal(p2$guides$shape$title, "Noise Condition")
   expect_equal(p2$guides$linetype$title, "Noise Condition")
 })
+
+test_that("connecting individual points works", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_on_cran() ## uses only expect_doppelganger
+  
+  p_con <- afex_plot(aw, x = "angle", error = "within", 
+                     data_geom = list(ggplot2::geom_count, ggplot2::geom_line), 
+                     data_arg = list(list(), list(mapping = ggplot2::aes(group = id))), 
+                     point_arg = list(size = 2.5), 
+                     error_arg = list(width = 0, linewidth = 1.5)) +
+    ggplot2::geom_line(ggplot2::aes(group = 1), linewidth = 1.5)
+  expect_doppelganger("afex_plot connecting individual points works", p_con)
+})
+
 
 test_that("labels are correct in case variables are of lenth > 1", {
   testthat::skip_if_not_installed("emmeans")

@@ -5,6 +5,7 @@ Significant User Visible Changes and New Features
 
 Bugfixes
  o  Updates to documentation in various places.
+ o  Using vdiffr for unit tests of afex_plot
  
 
 Changes in afex Version 1.2-x (2022-10-30)

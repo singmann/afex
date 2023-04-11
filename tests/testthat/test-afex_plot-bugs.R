@@ -1,4 +1,3 @@
-context("afex_plot: known bugs")
 
 test_that("mixed models with Type = 2 work", {
   testthat::skip_if_not_installed("ggplot2")
@@ -11,7 +10,7 @@ test_that("mixed models with Type = 2 work", {
   m1 <- mixed(score ~ Machine + (1|Worker), 
               data=Machines, type = 2, method = "LRT", 
               progress = FALSE)
-  expect_is(afex_plot(m1, "Machine"), "ggplot")
+  expect_doppelganger("afex_plot lmm, type = 2", afex_plot(m1, "Machine"))
 })
 
 test_that("response variable y works", {
@@ -33,7 +32,7 @@ test_that("response variable y works", {
   
   pp <- afex_plot(m1, "Machine")
   
-  expect_true(all(pp$layers[[1]]$data$y > 0))
+  expect_doppelganger("afex_plot dv = y works", pp)
 })
 
 test_that("merMod objects with missing data can be plotted", {
@@ -56,15 +55,14 @@ test_that("merMod objects with missing data can be plotted", {
               progress = FALSE)
   pp2 <- afex_plot(m2, "Machine")
   
-  expect_equivalent(
-    pp$layers[[1]]$data, pp2$layers[[1]]$data  
-  )
+  expect_doppelganger("afex_plot merMod objects with missing data", pp2)
 })
 
 
 test_that("binomial models plot data correctly with factor DVs", {
   testthat::skip_if_not_installed("ggplot2")
   testthat::skip_if_not_installed("emmeans")
+  set.seed(898765)
   ## long format binomial GLM (https://stats.stackexchange.com/q/322038/442):
   drc4 <- function(x, b =1.0, c = 0, d = 1, e = 0){
     (d - c)/ (1 + exp(-b * (log(x)  - log(e))))
@@ -78,10 +76,12 @@ test_that("binomial models plot data correctly with factor DVs", {
   fitLong <- glm( mortality ~ dose, data = dfLong, 
                   family = "binomial")
   p1 <- afex_plot(fitLong, "dose")
+  expect_doppelganger("afex_plot binomial glm with factor", p1)
   dfLong$mortality <- factor(dfLong$mortality)
   fitLong2 <- glm( mortality ~ dose, data = dfLong, 
                    family = "binomial")
   p2 <- afex_plot(fitLong2, "dose")
+  expect_doppelganger("afex_plot binomial glm with factor 2", p2)
   expect_equivalent(p1, p2, check.environment=FALSE)
 })
 

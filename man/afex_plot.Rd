@@ -485,7 +485,7 @@ p1 + ggpubr::theme_pubr()
 ggplot2::theme_set(ggplot2::theme_bw())
 
 ### There are several ways to deal with overlapping points in the background besides alpha
-# 1. using the default data geom and ggplot2::position_jitterdodge
+# Using the default data geom and ggplot2::position_jitterdodge
 afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
           data_arg = list(
             position = 
@@ -495,48 +495,59 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                 dodge.width = 0.3  ## needs to be same as dodge
                 )))
 
-# 2. using ggbeeswarm::geom_beeswarm
+# Overlapping points are shown as larger points using geom_count
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+                data_geom = ggplot2::geom_count)
+
+# Using ggbeeswarm::geom_quasirandom (overlapping points shown in violin shape)
+afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+          data_geom = ggbeeswarm::geom_quasirandom,
+          data_arg = list(
+            dodge.width = 0.5,  ## needs to be same as dodge
+            cex = 0.8))
+
+
+# Using ggbeeswarm::geom_beeswarm (overlapping points are adjacent on y-axis)
 afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggbeeswarm::geom_beeswarm,
           data_arg = list(
             dodge.width = 0.5,  ## needs to be same as dodge
             cex = 0.8))
 
-# 3. do not display points, but use a violinplot: ggplot2::geom_violin
+# Do not display points, but use a violinplot: ggplot2::geom_violin
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           data_geom = ggplot2::geom_violin, 
           data_arg = list(width = 0.5))
 
-# 4. violinplots with color: ggplot2::geom_violin
+# violinplots with color: ggplot2::geom_violin
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           mapping = c("linetype", "shape", "fill"),
           data_geom = ggplot2::geom_violin, 
           data_arg = list(width = 0.5))
 
-# 5. do not display points, but use a boxplot: ggplot2::geom_boxplot
+# do not display points, but use a boxplot: ggplot2::geom_boxplot
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           data_geom = ggplot2::geom_boxplot, 
           data_arg = list(width = 0.3))
           
-# 6. combine points with boxplot: ggpol::geom_boxjitter
+# combine points with boxplot: ggpol::geom_boxjitter
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(width = 0.3))
 ## hides error bars!
 
-# 7. nicer variant of ggpol::geom_boxjitter
+# nicer variant of ggpol::geom_boxjitter
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           mapping = c("shape", "fill"),
           data_geom = ggpol::geom_boxjitter, 
           data_arg = list(
             width = 0.3, 
-            jitter.width = 0,
-            jitter.height = 10,
+            jitter.params = list(width = 0, height = 10),
             outlier.intersect = TRUE),
           point_arg = list(size = 2.5), 
-          error_arg = list(size = 1.5, width = 0))
+          error_arg = list(linewidth = 1.5, width = 0))
 
-# 8. nicer variant of ggpol::geom_boxjitter without lines
+# nicer variant of ggpol::geom_boxjitter without lines
 afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
           mapping = c("shape", "fill"),
           data_geom = ggpol::geom_boxjitter, 
@@ -546,7 +557,7 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
             outlier.intersect = TRUE),
           point_arg = list(size = 2.5), 
           line_arg = list(linetype = 0),
-          error_arg = list(size = 1.5, width = 0))
+          error_arg = list(linewidth = 1.5, width = 0))
 
 ### we can also use multiple geoms for the background by passing a list of geoms
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
@@ -585,7 +596,7 @@ afex_plot(aw, x = "angle", error = "within") ## default
 ## with color we need larger points
 afex_plot(aw, x = "angle", mapping = "color", error = "within", 
           point_arg = list(size = 2.5), 
-          error_arg = list(size = 1.5, width = 0.05)) 
+          error_arg = list(linewidth = 1.5, width = 0.05)) 
 
 afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter)
 
@@ -598,7 +609,7 @@ afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter,
             outlier.intersect = TRUE
           ),
           point_arg = list(size = 2.5), 
-          error_arg = list(size = 1.5, width = 0.05))
+          error_arg = list(linewidth = 1.5, width = 0.05))
 
 ## we can use multiple geoms with separate argument lists:
 afex_plot(aw, x = "angle", error = "within", 
@@ -617,8 +628,8 @@ afex_plot(aw, x = "angle", error = "within",
           data_geom = list(ggplot2::geom_count, ggplot2::geom_line), 
           data_arg = list(list(), list(mapping = ggplot2::aes(group = id))), 
           point_arg = list(size = 2.5), 
-          error_arg = list(width = 0, size = 1.5)) +
-  ggplot2::geom_line(ggplot2::aes(group = 1), size = 1.5)
+          error_arg = list(width = 0, linewidth = 1.5)) +
+  ggplot2::geom_line(ggplot2::aes(group = 1), linewidth = 1.5)
 
 ## One-way plots also supports panels:
 afex_plot(aw, x = "angle", panel = "noise", error = "within")

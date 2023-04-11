@@ -82,7 +82,7 @@ interaction_plot <- function(means,
         ifelse(is.list(this), 1L + 
                  as.numeric(all(as.logical(sapply(this, depth)))), 0L)
       }
-      if (depth(data_arg) == 1) {
+      if ((length(data_arg) == 0) | (depth(data_arg) == 1)) {
         if (!is.null(data_alpha)) data_arg$alpha <- data_alpha
         if (!is.null(data_color) & !any(c("color", "colour") %in% mapping)) {
           data_arg$color <- data_color

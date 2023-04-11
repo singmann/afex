@@ -8,8 +8,8 @@ test_that("lm works", {
   d1 <- afex_plot(warp.lm, "tension", return = "data")
   p2 <- afex_plot(warp.lm, "tension", "wool")
   d2 <- afex_plot(warp.lm, "tension", "wool", return = "data")
-  expect_is(p1, "ggplot")
-  expect_is(p2, "ggplot")
+  expect_doppelganger("afex_plots: lm model 1", p1)
+  expect_doppelganger("afex_plots: lm model 2", p2)
   expect_equal(nrow(d2$data), nrow(warpbreaks))
   expect_equal(nrow(d1$data), nrow(warpbreaks))
 })
@@ -17,6 +17,8 @@ test_that("lm works", {
 test_that("poisson glm works", {
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_on_cran() ## uses only expect_doppelganger
+  
   ins <- data.frame(
     n = c(500, 1200, 100, 400, 500, 300),
     size = factor(rep(1:3,2), labels = c("S","M","L")),
@@ -26,13 +28,15 @@ test_that("poisson glm works", {
                  data = ins, family = "poisson")
   p1 <- afex_plot(ins.glm, "size")
   p2 <- afex_plot(ins.glm, "size", "age")
-  expect_is(p1, "ggplot")
-  expect_is(p2, "ggplot")
+  expect_doppelganger("afex_plots: poisson glm 1", p1)
+  expect_doppelganger("afex_plots: poisson glm 2", p2)
 })
 
 test_that("binomial glm works", {
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_on_cran() ## uses only expect_doppelganger
+  
   ldose <- factor(rep(0:5, 2))
   numdead <- c(1, 4, 9, 13, 18, 20, 0, 2, 6, 10, 12, 16)
   sex <- factor(rep(c("M", "F"), c(6, 6)))
@@ -41,8 +45,8 @@ test_that("binomial glm works", {
                     weights = rep(20, length(numdead)))
   p1 <- afex_plot(budworm.lg, "ldose")
   p2 <- afex_plot(budworm.lg, "ldose", "sex") ## data point is hidden behind mean!
-  expect_is(p1, "ggplot")
-  expect_is(p2, "ggplot")
+  expect_doppelganger("afex_plots: binomial glm 1", p1)
+  expect_doppelganger("afex_plots: binomial glm 2", p2)
 })
 
 test_that("nlme works", {
@@ -59,11 +63,11 @@ test_that("nlme works", {
   p3 <- afex_plot(oats.1, "nitro", data = Oats)
   p4 <- afex_plot(oats.1, "nitro", data = Oats, id = c("Block", "Variety"))
   p5 <- afex_plot(oats.1, "nitro", data = Oats, id = "Block")
-  expect_is(p1, "ggplot")
-  expect_is(p2, "ggplot")
-  expect_is(p3, "ggplot")
-  expect_is(p4, "ggplot")
-  expect_is(p5, "ggplot")
+  expect_doppelganger("afex_plots: nlme 1", p1)
+  expect_doppelganger("afex_plots: nlme 2", p2)
+  expect_doppelganger("afex_plots: nlme 3", p3)
+  expect_doppelganger("afex_plots: nlme 4", p4)
+  expect_doppelganger("afex_plots: nlme 5", p5)
   
   d3 <- afex_plot(oats.1, "nitro", data = Oats, return = "data")
   d4 <- afex_plot(oats.1, "nitro", data = Oats, 

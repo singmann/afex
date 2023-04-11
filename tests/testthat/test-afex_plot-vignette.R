@@ -1,5 +1,3 @@
-context("afex_plot vignette: saved objects replicate")
-
 test_that("glmmTMB object", {
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("ggplot2")
@@ -13,7 +11,7 @@ test_that("glmmTMB object", {
   # tmb <- tmb2
   # save(tmb, file = "inst/extdata/tmb_example_fit.rda", 
   #      compress = "xz")
-  load(system.file("extdata/", "tmb_example_fit.rda", package = "afex"))
+  #load(system.file("extdata/", "tmb_example_fit.rda", package = "afex"))
   ## previous versions checked for equivalence of summary() or coef(), but that
   ## seems unnecessary and did fail at some point 
   ## (i.e., summary() on old glmmTMB object failed)
@@ -25,18 +23,12 @@ test_that("glmmTMB object", {
   skip_if_not_installed("ggplot2")
   library("ggplot2")
   
-  p1o <- afex_plot(tmb, "spp")
   p1n <- afex_plot(tmb2, "spp")
-  expect_equivalent(p1o, p1n, check.environment = FALSE)
-  
-  p2o <- afex_plot(tmb, "spp", data_geom = geom_violin)
   p2n <- afex_plot(tmb2, "spp", data_geom = geom_violin)
-  expect_equivalent(p2o, p2n, check.environment = FALSE)
-  
-  p3o <- afex_plot(tmb, "spp", id = "site", data = Salamanders)
   p3n <- afex_plot(tmb2, "spp", id = "site", data = Salamanders)
-  expect_equivalent(p3o, p3n, check.environment = FALSE)
-  
+  expect_doppelganger("afex_plot: glmmTMB 1", p1n)
+  expect_doppelganger("afex_plot: glmmTMB 2", p2n)
+  expect_doppelganger("afex_plot: glmmTMB 3", p3n)
 })
 
 
@@ -48,6 +40,12 @@ test_that("rstanarm plots", {
   library("rstanarm") ## requires resetting the ggplot2 theme
   skip_if_not_installed("ggplot2")
   library("ggplot2")
+  skip_if_not_installed("cowplot")
+  library("cowplot")
+  theme_set(theme_bw(base_size = 14) + 
+              theme(legend.position="bottom", 
+                    panel.grid.major.x = element_blank(),
+                    panel.grid.minor.x = element_blank()))
   set_sum_contrasts()
   cbpp <- lme4::cbpp 
   cbpp$prob <- with(cbpp, incidence / size)
@@ -58,8 +56,8 @@ test_that("rstanarm plots", {
   }))
   b1n <- afex_plot(example_model, "period")
   b2n <- afex_plot(example_model, "period", data_geom = geom_violin)
-  expect_is(b1n, "ggplot")
-  expect_is(b2n, "ggplot")
+  expect_doppelganger("afex_plot: rstanarm 1", b1n)
+  expect_doppelganger("afex_plot: rstanarm 2", b2n)
   
   ## make cbpp long
   cbpp_l <- vector("list", nrow(cbpp))
@@ -85,8 +83,8 @@ test_that("rstanarm plots", {
   b3n <- afex_plot(example_model2, "period")
   b4n <- afex_plot(example_model2, "period", id = "herd")
   # b3n <- afex_plot(example_model2, "period", id = "herd", data = cbpp_l)
-  expect_is(b3n, "ggplot")
-  expect_is(b4n, "ggplot")
+  expect_doppelganger("afex_plot: rstanarm 3", b3n)
+  expect_doppelganger("afex_plot: rstanarm 4", b4n)
   
   skip_if_not_installed("MEMSS")
   data("Machines", package = "MEMSS") 
@@ -98,14 +96,9 @@ test_that("rstanarm plots", {
   
   b5n <- afex_plot(mm, "Machine")
   b6n <- afex_plot(mm, "Machine", id = "Worker")
-  load(system.file("extdata/", "plots_rstanarm.rda", package = "afex"))
   
-  expect_equivalent(b1$data, b1n$data, tolerance = 0.1)
-  expect_equivalent(b2$data, b2n$data, tolerance = 0.1)
-  expect_equivalent(b3$data, b3n$data, tolerance = 0.1)
-  expect_equivalent(b4$data, b4n$data, tolerance = 0.1)
-  expect_equivalent(b5$data, b5n$data, tolerance = 0.1)
-  expect_equivalent(b6$data, b6n$data, tolerance = 0.1)
+  expect_doppelganger("afex_plot: rstanarm 5", b5n)
+  expect_doppelganger("afex_plot: rstanarm 6", b6n)
 })
 
 test_that("brms plots", {
@@ -127,10 +120,8 @@ test_that("brms plots", {
   bb1n <- afex_plot(mm2, "Machine", data = Machines, dv = "score")
   bb2n <- afex_plot(mm2, "Machine", id = "Worker", 
                    data = Machines, dv = "score")
-  load(system.file("extdata/", "plots_brms.rda", package = "afex"))
-  
-  expect_equivalent(bb1$data, bb1n$data, tolerance = 0.1)
-  expect_equivalent(bb2$data, bb2n$data, tolerance = 0.1)
+  expect_doppelganger("afex_plot: brms 1", bb1n)
+  expect_doppelganger("afex_plot: brms 2", bb2n)
   
   expect_error(afex_plot(mm2, "Machine", data = Machines), 
                "Could not detect dv column")

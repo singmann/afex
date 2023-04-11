@@ -173,9 +173,6 @@ test_that("mixed: anova with multiple mixed objexts", {
                  "some models fit with REML = TRUE, some not")
 })
 
-context("Mixed: Expand random effects")
-
-
 test_that("mixed: expand_re argument, return = 'merMod'", {
   data("ks2013.3")
   set_default_contrasts()
@@ -273,7 +270,6 @@ test_that("mixed with all_fit = TRUE", {
   testthat::skip_if_not_installed("MEMSS")
   testthat::skip_if_not_installed("dfoptim")
   testthat::skip_on_cran()
-  skip_on_os("windows")
   require(optimx)
   data("Machines", package = "MEMSS") 
   aop <- afex_options()
@@ -359,7 +355,6 @@ test_that("mixed with all available methods", {
 test_that("mixed all_fit = TRUE works with old methods", {
   data("sk2011.2") # see example("mixed")
   testthat::skip_on_cran()
-  skip_on_os("windows")
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])
   sk2_aff_b <- mixed(response ~ instruction+(inference*type||id), sk2_aff,
                expand_re = TRUE, all_fit = TRUE, method = "nested-KR", 
@@ -378,7 +373,6 @@ test_that("mixed all_fit = TRUE works with old methods", {
 
 
 test_that("mixed all_fit = TRUE works with new (KR) methods", {
-  skip_on_os("windows")
   data("sk2011.2") # see example("mixed")
   testthat::skip_on_cran()
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation",])

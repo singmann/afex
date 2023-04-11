@@ -561,8 +561,7 @@ mixed <- function(formula,
     if (progress) cat("Fitting one lmer() model. ")
     full_model <- eval(mf)
     if (all_fit) {
-      all_fits <- 
-        suppressWarnings(all_fit(full_model, data = data, verbose = FALSE))
+      all_fits <- suppressWarnings(lme4::allFit(full_model, data = data, verbose = FALSE))
       all_fits <- c(default = full_model, all_fits)
       tmp_ll <- 
         vapply(all_fits, 
@@ -691,7 +690,7 @@ mixed <- function(formula,
         fits[[i]] <- eval(mf)
         if (all_fit) {
           all_fits[[i]] <- suppressWarnings(
-            all_fit(fits[[i]], data = data, verbose = FALSE))
+            lme4::allFit(fits[[i]], data = data, verbose = FALSE))
           all_fits[[i]] <- c(default = fits[[i]], all_fits[[i]])
           tmp_ll <- vapply(all_fits[[i]], 
                            function(x) tryCatch(logLik(x), 
@@ -707,7 +706,7 @@ mixed <- function(formula,
         m.call[[2]] <- formula
         res <- eval(m.call)
         if (all_fit) {
-          all_fits <- suppressWarnings(all_fit(res, data = data, verbose = FALSE))
+          all_fits <- suppressWarnings(lme4::allFit(res, data = data, verbose = FALSE))
           all_fits <- c(default = res, all_fits)
           tmp_ll <- vapply(all_fits,
                            function(x) tryCatch(logLik(x),

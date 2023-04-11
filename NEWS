@@ -2,6 +2,7 @@ Changes in afex Version 1.3-x (2023-04-18)
 
 Significant User Visible Changes and New Features
  o  Nicer warning if there is missing data for ANOVA models.
+ o  Removed all_fit() function. mixed(..., all_fit = TRUE) now uses lme4::allFit(). In case you have relied on all_fit() use lme4::allFit().
 
 Bugfixes
  o  Updates to documentation in various places.

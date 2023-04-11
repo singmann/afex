@@ -53,7 +53,8 @@ test_that("rstanarm plots", {
   suppressWarnings(capture_output({
   example_model <- rstanarm::stan_glmer(prob ~ period + (1|herd),
                                         data = cbpp, family = binomial, weight = size,
-                                        chains = 2, cores = 1, seed = 12345, iter = 500)
+                                        chains = 2, cores = 1, seed = 12345, 
+                                        iter = 1000, warmup = 500)
   }))
   b1n <- afex_plot(example_model, "period")
   b2n <- afex_plot(example_model, "period", data_geom = geom_violin)
@@ -78,7 +79,7 @@ test_that("rstanarm plots", {
     example_model2 <- rstanarm::stan_glmer(incidence ~ period + (1|herd),
                                            data = cbpp_l, family = binomial, 
                                            chains = 2, cores = 1, seed = 12345, 
-                                           iter = 500)
+                                           iter = 1000)
   }))
   
   b3n <- afex_plot(example_model2, "period")
@@ -92,7 +93,7 @@ test_that("rstanarm plots", {
   
   suppressWarnings(capture_output({
     mm <- rstanarm::stan_lmer(score ~ Machine + (Machine|Worker), data=Machines,
-                            chains = 2, cores = 1, seed = 12345, iter = 500)
+                            chains = 2, cores = 1, seed = 12345, iter = 1000)
   }))
   
   b5n <- afex_plot(mm, "Machine")
@@ -116,7 +117,7 @@ test_that("brms plots", {
   data("Machines", package = "MEMSS") 
   suppressWarnings(capture_output({
     mm2 <- brm(score ~ Machine + (Machine|Worker), data=Machines, 
-               chains = 2, cores = 1, seed = 12345, iter = 500)
+               chains = 2, cores = 1, seed = 12345, iter = 1000)
   }))
   bb1n <- afex_plot(mm2, "Machine", data = Machines, dv = "score")
   bb2n <- afex_plot(mm2, "Machine", id = "Worker", 

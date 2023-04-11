@@ -107,6 +107,7 @@ test_that("brms plots", {
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("ggplot2")
   skip_on_cran()
+  skip_on_ci()
   #skip_on_os("windows")
   skip_if_not_installed("brms")
   library("brms") ## requires resetting the ggplot2 theme

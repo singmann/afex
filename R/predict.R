@@ -17,7 +17,7 @@
 #'   data frame with an additional column of predicted values.
 #'
 #' @export
-#' @importFrom stats predict fitted
+#' @importFrom stats predict fitted setNames
 predict.afex_aov <- function(object, newdata, append = FALSE, colname_predict = ".predict", ...) {
   # if no newdata, get fitted
   if (missing(newdata)) {

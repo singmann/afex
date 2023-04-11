@@ -60,7 +60,7 @@
 #' @param expand_re logical. Should random effects terms be expanded (i.e.,
 #'   factors transformed into numerical variables) before fitting with
 #'   \code{(g)lmer}? Allows to use "||" notation with factors.
-#' @param all_fit logical. Should \code{\link{all_fit}} be used to fit each
+#' @param all_fit logical. Should \code{\link[lme4]{allFit}} be used to fit each
 #'   model with each available optimization algorithm and the results that
 #'   provided the best fit in each case be used? Warning: This can dramatically
 #'   increase the optimization time. Adds two new attributes to the returned

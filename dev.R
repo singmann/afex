@@ -15,6 +15,7 @@ check_built(path = "development/afex_1.2-0.tar.gz")
 devtools::test(filter = "plot", invert = TRUE)
 devtools::test(filter = "plot")
 devtools::test(filter = "afex_plot-basics")
+devtools::test(filter = "afex_plot-vignette")
 
 
 test_package("afex", filter = "aov")

@@ -36,7 +36,7 @@ test_that("rstanarm plots", {
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("ggplot2")
   skip_on_cran()
-  skip_on_ci()
+  #skip_on_ci()
   skip_if_not_installed("rstanarm")
   library("rstanarm") ## requires resetting the ggplot2 theme
   skip_if_not_installed("ggplot2")

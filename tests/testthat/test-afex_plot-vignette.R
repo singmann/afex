@@ -41,13 +41,9 @@ test_that("rstanarm plots", {
   library("rstanarm") ## requires resetting the ggplot2 theme
   skip_if_not_installed("ggplot2")
   library("ggplot2")
-  skip_if_not_installed("cowplot")
-  library("cowplot")
-  theme_set(theme_bw(base_size = 14) + 
-              theme(legend.position="bottom", 
-                    panel.grid.major.x = element_blank(),
-                    panel.grid.minor.x = element_blank()))
   set_sum_contrasts()
+  load("afex_plot-rstanarm.rda") ## comparison values
+  
   cbpp <- lme4::cbpp 
   cbpp$prob <- with(cbpp, incidence / size)
   suppressWarnings(capture_output({
@@ -56,10 +52,9 @@ test_that("rstanarm plots", {
                                         chains = 2, cores = 1, seed = 12345, 
                                         iter = 1000, warmup = 500)
   }))
-  b1n <- afex_plot(example_model, "period")
-  b2n <- afex_plot(example_model, "period", data_geom = geom_violin)
-  expect_doppelganger("afex_plot: rstanarm 1", b1n)
-  expect_doppelganger("afex_plot: rstanarm 2", b2n)
+  
+  b1d <- afex_plot(example_model, "period", return = "data")
+  expect_equal(b1d, rstanenv$b1d, tolerance = 0.05)
   
   ## make cbpp long
   cbpp_l <- vector("list", nrow(cbpp))
@@ -82,11 +77,10 @@ test_that("rstanarm plots", {
                                            iter = 1000)
   }))
   
-  b3n <- afex_plot(example_model2, "period")
-  b4n <- afex_plot(example_model2, "period", id = "herd")
-  # b3n <- afex_plot(example_model2, "period", id = "herd", data = cbpp_l)
-  expect_doppelganger("afex_plot: rstanarm 3", b3n)
-  expect_doppelganger("afex_plot: rstanarm 4", b4n)
+  b3d <- afex_plot(example_model2, "period", return = "data")
+  b4d <- afex_plot(example_model2, "period", id = "herd", return = "data")
+  expect_equal(b3d, rstanenv$b3d, tolerance = 0.05)
+  expect_equal(b4d, rstanenv$b4d, tolerance = 0.05)
   
   skip_if_not_installed("MEMSS")
   data("Machines", package = "MEMSS") 
@@ -96,11 +90,20 @@ test_that("rstanarm plots", {
                             chains = 2, cores = 1, seed = 12345, iter = 1000)
   }))
   
-  b5n <- afex_plot(mm, "Machine")
-  b6n <- afex_plot(mm, "Machine", id = "Worker")
+  b5d <- afex_plot(mm, "Machine", return = "data")
+  b6d <- afex_plot(mm, "Machine", id = "Worker", return = "data")
+  expect_equal(b5d, rstanenv$b5d, tolerance = 0.05)
+  expect_equal(b6d, rstanenv$b6d, tolerance = 0.05)
   
-  expect_doppelganger("afex_plot: rstanarm 5", b5n)
-  expect_doppelganger("afex_plot: rstanarm 6", b6n)
+  #### save
+  # rstanenv <- new.env()
+  # rstanenv$b1d <- b1d
+  # rstanenv$b3d <- b3d
+  # rstanenv$b4d <- b4d
+  # rstanenv$b5d <- b5d
+  # rstanenv$b6d <- b6d
+  # ls(envir = rstanenv)
+  # save(rstanenv, file = "tests/testthat/afex_plot-rstanarm.rda")
 })
 
 test_that("brms plots", {

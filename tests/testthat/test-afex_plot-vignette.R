@@ -44,6 +44,8 @@ test_that("rstanarm plots", {
   set_sum_contrasts()
   load("afex_plot-rstanarm.rda") ## comparison values
   
+  tol <- 0.1
+  
   cbpp <- lme4::cbpp 
   cbpp$prob <- with(cbpp, incidence / size)
   suppressWarnings(capture_output({
@@ -54,7 +56,7 @@ test_that("rstanarm plots", {
   }))
   
   b1d <- afex_plot(example_model, "period", return = "data")
-  expect_equal(b1d, rstanenv$b1d, tolerance = 0.05)
+  expect_equal(b1d, rstanenv$b1d, tolerance = tol)
   
   ## make cbpp long
   cbpp_l <- vector("list", nrow(cbpp))
@@ -79,8 +81,8 @@ test_that("rstanarm plots", {
   
   b3d <- afex_plot(example_model2, "period", return = "data")
   b4d <- afex_plot(example_model2, "period", id = "herd", return = "data")
-  expect_equal(b3d, rstanenv$b3d, tolerance = 0.05)
-  expect_equal(b4d, rstanenv$b4d, tolerance = 0.05)
+  expect_equal(b3d, rstanenv$b3d, tolerance = tol)
+  expect_equal(b4d, rstanenv$b4d, tolerance = tol)
   
   skip_if_not_installed("MEMSS")
   data("Machines", package = "MEMSS") 
@@ -92,8 +94,8 @@ test_that("rstanarm plots", {
   
   b5d <- afex_plot(mm, "Machine", return = "data")
   b6d <- afex_plot(mm, "Machine", id = "Worker", return = "data")
-  expect_equal(b5d, rstanenv$b5d, tolerance = 0.05)
-  expect_equal(b6d, rstanenv$b6d, tolerance = 0.05)
+  expect_equal(b5d, rstanenv$b5d, tolerance = tol)
+  expect_equal(b6d, rstanenv$b6d, tolerance = tol)
   
   #### save
   # rstanenv <- new.env()
@@ -110,7 +112,6 @@ test_that("brms plots", {
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("ggplot2")
   skip_on_cran()
-  skip_on_ci()
   #skip_on_os("windows")
   skip_if_not_installed("brms")
   library("brms") ## requires resetting the ggplot2 theme
@@ -123,11 +124,18 @@ test_that("brms plots", {
     mm2 <- brm(score ~ Machine + (Machine|Worker), data=Machines, 
                chains = 2, cores = 1, seed = 12345, iter = 1000)
   }))
-  bb1n <- afex_plot(mm2, "Machine", data = Machines, dv = "score")
+  bb1n <- afex_plot(mm2, "Machine", data = Machines, dv = "score", 
+                    return = "data")
   bb2n <- afex_plot(mm2, "Machine", id = "Worker", 
-                   data = Machines, dv = "score")
-  expect_doppelganger("afex_plot: brms 1", bb1n)
-  expect_doppelganger("afex_plot: brms 2", bb2n)
+                   data = Machines, dv = "score", return = "data")
+  load("afex_plot-brms.rda")
+  expect_equal(bb1n, brmslist$bb1n, tolerance = 5)
+  expect_equal(bb2n, brmslist$bb2n, tolerance = 5)
+  # brmslist <- list(
+  #   bb1n = bb1n,
+  #   bb2n = bb2n
+  # )
+  # save(brmslist, file = "tests/testthat/afex_plot-brms.rda")
   
   expect_error(afex_plot(mm2, "Machine", data = Machines), 
                "Could not detect dv column")

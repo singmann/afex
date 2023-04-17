@@ -8,7 +8,7 @@ Significant User Visible Changes and New Features
 Bugfixes
  o  Updates to documentation in various places.
  o  Using vdiffr for unit tests of afex_plot
- 
+ o  Fixed broken link to www.talkstats.com (replaced with link in web.archive.org)
 
 Changes in afex Version 1.2-x (2022-10-30)
 

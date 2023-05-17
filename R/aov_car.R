@@ -728,7 +728,8 @@ aov_4 <- function(formula,
                   print.formula = FALSE) {
 
   barterms <- findbars(formula)
-  if (length(barterms) > 1) stop("aov_4 only allows one random effect term")
+  if (length(barterms) > 1L) stop("aov_4 only allows one random effect term")
+  if (length(barterms) < 1L) stop("aov_4() requires one random-effect term in formula")
   within <- all.vars(barterms[[1]][[2]])
   id <- all.vars(barterms[[1]][[3]])
   

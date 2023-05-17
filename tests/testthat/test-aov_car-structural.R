@@ -144,4 +144,9 @@ test_that("error messages for common problems", {
   expect_error(
     aov_car(value ~ treatment * gender, data = obk2), 
     "formula needs an error term")
+  
+  expect_error(
+    aov_4(formula = value ~ treatment * gender, data = obk2),
+    "requires one random-effect term in formula"
+  )
 })

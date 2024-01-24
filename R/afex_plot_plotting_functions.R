@@ -203,7 +203,8 @@ interaction_plot <- function(means,
     plot_out <- plot_out + 
       ggplot2::xlab(attr(means, "x"))
   }
-  if (!missing(legend_title)) {
+  mapping <- mapping[nzchar(mapping)]
+  if (!missing(legend_title) && length(mapping) > 0) {
     legend_title <- paste(legend_title, collapse = "\n")
     tmp_list <- rep(list(ggplot2::guide_legend(title = legend_title)), 
                     length(mapping))
@@ -362,7 +363,8 @@ oneway_plot <- function(means,
     plot_out <- plot_out + 
       ggplot2::xlab(attr(means, "x"))
   }
-  if (!missing(legend_title)) {
+  mapping <- mapping[nzchar(mapping)]
+  if (!missing(legend_title) && length(mapping) > 0) {
     legend_title <- paste(legend_title, collapse = "\n")
     tmp_list <- rep(list(ggplot2::guide_legend(title = legend_title)), 
                     length(mapping))

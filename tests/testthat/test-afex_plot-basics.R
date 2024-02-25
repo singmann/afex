@@ -162,7 +162,9 @@ test_that("afex_plot works with various geoms (from examples)", {
             data_geom = ggbeeswarm::geom_quasirandom,
             data_arg = list(
               dodge.width = 0.5,  ## needs to be same as dodge
-              cex = 0.8))
+              cex = 0.8,
+              width = 0.05  ## choose small value so data points are not overlapping 
+              ))
   expect_doppelganger("geoms work: ggbeeswarm::geom_quasirandom", g3)
   
   

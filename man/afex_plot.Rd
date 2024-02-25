@@ -216,8 +216,9 @@ background? Default is \code{TRUE}.}
 \item{data_geom}{Geom \code{function} or \code{list} of geom functions used
 for plotting data in background. The default (missing) uses
 \code{\link[ggplot2]{geom_point}} if \code{trace} is specified, otherwise
-\code{\link[ggbeeswarm]{geom_beeswarm}} (a good alternative is
-\code{ggbeeswarm::geom_quasirandom}) . See examples fo further options.}
+\code{\link[ggbeeswarm]{geom_beeswarm}} (a good alternative in case of many
+data points is \code{ggbeeswarm::geom_quasirandom}) . See examples fo
+further options.}
 
 \item{data_alpha}{numeric \code{alpha} value between 0 and 1 passed to
 \code{data_geom}. Default is \code{0.5} which correspond to semitransparent
@@ -504,8 +505,9 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggbeeswarm::geom_quasirandom,
           data_arg = list(
             dodge.width = 0.5,  ## needs to be same as dodge
-            cex = 0.8))
-
+            cex = 0.8, 
+            width = 0.05  ## small value ensure data points match means
+            ))
 
 # Using ggbeeswarm::geom_beeswarm (overlapping points are adjacent on y-axis)
 afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
@@ -642,10 +644,10 @@ afex_plot(aw, x = "angle", panel = "noise", error = "within") +
 ## For more complicated plots it is easier to attach ggplot2:
 library("ggplot2")
 
-## We can hide geoms by plotting them in transparent color and add them
+## We can hide geoms by plotting them in transparent colour and add them
 ## afterward to use a mapping not directly supported. 
 ## For example, the next plot adds a line to a one-way plot with panels, but 
-## with all geoms in the foreground having a color conditional on the panel.
+## with all geoms in the foreground having a colour conditional on the panel.
 
 afex_plot(aw, x = "angle", panel = "noise", error = "within", 
           point_arg = list(color = "transparent"), 

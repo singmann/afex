@@ -1,3 +1,9 @@
+Changes in afex Version 1.3-1 (2024-02-25)
+
+Bugfixes
+ o prepared afex for ggplot2 version 3.5.0
+
+
 Changes in afex Version 1.3-x (2023-04-18)
 
 Significant User Visible Changes and New Features

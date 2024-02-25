@@ -67,8 +67,9 @@
 #' @param data_geom Geom \code{function} or \code{list} of geom functions used
 #'   for plotting data in background. The default (missing) uses
 #'   \code{\link[ggplot2]{geom_point}} if \code{trace} is specified, otherwise
-#'   \code{\link[ggbeeswarm]{geom_beeswarm}} (a good alternative is
-#'   \code{ggbeeswarm::geom_quasirandom}) . See examples fo further options.
+#'   \code{\link[ggbeeswarm]{geom_beeswarm}} (a good alternative in case of many
+#'   data points is \code{ggbeeswarm::geom_quasirandom}) . See examples fo
+#'   further options.
 #' @param data_alpha numeric \code{alpha} value between 0 and 1 passed to
 #'   \code{data_geom}. Default is \code{0.5} which correspond to semitransparent
 #'   data points in the background such that overlapping data points are plotted

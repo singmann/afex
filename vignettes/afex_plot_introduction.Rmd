@@ -192,7 +192,10 @@ p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
 p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                 data_geom = ggbeeswarm::geom_quasirandom,
                 data_arg = list(
-                  dodge.width = 0.5))
+                  dodge.width = 0.5,  ## needs to be same as dodge
+                  cex = 0.8,
+                  width = 0.05  ## choose small value so data points are not overlapping 
+                ))
 p7 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7, 
                 data_geom = ggpol::geom_boxjitter, 
                 data_arg = list(
@@ -218,7 +221,7 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           ),
           data_arg = list(
             list(draw_quantiles = c(0.25, 0.5, 0.75)),
-            list(dodge.width = 0.5)
+            list(dodge.width = 0.5, width = 0.05)
           ))
 ```
 

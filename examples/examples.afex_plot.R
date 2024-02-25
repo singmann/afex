@@ -55,8 +55,9 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = ggbeeswarm::geom_quasirandom,
           data_arg = list(
             dodge.width = 0.5,  ## needs to be same as dodge
-            cex = 0.8))
-
+            cex = 0.8, 
+            width = 0.05  ## small value ensure data points match means
+            ))
 
 # Using ggbeeswarm::geom_beeswarm (overlapping points are adjacent on y-axis)
 afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
@@ -193,10 +194,10 @@ afex_plot(aw, x = "angle", panel = "noise", error = "within") +
 ## For more complicated plots it is easier to attach ggplot2:
 library("ggplot2")
 
-## We can hide geoms by plotting them in transparent color and add them
+## We can hide geoms by plotting them in transparent colour and add them
 ## afterward to use a mapping not directly supported. 
 ## For example, the next plot adds a line to a one-way plot with panels, but 
-## with all geoms in the foreground having a color conditional on the panel.
+## with all geoms in the foreground having a colour conditional on the panel.
 
 afex_plot(aw, x = "angle", panel = "noise", error = "within", 
           point_arg = list(color = "transparent"), 

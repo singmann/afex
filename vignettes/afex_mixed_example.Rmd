@@ -400,6 +400,7 @@ afex_plot(m9s, "frequency", "stimulus", "task", id = "id",
           data_arg = list(
             dodge.width = 0.5,  ## needs to be same as dodge
             cex = 0.8,
+            width = 0.1,
             color = "darkgrey"))
 ```
 

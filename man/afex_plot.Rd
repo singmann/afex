@@ -33,6 +33,7 @@ afex_plot(object, ...)
   dodge = 0.5,
   return = "plot",
   factor_levels = list(),
+  plot_first = NULL,
   legend_title,
   ...
 )
@@ -59,6 +60,7 @@ afex_plot(object, ...)
   dodge = 0.5,
   return = "plot",
   factor_levels = list(),
+  plot_first = NULL,
   legend_title,
   ...
 )
@@ -85,6 +87,7 @@ afex_plot(object, ...)
   dodge = 0.5,
   return = "plot",
   factor_levels = list(),
+  plot_first = NULL,
   legend_title,
   ...
 )
@@ -115,6 +118,7 @@ afex_plot(object, ...)
   dodge = 0.5,
   return = "plot",
   factor_levels = list(),
+  plot_first = NULL,
   legend_title,
   ...
 )
@@ -133,6 +137,7 @@ interaction_plot(
   point_arg = list(),
   line_arg = list(),
   dodge = 0.5,
+  plot_first = NULL,
   legend_title,
   col_x = "x",
   col_y = "y",
@@ -154,6 +159,7 @@ oneway_plot(
   data_color = "darkgrey",
   data_arg = list(),
   point_arg = list(),
+  plot_first = NULL,
   legend_title,
   col_x = "x",
   col_y = "y",
@@ -264,6 +270,11 @@ reordering (and renaming) the factor levels, as order of names within a
 list element are the order that will be used for plotting. If specified,
 emits a \code{message} with \code{old -> new} factor levels.}
 
+\item{plot_first}{A \code{ggplot2} geom (or a list of geoms) that will be
+added to the returned plot as a first element (i.e., before any of the
+other graphical elements). Useful for adding reference lines or similar
+(e.g., using \code{\link[ggplot2]{geom_hline}}).}
+
 \item{legend_title}{A scalar \code{character} vector with a new title for the
 legend.}
 
@@ -291,7 +302,7 @@ background data points.}
 \item{within_vars, between_vars}{For the \code{afex_plot.default} method, an
 optional \code{character} vector specifying which variables should be
 treated as within-subjects (or repeated-measures) factors and which as
-between-subjects (or independen-sampels) factors. If one of the two
+between-subjects (or independent-samples) factors. If one of the two
 arguments is given, all other factors are assumed to fall into the other
 category.}
 
@@ -681,6 +692,11 @@ afex_plot(aw, x = "noise", trace = "angle",
 ## Change title of legend
 afex_plot(aw, x = "noise", trace = "angle", 
           legend_title = "Noise Condition")
+
+## Add reference line in the background
+afex_plot(aw, x = "noise", trace = "angle", 
+          plot_first = ggplot2::geom_hline(yintercept = 450, 
+                                            colour = "darkgrey"))
 
 ## for plots with few factor levels, smaller dodge might be better:
 afex_plot(aw, x = "angle", trace = "noise", dodge = 0.25) 

@@ -14,6 +14,7 @@ interaction_plot <- function(means,
                              point_arg = list(),
                              line_arg = list(),
                              dodge = 0.5, 
+                             plot_first = NULL,
                              legend_title,
                              col_x = "x",
                              col_y = "y",
@@ -46,6 +47,15 @@ interaction_plot <- function(means,
                                   x = col_x, 
                                   group = col_trace),
                                   tmp_list)))
+  if (!is.null(plot_first)) {
+    if (is.list(plot_first)) {
+      for (i in seq_along(plot_first)) {
+        plot_out <- plot_out + plot_first[[i]]
+      }
+    } else {
+      plot_out <- plot_out + plot_first
+    }
+  }
   
   if (data_plot) {
     if (missing(data_geom)) {
@@ -232,6 +242,7 @@ oneway_plot <- function(means,
                         data_color = "darkgrey",
                         data_arg = list(),
                         point_arg = list(),
+                        plot_first = NULL,
                         legend_title,
                         col_x = "x",
                         col_y = "y",
@@ -266,6 +277,16 @@ oneway_plot <- function(means,
                                   x = col_x, 
                                   group = col_x),
                                   tmp_list)))
+  
+  if (!is.null(plot_first)) {
+    if (is.list(plot_first)) {
+      for (i in seq_along(plot_first)) {
+        plot_out <- plot_out + plot_first[[i]]
+      }
+    } else {
+      plot_out <- plot_out + plot_first
+    }
+  }
   
   
   if (data_plot) {

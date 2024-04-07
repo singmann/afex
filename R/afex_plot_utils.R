@@ -16,6 +16,7 @@ afex_plot_internal <- function(x,
                                line_arg,
                                mapping,
                                legend_title,
+                               plot_first,
                                return) {
   
   if (length(trace) > 0) {
@@ -38,6 +39,7 @@ afex_plot_internal <- function(x,
                               point_arg = point_arg,
                               line_arg = line_arg,
                               mapping = mapping,
+                              plot_first = plot_first,
                               legend_title =  if (missing(legend_title)) 
                                 paste(trace, sep = "\n") else
                                   legend_title
@@ -58,6 +60,7 @@ afex_plot_internal <- function(x,
                          data_arg = data_arg,
                          point_arg = point_arg,
                          mapping = mapping,
+                         plot_first = plot_first,
                          legend_title = if (missing(legend_title)) 
                            paste(x, sep = "\n") else
                              legend_title

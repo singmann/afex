@@ -232,6 +232,11 @@ afex_plot(aw, x = "noise", trace = "angle",
 afex_plot(aw, x = "noise", trace = "angle", 
           legend_title = "Noise Condition")
 
+## Add reference line in the background
+afex_plot(aw, x = "noise", trace = "angle", 
+          plot_first = ggplot2::geom_hline(yintercept = 450, 
+                                            colour = "darkgrey"))
+
 ## for plots with few factor levels, smaller dodge might be better:
 afex_plot(aw, x = "angle", trace = "noise", dodge = 0.25) 
 

@@ -354,6 +354,49 @@ test_that("connecting individual points works", {
   expect_doppelganger("afex_plot connecting individual points works", p_con)
 })
 
+test_that("plot_first works", {
+  testthat::skip_if_not_installed("emmeans")
+  testthat::skip_if_not_installed("ggplot2")
+  testthat::skip_on_cran() ## uses only expect_doppelganger
+  
+  p_ref_line1 <- afex_plot(
+    aw,
+    x = "angle",
+    trace = "noise",
+    error = "within",
+    plot_first = list(
+      ggplot2::geom_hline(yintercept = 550),
+      ggplot2::geom_vline(xintercept = 1.5)
+    )
+  )
+  p_ref_line2 <- afex_plot(
+    aw,
+    x = "angle",
+    trace = "noise",
+    error = "within",
+    plot_first = ggplot2::geom_hline(yintercept = 550)
+  )
+  p_ref_line3 <- afex_plot(
+    aw,
+    x = "angle",
+    error = "within",
+    plot_first = list(
+      ggplot2::geom_hline(yintercept = 550),
+      ggplot2::geom_vline(xintercept = 1.5)
+    )
+  )
+  p_ref_line4 <- afex_plot(
+    aw,
+    x = "angle",
+    trace = "noise",
+    error = "within",
+    plot_first = ggplot2::geom_hline(yintercept = 550)
+  )
+  expect_doppelganger("plot_first for afex_plot works 1", p_ref_line1)
+  expect_doppelganger("plot_first for afex_plot works 2", p_ref_line2)
+  expect_doppelganger("plot_first for afex_plot works 3", p_ref_line3)
+  expect_doppelganger("plot_first for afex_plot works 4", p_ref_line4)
+})
 
 test_that("labels are correct in case variables are of lenth > 1", {
   testthat::skip_if_not_installed("emmeans")

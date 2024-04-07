@@ -108,6 +108,10 @@
 #'   emits a \code{message} with \code{old -> new} factor levels.
 #' @param legend_title A scalar \code{character} vector with a new title for the
 #'   legend.
+#' @param plot_first A \code{ggplot2} geom (or a list of geoms) that will be
+#'   added to the returned plot as a first element (i.e., before any of the
+#'   other graphical elements). Useful for adding reference lines or similar
+#'   (e.g., using \code{\link[ggplot2]{geom_hline}}).
 #' @param data For the \code{afex_plot.default} method, an optional
 #'   \code{data.frame} containing the raw data used for fitting the model and
 #'   which will be used as basis for the data points in the background. If
@@ -118,7 +122,7 @@
 #' @param within_vars,between_vars For the \code{afex_plot.default} method, an
 #'   optional \code{character} vector specifying which variables should be
 #'   treated as within-subjects (or repeated-measures) factors and which as
-#'   between-subjects (or independen-sampels) factors. If one of the two
+#'   between-subjects (or independent-samples) factors. If one of the two
 #'   arguments is given, all other factors are assumed to fall into the other
 #'   category.
 #' @param means \code{data.frame}s used for plotting of the plotting
@@ -307,6 +311,7 @@ afex_plot.afex_aov <- function(object,
                                dodge = 0.5,
                                return = "plot",
                                factor_levels = list(),
+                               plot_first = NULL,
                                legend_title,
                                ...) {
   
@@ -404,6 +409,7 @@ afex_plot.afex_aov <- function(object,
                             line_arg = line_arg,
                             mapping = mapping,
                             legend_title =  legend_title,
+                            plot_first = plot_first,
                             return = return
   ))
 }
@@ -434,6 +440,7 @@ afex_plot.mixed <- function(object,
                             dodge = 0.5,
                             return = "plot",
                             factor_levels = list(),
+                            plot_first = NULL,
                             legend_title,
                             ...) {
   
@@ -537,6 +544,7 @@ afex_plot.mixed <- function(object,
                             line_arg = line_arg,
                             mapping = mapping,
                             legend_title =  legend_title,
+                            plot_first = plot_first,
                             return = return
   ))
 }
@@ -566,6 +574,7 @@ afex_plot.merMod <- function(object,
                             dodge = 0.5,
                             return = "plot",
                             factor_levels = list(),
+                            plot_first = NULL,
                             legend_title,
                             ...) {
   
@@ -668,6 +677,7 @@ afex_plot.merMod <- function(object,
                             line_arg = line_arg,
                             mapping = mapping,
                             legend_title =  legend_title,
+                            plot_first = plot_first,
                             return = return
   ))
 }
@@ -699,6 +709,7 @@ afex_plot.default <- function(object,
                               dodge = 0.5,
                               return = "plot",
                               factor_levels = list(),
+                              plot_first = NULL,
                               legend_title,
                               ...) {
   
@@ -829,6 +840,7 @@ afex_plot.default <- function(object,
                             line_arg = line_arg,
                             mapping = mapping,
                             legend_title =  legend_title,
+                            plot_first = plot_first,
                             return = return
   ))
 }

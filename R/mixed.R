@@ -1131,9 +1131,9 @@ recover_data.mixed <- function(object, ...) {
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")
   }
-  if (is_lmerTest_class(obj_use)) {
-    class(obj_use) <- "lmerMod"
-  }
+  # if (is_lmerTest_class(obj_use)) {
+  #   class(obj_use) <- "lmerMod"
+  # }
   emmeans::recover_data(obj_use, ...)
 }
 
@@ -1151,9 +1151,9 @@ emm_basis.mixed <- function(object, trms, xlev, grid, ...) {
   } else {
     stop("Cannot find 'merMod' object in ", full_model_name, " slot.")
   }
-  if (is_lmerTest_class(obj_use)) {
-    class(obj_use) <- "lmerMod"
-  }
+  # if (is_lmerTest_class(obj_use)) {
+  #   class(obj_use) <- "lmerMod"
+  # }
   emmeans::emm_basis(obj_use, trms, xlev, grid, ...)
 }
 

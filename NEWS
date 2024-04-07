@@ -4,7 +4,7 @@ Significant User Visible Changes and New Features
  o  Added plot_first argument to afex_plot(), which allows passing ggplot2 geom's which will be plotted first, before any other graphical elements. This allows plotting reference lines in the background of the plot, e.g. using geom_hline().
 
 Bugfixes
- o 
+ o Address #87 hopefully increasing speed of emmeans() for mixed objects significantly. 
 
 Changes in afex Version 1.3-1 (2024-02-25)
 

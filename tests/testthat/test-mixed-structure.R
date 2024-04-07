@@ -247,7 +247,7 @@ test_that("mixed: return=data, expand_re argument, and allFit", {
               expand_re = TRUE, method = "LRT", 
               control = lmerControl(optCtrl = list(maxfun=1e6)), progress=FALSE,
               return = "merMod")
-  m6_all_1 <- lme4::allFit(m6, verbose = FALSE, data = ks2013.3_tmp)
+  m6_all_1 <- suppressWarnings(lme4::allFit(m6, verbose = FALSE, data = ks2013.3_tmp))
   for (i in seq_along(m6_all_1)) expect_s4_class(m6_all_1[[i]], "lmerModLmerTest") 
   ks2013.3_tmp <- mixed(response ~ validity + (believability*validity||id), 
                         ks2013.3_tmp, expand_re = TRUE, method = "LRT", 

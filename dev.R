@@ -89,6 +89,7 @@ usethis::use_code_of_conduct()
 ### check reverse dependencies:
 
 library(revdepcheck)  # see https://github.com/r-lib/revdepcheck
-revdep_check(num_workers = 2)
+revdep_check(num_workers = 4)
 revdep_summary()
 revdep_details(revdep = "r2glmm")
+Sys.setenv(R_BIOC_VERSION = "3.18")

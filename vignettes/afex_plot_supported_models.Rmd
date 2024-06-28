@@ -162,7 +162,7 @@ tmb <- glmmTMB(count~spp * mined + (1|site),
 
 ```{r, eval=FALSE, include=FALSE}
 library("glmmTMB")
-set_sum_contrasts()
+afex::set_sum_contrasts()
 tmb <- glmmTMB(count~spp * mined + (1|site), 
               ziformula = ~spp * mined, 
               family=nbinom2, Salamanders)
@@ -173,6 +173,7 @@ save(tmb, file = "inst/extdata/tmb_example_fit.rda", compress = "xz")
 library("glmmTMB")
 data(Salamanders, package = "glmmTMB")
 load(system.file("extdata/", "tmb_example_fit.rda", package = "afex"))
+tmb <- up2date(tmb)
 ```
 
 `afex_plot` does not automatically detect the random-effect for `site`. This means that per default all 644 data points are shown. When plotting only one variable, in which the default `data_geom` is `ggbeeswarm::geom_beeswarm`, this can lead to rather ugly plots due to the zero inflation. This is shon in panel A below. In panel B, we address this by changing the geom to a violin plot. In panel C, we address this by aggregating the data within site, but still use the beeswarm plot. Note that for panel C it is necessary to pass the data via the `data` argument as otherwise `site` cannot be found for aggregation.

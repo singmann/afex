@@ -5,6 +5,7 @@ load_all()
 
 options(error = NULL)
 devtools::test()
+## before building, consider recreating the glmmTMB object for the vignette
 devtools::build(args = "--compact-vignettes=both", 
                 path = "development/") # R CMD build afex --compact-vignettes="gs+qpdf"
 document()

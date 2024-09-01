@@ -4,7 +4,7 @@ author: "Henrik Singmann"
 date: "`r Sys.Date()`"
 show_toc: true
 output:
-  knitr:::html_vignette:
+  rmarkdown:::html_vignette:
     toc: yes
 vignette: >
   %\VignetteIndexEntry{Analysis of Accuracy Data using ANOVA and binomial GLMMs}

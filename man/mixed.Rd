@@ -39,8 +39,8 @@ tests, taken from \code{\link{afex_options}}.}
 
 \item{method}{character vector indicating which methods for obtaining
 p-values should be used: \code{"S"} corresponds to the Satterthwaite
-approximation for degrees of freedom (via \code{\link{lmerTest}}, only
-LMMs), \code{"KR"} corresponds to the Kenward-Roger approximation for
+approximation for degrees of freedom (via \code{\link[lmerTest]{lmerTest}},
+only LMMs), \code{"KR"} corresponds to the Kenward-Roger approximation for
 degrees of freedom (only LMMs), \code{"PB"} calculates p-values based on
 parametric bootstrap, \code{"LRT"} calculates p-values via the likelihood
 ratio tests implemented in the \code{anova} method for \code{merMod}
@@ -118,8 +118,9 @@ the \code{+}, \code{sig_symbols = rep("", 4)} will display no symbols. The
 default is given by \code{afex_options("sig_symbols")}.}
 
 \item{...}{further arguments (such as \code{weights}, \code{family}, or
-\code{control}) passed to \code{\link{lmer}}/\code{\link{glmer}}. Note that
-additional data (e.g., \code{weights}) need to be passed fully and not only
+\code{control}) passed to
+\code{\link[lme4]{lmer}}/\code{\link[lme4]{glmer}}. Note that additional
+data (e.g., \code{weights}) need to be passed fully and not only
 by name (e.g., \code{weights = df$weights} and not \code{weights =
 weights}).}
 }
@@ -206,7 +207,7 @@ Note that  \code{anova} can also be called with additional mixed and/or
 of \code{anova.merMod}) which produces the known LRT tables.
 
 The \code{summary} method for objects of class \code{mixed} simply calls
-\code{\link{summary.merMod}} on the full model.
+\code{\link[lme4]{summary.merMod}} on the full model.
 
 If \code{return = "merMod"} (or when invoking \code{lmer_alt}), an object of
 class \code{"lmerModLmerTest"} or of class \code{"merMod"} (depending on the

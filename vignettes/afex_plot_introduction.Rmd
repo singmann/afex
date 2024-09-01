@@ -4,7 +4,7 @@ author: "Henrik Singmann"
 date: "`r Sys.Date()`"
 show_toc: true
 output:
-  knitr:::html_vignette:
+  rmarkdown:::html_vignette:
     toc: yes
 vignette: >
   %\VignetteIndexEntry{afex_plot: Publication Ready Plots for Experimental Designs}

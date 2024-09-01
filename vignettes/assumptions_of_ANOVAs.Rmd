@@ -4,7 +4,7 @@ author: "Mattan S. Ben-Shachar"
 date: "`r Sys.Date()`"
 show_toc: true
 output:
-  knitr:::html_vignette:
+  rmarkdown:::html_vignette:
     toc: yes
 vignette: >
   %\VignetteIndexEntry{Testing the Assumptions of ANOVAs}

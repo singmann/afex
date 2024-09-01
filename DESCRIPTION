@@ -77,5 +77,5 @@ Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"),
          person(given="Russell", family="Lenth", role=c("ctb")), 
          person(given="Rune", family="Haubo Bojesen Christensen", role=c("ctb")))
 Version: 1.4-1
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 LazyData: true

@@ -7,10 +7,11 @@ options(error = NULL)
 devtools::test()
 ## before building, consider recreating the glmmTMB object for the vignette
 devtools::build(args = "--compact-vignettes=both", 
+                manual = TRUE,
                 path = "development/") # R CMD build afex --compact-vignettes="gs+qpdf"
 document()
 check()
-check_built(path = "development/afex_1.3-1.tar.gz")
+check_built(path = "development/afex_1.4-1.tar.gz")
 
 ## works better on windows:
 devtools::test(filter = "plot", invert = TRUE)

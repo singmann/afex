@@ -1,4 +1,10 @@
-year <- sub("-.*", "", meta$Date)
+if(is.null(meta$Date)) {
+  date <- Sys.Date()
+} else {
+  date <- meta$Date
+}
+
+year <- sub("-.*", "", date)
 url  <- "https://cran.r-project.org/package=afex"
 
 authors_r <-read.dcf(system.file("DESCRIPTION", package = "afex"), fields = "Authors@R")

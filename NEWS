@@ -1,3 +1,10 @@
+Changes in afex Version 1.5-x (2025-05-xx)
+Significant User Visible Changes and New Features
+o 
+
+Bugfixes
+o functions findbars() and nobars() are now imported from package reformulas instead of lme4 [GH issue #132]
+
 Changes in afex Version 1.4-x (2024-xx-xx)
 
 Significant User Visible Changes and New Features

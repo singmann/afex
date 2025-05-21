@@ -390,7 +390,8 @@
 #'   
 #'
 ## @import pbkrtest
-#' @importFrom lme4 glmer nobars getME isREML
+#' @importFrom lme4 glmer getME isREML
+#' @importFrom reformulas nobars
 #' @importFrom parallel clusterCall clusterExport clusterEvalQ clusterApplyLB
 #' @importFrom stats logLik terms as.formula contrasts<- model.matrix model.frame anova
 #' @importFrom methods is

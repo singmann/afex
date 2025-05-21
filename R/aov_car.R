@@ -297,7 +297,7 @@
 #'   
 #' @importFrom car Anova
 #' @importFrom reshape2 dcast
-#' @importFrom lme4 findbars nobars 
+#' @importFrom reformulas findbars nobars 
 #' @importFrom stats terms as.formula xtabs contrasts<- coef
 #' @importFrom utils head
 #' 

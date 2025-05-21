@@ -44,7 +44,7 @@ Suggests:
     ggResidpanel,
     grid,
     vdiffr
-Imports: pbkrtest (>= 0.4-1), lmerTest (>= 3.0-0), car, reshape2, stats, methods, utils
+Imports: pbkrtest (>= 0.4-1), lmerTest (>= 3.0-0), car, reshape2, stats, methods, utils, reformulas
 Description: Convenience functions for analyzing factorial experiments using ANOVA or
          mixed models. aov_ez(), aov_car(), and aov_4() allow specification of
          between, within (i.e., repeated-measures), or mixed (i.e., split-plot) 
@@ -76,6 +76,6 @@ Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"),
          person(given="Jonathon", family="Love", role=c("ctb")), 
          person(given="Russell", family="Lenth", role=c("ctb")), 
          person(given="Rune", family="Haubo Bojesen Christensen", role=c("ctb")))
-Version: 1.4-1
+Version: 1.5-0
 RoxygenNote: 7.3.2
 LazyData: true

@@ -13,7 +13,6 @@ downloads](https://cranlogs.r-pkg.org/badges/last-month/afex)](https://github.co
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/afex)](https://r-pkg.org/pkg/afex)
 [![Research software
 impact](http://depsy.org/api/package/cran/afex/badge.svg)](http://depsy.org/package/r/afex)
-[![R-CMD-check](https://github.com/singmann/afex/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/singmann/afex/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 The main functionalities provided by `afex` are:
@@ -176,7 +175,7 @@ Follow-up tests with `emmeans` need to be specified in two steps.
     function such as `pairs()`.
 
 ``` r
-library("emmeans")
+suppressPackageStartupMessages(library("emmeans"))
 ## set up reference grid using only length
 em1 <- emmeans(a, "length")
 em1
@@ -287,9 +286,9 @@ m1
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>        Effect        df         F p.value
-#> 1        task  1, 44.80 13.47 ***   <.001
-#> 2      length 2, 325.78   6.03 **    .003
-#> 3 task:length 2, 303.23      0.33    .722
+#> 1        task  1, 44.79 13.47 ***   <.001
+#> 2      length 2, 325.77   6.03 **    .003
+#> 3 task:length 2, 303.20      0.33    .722
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 nice(m1)
@@ -298,9 +297,9 @@ nice(m1)
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>        Effect        df         F p.value
-#> 1        task  1, 44.80 13.47 ***   <.001
-#> 2      length 2, 325.78   6.03 **    .003
-#> 3 task:length 2, 303.23      0.33    .722
+#> 1        task  1, 44.79 13.47 ***   <.001
+#> 2      length 2, 325.77   6.03 **    .003
+#> 3 task:length 2, 303.20      0.33    .722
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '+' 0.1 ' ' 1
 ```
@@ -318,9 +317,9 @@ anova(m1)
 #> Model: log_rt ~ task * length + (length | id) + (task | item)
 #> Data: fhch
 #>             num Df  den Df       F    Pr(>F)    
-#> task             1  44.797 13.4692 0.0006426 ***
-#> length           2 325.775  6.0255 0.0026940 ** 
-#> task:length      2 303.227  0.3263 0.7218472    
+#> task             1  44.787 13.4672 0.0006432 ***
+#> length           2 325.766  6.0252 0.0026947 ** 
+#> task:length      2 303.203  0.3263 0.7218141    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
@@ -346,26 +345,26 @@ summary(m1)
 #> 
 #> Scaled residuals: 
 #>     Min      1Q  Median      3Q     Max 
-#> -5.9267 -0.5900 -0.1018  0.4789  5.2673 
+#> -5.9268 -0.5900 -0.1018  0.4789  5.2673 
 #> 
 #> Random effects:
 #>  Groups   Name        Variance  Std.Dev. Corr       
-#>  item     (Intercept) 0.0115702 0.10756             
-#>           task1       0.0104587 0.10227  0.47       
-#>  id       (Intercept) 0.0374050 0.19340             
+#>  item     (Intercept) 0.0115706 0.10757             
+#>           task1       0.0104571 0.10226  0.47       
+#>  id       (Intercept) 0.0374107 0.19342             
 #>           length1     0.0003297 0.01816   0.16      
 #>           length2     0.0001009 0.01005   0.11 -0.96
-#>  Residual             0.0925502 0.30422             
+#>  Residual             0.0925505 0.30422             
 #> Number of obs: 12960, groups:  item, 600; id, 45
 #> 
 #> Fixed effects:
 #>                 Estimate Std. Error         df t value Pr(>|t|)    
-#> (Intercept)    -0.089098   0.029468  44.989068  -3.024 0.004117 ** 
-#> task1          -0.108035   0.029437  44.797243  -3.670 0.000643 ***
-#> length1        -0.020756   0.007810 226.902599  -2.658 0.008425 ** 
-#> length2        -0.003746   0.007467 380.122063  -0.502 0.616214    
-#> task1:length1   0.005719   0.007569 206.633789   0.756 0.450736    
-#> task1:length2  -0.004627   0.007214 353.115359  -0.641 0.521661    
+#> (Intercept)    -0.089098   0.029471  44.978712  -3.023 0.004120 ** 
+#> task1          -0.108035   0.029439  44.786596  -3.670 0.000643 ***
+#> length1        -0.020756   0.007810 226.899942  -2.658 0.008425 ** 
+#> length2        -0.003746   0.007467 380.165727  -0.502 0.616216    
+#> task1:length1   0.005719   0.007568 206.605639   0.756 0.450707    
+#> task1:length2  -0.004628   0.007214 353.152953  -0.641 0.521632    
 #> ---
 #> Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 #> 
@@ -401,13 +400,13 @@ estimated to be near to zero.
 
 ``` r
 summary(m2)$varcor
-#>  Groups   Name        Std.Dev.  
-#>  item     re2.task1   1.0119e-01
-#>  item.1   (Intercept) 1.0685e-01
-#>  id       re1.length2 3.1129e-06
-#>  id.1     re1.length1 1.2292e-02
-#>  id.2     (Intercept) 1.9340e-01
-#>  Residual             3.0437e-01
+#>  Groups   Name        Std.Dev.
+#>  item     re2.task1   0.101196
+#>  item.1   (Intercept) 0.106845
+#>  id       re1.length2 0.000000
+#>  id.1     re1.length1 0.012291
+#>  id.2     (Intercept) 0.193395
+#>  Residual             0.304374
 ```
 
 As shown above, one parameter of the by-participant random slope for

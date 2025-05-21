@@ -35,8 +35,7 @@ options(warn = 0)
 
 #####
 
-rhub::validate_email("singmann@gmail.com")
-rhub::check_for_cran("development/afex_1.3-1.tar.gz")
+rhub::rhub_setup()
 
 ####
 

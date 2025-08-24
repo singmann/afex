@@ -6,9 +6,11 @@ load_all()
 options(error = NULL)
 devtools::test()
 ## before building, consider recreating the glmmTMB object for the vignette
-devtools::build(args = "--compact-vignettes=both", 
-                manual = TRUE,
-                path = "development/") # R CMD build afex --compact-vignettes="gs+qpdf"
+devtools::build(
+  args = "--compact-vignettes=both",
+  manual = TRUE,
+  path = "development/"
+) # R CMD build afex --compact-vignettes="gs+qpdf"
 document()
 check()
 check_built(path = "development/afex_1.4-1.tar.gz")
@@ -66,7 +68,9 @@ usethis::use_data(laptop_urry2021)
 
 ## resave extdata:
 rda_files <- list.files("inst/extdata/", full.names = TRUE)
-for (i in rda_files) tools::resaveRdaFiles(i)
+for (i in rda_files) {
+  tools::resaveRdaFiles(i)
+}
 
 #install.packages("afex", dependencies = TRUE)
 #devtools::build()
@@ -89,7 +93,7 @@ usethis::use_code_of_conduct()
 
 ### check reverse dependencies:
 
-library(revdepcheck)  # see https://github.com/r-lib/revdepcheck
+library(revdepcheck) # see https://github.com/r-lib/revdepcheck
 revdep_check(num_workers = 4)
 revdep_summary()
 revdep_details(revdep = "r2glmm")

@@ -12,7 +12,7 @@
 #' A person is wet.  \cr
 #' How valid is the conclusion/How likely is it that the person fell into a swimming pool?
 #'
-#' Our study also included valid and plausible and invalid and implausible problems. 
+#' Our study also included valid and plausible and invalid and implausible problems.
 #'
 #' Note that the factor `plausibility` is not present in the original manuscript, there it is a results of a combination of other factors.
 #'
@@ -29,17 +29,14 @@
 #'
 #' @examples
 #' data(sk2011.1)
-#' 
+#'
 #' # Table 1 (p. 264):
-#' aov_ez("id", "response", sk2011.1[ sk2011.1$what == "affirmation",], 
-#'        within = c("inference", "type"), between = "instruction", 
+#' aov_ez("id", "response", sk2011.1[ sk2011.1$what == "affirmation",],
+#'        within = c("inference", "type"), between = "instruction",
 #'        anova_table=(es = "pes"))
-#' aov_ez("id", "response", sk2011.1[ sk2011.1$what == "denial",], 
-#'        within = c("inference", "type"), between = "instruction", 
+#' aov_ez("id", "response", sk2011.1[ sk2011.1$what == "denial",],
+#'        within = c("inference", "type"), between = "instruction",
 #'        anova_table=(es = "pes"))
-#' 
-#'  
+#'
+#'
 NULL
-
-
-

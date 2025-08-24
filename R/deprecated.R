@@ -9,23 +9,31 @@
 #' @param ... arguments passed from the old functions of the style
 #'   \code{foo.bar()} to the new functions \code{foo_bar()}
 #' @export
-test_levene <- function(...){
-  .Deprecated("check_homogeneity", "afex", "Functionality has moved to the 'performance' package.\nCalling 'performance::check_homogeneity()'.")
+test_levene <- function(...) {
+  .Deprecated(
+    "check_homogeneity",
+    "afex",
+    "Functionality has moved to the 'performance' package.\nCalling 'performance::check_homogeneity()'."
+  )
   performance::check_homogeneity(...)
 }
 
 #' @rdname deprecated
 #' @export
-test_sphericity<- function(...){
-  .Deprecated("check_sphericity", "afex", "Functionality has moved to the 'performance' package.\nCalling 'performance::check_sphericity()'.")
+test_sphericity <- function(...) {
+  .Deprecated(
+    "check_sphericity",
+    "afex",
+    "Functionality has moved to the 'performance' package.\nCalling 'performance::check_sphericity()'."
+  )
   performance::check_sphericity(...)
 }
 
 
-
 warn_deprecated_arg <- function(name, instead) {
-  warning(gettextf("'%s' is deprecated; use '%s' instead", name, instead),
-          call.=FALSE, domain=NA)
+  warning(
+    gettextf("'%s' is deprecated; use '%s' instead", name, instead),
+    call. = FALSE,
+    domain = NA
+  )
 }
-        
-

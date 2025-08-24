@@ -13,3 +13,5 @@ Rplots.pdf
 ^README\.Rmd$
 ^CODE_OF_CONDUCT\.md$
 ^\.github$
+^[.]?air[.]toml$
+^\.vscode$

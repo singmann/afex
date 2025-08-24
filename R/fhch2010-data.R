@@ -1,11 +1,11 @@
 #' Data from Freeman, Heathcote, Chalmers, & Hockley (2010)
 #'
 #' Lexical decision and word naming latencies for 300 words and 300 nonwords presented in Freeman, Heathcote, Chalmers, and Hockley (2010). The study had one between-subjects factors, \code{"task"} with two levels (\code{"naming"} or \code{"lexdec"}), and four within-subjects factors: \code{"stimulus"} type with two levels (\code{"word"} or \code{"nonword"}), word \code{"density"} and word \code{"frequency"} each with two levels (\code{"low"} and \code{"high"}) and stimulus \code{"length"} with three levels (4, 5, and 6).
-#' 
+#'
 #'  In the lexical-decision condition (N = 25), subjects indicated whether each item was a word or a nonword, by pressing either the left (labeled word) or right (labeled nonword) outermost button on a 6-button response pad. The next study item appeared immediately after the lexical decision response was given. In the naming condition (N = 20), subjects were asked to name each item aloud, and items remained on screen for 3 s. Naming time was recorded by a voice key.
-#' 
+#'
 #' Items consisted of 300 words, 75 in each set making up a factorial combination of high and low density and frequency, and 300 nonwords, with equal numbers of 4, 5, and 6 letter items in each set.
-#' 
+#'
 #'
 #' @docType data
 #' @keywords dataset
@@ -30,6 +30,3 @@
 #'
 #' @example examples/examples.fhch2010.R
 NULL
-
-
-

@@ -1,32 +1,62 @@
-
 context("ANOVAs: known bugs")
 
 test_that("aov does not throw 'Error() model is singular' warning for missing values", {
   data(md_12.1)
-  md_12.1b <- md_12.1[-1,]
-  expect_warning(aov_ez("id", "rt", md_12.1b, within = c("angle", "noise")), "Missing values", all = TRUE)
+  md_12.1b <- md_12.1[-1, ]
+  expect_warning(
+    aov_ez("id", "rt", md_12.1b, within = c("angle", "noise")),
+    "Missing values",
+    all = TRUE
+  )
 })
 
 test_that("regex works correctly in aov_car when also having within factors outside the Error term", {
   data(obk.long)
-  expect_is(aov_car(value ~ treatment * gender*phase*hour + Error(id/phase*hour), data = obk.long), "afex_aov")
+  expect_is(
+    aov_car(
+      value ~ treatment * gender * phase * hour + Error(id / phase * hour),
+      data = obk.long
+    ),
+    "afex_aov"
+  )
 })
 
 test_that("another label bug (May 2014)", {
   data("sk2011.1")
   levels(sk2011.1$inference) <- c("A+:D-", "A+:D+", "A-:D+", "A- : D-")
-  expect_is(aov_ez("id", "response", sk2011.1, between = "instruction", within = c("type", "inference"), return = "Anova", fun_aggregate = mean), "Anova.mlm")  
+  expect_is(
+    aov_ez(
+      "id",
+      "response",
+      sk2011.1,
+      between = "instruction",
+      within = c("type", "inference"),
+      return = "Anova",
+      fun_aggregate = mean
+    ),
+    "Anova.mlm"
+  )
 })
 
 test_that("orig label bug", {
   data(obk.long)
   obk2 <- obk.long
   levels(obk2$phase) <- c("fup test", "post-hans", "pre tenetious")
-  expect_is(aov_car(value ~ treatment * gender + age + Error(id/phase*hour), data = obk2, factorize=FALSE, return = "Anova"), "Anova.mlm")
+  expect_is(
+    aov_car(
+      value ~ treatment * gender + age + Error(id / phase * hour),
+      data = obk2,
+      factorize = FALSE,
+      return = "Anova"
+    ),
+    "Anova.mlm"
+  )
 })
 
 test_that("ANCOVA check bug (reported by Gang Chen), January 2013", {
-  dat <- read.table(header=TRUE, text = "ID Group Gender ROI Value Propdd00 GAS0 MAD0 CPD0
+  dat <- read.table(
+    header = TRUE,
+    text = "ID Group Gender ROI Value Propdd00 GAS0 MAD0 CPD0
 2016 AE M 05_06 1.581 0.543 1.908 0.439999999999998 -0.5335
 2016 AE M 07_08 1.521 0.543 1.908 0.439999999999998 -0.5335
 2016 AE M 09_10 1.623 0.543 1.908 0.439999999999998 -0.5335
@@ -147,51 +177,179 @@ test_that("ANCOVA check bug (reported by Gang Chen), January 2013", {
 2117 HC F 07_08 1.587 -0.014 0.917999999999999 1.293 3.7965
 2117 HC F 05_06 1.667 -0.014 0.917999999999999 1.293 3.7965
 2117 HC F 01_02 1.663 -0.014 0.917999999999999 1.293 3.7965
-")
+"
+  )
   dat$ID <- as.factor(dat$ID)
-  fm <- aov_car(Value ~ Propdd00 + Group + Gender + GAS0 + MAD0 + CPD0 + Error(ID/ROI), data=dat, factorize=FALSE, return = "Anova")
-  fm0 <- aov_car(Value ~ MAD0 + CPD0 + Error(ID/ROI), data=dat, factorize=FALSE, return='afex_aov')
+  fm <- aov_car(
+    Value ~ Propdd00 + Group + Gender + GAS0 + MAD0 + CPD0 + Error(ID / ROI),
+    data = dat,
+    factorize = FALSE,
+    return = "Anova"
+  )
+  fm0 <- aov_car(
+    Value ~ MAD0 + CPD0 + Error(ID / ROI),
+    data = dat,
+    factorize = FALSE,
+    return = 'afex_aov'
+  )
   expect_is(fm, "Anova.mlm")
   expect_is(fm0, "afex_aov")
 })
 
 
 test_that("ANOVA: ids in multiple between.subjects conditions", {
-  species<- c("a","b","c","c","b","c","b","b","a","b","c","c","a","a","b","b","a","a","b","c")
-  habitat<-  c("x","x","x","y","y","y","x","x","y","z","y","y","z","z","x","x","y","y","z","z")
-  mvt.rate<-c(6,5,7,8,9,4,3,5,6,9,3,6,6,7,8,9,5,6,7,8)
-  ind<-as.factor(c(1,2,3,4,1,2,3,4,1,2,3,4,1,2,3,4,1,2,3,4))
-  data1<-data.frame(species, habitat, mvt.rate, ind)
+  species <- c(
+    "a",
+    "b",
+    "c",
+    "c",
+    "b",
+    "c",
+    "b",
+    "b",
+    "a",
+    "b",
+    "c",
+    "c",
+    "a",
+    "a",
+    "b",
+    "b",
+    "a",
+    "a",
+    "b",
+    "c"
+  )
+  habitat <- c(
+    "x",
+    "x",
+    "x",
+    "y",
+    "y",
+    "y",
+    "x",
+    "x",
+    "y",
+    "z",
+    "y",
+    "y",
+    "z",
+    "z",
+    "x",
+    "x",
+    "y",
+    "y",
+    "z",
+    "z"
+  )
+  mvt.rate <- c(6, 5, 7, 8, 9, 4, 3, 5, 6, 9, 3, 6, 6, 7, 8, 9, 5, 6, 7, 8)
+  ind <- as.factor(c(
+    1,
+    2,
+    3,
+    4,
+    1,
+    2,
+    3,
+    4,
+    1,
+    2,
+    3,
+    4,
+    1,
+    2,
+    3,
+    4,
+    1,
+    2,
+    3,
+    4
+  ))
+  data1 <- data.frame(species, habitat, mvt.rate, ind)
   # should give an error
-  expect_error(aov_ez("ind", "mvt.rate", data1, within = "habitat", between = "species"), "Following ids are in more than one between subjects condition:")
+  expect_error(
+    aov_ez("ind", "mvt.rate", data1, within = "habitat", between = "species"),
+    "Following ids are in more than one between subjects condition:"
+  )
 })
 
 test_that("empty factors are not causing aov.cat to choke", {
   data(sleepstudy) #Example data in lme4
-  sleepstudy$Days<-factor(sleepstudy$Days)
+  sleepstudy$Days <- factor(sleepstudy$Days)
   #Works with all factors
-  expect_is(aov_ez("Subject","Reaction",sleepstudy, within="Days", return = "Anova"), "Anova.mlm")
+  expect_is(
+    aov_ez(
+      "Subject",
+      "Reaction",
+      sleepstudy,
+      within = "Days",
+      return = "Anova"
+    ),
+    "Anova.mlm"
+  )
   #If you remove a factor it fails...
-  expect_is(aov_ez("Subject","Reaction",sleepstudy[sleepstudy$Days!=9,], within="Days", return = "Anova"), "Anova.mlm")
+  expect_is(
+    aov_ez(
+      "Subject",
+      "Reaction",
+      sleepstudy[sleepstudy$Days != 9, ],
+      within = "Days",
+      return = "Anova"
+    ),
+    "Anova.mlm"
+  )
 })
 
 test_that("factors have more than one level", {
   data(obk.long)
-  expect_error(aov_car(value ~ treatment+ Error(id/phase), data = obk.long[ obk.long$treatment == "control",]), "one level only.")
-  expect_error(aov_car(value ~ treatment+ Error(id/phase), data = obk.long[ obk.long$phase == "pre",]), "one level only.")
+  expect_error(
+    aov_car(
+      value ~ treatment + Error(id / phase),
+      data = obk.long[obk.long$treatment == "control", ]
+    ),
+    "one level only."
+  )
+  expect_error(
+    aov_car(
+      value ~ treatment + Error(id / phase),
+      data = obk.long[obk.long$phase == "pre", ]
+    ),
+    "one level only."
+  )
 })
 
 
 test_that("variable names longer", {
   data(obk.long)
   obk.long$gender2 <- obk.long$treatment
-  orig <- aov_car(value ~ treatment * gender + age + Error(id/phase*hour), data = obk.long, factorize=FALSE, observed = "gender")
-  v1 <- aov_car(value ~ gender2 * gender + age + Error(id/phase*hour), data = obk.long, factorize=FALSE, observed = "gender")
-  v2 <- aov_car(value ~ gender2 * gender + age + Error(id/phase*hour), data = obk.long, factorize=FALSE, observed = "gender2")
+  orig <- aov_car(
+    value ~ treatment * gender + age + Error(id / phase * hour),
+    data = obk.long,
+    factorize = FALSE,
+    observed = "gender"
+  )
+  v1 <- aov_car(
+    value ~ gender2 * gender + age + Error(id / phase * hour),
+    data = obk.long,
+    factorize = FALSE,
+    observed = "gender"
+  )
+  v2 <- aov_car(
+    value ~ gender2 * gender + age + Error(id / phase * hour),
+    data = obk.long,
+    factorize = FALSE,
+    observed = "gender2"
+  )
   expect_equivalent(orig$anova_table, v1$anova_table)
-  expect_identical(nice(orig)[,-1], nice(v1)[,-1])
-  expect_identical(nice(orig)[,c("df", "MSE", "F", "p.value")], nice(v2)[,c("df", "MSE", "F", "p.value")])
-  expect_equivalent(orig$anova_table[,c("num Df", "den Df", "MSE", "F", "Pr(>F)")], v2$anova_table[c("num Df", "den Df", "MSE", "F", "Pr(>F)")])
+  expect_identical(nice(orig)[, -1], nice(v1)[, -1])
+  expect_identical(
+    nice(orig)[, c("df", "MSE", "F", "p.value")],
+    nice(v2)[, c("df", "MSE", "F", "p.value")]
+  )
+  expect_equivalent(
+    orig$anova_table[, c("num Df", "den Df", "MSE", "F", "Pr(>F)")],
+    v2$anova_table[c("num Df", "den Df", "MSE", "F", "Pr(>F)")]
+  )
 })
 
 test_that("works with dplyr data.frames (see https://github.com/singmann/afex/issues/6):", {
@@ -199,36 +357,69 @@ test_that("works with dplyr data.frames (see https://github.com/singmann/afex/is
     skip_if_not_installed("dplyr")
     data(md_12.1)
     md2 <- dplyr::as_tibble(md_12.1)
-    expect_is(aov_ez("id", "rt", md2, within = c("angle", "noise"), 
-                     anova_table=list(correction = "none", es = "none")), 
-              "afex_aov") 
+    expect_is(
+      aov_ez(
+        "id",
+        "rt",
+        md2,
+        within = c("angle", "noise"),
+        anova_table = list(correction = "none", es = "none")
+      ),
+      "afex_aov"
+    )
   }
 })
 
 test_that("return='nice' works", {
   data(md_12.1)
-  expect_is(aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), return = "nice"), "data.frame")
+  expect_is(
+    aov_ez("id", "rt", md_12.1, within = c("angle", "noise"), return = "nice"),
+    "data.frame"
+  )
 })
 
 
 test_that("aov_car works with column names containing spaces: https://github.com/singmann/afex/issues/22", {
-  data <- list("dependent" = rnorm(100), "RM Factor 1" = factor(rep(c("Level 1", "Level 2"), 50)), "subject" = factor(rep(1:50, each = 2)))
+  data <- list(
+    "dependent" = rnorm(100),
+    "RM Factor 1" = factor(rep(c("Level 1", "Level 2"), 50)),
+    "subject" = factor(rep(1:50, each = 2))
+  )
   attr(data, 'row.names') <- seq_len(length(data[[1]]))
   attr(data, 'class') <- 'data.frame'
-  
-  expect_is(aov_car(dependent ~ `RM Factor 1` + Error(subject/(`RM Factor 1`)), data),  "afex_aov")
-  expect_is(aov_4(dependent ~ `RM Factor 1` + (`RM Factor 1`|subject), data), "afex_aov")
-  expect_is(aov_ez("subject", "dependent", data, within = "RM Factor 1"), "afex_aov")
+
+  expect_is(
+    aov_car(dependent ~ `RM Factor 1` + Error(subject / (`RM Factor 1`)), data),
+    "afex_aov"
+  )
+  expect_is(
+    aov_4(dependent ~ `RM Factor 1` + (`RM Factor 1` | subject), data),
+    "afex_aov"
+  )
+  expect_is(
+    aov_ez("subject", "dependent", data, within = "RM Factor 1"),
+    "afex_aov"
+  )
 })
 
 test_that("aov_car works with column names containing spaces for between factors", {
-  data <- list("dependent" = rnorm(100), "RM Factor 1" = factor(rep(c("Level 1", "Level 2"), 50)), "subject" = factor(rep(1:100)))
+  data <- list(
+    "dependent" = rnorm(100),
+    "RM Factor 1" = factor(rep(c("Level 1", "Level 2"), 50)),
+    "subject" = factor(rep(1:100))
+  )
   attr(data, 'row.names') <- seq_len(length(data[[1]]))
   attr(data, 'class') <- 'data.frame'
-  
-  expect_is(aov_car(dependent ~ `RM Factor 1` + Error(subject), data),  "afex_aov")
-  expect_is(aov_4(dependent ~ `RM Factor 1` + (1|subject), data), "afex_aov")
-  expect_is(aov_ez("subject", "dependent", data, between = "RM Factor 1"), "afex_aov")
+
+  expect_is(
+    aov_car(dependent ~ `RM Factor 1` + Error(subject), data),
+    "afex_aov"
+  )
+  expect_is(aov_4(dependent ~ `RM Factor 1` + (1 | subject), data), "afex_aov")
+  expect_is(
+    aov_ez("subject", "dependent", data, between = "RM Factor 1"),
+    "afex_aov"
+  )
 })
 
 
@@ -236,15 +427,20 @@ test_that("aov_ez works with multiple covariates", {
   skip_if_not_installed("psychTools")
   require(psychTools)
   data(msq)
-  msq2 <- msq[!is.na(msq$Extraversion),]
-  msq2 <- droplevels(msq2[msq2$ID != "18",])
-  msq2$TOD <- msq2$TOD-mean(msq2$TOD)
-  msq2$MSQ_Time <- msq2$MSQ_Time-mean(msq2$MSQ_Time)
-  msq2$condition <- msq2$condition-mean(msq2$condition) # that is somewhat stupid
-  mulcov <- aov_ez(data=msq2, dv="Extraversion", id = "ID", 
-                   between = "condition", 
-                   covariate=c("TOD", "MSQ_Time"), 
-                   factorize=FALSE, fun_aggregate = mean)
+  msq2 <- msq[!is.na(msq$Extraversion), ]
+  msq2 <- droplevels(msq2[msq2$ID != "18", ])
+  msq2$TOD <- msq2$TOD - mean(msq2$TOD)
+  msq2$MSQ_Time <- msq2$MSQ_Time - mean(msq2$MSQ_Time)
+  msq2$condition <- msq2$condition - mean(msq2$condition) # that is somewhat stupid
+  mulcov <- aov_ez(
+    data = msq2,
+    dv = "Extraversion",
+    id = "ID",
+    between = "condition",
+    covariate = c("TOD", "MSQ_Time"),
+    factorize = FALSE,
+    fun_aggregate = mean
+  )
   expect_is(mulcov, "afex_aov")
 })
 
@@ -253,26 +449,52 @@ test_that("aov_car works with p.val adjustment == NA for HF as well as GG", {
   skip_on_cran() ## takes rather long
   load("anova_hf_error.rda")
   #load("tests/testthat/anova_hf_error.rda")
-  expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"))), 
-            "nice_table")
-  expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"), 
-                   anova_table = list(correction = "GG"))),
-            "nice_table")
-  expect_is(nice(aov_ez("Snum", "RT", demo, within=c("DistF", "WidthF", "AngleF"), 
-                   anova_table = list(correction = "HF"))),
-            "nice_table")
+  expect_is(
+    nice(aov_ez("Snum", "RT", demo, within = c("DistF", "WidthF", "AngleF"))),
+    "nice_table"
+  )
+  expect_is(
+    nice(aov_ez(
+      "Snum",
+      "RT",
+      demo,
+      within = c("DistF", "WidthF", "AngleF"),
+      anova_table = list(correction = "GG")
+    )),
+    "nice_table"
+  )
+  expect_is(
+    nice(aov_ez(
+      "Snum",
+      "RT",
+      demo,
+      within = c("DistF", "WidthF", "AngleF"),
+      anova_table = list(correction = "HF")
+    )),
+    "nice_table"
+  )
 })
 
 test_that("aov_car: character variables and factorize = FALSE", {
   data(obk.long)
   obk2 <- obk.long
   obk2$treatment <- as.character(obk2$treatment)
-  a1 <- aov_car(value ~ treatment * gender + Error(id), data = obk.long, 
-                fun_aggregate = mean)
-  a2 <- aov_car(value ~ treatment * gender + Error(id), data = obk2, 
-                fun_aggregate = mean)
-  a3 <- aov_car(value ~ treatment * gender + Error(id), data = obk2, 
-                fun_aggregate = mean, factorize = FALSE)
+  a1 <- aov_car(
+    value ~ treatment * gender + Error(id),
+    data = obk.long,
+    fun_aggregate = mean
+  )
+  a2 <- aov_car(
+    value ~ treatment * gender + Error(id),
+    data = obk2,
+    fun_aggregate = mean
+  )
+  a3 <- aov_car(
+    value ~ treatment * gender + Error(id),
+    data = obk2,
+    fun_aggregate = mean,
+    factorize = FALSE
+  )
   expect_equal(a1$anova_table, a2$anova_table)
   expect_equal(a1$anova_table, a3$anova_table)
 })
@@ -280,15 +502,22 @@ test_that("aov_car: character variables and factorize = FALSE", {
 test_that("additive design works without interaction and corresponding data", {
   dat <- read.csv("skf_issue.csv")
   dat[["ID"]] <- factor(1:nrow(dat))
-  
-  aov1 <- aov_car(formula = Y ~ A + B + C + D + E + F + G + Error(ID), 
-                  data = dat, type="3")
+
+  aov1 <- aov_car(
+    formula = Y ~ A + B + C + D + E + F + G + Error(ID),
+    data = dat,
+    type = "3"
+  )
   expect_is(aov1, "afex_aov")
-  
+
   datFac <- dat
-  for(i in 1:7) 
+  for (i in 1:7) {
     datFac[[LETTERS[i]]] <- factor(ifelse(dat[[LETTERS[i]]] == -1, "a", "b"))
-  aov2 <- aov_car(formula = Y ~ A + B + C + D + E + F + G + Error(ID), 
-                  data = datFac, type="3")
+  }
+  aov2 <- aov_car(
+    formula = Y ~ A + B + C + D + E + F + G + Error(ID),
+    data = datFac,
+    type = "3"
+  )
   expect_is(aov2, "afex_aov")
 })

@@ -1,6 +1,6 @@
 #' Replication of Laptop Note Taking Study (Urry et al. 2021, Psych. Science)
 #'
-#' Original abstract: 
+#' Original abstract:
 #' In this direct replication of Mueller and Oppenheimer’s (2014) Study 1,
 #' participants watched a lecture while taking notes with a laptop (n = 74) or
 #' longhand (n = 68). After a brief distraction and without the opportunity to
@@ -8,7 +8,7 @@
 #' notes containing more words spoken verbatim by the lecturer and more words
 #' overall than did longhand participants. However, laptop participants did not
 #' perform better than longhand participants on the quiz.
-#' 
+#'
 #' Own description:
 #'
 #' Heather Urry and 87 of her undergraduate and graduate students (yes, all 87
@@ -29,8 +29,8 @@
 #'
 #' @docType data
 #' @keywords dataset
-#' @name laptop_urry 
-#' @usage laptop_urry 
+#' @name laptop_urry
+#' @usage laptop_urry
 #' @format A data frame with 142 rows and 6 variables:
 #' \describe{
 #'   \item{pid}{participant id, factor with 142 levels}
@@ -52,6 +52,3 @@
 #' @encoding UTF-8
 #'
 "laptop_urry"
-
-
-

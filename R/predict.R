@@ -18,7 +18,13 @@
 #'
 #' @export
 #' @importFrom stats predict fitted setNames
-predict.afex_aov <- function(object, newdata, append = FALSE, colname_predict = ".predict", ...) {
+predict.afex_aov <- function(
+  object,
+  newdata,
+  append = FALSE,
+  colname_predict = ".predict",
+  ...
+) {
   # if no newdata, get fitted
   if (missing(newdata)) {
     return(fitted(object, append = append, colname_predict = colname_predict))

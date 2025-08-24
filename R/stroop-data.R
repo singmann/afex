@@ -1,6 +1,6 @@
 #' Stroop data from Lin et al. (2020, Psych. Science)
 #'
-#' 
+#'
 #' Lin, Saunders, Friese, Evans, and Inzlicht (2020) investigated ego depletion.
 #' An initial high-demand task was followed by a Stroop task. The data of the
 #' Stroop task from all 4 of their studies is included here.
@@ -21,7 +21,7 @@
 #' effort exertion reduced response caution rather than inhibitory control,
 #' suggesting that after exerting effort, people disengage and become
 #' uninterested in exerting further effort.
-#' 
+#'
 #'
 #'
 #' @docType data
@@ -46,6 +46,3 @@
 #' @encoding UTF-8
 #'
 "stroop"
-
-
-

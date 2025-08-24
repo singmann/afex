@@ -1,11 +1,11 @@
 #' Data 16.1 / 10.9 from Maxwell & Delaney
 #'
 #' Hypothetical Reaction Time Data for 2 x 3 Perceptual Experiment: Example data for chapter 12 of Maaxwell and Delaney (2004, Table 12.1, p. 574) in long format. Has two within.subjects factors: angle and noise.
-#' 
+#'
 #' Description from pp. 829:
-#' 
+#'
 #' As brief background, the goal of the study here is to examine the extent to which female and male clinical psychology graduate student trainees may assign different severity ratings to clients at initial intake. Three female and 3 male graduate students are randomly selected to participate and each is randomly assigned four clients with whom to do an intake interview, after which each clinical trainee assigns a severity rating to each client, producing the data shown in Table 16.1.
-#' 
+#'
 #' Note that I changed the labeling of the id slightly, so that they are now labeled from 1 to 6. Furthermore, I changed the contrasts of sex to \code{contr.treatment} to replicate the exact results of Table 16.3 (p. 837).
 #'
 #' @docType data
@@ -19,16 +19,16 @@
 #' @examples
 #' ### replicate results from Table 16.3 (Maxwell & Delaney, 2004, p. 837)
 #' data(md_16.1)
-#' 
+#'
 #' # original results need treatment contrasts:
 #' (mixed1_orig <- mixed(severity ~ sex + (1|id), md_16.1, check.contrasts=FALSE))
 #' summary(mixed1_orig$full.model)
-#' 
+#'
 #' # p-values stay the same with afex default contrasts (contr.sum),
 #' # but estimates and t-values for the fixed effects parameters change.
 #' (mixed1 <- mixed(severity ~ sex + (1|id), md_16.1))
 #' summary(mixed1$full.model)
-#' 
+#'
 #' @encoding UTF-8
-#' 
+#'
 NULL

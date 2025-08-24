@@ -9,7 +9,7 @@
 #'   which sets the corresponding option to the new value (and returns nothing),
 #'   (4) a list with option-value pairs which sets all the corresponding
 #'   arguments. The example show all possible cases.
-#' 
+#'
 #' @details The following arguments are currently set:
 #' \itemize{
 #' \item \code{check_contrasts} should contrasts be checked and changed to
@@ -47,14 +47,14 @@
 #' \item \code{return_aov}: Return value of the ANOVA functions (see
 #'   \code{\link{aov_car}}), default is \code{"nice"}.
 #' }
-#' 
+#'
 #' @note All options are saved in the global R \code{\link{options}} with prefix
 #'   \code{afex.}
-#'   
+#'
 #' @return depends on input, see above.
 #'
 #' @example examples/examples.helpers.R
-#' 
+#'
 #' @export
 
 # afex_options <- function(...)
@@ -74,12 +74,14 @@
 afex_options <- function(...) {
   dots <- list(...)
   #browser()
-  if (length(dots) == 0) {  # branch to get all afex options
+  if (length(dots) == 0) {
+    # branch to get all afex options
     op <- options()
     afex_op <- op[grepl("^afex.", names(op))]
     names(afex_op) <- sub("^afex.", "", names(afex_op))
     return(afex_op)
-  } else if (is.list(dots[[1]])) {  # set several afex options as a list:
+  } else if (is.list(dots[[1]])) {
+    # set several afex options as a list:
     newop <- dots[[1]]
     names(newop) <- paste0("afex.", names(newop))
     options(newop)
@@ -87,11 +89,19 @@ afex_options <- function(...) {
     newop <- dots
     names(newop) <- paste0("afex.", names(newop))
     options(newop)
-  } else if (is.null(names(dots))) {  # get a single afex options
-    if (length(dots) > 1) stop("afex_options() can only return the value of a single option.", call. = FALSE)
+  } else if (is.null(names(dots))) {
+    # get a single afex options
+    if (length(dots) > 1) {
+      stop(
+        "afex_options() can only return the value of a single option.",
+        call. = FALSE
+      )
+    }
     return(getOption(paste0("afex.", unlist(dots))))
   } else {
-    warning("Unsopported command to afex_options(), nothing done.", call. = FALSE)
+    warning(
+      "Unsopported command to afex_options(), nothing done.",
+      call. = FALSE
+    )
   }
 }
-

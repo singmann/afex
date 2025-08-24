@@ -35,7 +35,7 @@ options(warn = 0)
 
 #####
 
-rhub::rhub_setup()
+rhub::rhub_check()
 
 ####
 

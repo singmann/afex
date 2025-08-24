@@ -35,25 +35,26 @@ interaction_plot <- function(
       call. = FALSE
     )
   }
-  tmp_list <- as.list(rep(col_trace, length(mapping)))
+  tmp_list <- vector("list", length(mapping))
   names(tmp_list) <- mapping
+  for (i in seq_along(tmp_list)) {
+    tmp_list[[i]] <- rlang::data_sym(col_trace)
+  }
 
   error_mapping <- mapping[!(mapping %in% c("linetype", "shape", "fill"))]
-  tmp_list_error <- as.list(rep(col_trace, length(error_mapping)))
+  tmp_list_error <- vector("list", length(error_mapping))
   names(tmp_list_error) <- error_mapping
+  for (i in seq_along(tmp_list_error)) {
+    tmp_list_error[[i]] <- rlang::data_sym(col_trace)
+  }
 
   plot_out <- ggplot2::ggplot(
     data = means,
-    mapping = do.call(
-      what = ggplot2::aes_string,
-      args = c(
-        list(
-          y = col_y,
-          x = col_x,
-          group = col_trace
-        ),
-        tmp_list
-      )
+    mapping = ggplot2::aes(
+      y = .data[[col_y]],
+      x = .data[[col_x]],
+      group = .data[[col_trace]],
+      !!!tmp_list
     )
   )
   if (!is.null(plot_first)) {
@@ -87,14 +88,9 @@ interaction_plot <- function(
         do.call(
           what = data_geom,
           args = c(
-            #mapping = list(ggplot2::aes(group = interaction(x, trace))),
             mapping = list(
-              ggplot2::aes_string(
-                group = paste0(
-                  "interaction(",
-                  paste0(c(col_x, col_trace), collapse = ", "),
-                  ")"
-                )
+              ggplot2::aes(
+                group = interaction(.data[[col_x]], .data[[col_trace]])
               )
             ),
             data = list(data),
@@ -131,12 +127,8 @@ interaction_plot <- function(
               what = data_geom[[i]],
               args = c(
                 mapping = list(
-                  ggplot2::aes_string(
-                    group = paste0(
-                      "interaction(",
-                      paste0(c(col_x, col_trace), collapse = ", "),
-                      ")"
-                    )
+                  ggplot2::aes(
+                    group = interaction(.data[[col_x]], .data[[col_trace]])
                   )
                 ),
                 data = list(data),
@@ -165,12 +157,8 @@ interaction_plot <- function(
               what = data_geom[[i]],
               args = c(
                 mapping = list(
-                  ggplot2::aes_string(
-                    group = paste0(
-                      "interaction(",
-                      paste0(c(col_x, col_trace), collapse = ", "),
-                      ")"
-                    )
+                  ggplot2::aes(
+                    group = interaction(.data[[col_x]], .data[[col_trace]])
                   )
                 ),
                 data = list(data),
@@ -215,17 +203,12 @@ interaction_plot <- function(
           what = ggplot2::geom_errorbar,
           args = c(
             data = list(tmp_means),
-            mapping = list(do.call(
-              what = ggplot2::aes_string,
-              args = c(
-                list(
-                  x = col_x,
-                  ymin = col_lower,
-                  ymax = col_upper,
-                  group = col_trace
-                ),
-                tmp_list_error
-              )
+            mapping = list(ggplot2::aes(
+              x = .data[[col_x]],
+              ymin = .data[[col_lower]],
+              ymax = .data[[col_upper]],
+              group = .data[[col_trace]],
+              !!!tmp_list_error
             )),
             position = list(ggplot2::position_dodge(width = dodge)),
             error_arg,
@@ -297,12 +280,18 @@ oneway_plot <- function(
   }
 
   if (length(mapping) > 1 || mapping[1] != "") {
-    tmp_list <- as.list(rep(col_x, length(mapping)))
+    tmp_list <- vector("list", length(mapping))
     names(tmp_list) <- mapping
+    for (i in seq_along(tmp_list)) {
+      tmp_list[[i]] <- rlang::data_sym(col_x)
+    }
 
     error_mapping <- mapping[!(mapping %in% c("linetype", "shape", "fill"))]
-    tmp_list_error <- as.list(rep(col_x, length(error_mapping)))
+    tmp_list_error <- vector("list", length(error_mapping))
     names(tmp_list_error) <- error_mapping
+    for (i in seq_along(tmp_list_error)) {
+      tmp_list_error[[i]] <- rlang::data_sym(col_x)
+    }
   } else {
     tmp_list <- list()
     tmp_list_error <- list()
@@ -310,16 +299,11 @@ oneway_plot <- function(
 
   plot_out <- ggplot2::ggplot(
     data = means,
-    mapping = do.call(
-      what = ggplot2::aes_string,
-      args = c(
-        list(
-          y = col_y,
-          x = col_x,
-          group = col_x
-        ),
-        tmp_list
-      )
+    mapping = ggplot2::aes(
+      y = .data[[col_y]],
+      x = .data[[col_x]],
+      group = .data[[col_x]],
+      !!!tmp_list
     )
   )
 
@@ -414,18 +398,14 @@ oneway_plot <- function(
       do.call(
         what = ggplot2::geom_errorbar,
         args = c(
-          mapping = list(do.call(
-            what = ggplot2::aes_string,
-            args = c(
-              list(
-                x = col_x,
-                ymin = col_lower,
-                ymax = col_upper
-              ),
-              tmp_list_error
-            )
+          mapping = list(ggplot2::aes(
+            x = .data[[col_x]],
+            ymin = .data[[col_lower]],
+            ymax = .data[[col_upper]],
+            !!!tmp_list_error
           )),
           error_arg,
+          na.rm = list(TRUE),
           inherit.aes = list(FALSE)
         )
       )

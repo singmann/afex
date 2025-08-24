@@ -281,6 +281,7 @@
 #'
 #'
 #' @importFrom stats aggregate sd qt formula
+#' @importFrom rlang .data
 #'
 #' @example examples/examples.afex_plot.R
 #'

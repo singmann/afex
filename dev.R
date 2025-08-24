@@ -13,7 +13,7 @@ devtools::build(
 ) # R CMD build afex --compact-vignettes="gs+qpdf"
 document()
 check()
-check_built(path = "development/afex_1.4-1.tar.gz")
+check_built(path = "development/afex_1.5-0.tar.gz")
 
 ## works better on windows:
 devtools::test(filter = "plot", invert = TRUE)
@@ -83,7 +83,7 @@ devtools::build(args = "--compact-vignettes=both")
 
 usethis::use_package("statmod", "Suggests")
 usethis::use_package("rstanarm", "Suggests")
-usethis::use_package("brms", "Suggests")
+usethis::use_package("rlang", "Suggests")
 usethis::use_package("cowplot", "Suggests")
 usethis::use_package("vdiffr", "Suggests")
 #usethis::use_package("GLMMadaptive", "Suggests")

@@ -31,9 +31,9 @@
 <line x1='162.24' y1='468.61' x2='162.24' y2='521.37' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-linecap: butt;' />
 <polygon points='147.87,415.85 147.87,468.61 176.61,468.61 176.61,415.85 147.87,415.85 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFFFFF; fill-opacity: 0.50;' />
 <line x1='147.87' y1='415.85' x2='176.61' y2='415.85' style='stroke-width: 2.13; stroke: #A9A9A9; stroke-linecap: butt; stroke-linejoin: miter;' />
-<circle cx='449.67' cy='521.37' r='1.95' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.50; fill: #A9A9A9; fill-opacity: 0.50;' />
-<circle cx='449.67' cy='257.57' r='1.95' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.50; fill: #A9A9A9; fill-opacity: 0.50;' />
-<circle cx='449.67' cy='521.37' r='1.95' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.50; fill: #A9A9A9; fill-opacity: 0.50;' />
+<circle cx='449.67' cy='521.37' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #A9A9A9; fill-opacity: 0.50;' />
+<circle cx='449.67' cy='257.57' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #A9A9A9; fill-opacity: 0.50;' />
+<circle cx='449.67' cy='521.37' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #A9A9A9; fill-opacity: 0.50;' />
 <line x1='449.67' y1='363.09' x2='449.67' y2='363.09' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-linecap: butt;' />
 <line x1='449.67' y1='415.85' x2='449.67' y2='415.85' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-linecap: butt;' />
 <polygon points='435.30,363.09 435.30,415.85 464.04,415.85 464.04,363.09 435.30,363.09 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFFFFF; fill-opacity: 0.50;' />
@@ -46,13 +46,13 @@
 <line x1='497.58' y1='297.14' x2='497.58' y2='415.85' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 2.85,2.85; stroke-linecap: butt;' />
 <polygon points='483.21,204.81 483.21,297.14 511.95,297.14 511.95,204.81 483.21,204.81 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 2.85,2.85; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFFFFF; fill-opacity: 0.50;' />
 <line x1='483.21' y1='231.19' x2='511.95' y2='231.19' style='stroke-width: 2.13; stroke: #A9A9A9; stroke-dasharray: 5.69,5.69; stroke-linecap: butt; stroke-linejoin: miter;' />
-<circle cx='258.05' cy='521.37' r='1.95' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.50; fill: #A9A9A9; fill-opacity: 0.50;' />
-<circle cx='258.05' cy='257.57' r='1.95' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.50; fill: #A9A9A9; fill-opacity: 0.50;' />
+<polygon points='256.10,523.33 260.01,523.33 260.01,519.42 256.10,519.42 ' style='stroke-width: 0.71; stroke: none; fill: #A9A9A9; fill-opacity: 0.50;' />
+<polygon points='256.10,259.52 260.01,259.52 260.01,255.61 256.10,255.61 ' style='stroke-width: 0.71; stroke: none; fill: #A9A9A9; fill-opacity: 0.50;' />
 <line x1='258.05' y1='363.09' x2='258.05' y2='310.33' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
 <line x1='258.05' y1='402.66' x2='258.05' y2='415.85' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
 <polygon points='243.68,363.09 243.68,402.66 272.42,402.66 272.42,363.09 243.68,363.09 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFFFFF; fill-opacity: 0.50;' />
 <line x1='243.68' y1='363.09' x2='272.42' y2='363.09' style='stroke-width: 2.13; stroke: #A9A9A9; stroke-dasharray: 11.38,5.69; stroke-linecap: butt; stroke-linejoin: miter;' />
-<circle cx='545.48' cy='363.09' r='1.95' style='stroke-width: 0.71; stroke: #A9A9A9; stroke-opacity: 0.50; fill: #A9A9A9; fill-opacity: 0.50;' />
+<polygon points='543.53,365.04 547.44,365.04 547.44,361.13 543.53,361.13 ' style='stroke-width: 0.71; stroke: none; fill: #A9A9A9; fill-opacity: 0.50;' />
 <line x1='545.48' y1='112.48' x2='545.48' y2='46.53' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
 <line x1='545.48' y1='191.62' x2='545.48' y2='310.33' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
 <polygon points='531.11,112.48 531.11,191.62 559.85,191.62 559.85,112.48 531.11,112.48 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFFFFF; fill-opacity: 0.50;' />
@@ -112,6 +112,8 @@
 <polyline points='689.64,270.01 689.64,267.42 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-linecap: butt; stroke-linejoin: miter;' />
 <rect x='683.16' y='270.01' width='12.96' height='8.64' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFFFFF; fill-opacity: 0.50;' />
 <polyline points='683.16,274.33 696.12,274.33 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-linecap: butt; stroke-linejoin: miter;' />
+<polyline points='689.64,281.25 689.64,281.25 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-linecap: butt; stroke-linejoin: miter;' />
+<polyline points='689.64,267.42 689.64,267.42 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-linecap: butt; stroke-linejoin: miter;' />
 <circle cx='689.64' cy='274.33' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
 <line x1='682.72' y1='274.33' x2='696.55' y2='274.33' style='stroke-width: 1.07; stroke-linecap: butt;' />
 <circle cx='689.64' cy='274.33' r='1.95' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
@@ -123,6 +125,8 @@
 <polyline points='689.64,287.29 689.64,284.70 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 2.85,2.85; stroke-linecap: butt; stroke-linejoin: miter;' />
 <rect x='683.16' y='287.29' width='12.96' height='8.64' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 2.85,2.85; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFFFFF; fill-opacity: 0.50;' />
 <polyline points='683.16,291.61 696.12,291.61 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 2.85,2.85; stroke-linecap: butt; stroke-linejoin: miter;' />
+<polyline points='689.64,298.53 689.64,298.53 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 2.85,2.85; stroke-linecap: butt; stroke-linejoin: miter;' />
+<polyline points='689.64,284.70 689.64,284.70 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 2.85,2.85; stroke-linecap: butt; stroke-linejoin: miter;' />
 <polygon points='689.64,288.57 692.27,293.13 687.00,293.13 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
 <line x1='682.72' y1='291.61' x2='696.55' y2='291.61' style='stroke-width: 1.07; stroke-dasharray: 2.85,2.85; stroke-linecap: butt;' />
 <polygon points='689.64,288.57 692.27,293.13 687.00,293.13 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
@@ -134,6 +138,8 @@
 <polyline points='689.64,304.57 689.64,301.98 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt; stroke-linejoin: miter;' />
 <rect x='683.16' y='304.57' width='12.96' height='8.64' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt; stroke-linejoin: miter; fill: #FFFFFF; fill-opacity: 0.50;' />
 <polyline points='683.16,308.89 696.12,308.89 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt; stroke-linejoin: miter;' />
+<polyline points='689.64,315.81 689.64,315.81 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt; stroke-linejoin: miter;' />
+<polyline points='689.64,301.98 689.64,301.98 ' style='stroke-width: 1.07; stroke: #A9A9A9; stroke-dasharray: 5.69,2.85; stroke-linecap: butt; stroke-linejoin: miter;' />
 <polygon points='687.68,310.85 691.59,310.85 691.59,306.94 687.68,306.94 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />
 <line x1='682.72' y1='308.89' x2='696.55' y2='308.89' style='stroke-width: 1.07; stroke-dasharray: 5.69,2.85; stroke-linecap: butt;' />
 <polygon points='687.68,310.85 691.59,310.85 691.59,306.94 687.68,306.94 ' style='stroke-width: 0.71; stroke: none; fill: #000000;' />

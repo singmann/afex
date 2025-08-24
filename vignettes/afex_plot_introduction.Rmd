@@ -164,7 +164,7 @@ The following figure shows eight different variants of a single geom. The plot i
 4. Box plot: `geom_boxplot`. Note that for this plot we have added `linetype = 1` to `data_arg`, which avoids that the outline of the box plots is affected by the `linetype` mapping (compare this with the violin plot where the outline of the violin differs across levels of the angle factor).
 2. Display points using a bee swarm plot, which displaces overlapping points on the x-axis: `ggbeeswarm::geom_beeswarm`
 2. Display points using a variant of the bee swarm plot in which points are jittered horizontally to show the shape of the distribution in the same way as the violin plot:   `ggbeeswarm::geom_quasirandom`
-5. Combine box plot with jittered points: `ggpol::geom_boxjitter`
+5. Combine box plot with jittered points: `ggpol::geom_boxjitter` (this is currently deactivated as the `ggpol` package did not work with `ggplot 4.0.0` when building this vignette)
 
 ```{r fig.width=8.5, fig.height=16, dpi = 125}
 p0 <- afex_plot(aw, x = "noise", trace = "angle", error = "within")
@@ -196,15 +196,16 @@ p6 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                   cex = 0.8,
                   width = 0.05  ## choose small value so data points are not overlapping 
                 ))
-p7 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7, 
-                data_geom = ggpol::geom_boxjitter, 
-                data_arg = list(
-                  width = 0.5, 
-                  jitter.params = list(width = 0, height = 10),
-                  outlier.intersect = TRUE),
-                point_arg = list(size = 2.5), 
-                error_arg = list(linewidth = 1.5, width = 0))
-plot_grid(p0, p1, p2, p3, p4, p5, p6, p7, ncol = 2, labels = 1:8)  
+## currently deactivated 
+# p7 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7, 
+#                 data_geom = ggpol::geom_boxjitter, 
+#                 data_arg = list(
+#                   width = 0.5, 
+#                   jitter.params = list(width = 0, height = 10),
+#                   outlier.intersect = TRUE),
+#                 point_arg = list(size = 2.5), 
+#                 error_arg = list(linewidth = 1.5, width = 0))
+plot_grid(p0, p1, p2, p3, p4, p5, p6, ncol = 2, labels = 1:7)  
 ```
 
 ### Multiple Geoms
@@ -246,17 +247,17 @@ p4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
                 mapping = c("shape", "fill"),
                 data_geom = ggplot2::geom_boxplot, 
                 data_arg = list(width = 0.3))
-p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
-                mapping = c("shape", "fill"),
-                data_geom = ggpol::geom_boxjitter, 
-                data_arg = list(
-                  width = 0.5, 
-                  jitter.params = list(width = 0, height = 10),
-                  outlier.intersect = TRUE),
-                point_arg = list(size = 2.5), 
-                line_arg = list(linetype = 0),
-                error_arg = list(linewidth = 1.5, width = 0))
-plot_grid(p2, p3, p4, p5, ncol = 2) 
+# p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
+#                 mapping = c("shape", "fill"),
+#                 data_geom = ggpol::geom_boxjitter, 
+#                 data_arg = list(
+#                   width = 0.5, 
+#                   jitter.params = list(width = 0, height = 10),
+#                   outlier.intersect = TRUE),
+#                 point_arg = list(size = 2.5), 
+#                 line_arg = list(linetype = 0),
+#                 error_arg = list(linewidth = 1.5, width = 0))
+plot_grid(p2, p3, p4, ncol = 2) 
 ```
 
 ## Plotting Order and Error Bars
@@ -287,17 +288,21 @@ If `afex_plot()` is called without a trace factor, a one-way plot is created. We
 po1 <- afex_plot(aw, x = "angle", mapping = "color", error = "within", 
                  point_arg = list(size = 2.5), 
                  error_arg = list(linewidth = 1.5, width = 0.05)) 
-po2 <- afex_plot(aw, x = "angle", error = "within", 
-                 data_geom = ggpol::geom_boxjitter, 
-                 mapping = "fill", data_alpha = 0.7, 
-                 data_arg = list(
-                   width = 0.6, 
-                   jitter.params = list(width = 0.05, height = 10),
-                   outlier.intersect = TRUE
-                 ),
+po2 <- afex_plot(aw, x = "angle", mapping = "color", error = "within", 
                  point_arg = list(size = 2.5), 
-                 error_arg = list(linewidth = 1.5, width = 0.05)) +
+                 error_arg = list(linewidth = 1.5, width = 0.05)) + 
   theme(legend.position="none")
+# po2 <- afex_plot(aw, x = "angle", error = "within", 
+#                  data_geom = ggpol::geom_boxjitter, 
+#                  mapping = "fill", data_alpha = 0.7, 
+#                  data_arg = list(
+#                    width = 0.6, 
+#                    jitter.params = list(width = 0.05, height = 10),
+#                    outlier.intersect = TRUE
+#                  ),
+#                  point_arg = list(size = 2.5), 
+#                  error_arg = list(linewidth = 1.5, width = 0.05)) +
+#   theme(legend.position="none")
 plot_grid(po1, po2) 
 ```
 
@@ -305,16 +310,21 @@ One-way plots can also be split across different panels by specifying a `panel` 
 
 ```{r fig.width=7, fig.height=3.5, message=FALSE}
 afex_plot(aw, x = "angle", panel = "noise", error = "within",
-          data_geom = ggpol::geom_boxjitter,
-          mapping = "fill", data_alpha = 0.7,
-          data_arg = list(
-            width = 0.6,
-            jitter.params = list(width = 0.05, height = 10),
-            outlier.intersect = TRUE
-          ),
-          point_arg = list(size = 2.5),
-          error_arg = list(linewidth = 1.5, width = 0.05)) +
+          mapping = "color",
+                 point_arg = list(size = 2.5), 
+                 error_arg = list(linewidth = 1.5, width = 0.05)) + 
   theme(legend.position="none")
+# afex_plot(aw, x = "angle", panel = "noise", error = "within",
+#           data_geom = ggpol::geom_boxjitter,
+#           mapping = "fill", data_alpha = 0.7,
+#           data_arg = list(
+#             width = 0.6,
+#             jitter.params = list(width = 0.05, height = 10),
+#             outlier.intersect = TRUE
+#           ),
+#           point_arg = list(size = 2.5),
+#           error_arg = list(linewidth = 1.5, width = 0.05)) +
+#   theme(legend.position="none")
 ```
 
 Sometimes we still want to add a line connecting the estimated marginal means. As `afex_plot()` returns a `ggplot2` object, we can do this easily by adding a `geom_line` object to the call. As we want to add a line through all of the shown points in the foreground, we need to add the corresponding groups aesthetics to this call: `geom_line(aes(group = 1))`. We can add further arguments to this call, as shown in the left panel below.

@@ -195,37 +195,38 @@ test_that("afex_plot works with various geoms (from examples)", {
             data_arg = list(width = 0.3))
   expect_doppelganger("geoms work: box plot", g7)
   
-  # combine points with boxplot: ggpol::geom_boxjitter
-  g8 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-            data_geom = ggpol::geom_boxjitter, 
-            data_arg = list(width = 0.3))
-  expect_doppelganger("geoms work: boxjitter 1", g8)
-  ## hides error bars!
+  ## disabled due to boxjitter failing with ggplot 4.0.0 (August 2025)
+  # # combine points with boxplot: ggpol::geom_boxjitter
+  # g8 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+  #           data_geom = ggpol::geom_boxjitter, 
+  #           data_arg = list(width = 0.3))
+  # expect_doppelganger("geoms work: boxjitter 1", g8)
+  # ## hides error bars!
   
   # nicer variant of ggpol::geom_boxjitter
-  g9 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-            mapping = c("shape", "fill"),
-            data_geom = ggpol::geom_boxjitter, 
-            data_arg = list(
-              width = 0.3, 
-              jitter.params = list(width = 0, height = 10),
-              outlier.intersect = TRUE),
-            point_arg = list(size = 2.5), 
-            error_arg = list(linewidth = 1.5, width = 0))
-  expect_doppelganger("geoms work: boxjitter 2", g9)
+  # g9 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+  #           mapping = c("shape", "fill"),
+  #           data_geom = ggpol::geom_boxjitter, 
+  #           data_arg = list(
+  #             width = 0.3, 
+  #             jitter.params = list(width = 0, height = 10),
+  #             outlier.intersect = TRUE),
+  #           point_arg = list(size = 2.5), 
+  #           error_arg = list(linewidth = 1.5, width = 0))
+  # expect_doppelganger("geoms work: boxjitter 2", g9)
   
   # nicer variant of ggpol::geom_boxjitter without lines
-  g10 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
-            mapping = c("shape", "fill"),
-            data_geom = ggpol::geom_boxjitter, 
-            data_arg = list(
-              width = 0.5, 
-              jitter.params = list(width = 0, height = 10),
-              outlier.intersect = TRUE),
-            point_arg = list(size = 2.5), 
-            line_arg = list(linetype = 0),
-            error_arg = list(linewidth = 1.5, width = 0))
-  expect_doppelganger("geoms work: boxjitter 3", g10)
+  # g10 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
+  #           mapping = c("shape", "fill"),
+  #           data_geom = ggpol::geom_boxjitter, 
+  #           data_arg = list(
+  #             width = 0.5, 
+  #             jitter.params = list(width = 0, height = 10),
+  #             outlier.intersect = TRUE),
+  #           point_arg = list(size = 2.5), 
+  #           line_arg = list(linetype = 0),
+  #           error_arg = list(linewidth = 1.5, width = 0))
+  # expect_doppelganger("geoms work: boxjitter 3", g10)
   
   ### we can also use multiple geoms for the background by passing a list of geoms
   g11 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 

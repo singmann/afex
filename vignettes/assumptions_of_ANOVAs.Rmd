@@ -132,17 +132,19 @@ s1 <- aov_ez("pno", "rt", stroop1,
              within = c("condition", "congruency"))
 
 is_norm <- check_normality(s1)
+is_norm
 
-plot(is_norm)
-
-plot(is_norm, type = "qq")
+## disabled to allow ggplot2 4.0.0 update (August 2025)
+# plot(is_norm)
+# 
+# plot(is_norm, type = "qq")
 ```
 If the residuals were normally distributed, we would see them falling close to the diagonal line, inside the 95% confidence bands around the qq-line.
 
 We can further de-trend the plot, and show not the expected quantile, but the deviation from the expected quantile, which may help reducing visual bias.
 
 ```{r}
-plot(is_norm, type = "qq", detrend = TRUE)
+# plot(is_norm, type = "qq", detrend = TRUE)
 ```
 
 Wow! The deviation from normalicy is now visually much more pronounced!
@@ -159,8 +161,9 @@ s2 <- aov_ez("pno", "rt", stroop1,
              within = c("condition", "congruency"))
 
 is_norm <- check_normality(s2)
+is_norm
 
-plot(is_norm, type = "qq", detrend = TRUE)
+# plot(is_norm, type = "qq", detrend = TRUE)
 ```
 
 Success - after the transformation, the residuals (on the log scale) do not deviate more than expected from errors sampled from a normal distribution (are mostly contained in the 95%CI bands)!

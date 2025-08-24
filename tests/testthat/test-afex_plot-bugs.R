@@ -52,7 +52,13 @@ test_that("merMod objects with missing data can be plotted", {
 
   expect_is(pp, "ggplot")
 
-  m2 <- mixed(score ~ Machine + (1 | Worker), data = Machines, progress = FALSE)
+  suppressWarnings(
+    m2 <- mixed(
+      score ~ Machine + (1 | Worker),
+      data = Machines,
+      progress = FALSE
+    )
+  )
   pp2 <- afex_plot(m2, "Machine")
 
   expect_doppelganger("afex_plot merMod objects with missing data", pp2)

@@ -5,12 +5,14 @@ test_that("mixed: Maxell & Delaney (2004), Table 16.4, p. 842: Type 2", {
   md_16.4b <- md_16.4
   md_16.4b$cog <- scale(md_16.4b$cog, scale = FALSE)
   contrasts(md_16.4b$cond) <- "contr.sum"
-  mixed4_2 <- mixed(
-    induct ~ cond * cog + (cog | room:cond),
-    md_16.4b,
-    type = 2,
-    progress = FALSE,
-    method = "nested-KR"
+  suppressWarnings(
+    mixed4_2 <- mixed(
+      induct ~ cond * cog + (cog | room:cond),
+      md_16.4b,
+      type = 2,
+      progress = FALSE,
+      method = "nested-KR"
+    )
   )
   lmer4_full <- lmer(induct ~ cond * cog + (cog | room:cond), md_16.4b)
   lmer4_small <- lmer(induct ~ cond + cog + (cog | room:cond), md_16.4b)

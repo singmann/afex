@@ -35,12 +35,13 @@ test_that("inverse.gaussian works", {
                      data = df,
                      method = "LRT", progress = FALSE), "mixed")
   
-  expect_is(mixed(y ~ x1 * x2 + (1|id),
-                     family = inverse.gaussian(link = "inverse"),
-                     control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
-                     data = df,
-                     method = "PB", progress = FALSE, 
-                  args_test = list(nsim = 5)), "mixed")
+  ## temporarily deactivated due to pbkrtest bug (August 2025)
+  # expect_is(mixed(y ~ x1 * x2 + (1|id),
+  #                    family = inverse.gaussian(link = "inverse"),
+  #                    control=glmerControl(optimizer="bobyqa", optCtrl=list(maxfun=2e5)),
+  #                    data = df,
+  #                    method = "PB", progress = FALSE, 
+  #                 args_test = list(nsim = 5)), "mixed")
   
   
 })

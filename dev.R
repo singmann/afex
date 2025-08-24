@@ -86,7 +86,7 @@ usethis::use_package("rstanarm", "Suggests")
 usethis::use_package("rlang", "Suggests")
 usethis::use_package("cowplot", "Suggests")
 usethis::use_package("vdiffr", "Suggests")
-#usethis::use_package("GLMMadaptive", "Suggests")
+usethis::use_package("GLMMadaptive", "Suggests")
 usethis::use_readme_rmd()
 usethis::use_cran_badge()
 usethis::use_code_of_conduct()
@@ -94,7 +94,7 @@ usethis::use_code_of_conduct()
 ### check reverse dependencies:
 
 library(revdepcheck) # see https://github.com/r-lib/revdepcheck
-revdep_check(num_workers = 4)
+revdep_check(num_workers = 10)
 revdep_summary()
 revdep_details(revdep = "r2glmm")
 Sys.setenv(R_BIOC_VERSION = "3.18")

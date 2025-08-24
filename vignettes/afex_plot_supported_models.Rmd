@@ -16,7 +16,7 @@ vignette: >
 req_suggested_packages <- c("emmeans", "ggplot2", "cowplot",
                             "ggbeeswarm", "ggpol", 
                             "nlme", "glmmTMB", "rstanarm", "brms", 
-                            "MEMSS")
+                            "MEMSS", "GLMMadaptive")
 pcheck <- lapply(req_suggested_packages, requireNamespace, 
                  quietly = TRUE)
 if (any(!unlist(pcheck))) {
@@ -213,6 +213,43 @@ afex_plot(tmb, "spp", "mined", id = "site", data = Salamanders,
           )
 ```
 
+# GLMMadaptive
+
+If we only have a single random-effect grouping factor we can also use [`GLMMadaptive`](https://cran.r-project.org/package=GLMMadaptive). `GLMMadaptive` provides support for a range of interesting response distributions, such a zero-inflated or hurdle distributions. Importantly, `GLMMadaptive` approximates the integral in the model's log-likelihood function via the Gold-standard method, adaptive Gaussian quadrature. 
+
+```{r, eval=FALSE}
+library("GLMMadaptive")
+afex::set_sum_contrasts()
+data(Salamanders, package = "glmmTMB")
+gm1 <- mixed_model(count~spp * mined, random = ~ 1 | site, data = Salamanders,
+                   family = zi.poisson(), zi_fixed = ~ ~spp * mined)
+```
+
+```{r, eval=FALSE, include=FALSE}
+library("GLMMadaptive")
+afex::set_sum_contrasts()
+gm1 <- mixed_model(count~spp * mined, random = ~ 1 | site, data = Salamanders,
+                   family = zi.poisson(), zi_fixed = ~ ~spp * mined)
+save(gm1, file = "inst/extdata/glmmadapt_example_fit.rda", compress = "xz")
+```
+
+```{r, echo=FALSE, include=FALSE}
+library("GLMMadaptive")
+data(Salamanders, package = "glmmTMB")
+load(system.file("extdata/", "glmmadapt_example_fit.rda", package = "afex"))
+```
+
+As before, to crate an `afex_plot()`, we need to pass both the original `data`, and pass the grouping factor (`site`) to the `id`-argument to ensure individual-level data points are aggregated appropriately.
+
+
+```{r fig.width=4, fig.height=3, eval = TRUE}
+afex_plot(gm1, "spp", "mined", id = "site", 
+          data = Salamanders, data_geom = ggplot2::geom_count)
+```
+
+
+
+
 # rstanarm
 
 `afex_plot()` also supports Bayesian models that are also supported via `emmeans`. For example, we can easily fit a binomial model with [`rstanarm`](https://cran.r-project.org/package=rstanarm).
@@ -390,20 +427,6 @@ bb2 <- afex_plot(mm2, "Machine", id = "Worker",
           data = Machines, dv = "score")
 bbout <- ggplotGrob(plot_grid(bb1, bb2))
 save(bbout, file = "../inst/extdata/plots_brms.rda", version = 2)
-```
-
-
-# Not Yet Supported: GLMMadaptive
-
-Some models are unfortunately not yet supported. For example, models fit with the new and pretty cool looking [`GLMMadaptive`](https://cran.r-project.org/package=GLMMadaptive) package using some of the special families do not seem to produce reasonable results. The following unfortunately does not produce a reasonable plot. 
-
-```{r fig.width=4, fig.height=3, eval = FALSE}
-library("GLMMadaptive")
-data(Salamanders, package = "glmmTMB")
-gm1 <- mixed_model(count~spp * mined, random = ~ 1 | site, data = Salamanders,
-                   family = zi.poisson(), zi_fixed = ~ mined)
-
-afex_plot(gm1, "spp", data = Salamanders)
 ```
 
 

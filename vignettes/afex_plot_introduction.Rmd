@@ -67,7 +67,7 @@ The ANOVA shows that both, the two main effect as well as the interaction, are s
 
 ## Basic Plot
 
-```{r fig.width=9, fig.height=4}
+```{r fig.width=7, fig.height=3.5, dpi = 100, out.width='90%'}
 p_an <- afex_plot(aw, x = "angle", trace = "noise") 
 p_na <- afex_plot(aw, x = "noise", trace = "angle")
 plot_grid(p_an, p_na)  ## try adding: labels = "AUTO"
@@ -94,7 +94,7 @@ As the additional output shows, changing the factor levels via `factor_levels` e
 
 As said above, I am not a big fan of the default grey theme of `ggplot2` plots. Consequently, we compare a number of different themes for this plot in the following. For all but `ggpubr::theme_pubr()`, we also move the legend to the bottom as this better allows the plot to cover only a single column in a two-column layout. `ggpubr::theme_pubr()` automatically plots the legend on top.
 
-```{r fig.width=8.5, fig.height=6, dpi = 150}
+```{r fig.width=8.5, fig.height=6, dpi = 100, out.width='100%'}
 plot_grid(
   p_an + theme_bw() + theme(legend.position="bottom"),
   p_an + theme_light() + theme(legend.position="bottom"),
@@ -159,14 +159,14 @@ The following figure shows eight different variants of a single geom. The plot i
 
 1. Default background geom.
 1. Add jitter on the y-axis to points which avoids perfect overlap.
-3. Size of points show number of data points at a given y-axis position: `geom_count`. For this geom, adding a call to `scale_size_area()` can sometimes be beneficial.
+3. Size of points show number of data points at a given y-axis position: `geom_count`. Because the size legend is not that imported, we disable it here to avoid legend clutter. Note that for this geom, adding a call to `scale_size_area()` can sometimes be beneficial.
 3. Violin plot: `geom_violin`
 4. Box plot: `geom_boxplot`. Note that for this plot we have added `linetype = 1` to `data_arg`, which avoids that the outline of the box plots is affected by the `linetype` mapping (compare this with the violin plot where the outline of the violin differs across levels of the angle factor).
 2. Display points using a bee swarm plot, which displaces overlapping points on the x-axis: `ggbeeswarm::geom_beeswarm`
 2. Display points using a variant of the bee swarm plot in which points are jittered horizontally to show the shape of the distribution in the same way as the violin plot:   `ggbeeswarm::geom_quasirandom`
 5. Combine box plot with jittered points: `ggpol::geom_boxjitter` (this is currently deactivated as the `ggpol` package did not work with `ggplot 4.0.0` when building this vignette)
 
-```{r fig.width=8.5, fig.height=16, dpi = 125}
+```{r fig.width=7, fig.height=13, dpi = 100, out.width='100%'}
 p0 <- afex_plot(aw, x = "noise", trace = "angle", error = "within")
 p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                 data_arg = list(
@@ -177,7 +177,8 @@ p1 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.3,
                       dodge.width = 0.3  ## needs to be same as dodge
                     )))
 p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
-                data_geom = geom_count)
+                data_geom = geom_count) +
+  guides(size = "none")
 p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
                 data_geom = geom_violin, 
                 data_arg = list(width = 0.5))
@@ -214,7 +215,7 @@ We can also use multiple geoms to plot the data in the background. To do so, we 
 
 For example, we can combine a violin plot, drawing the outline of the shape of the distribution, with `geom_quasirandom`, showing each individual data point in the same shape.
 
-```{r fig.width=3.5, fig.height=3, dpi = 100, out.width='50%'}
+```{r fig.width=3.5, fig.height=3.5, dpi = 100, out.width='50%'}
 afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
           data_geom = list(
             geom_violin, 
@@ -232,7 +233,7 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
 So far, all plots were shown in black and white only. However, it is easy to include color. We do so for some of the plots from above. To achieve this, we have to change the value of the `mapping` argument. 
 
 
-```{r fig.width=8.5, fig.height=8, dpi = 125}
+```{r fig.width=8, fig.height=7, dpi = 100, out.width='100%'}
 p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                 mapping = c("shape", "color"),
                 data_geom = ggbeeswarm::geom_beeswarm,
@@ -266,7 +267,7 @@ For graphical elements in the foreground, `afex_plot()` first plots all graphica
 
 In case we have overlapping lines and error bars or use thick lines, we sometimes do not want that the error bars also receive different line types. In this case, we can simply pass `linetype = 1` to `error_arg` to overwrite the corresponding mapping. This is shown in the right plot.
 
-```{r fig.width=8.5, fig.height=4, dpi = 150}
+```{r fig.width=8.5, fig.height=4, dpi = 125, out.width='100%'}
 p1 <- afex_plot(aw, x = "noise", trace = "angle", mapping = c("color"), 
                 error = "within", 
                 point_arg = list(size = 5), line_arg = list(size = 2),
@@ -331,7 +332,7 @@ Sometimes we still want to add a line connecting the estimated marginal means. A
 
 ```{r fig.width=7, fig.height=3.5, message=FALSE}
 plot_grid(
-  po1 + geom_line(aes(group = 1), color = "darkgrey", size = 1.5), 
+  po1 + geom_line(aes(group = 1), color = "darkgrey", linewidth = 1.5), 
   po2 + geom_line(aes(group = 1))
 ) 
 ```

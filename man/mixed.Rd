@@ -141,12 +141,12 @@ An object of class \code{"mixed"} (i.e., a list) with the following
     \code{"lmerModLmerTest"}) and \code{"lme4"} returning an object of class
     (\code{"merMod"}). Note that in case a \code{family} argument is present
     an object of class \code{"glmerMod"} is always returned.
-  \item \code{restricted_models} a list of \code{"g/lmerMod"} (or 
+  \item \code{restricted_models} a list of \code{"g/lmerMod"} (or
     \code{"lmerModLmerTest"}) objects from estimating the restricted models
     (i.e., each model lacks the corresponding effect)
-  \item \code{tests} a list of objects returned by the function for 
+  \item \code{tests} a list of objects returned by the function for
     obtaining the p-values.
-  \item \code{data} The data used for estimation (i.e., after excluding 
+  \item \code{data} The data used for estimation (i.e., after excluding
     missing rows and applying expand_re if requested).
   \item \code{call} The matched call.
 }
@@ -174,29 +174,29 @@ scales the statistic by a calculated amount, see also
   \item \code{F} computed F statistic
   \item \code{ndf} numerator degrees of freedom (number of parameters used
     for the effect)
-  \item \code{ddf} denominator degrees of freedom (effective residual 
+  \item \code{ddf} denominator degrees of freedom (effective residual
     degrees of freedom for testing the effect), computed from the
     Kenward-Roger correction using \code{pbkrtest::KRmodcomp}
-  \item \code{F.scaling} scaling of F-statistic computing from Kenward-Roger 
+  \item \code{F.scaling} scaling of F-statistic computing from Kenward-Roger
     approximation (only printed if \code{method="nested-KR"})
 }
 
 For models with \code{method="LRT"} the following further columns are
 returned:
 \enumerate{
-  \item \code{df.large} degrees of freedom (i.e., estimated paramaters) for 
+  \item \code{df.large} degrees of freedom (i.e., estimated paramaters) for
     full model (i.e., model containing the corresponding effect)
-  \item \code{df.small} degrees of freedom (i.e., estimated paramaters) for 
+  \item \code{df.small} degrees of freedom (i.e., estimated paramaters) for
     restricted model (i.e., model without the corresponding effect)
-  \item \code{chisq} 2 times the difference in likelihood (obtained with 
+  \item \code{chisq} 2 times the difference in likelihood (obtained with
     \code{logLik}) between full and restricted model
-  \item \code{df} difference in degrees of freedom between full and 
+  \item \code{df} difference in degrees of freedom between full and
     restricted model (p-value is based on these df).
 }
 
 For models with \code{method="PB"} the following further column is returned:
 \enumerate{
-  \item \code{stat} 2 times the difference in likelihood (obtained with 
+  \item \code{stat} 2 times the difference in likelihood (obtained with
     \code{logLik}) between full and restricted model (i.e., a chi-square
     value).
 }

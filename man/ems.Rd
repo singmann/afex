@@ -2,9 +2,7 @@
 % Please edit documentation in R/ems.R
 \name{ems}
 \alias{ems}
-\title{Expected values of mean squares for factorial designs
- 
- Implements the Cornfield-Tukey algorithm for deriving the expected values of the mean squares for factorial designs.}
+\title{Expected values of mean squares for factorial designs}
 \usage{
 ems(design, nested = NULL, random = "")
 }
@@ -19,9 +17,7 @@ ems(design, nested = NULL, random = "")
 The returned value is a formatted table where the rows represent the mean squares, the columns represent the variance components that comprise the various mean squares, and the entries in each cell represent the terms that are multiplied and summed to form the expectation of the mean square for that row. Each term is either the lower-case version of one of the experimental factors, which indicates the number of levels for that factor, or a "1", which means the variance component for that column is contributes to the mean square but is not multiplied by anything else.
 }
 \description{
-Expected values of mean squares for factorial designs
- 
- Implements the Cornfield-Tukey algorithm for deriving the expected values of the mean squares for factorial designs.
+Implements the Cornfield-Tukey algorithm for deriving the expected values of the mean squares for factorial designs.
 }
 \note{
 Names for factors or parameters should only be of length 1 as they are simply concatenated in the returned table.

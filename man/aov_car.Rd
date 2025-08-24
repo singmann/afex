@@ -133,10 +133,10 @@ indicating no covariates. Please note that \code{factorize} needs to be set
 to \code{FALSE} in case the covariate is numeric and should be treated as
 such.}
 
-\item{transformation}{In \code{aov_ez}, a \code{character} vector (of length 
-1) indicating the name of a transformation to apply to \code{dv} before 
-fitting the model. If missing, no transformation is applied. In 
-\code{aov_car} and \code{aov_4}, a response transformation may be 
+\item{transformation}{In \code{aov_ez}, a \code{character} vector (of length
+1) indicating the name of a transformation to apply to \code{dv} before
+fitting the model. If missing, no transformation is applied. In
+\code{aov_car} and \code{aov_4}, a response transformation may be
 incorporated in the left-hand side of \code{formula}.}
 }
 \value{
@@ -148,10 +148,10 @@ incorporated in the left-hand side of \code{formula}.}
 \describe{
   \item{\code{"anova_table"}}{An ANOVA table of class \code{c("anova",
    "data.frame")}.}
-  \item{\code{"aov"}}{\code{aov} object returned from \code{\link{aov}} 
+  \item{\code{"aov"}}{\code{aov} object returned from \code{\link{aov}}
    (should not be used to evaluate significance of effects, but can be passed
    to \code{emmeans} for post-hoc tests).}
-  \item{\code{"Anova"}}{object returned from \code{\link[car]{Anova}}, an 
+  \item{\code{"Anova"}}{object returned from \code{\link[car]{Anova}}, an
   object of class \code{"Anova.mlm"} (if within-subjects factors are present)
   or of class \code{c("anova", "data.frame")}.}
   \item{\code{"lm"}}{the object fitted with \code{lm} and passed to
@@ -261,7 +261,7 @@ example):
    \item Test the contrast on the reference grid using \code{\link[emmeans]{contrast}}. For example: \code{contrast(r, con1)}
    \item To control for multiple testing p-value adjustments can be specified. For example the Bonferroni-Holm correction: \code{contrast(r, con1, adjust = "holm")}
  }
- 
+
  Note that \pkg{emmeans} allows for a variety of advanced settings and
  simplifications, for example: all pairwise comparison of a single factor
  using one command (e.g., \code{emmeans(x, "a", contr = "pairwise")}) or
@@ -269,19 +269,19 @@ example):
  A comprehensive overview of the functionality is provided in the
  accompanying vignettes (see
  \href{https://CRAN.R-project.org/package=emmeans}{here}).
- 
+
  Since version 1.0, \pkg{afex} per default uses the \code{multivariate} model
  (i.e., the \code{lm} slot of the \code{afex_aov} object) for follow-up tests
  with \pkg{emmeans}. Compared to the \code{univariate} model (i.e., the
  \code{aov} slot), this can handle unbalanced data and addresses sphericity
  better. To use the older (and not recommended) \code{model = "univariate"}
  make sure to set \code{include_aov = TRUE} when estimating the ANOVA.
- 
+
  Starting with \pkg{afex} version 0.22, \pkg{emmeans} is \emph{not}
  loaded/attached automatically when loading \pkg{afex}. Therefore,
  \pkg{emmeans} now needs to be loaded by the user via
  \code{library("emmeans")} or \code{require("emmeans")}.
-}  
+}
 
 \subsection{Methods for \code{afex_aov} Objects}{ A full overview over the
 methods provided for \code{afex_aov} objects is provided in the corresponding
@@ -319,20 +319,20 @@ Calculation of ANOVA models via \code{aov} (which is done per default)
   ANOVAs with many within-subjects factors or levels. To avoid this
   calculation set \code{include_aov = FALSE}. You can also disable this
   globally with: \code{afex_options(include_aov = FALSE)}
-  
+
   The id variable and variables entered as within-subjects (i.e.,
   repeated-measures) factors are silently converted to factors. Levels of
   within-subject factors are converted to valid variable names using
   \code{\link{make.names}(...,unique=TRUE)}. Unused factor levels are
   silently dropped on all variables.
-  
+
   Contrasts attached to a factor as an attribute are probably not preserved
   and not supported.
-  
+
   The workhorse is \code{aov_car}. \code{aov_4} and \code{aov_ez} only
   construe and pass an appropriate formula to \code{aov_car}. Use
   \code{print.formula = TRUE} to view this formula.
-  
+
   In contrast to \code{\link{aov}} \code{aov_car} assumes that all factors to
   the right of \code{/} in the \code{Error} term are belonging together.
   Consequently, \code{Error(id/(a*b))} and \code{Error(id/a*b)} are identical
@@ -557,11 +557,11 @@ Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever,
   H., Wetzels, R., Grasman, R. P. P. P., ... Wagenmakers, E.-J. (2015).
   Hidden multiplicity in exploratory multiway ANOVA: Prevalence and remedies.
   \emph{Psychonomic Bulletin & Review}, 1-8. \doi{10.3758/s13423-015-0913-5}
-  
+
   Maxwell, S. E., & Delaney, H. D. (2004). \emph{Designing Experiments and
   Analyzing Data: A Model-Comparisons Perspective}. Mahwah, N.J.: Lawrence
   Erlbaum Associates.
-  
+
   Venables, W.N. (2000). \emph{Exegeses on linear models}. Paper presented to
   the S-Plus User's Conference, Washington DC, 8-9 October 1998, Washington,
   DC. Available from: \url{http://www.stats.ox.ac.uk/pub/MASS3/Exegeses.pdf}
@@ -569,7 +569,7 @@ Cramer, A. O. J., van Ravenzwaaij, D., Matzke, D., Steingroever,
 \seealso{
 Various methods for objects of class \code{afex_aov} are available:
   \code{\link{afex_aov-methods}}
-  
+
 \code{\link{nice}} creates the nice ANOVA tables which is by default printed.
 See also there for a slightly longer discussion of the available effect
 sizes.

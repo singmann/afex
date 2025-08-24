@@ -183,14 +183,14 @@ specifies further mappings for these factors if \code{trace} is missing.}
 specifying the factor names of the predictors connected by the same line.
 \code{mapping} specifies further mappings for these factors.}
 
-\item{panel}{An optional \code{character} vector or one-sided \code{formula} 
+\item{panel}{An optional \code{character} vector or one-sided \code{formula}
 specifying the factor names of the predictors shown in different panels.}
 
-\item{mapping}{A \code{character} vector specifying which aesthetic mappings 
-should be applied to either the \code{trace} factors (if \code{trace} is 
-specified) or the \code{x} factors. Useful options are any combination of 
-\code{"shape"}, \code{"color"}, \code{"linetype"}, or also \code{"fill"} 
-(see examples). The default (i.e., missing) uses \code{c("shape", 
+\item{mapping}{A \code{character} vector specifying which aesthetic mappings
+should be applied to either the \code{trace} factors (if \code{trace} is
+specified) or the \code{x} factors. Useful options are any combination of
+\code{"shape"}, \code{"color"}, \code{"linetype"}, or also \code{"fill"}
+(see examples). The default (i.e., missing) uses \code{c("shape",
 "linetype")} if \code{trace} is specified and \code{""} otherwise (i.e., no
 additional aesthetic). If specific mappings should not be applied to
 specific graphical elements, one can override those via the corresponding
@@ -198,10 +198,10 @@ further arguments. For example, for \code{data_arg} the default is
 \code{list(color = "darkgrey")} which prevents that \code{"color"} is
 mapped onto points in the background.}
 
-\item{error}{A scalar \code{character} vector specifying on which standard 
+\item{error}{A scalar \code{character} vector specifying on which standard
 error the error bars should be based. Default is \code{"model"}, which
-plots model-based standard errors. Further options are: \code{"none"} (or 
-\code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and 
+plots model-based standard errors. Further options are: \code{"none"} (or
+\code{NULL}), \code{"mean"}, \code{"within"} (or \code{"CMO"}), and
 \code{"between"}. See details.}
 
 \item{error_ci}{Logical. Should error bars plot confidence intervals
@@ -211,12 +211,12 @@ plots model-based standard errors. Further options are: \code{"none"} (or
 confidence interval. Default is .95 corresponding to a 95\% confidence
 interval.}
 
-\item{error_arg}{A \code{list} of further arguments passed to 
-\code{\link[ggplot2]{geom_errorbar}}, which draws the errorsbars. Default 
-is \code{list(width = 0)} which suppresses the vertical bars at the end of 
+\item{error_arg}{A \code{list} of further arguments passed to
+\code{\link[ggplot2]{geom_errorbar}}, which draws the errorsbars. Default
+is \code{list(width = 0)} which suppresses the vertical bars at the end of
 the error bar.}
 
-\item{data_plot}{\code{logical}. Should raw data be plotted in the 
+\item{data_plot}{\code{logical}. Should raw data be plotted in the
 background? Default is \code{TRUE}.}
 
 \item{data_geom}{Geom \code{function} or \code{list} of geom functions used
@@ -242,21 +242,21 @@ Default is \code{"darkgrey"}. If \code{NULL} it is not passed to
 \code{data_geom} is a \code{list} of multiple geoms, which allows having
 separate argument lists per \code{data_geom}.}
 
-\item{point_arg, line_arg}{A \code{list} of further arguments passed to 
+\item{point_arg, line_arg}{A \code{list} of further arguments passed to
 \code{\link[ggplot2]{geom_point}} or \code{\link[ggplot2]{geom_line}} which
 draw the points and lines in the foreground. Default is \code{list()}.
 \code{line_arg} is only used if \code{trace} is specified.}
 
-\item{emmeans_arg}{A \code{list} of further arguments passed to 
-\code{\link[emmeans]{emmeans}}. Of particular importance for ANOVAs is 
+\item{emmeans_arg}{A \code{list} of further arguments passed to
+\code{\link[emmeans]{emmeans}}. Of particular importance for ANOVAs is
 \code{model}, see \code{\link{afex_aov-methods}}.}
 
-\item{dodge}{Numerical amount of dodging of factor-levels on x-axis. Default 
+\item{dodge}{Numerical amount of dodging of factor-levels on x-axis. Default
 is \code{0.5}.}
 
-\item{return}{A scalar \code{character} specifying what should be returned. 
-The default \code{"plot"} returns the \pkg{ggplot2} plot. The other option 
-\code{"data"} returns a list with two \code{data.frame}s containing the 
+\item{return}{A scalar \code{character} specifying what should be returned.
+The default \code{"plot"} returns the \pkg{ggplot2} plot. The other option
+\code{"data"} returns a list with two \code{data.frame}s containing the
 data used for plotting: \code{means} contains the means and standard errors
 for the foreground, \code{data} contains the raw data in the background.}
 
@@ -279,8 +279,8 @@ other graphical elements). Useful for adding reference lines or similar
 legend.}
 
 \item{id}{An optional \code{character} vector specifying over which variables
-the raw data should be aggregated. Only relevant for \code{mixed}, 
-\code{merMod}, and \code{default} method. The default (missing) uses all 
+the raw data should be aggregated. Only relevant for \code{mixed},
+\code{merMod}, and \code{default} method. The default (missing) uses all
 random effects grouping factors (for \code{mixed} and \code{merMod} method)
 or assumes all data points are independent. This can lead to many data
 points. \code{error = "within"} or \code{error = "between"} require that
@@ -309,17 +309,17 @@ category.}
 \item{means}{\code{data.frame}s used for plotting of the plotting
 functions.}
 
-\item{error_plot}{\code{logical}. Should error bars be plotted? Only used in 
+\item{error_plot}{\code{logical}. Should error bars be plotted? Only used in
 plotting functions. To suppress plotting of error bars use \code{error =
 "none"} in \code{afex_plot}.}
 
-\item{col_y, col_x, col_trace, col_panel}{A scalar \code{character} string 
+\item{col_y, col_x, col_trace, col_panel}{A scalar \code{character} string
 specifying the name of the corresponding column containing the information
 used for plotting. Each column needs to exist in both the \code{means} and
 the \code{data} \code{data.frame}.}
 
-\item{col_lower, col_upper}{A scalar \code{character} string specifying the 
-name of the columns containing lower and upper bounds for the error bars. 
+\item{col_lower, col_upper}{A scalar \code{character} string specifying the
+name of the columns containing lower and upper bounds for the error bars.
 These columns need to exist in \code{means}.}
 }
 \value{
@@ -327,38 +327,38 @@ Returns a \pkg{ggplot2} plot (i.e., object of class \code{c("gg",
   "ggplot")}) unless \code{return = "data"}.
 }
 \description{
-Plots results from factorial experiments. Estimated marginal 
-  means and error bars are plotted in the foreground, raw data is plotted in 
+Plots results from factorial experiments. Estimated marginal
+  means and error bars are plotted in the foreground, raw data is plotted in
   the background. Error bars can be based on different standard errors (e.g.,
   model-based, within-subjects, between-subjects). Functions described here
   return a \pkg{ggplot2} plot object, thus allowing further customization of
   the plot.
-  
+
   \code{afex_plot} is the user friendly function that does data preparation
   and plotting. It also allows to only return the prepared data (\code{return
   = "data"}).
-  
+
   \code{interaction_plot} does the plotting when a \code{trace} factor is
   present. \code{oneway_plot} does the plotting when a \code{trace} factor is
   absent.
 }
 \details{
-\code{afex_plot} obtains the estimated marginal means via 
-  \code{\link[emmeans]{emmeans}} and aggregates the raw data to the same 
+\code{afex_plot} obtains the estimated marginal means via
+  \code{\link[emmeans]{emmeans}} and aggregates the raw data to the same
   level. It then calculates the desired confidence interval or standard error
   (see below) and passes the prepared data to one of the two plotting
-  functions: \code{interaction_plot} when \code{trace} is specified and 
+  functions: \code{interaction_plot} when \code{trace} is specified and
   \code{oneway_plot} otherwise.
 
   \subsection{Error Bars}{Error bars provide a grahical representation of the
   variability of the estimated means and should be routinely added to results
-  figures. However, there exist several possibilities which particular 
-  measure of variability to use. Because of this, any figure depicting error 
+  figures. However, there exist several possibilities which particular
+  measure of variability to use. Because of this, any figure depicting error
   bars should be accompanied by a note detailing which measure the error bars
   shows. The present functions allow plotting of different types of
-  confidence intervals (if \code{error_ci = TRUE}, the default) or standard 
+  confidence intervals (if \code{error_ci = TRUE}, the default) or standard
   errors (if \code{error_ci = FALSE}).
-  
+
   A further complication is that readers routinely misinterpret confidence
   intervals. The most common error is to assume that non-overlapping error
   bars indicate a significant difference (e.g., Belia et al., 2005). This is
@@ -369,7 +369,7 @@ Plots results from factorial experiments. Estimated marginal
   variance, even error bars that overlap by as much as 50\% still correspond
   to \emph{p} < .05. Error bars that are just touching roughly correspond to
   \emph{p} = .01.
-  
+
   In the case of designs involving repeated-measures factors the usual
   confidence intervals or standard errors (i.e., model-based confidence
   intervals or intervals based on the standard error of the mean) cannot be
@@ -381,7 +381,7 @@ Plots results from factorial experiments. Estimated marginal
   judging differences between repeated-measures condition. As a downside,
   when using within-subjects intervals no comparisons across between-subjects
   conditions or with respect to a fixed-value are possible anymore.
-  
+
   In the case of a mixed-design, no single type of error bar is possible that
   allows comparison across all conditions. Likewise, for mixed models
   involving multiple \emph{crossed} random effects, no single set of error
@@ -394,7 +394,7 @@ Plots results from factorial experiments. Estimated marginal
   does not as easily suggest an incorrect inferences. Another possibility is
   to use the model-based standard error and note in the figure caption that
   it does not permit comparisons across repeated-measures factors.
-  
+
   The following "rules of eye" (Cumming and Finch, 2005) hold, when permitted
   by design (i.e., within-subjects bars for within-subjects comparisons;
   other variants for between-subjects comparisons), and groups are
@@ -413,9 +413,9 @@ Plots results from factorial experiments. Estimated marginal
     is about 1 or greater.
     \item \emph{p} < .01 when the proportion gap between SE bars is about 2
     or more.
-  }   
   }
-  \subsection{Implemented Standard Errors}{The following lists the 
+  }
+  \subsection{Implemented Standard Errors}{The following lists the
   implemented approaches to calculate confidence intervals (CIs) and standard
   errors (SEs). CIs are based on the SEs using the \emph{t}-distribution with
   degrees of freedom based on the cell or group size. For ANOVA models,
@@ -440,8 +440,8 @@ Plots results from factorial experiments. Estimated marginal
     then calculated independently for each cell (i.e., if the desired output
     contains between-subjects factors, SEs are calculated for each cell
     including the between-subjects factors).}
-    \item{\code{"between"}}{First aggregates the data per participant and 
-    then calculates the SEs for each between-subjects condition. Results in 
+    \item{\code{"between"}}{First aggregates the data per participant and
+    then calculates the SEs for each between-subjects condition. Results in
     one SE and \emph{t}-quantile for all conditions in purely within-subjects
     designs.}
     \item{\code{"none"} or \code{NULL}}{Suppresses calculation of SEs and
@@ -542,35 +542,36 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within",
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           data_geom = ggplot2::geom_boxplot, 
           data_arg = list(width = 0.3))
-          
+
+# geom_boxjitter needs updating for ggplot 4.0.0
 # combine points with boxplot: ggpol::geom_boxjitter
-afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-          data_geom = ggpol::geom_boxjitter, 
-          data_arg = list(width = 0.3))
+# afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+#           data_geom = ggpol::geom_boxjitter, 
+#           data_arg = list(width = 0.3))
 ## hides error bars!
 
 # nicer variant of ggpol::geom_boxjitter
-afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-          mapping = c("shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
-          data_arg = list(
-            width = 0.3, 
-            jitter.params = list(width = 0, height = 10),
-            outlier.intersect = TRUE),
-          point_arg = list(size = 2.5), 
-          error_arg = list(linewidth = 1.5, width = 0))
+# afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+#           mapping = c("shape", "fill"),
+#           data_geom = ggpol::geom_boxjitter, 
+#           data_arg = list(
+#             width = 0.3, 
+#             jitter.params = list(width = 0, height = 10),
+#             outlier.intersect = TRUE),
+#           point_arg = list(size = 2.5), 
+#           error_arg = list(linewidth = 1.5, width = 0))
 
 # nicer variant of ggpol::geom_boxjitter without lines
-afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
-          mapping = c("shape", "fill"),
-          data_geom = ggpol::geom_boxjitter, 
-          data_arg = list(
-            width = 0.5, 
-            jitter.params = list(width = 0, height = 10),
-            outlier.intersect = TRUE),
-          point_arg = list(size = 2.5), 
-          line_arg = list(linetype = 0),
-          error_arg = list(linewidth = 1.5, width = 0))
+# afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
+#           mapping = c("shape", "fill"),
+#           data_geom = ggpol::geom_boxjitter, 
+#           data_arg = list(
+#             width = 0.5, 
+#             jitter.params = list(width = 0, height = 10),
+#             outlier.intersect = TRUE),
+#           point_arg = list(size = 2.5), 
+#           line_arg = list(linetype = 0),
+#           error_arg = list(linewidth = 1.5, width = 0))
 
 ### we can also use multiple geoms for the background by passing a list of geoms
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
@@ -580,7 +581,6 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within",
           ))
 
 ## with separate extra arguments:
-
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           dodge = 0.5,
           data_geom = list(
@@ -611,18 +611,18 @@ afex_plot(aw, x = "angle", mapping = "color", error = "within",
           point_arg = list(size = 2.5), 
           error_arg = list(linewidth = 1.5, width = 0.05)) 
 
-afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter)
+# afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter)
 
 ## nicer
-afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter, 
-          mapping = "fill", data_alpha = 0.7, 
-          data_arg = list(
-            width = 0.6, 
-            jitter.params = list(width = 0.07, height = 10),
-            outlier.intersect = TRUE
-          ),
-          point_arg = list(size = 2.5), 
-          error_arg = list(linewidth = 1.5, width = 0.05))
+# afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter, 
+#           mapping = "fill", data_alpha = 0.7, 
+#           data_arg = list(
+#             width = 0.6, 
+#             jitter.params = list(width = 0.07, height = 10),
+#             outlier.intersect = TRUE
+#           ),
+#           point_arg = list(size = 2.5), 
+#           error_arg = list(linewidth = 1.5, width = 0.05))
 
 ## we can use multiple geoms with separate argument lists:
 afex_plot(aw, x = "angle", error = "within", 
@@ -942,20 +942,20 @@ Belia, S., Fidler, F., Williams, J., & Cumming, G. (2005).
   Researchers Misunderstand Confidence Intervals and Standard Error Bars.
   \emph{Psychological Methods}, 10(4), 389-396.
   https://doi.org/10.1037/1082-989X.10.4.389
-  
+
   Cousineau, D., & O'Brien, F. (2014). Error bars in within-subject designs:
   a comment on Baguley (2012). \emph{Behavior Research Methods}, 46(4),
   1149-1151. https://doi.org/10.3758/s13428-013-0441-z
-  
+
   Cumming, G., & Finch, S. (2005). Inference by Eye: Confidence Intervals and
   How to Read Pictures of Data. \emph{American Psychologist}, 60(2), 170-180.
   https://doi.org/10.1037/0003-066X.60.2.170
-  
+
   Knol, M. J., Pestman, W. R., & Grobbee, D. E. (2011). The (mis)use of
   overlap of confidence intervals to assess effect modification.
   \emph{European Journal of Epidemiology}, 26(4), 253-254.
   https://doi.org/10.1007/s10654-011-9563-8
-  
+
   Schenker, N., & Gentleman, J. F. (2001). On Judging the Significance of
   Differences by Examining the Overlap Between Confidence Intervals.
   \emph{The American Statistician}, 55(3), 182-186.

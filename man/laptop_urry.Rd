@@ -30,7 +30,7 @@ Urry, H. L., Crittle, C. S., Floerke, V. A., Leonard, M. Z., Perry,
 laptop_urry
 }
 \description{
-Original abstract: 
+Original abstract:
 In this direct replication of Mueller and Oppenheimer’s (2014) Study 1,
 participants watched a lecture while taking notes with a laptop (n = 74) or
 longhand (n = 68). After a brief distraction and without the opportunity to

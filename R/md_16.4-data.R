@@ -21,6 +21,8 @@
 #' @encoding UTF-8
 #'
 #' @examples
+#' if (requireNamespace("lme4") &
+#'     requireNamespace("lmerTest")) {
 #' # data for next examples (Maxwell & Delaney, Table 16.4)
 #' data(md_16.4)
 #' str(md_16.4)
@@ -29,6 +31,6 @@
 #' # p-values (almost) hold:
 #' (mixed2 <- mixed(induct ~ cond + (1|room:cond), md_16.4))
 #' # (1|room:cond) is needed because room is nested within cond.
-#'
+#' }
 #'
 NULL

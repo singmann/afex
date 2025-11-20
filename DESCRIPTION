@@ -1,9 +1,12 @@
 Package: afex
 Type: Package
 Title: Analysis of Factorial Experiments
-Depends: R (>= 3.5.0), lme4 (>= 1.1-8)
+Depends: R (>= 3.5.0)
 Suggests: 
+    lme4 (>= 1.1-8),
     emmeans (>= 1.4),
+    pbkrtest (>= 0.4-1), 
+    lmerTest (>= 3.0-0),
     coin,
     xtable,
     parallel,
@@ -45,7 +48,7 @@ Suggests:
     grid,
     vdiffr,
     GLMMadaptive
-Imports: pbkrtest (>= 0.4-1), lmerTest (>= 3.0-0), car, reshape2, stats, methods, utils, reformulas, rlang
+Imports: car, reshape2, stats, methods, utils, reformulas, rlang
 Description: Convenience functions for analyzing factorial experiments using ANOVA or
          mixed models. aov_ez(), aov_car(), and aov_4() allow specification of
          between, within (i.e., repeated-measures), or mixed (i.e., split-plot) 
@@ -77,6 +80,6 @@ Authors@R: c(person(given="Henrik", family="Singmann", role=c("aut", "cre"),
          person(given="Jonathon", family="Love", role=c("ctb")), 
          person(given="Russell", family="Lenth", role=c("ctb")), 
          person(given="Rune", family="Haubo Bojesen Christensen", role=c("ctb")))
-Version: 1.5-0
-RoxygenNote: 7.3.2
+Version: 1.6-0
+RoxygenNote: 7.3.3
 LazyData: true

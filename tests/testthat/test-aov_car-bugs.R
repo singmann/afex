@@ -274,7 +274,8 @@ test_that("ANOVA: ids in multiple between.subjects conditions", {
 })
 
 test_that("empty factors are not causing aov.cat to choke", {
-  data(sleepstudy) #Example data in lme4
+  testthat::skip_if_not_installed("lme4")
+  data(sleepstudy, package = "lme4") #Example data in lme4
   sleepstudy$Days <- factor(sleepstudy$Days)
   #Works with all factors
   expect_is(

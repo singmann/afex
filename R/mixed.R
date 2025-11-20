@@ -390,7 +390,6 @@
 #'
 #'
 ## @import pbkrtest
-#' @importFrom lme4 glmer getME isREML
 #' @importFrom reformulas nobars
 #' @importFrom parallel clusterCall clusterExport clusterEvalQ clusterApplyLB
 #' @importFrom stats logLik terms as.formula contrasts<- model.matrix model.frame anova
@@ -418,6 +417,9 @@ mixed <- function(
   sig_symbols = afex_options("sig_symbols"),
   ...
 ) {
+  if (!requireNamespace("lme4", quietly = TRUE)) {
+    stop("lme4 is required for estimating mixed effects models")
+  }
   dots <- list(...)
   data <- as.data.frame(data) # adding droplevels() here seems to lead to problems
   # with factors that have contrasts associated with it.
@@ -569,10 +571,13 @@ mixed <- function(
   mf[["formula"]] <-
     as.formula(paste0(dv, deparse(rh2, width.cutoff = 500L), "+", random))
   if ("family" %in% names(mf)) {
-    mf[[1]] <- as.name("glmer")
+    mf[[1]] <- quote(lme4::glmer)
     use_reml <- FALSE
   } else {
     if (afex_options("lmer_function") == "lmerTest") {
+      if (!requireNamespace("lmerTest", quietly = TRUE)) {
+        stop("lmerTest is required for estimating mixed effects models")
+      }
       mf[[1]] <- quote(lmerTest::lmer)
     } else if (afex_options("lmer_function") == "lme4") {
       if (!(return %in% c("merMod")) && method %in% c("KR", "S")) {
@@ -941,7 +946,7 @@ mixed <- function(
       }
     }
     # check again and warn
-    if (!isREML(fits[[1]]) & !isTRUE(check_likelihood(fits))) {
+    if (!lme4::isREML(fits[[1]]) & !isTRUE(check_likelihood(fits))) {
       warning(paste(
         "Following nested model(s) provide better fit than full model:",
         paste(check_likelihood(fits), collapse = ", "),
@@ -1259,6 +1264,9 @@ check_likelihood <- function(object) {
 #' @rdname mixed
 #' @export
 lmer_alt <- function(formula, data, check_contrasts = FALSE, ...) {
+  if (!requireNamespace("lme4", quietly = TRUE)) {
+    stop("lme4 is required for estimating mixed effects models")
+  }
   mc <- match.call()
   #assign(all.vars(mc[["data"]]), data)
   mc[[1]] <- as.name("mixed")
@@ -1275,7 +1283,7 @@ lmer_alt <- function(formula, data, check_contrasts = FALSE, ...) {
 print.mixed <- function(x, ...) {
   full_model_name <- names(x)[[2]]
   try(
-    if (!isREML(x[[full_model_name]]) && !isTRUE(check_likelihood(x))) {
+    if (!lme4::isREML(x[[full_model_name]]) && !isTRUE(check_likelihood(x))) {
       warning(
         paste(
           "Following nested model(s) provide better fit than full model:",
@@ -1353,7 +1361,7 @@ anova.mixed <- function(
   } else {
     try(
       if (
-        !isREML(object[[full_model_name]]) &&
+        !lme4::isREML(object[[full_model_name]]) &&
           !isTRUE(check_likelihood(object))
       ) {
         warning(

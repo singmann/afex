@@ -27,6 +27,8 @@ Table 16.4 shows hypothetical data collected from 29 children who participated i
 Note that it would make a lot more sense to change the labeling of room from 1 to 3 nested within cond to 1 to 6. However, I keep this in line with the original. The random effects term in the call to mixed is therefore a little bit uncommon.#'
 }
 \examples{
+if (requireNamespace("lme4") &
+    requireNamespace("lmerTest")) {
 # data for next examples (Maxwell & Delaney, Table 16.4)
 data(md_16.4)
 str(md_16.4)
@@ -35,7 +37,7 @@ str(md_16.4)
 # p-values (almost) hold:
 (mixed2 <- mixed(induct ~ cond + (1|room:cond), md_16.4))
 # (1|room:cond) is needed because room is nested within cond.
-
+}
 
 }
 \keyword{dataset}

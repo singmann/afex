@@ -1,4 +1,6 @@
 test_that("mixed models with Type = 2 work", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   testthat::skip_if_not_installed("ggplot2")
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("MEMSS")
@@ -17,6 +19,8 @@ test_that("mixed models with Type = 2 work", {
 })
 
 test_that("response variable y works", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   testthat::skip_if_not_installed("ggplot2")
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("MEMSS")
@@ -38,6 +42,8 @@ test_that("response variable y works", {
 })
 
 test_that("merMod objects with missing data can be plotted", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   testthat::skip_if_not_installed("ggplot2")
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("MEMSS")
@@ -93,6 +99,8 @@ test_that("binomial models plot data correctly with factor DVs", {
 })
 
 test_that("non-factor IVs work with factor_levels argument", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   testthat::skip_if_not_installed("ggplot2")
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("MEMSS")

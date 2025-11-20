@@ -805,7 +805,9 @@ cbind(
 ##################################################################
 ##                         Mixed Models                         ##
 ##################################################################
-if (requireNamespace("MEMSS") && 
+if (requireNamespace("lme4") && 
+    requireNamespace("lmerTest") && 
+    requireNamespace("MEMSS") && 
     requireNamespace("emmeans") && 
     requireNamespace("ggplot2")) {
 

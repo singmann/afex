@@ -2,6 +2,8 @@ context("mixed interplay with effects")
 
 
 test_that("mixed works with effects", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   skip_if_not_installed("MEMSS")
   data("Machines", package = "MEMSS")
   # simple model with random-slopes for repeated-measures factor

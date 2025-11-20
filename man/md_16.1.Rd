@@ -25,6 +25,8 @@ As brief background, the goal of the study here is to examine the extent to whic
 Note that I changed the labeling of the id slightly, so that they are now labeled from 1 to 6. Furthermore, I changed the contrasts of sex to \code{contr.treatment} to replicate the exact results of Table 16.3 (p. 837).
 }
 \examples{
+if (requireNamespace("lme4") &
+    requireNamespace("lmerTest")) {
 ### replicate results from Table 16.3 (Maxwell & Delaney, 2004, p. 837)
 data(md_16.1)
 
@@ -36,6 +38,7 @@ summary(mixed1_orig$full.model)
 # but estimates and t-values for the fixed effects parameters change.
 (mixed1 <- mixed(severity ~ sex + (1|id), md_16.1))
 summary(mixed1$full.model)
+}
 
 }
 \keyword{dataset}

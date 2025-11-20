@@ -3,7 +3,9 @@
 ## Simple Examples (from MEMSS) ##
 ##################################
 
-if (requireNamespace("MEMSS")) {
+if (requireNamespace("lme4") & 
+    requireNamespace("lmerTest") & 
+    requireNamespace("MEMSS")) {
 data("Machines", package = "MEMSS") 
 
 # simple model with random-slopes for repeated-measures factor

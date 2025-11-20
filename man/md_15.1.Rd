@@ -33,6 +33,8 @@ data(md_15.1)
 ### ANOVA results (Table 15.2)
 aov_4(iq ~ timecat + (timecat|id),data=md_15.1, anova_table=list(correction = "none"))
 
+if (requireNamespace("lme4") &
+    requireNamespace("lmerTest")) {
 ### Table 15.3 (random intercept only)
 # we need to set the base level on the last level:
 contrasts(md_15.1$timecat) <- contr.treatment(4, base = 4)
@@ -63,6 +65,7 @@ contrasts(md_15.1$timecat) <- contr.poly
 # growth curve model
 (t15.6 <- mixed(iq ~ time + (1+time|id),data=md_15.1))
 summary(t15.6$full.model)
+}
 
 }
 \author{

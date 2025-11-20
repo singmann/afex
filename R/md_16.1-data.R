@@ -17,6 +17,8 @@
 
 #'
 #' @examples
+#' if (requireNamespace("lme4") &
+#'     requireNamespace("lmerTest")) {
 #' ### replicate results from Table 16.3 (Maxwell & Delaney, 2004, p. 837)
 #' data(md_16.1)
 #'
@@ -28,6 +30,7 @@
 #' # but estimates and t-values for the fixed effects parameters change.
 #' (mixed1 <- mixed(severity ~ sex + (1|id), md_16.1))
 #' summary(mixed1$full.model)
+#' }
 #'
 #' @encoding UTF-8
 #'

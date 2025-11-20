@@ -3,6 +3,8 @@ context("mixed: known bugs")
 test_that("all_fit = TRUE works with emmeans", {
   testthat::skip_on_cran()
   skip_if_not_installed("MEMSS")
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   skip_if_not_installed("emmeans")
   skip_on_os("windows")
   data("Machines", package = "MEMSS")
@@ -12,6 +14,8 @@ test_that("all_fit = TRUE works with emmeans", {
 
 test_that("inverse.gaussian works", {
   ## see: https://github.com/singmann/afex/issues/74
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   skip_if_not_installed("statmod")
   skip_if(packageVersion("lme4") <= "1.1.21")
   skip_on_cran()
@@ -27,7 +31,7 @@ test_that("inverse.gaussian works", {
     mixed(
       y ~ x1 * x2 + (1 | id),
       family = inverse.gaussian(link = "inverse"),
-      control = glmerControl(
+      control = lme4::glmerControl(
         optimizer = "bobyqa",
         optCtrl = list(maxfun = 2e5)
       ),
@@ -48,6 +52,8 @@ test_that("inverse.gaussian works", {
 })
 
 test_that("character formula is contrast checked", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data("sk2011.2")
   # use only affirmation problems (S&K also splitted the data like this)
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation", ])
@@ -68,6 +74,8 @@ test_that("character formula is contrast checked", {
 })
 
 test_that("character variables are treated as factors", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data("sk2011.2")
   # use only affirmation problems (S&K also splitted the data like this)
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation", ])
@@ -90,6 +98,8 @@ test_that("character variables are treated as factors", {
 })
 
 test_that("mixed works with long formulas", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data(obk.long)
   obk2 <- obk.long
   colnames(obk2) <- sapply(colnames(obk2), function(x) paste0(x, x, x, x, x, x))
@@ -109,6 +119,8 @@ test_that("mixed works with long formulas", {
 })
 
 test_that("nice.mixed and print.mixed can handle old objects", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   # created via:
   #   require(devtools)
   #   dev_mode()
@@ -132,6 +144,8 @@ test_that("nice.mixed and print.mixed can handle old objects", {
 
 
 test_that("nice.mixed, print.mixed, and anova.mixed can handle objects with full.models", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   load("mixed_with_dot.rda") #
   #load("tests/testthat/mixed_with_dot.rda")
   expect_is(suppressWarnings(nice(sk_m1)), "data.frame")
@@ -146,6 +160,7 @@ test_that("nice.mixed, print.mixed, and anova.mixed can handle objects with full
 })
 
 test_that("lmer_alt works with GLMMs", {
+  skip_if_not_installed("lme4")
   skip_if_not_installed("mlmRev")
   if (require("mlmRev")) {
     expect_that(
@@ -161,6 +176,8 @@ test_that("lmer_alt works with GLMMs", {
 })
 
 test_that("lmer_alt works with NA in independent variables", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data(sk2011.2)
 
   # use only affirmation problems (S&K also splitted the data like this)
@@ -180,6 +197,8 @@ test_that("lmer_alt works with NA in independent variables", {
 })
 
 test_that("lmer_alt works with custom contrasts", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   ## see: https://afex.singmann.science/forums/topic/trouble-with-ordered-contrasts-and-lmer_alt
   Subj <- rep(1:10, each = 10)
   Item <- rep(1:10, times = 10)
@@ -203,6 +222,8 @@ test_that("lmer_alt works with custom contrasts", {
 })
 
 test_that("subset() in mix works with method == 'LRT'", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data(obk.long)
   set_default_contrasts()
   msub <- mixed(

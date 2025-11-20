@@ -103,6 +103,8 @@ test_that("all input type works and warnings are correct", {
 
 
 test_that("mixed plots are produced", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("ggplot2")
   testthat::skip_on_cran() ## uses only expect_doppelganger
@@ -139,11 +141,13 @@ test_that("mixed plots are produced", {
 })
 
 test_that("lme4::merMod plots are produced", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_if_not_installed("ggplot2")
   Oats <- nlme::Oats
   Oats$VarBlock <- Oats$Variety:Oats$Block
-  Oats.lmer <- lmer(
+  Oats.lmer <- lme4::lmer(
     yield ~ Variety * factor(nitro) + (1 | VarBlock) + (1 | Block),
     data = Oats
   )

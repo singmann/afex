@@ -1,6 +1,8 @@
 # note: all calls with type 2 are wrapped in suppressWarnings()!
 
 test_that("mixed: Maxell & Delaney (2004), Table 16.4, p. 842: Type 2", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data(md_16.4)
   md_16.4b <- md_16.4
   md_16.4b$cog <- scale(md_16.4b$cog, scale = FALSE)
@@ -14,16 +16,21 @@ test_that("mixed: Maxell & Delaney (2004), Table 16.4, p. 842: Type 2", {
       method = "nested-KR"
     )
   )
-  lmer4_full <- lmer(induct ~ cond * cog + (cog | room:cond), md_16.4b)
-  lmer4_small <- lmer(induct ~ cond + cog + (cog | room:cond), md_16.4b)
-  expect_that(fixef(mixed4_2$full_model[[2]]), equals(fixef(lmer4_full)))
+  lmer4_full <- lme4::lmer(induct ~ cond * cog + (cog | room:cond), md_16.4b)
+  lmer4_small <- lme4::lmer(induct ~ cond + cog + (cog | room:cond), md_16.4b)
   expect_that(
-    fixef(mixed4_2$full_model[[1]]),
-    is_equivalent_to(fixef(lmer4_small))
+    lme4::fixef(mixed4_2$full_model[[2]]),
+    equals(lme4::fixef(lmer4_full))
+  )
+  expect_that(
+    lme4::fixef(mixed4_2$full_model[[1]]),
+    is_equivalent_to(lme4::fixef(lmer4_small))
   )
 })
 
 test_that("mixed: Maxell & Delaney (2004), Table 16.4, p. 842: Type 3", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data(md_16.4)
   md_16.4b <- md_16.4
   md_16.4b$cog <- scale(md_16.4b$cog, scale = FALSE)
@@ -46,6 +53,8 @@ test_that("mixed: Maxell & Delaney (2004), Table 16.4, p. 842: Type 3", {
 })
 
 test_that("mixed, obk.long: type 2 and LRTs", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data(obk.long, package = "afex")
   contrasts(obk.long$treatment) <- "contr.sum"
   contrasts(obk.long$phase) <- "contr.sum"
@@ -100,6 +109,8 @@ test_that("mixed, obk.long: type 2 and LRTs", {
 })
 
 test_that("mixed, mlmRev: type 3 and 2 LRTs for GLMMs", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   skip_if_not_installed("mlmRev")
   if (require("mlmRev")) {
     suppressWarnings(
@@ -127,6 +138,8 @@ test_that("mixed, mlmRev: type 3 and 2 LRTs for GLMMs", {
 })
 
 test_that("mixed, obk.long: LMM with method = PB", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   expect_that(
     mixed(
       value ~ treatment + phase * hour + (1 | id),
@@ -140,6 +153,8 @@ test_that("mixed, obk.long: LMM with method = PB", {
 })
 
 test_that("mixed, obk.long: multicore loads lme4 and produces the same results", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   #if (packageVersion("testthat") >= "0.9") {
   if (FALSE) {
     # that never seems to run...
@@ -175,6 +190,8 @@ test_that("mixed, obk.long: multicore loads lme4 and produces the same results",
 })
 
 test_that("print(mixed) works: only 1 or 2 fixed effects with all methods", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data(obk.long, package = "afex")
   expect_that(
     print(mixed(
@@ -231,6 +248,8 @@ test_that("print(mixed) works: only 1 or 2 fixed effects with all methods", {
 # })
 
 test_that("mixed: set.data.arg", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data(obk.long, package = "afex")
   suppressWarnings(
     m1 <- mixed(
@@ -258,6 +277,8 @@ test_that("mixed: set.data.arg", {
 })
 
 test_that("mixed: anova with multiple mixed objexts", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data("sk2011.2")
   data("ks2013.3")
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation", ])
@@ -307,6 +328,8 @@ test_that("mixed: anova with multiple mixed objexts", {
 })
 
 test_that("mixed: expand_re argument, return = 'merMod'", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data("ks2013.3")
   set_default_contrasts()
   m2 <- mixed(
@@ -383,6 +406,8 @@ test_that("mixed: expand_re argument, return = 'merMod'", {
 })
 
 test_that("mixed: expand_re argument (longer)", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   if (packageVersion("testthat") >= "0.9") {
     testthat::skip_on_cran()
     testthat::skip_on_travis()
@@ -427,6 +452,8 @@ test_that("mixed: expand_re argument (longer)", {
 
 
 test_that("mixed: return=data, expand_re argument, and allFit", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   #if (packageVersion("testthat") >= "0.9") {
   #testthat::skip_on_travis()
   testthat::skip_if_not_installed("optimx")
@@ -472,6 +499,8 @@ test_that("mixed: return=data, expand_re argument, and allFit", {
 })
 
 test_that("mixed with all_fit = TRUE", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   testthat::skip_if_not_installed("optimx")
   testthat::skip_if_not_installed("MEMSS")
   testthat::skip_if_not_installed("dfoptim")
@@ -508,6 +537,8 @@ test_that("mixed with all_fit = TRUE", {
 
 
 test_that("mixed: return=data works", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data("ks2013.3")
   ks2013.3_tmp <- ks2013.3
   ks2013.3_tmp <- mixed(
@@ -531,6 +562,8 @@ test_that("mixed: return=data works", {
 
 
 test_that("mixed with all available methods", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data("sk2011.2") # see example("mixed")
   testthat::skip_on_travis()
   testthat::skip_on_cran()
@@ -607,6 +640,8 @@ test_that("mixed with all available methods", {
 
 
 test_that("mixed all_fit = TRUE works with old methods", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data("sk2011.2") # see example("mixed")
   testthat::skip_on_cran()
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation", ])
@@ -637,6 +672,8 @@ test_that("mixed all_fit = TRUE works with old methods", {
 
 
 test_that("mixed all_fit = TRUE works with new (KR) methods", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data("sk2011.2") # see example("mixed")
   testthat::skip_on_cran()
   sk2_aff <- droplevels(sk2011.2[sk2011.2$what == "affirmation", ])
@@ -667,6 +704,8 @@ test_that("mixed all_fit = TRUE works with new (KR) methods", {
 
 
 test_that("anova_table attributes", {
+  skip_if_not_installed("lme4")
+  skip_if_not_installed("lmerTest")
   data(obk.long)
   symbol_test <- mixed(
     value ~ treatment * phase + (1 | id),

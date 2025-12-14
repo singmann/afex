@@ -41,7 +41,7 @@ The data are lexical decision and word naming latencies for 300 words and 300 no
 
 ## Data and R Preparation
 
-We start with loading some packages we will need throughout this example. For data manipulation we will be using the `dplyr` and `tidyr` packages from the [`tidyverse`](https://www.tidyverse.org/). A thorough introduction to these packages is beyond this example, but well worth it, and can be found in ['R for Data Science'](https://r4ds.had.co.nz/) by Wickham and Grolemund. For plotting we will be using `ggplot2`, also part of the `tidyverse`.
+We start with loading some packages we will need throughout this example. For data manipulation we will be using the `dplyr` and `tidyr` packages from the [`tidyverse`](https://tidyverse.org/). A thorough introduction to these packages is beyond this example, but well worth it, and can be found in ['R for Data Science'](https://r4ds.had.co.nz/) by Wickham and Grolemund. For plotting we will be using `ggplot2`, also part of the `tidyverse`.
 
 After loading the packages, we will load the data (which comes with `afex`), remove the errors, and take a look at the variables in the data.
 

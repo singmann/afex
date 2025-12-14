@@ -366,7 +366,7 @@ emmeans::emm_options(lmer.df = "asymptotic")
 ```
 
 The ANOVA table of the mixed model indicates that the three-way interaction `task:stimulus:frequency` is significant on which we focus in the following.
-```{r, eval=TRUE}
+```{r}
 m9s
 ```
 
@@ -374,13 +374,13 @@ m9s
 
 For mixed models, one important decision is the random-effects grouping factor(s) based on which the raw data plotted in the background is aggregated. This decision is necessary, because without such a factor, there would only be one observation for each cell of the design (unless the full design is considered). In the default setting, with `id` missing, the combination of all random-effects grouping factors is used.
 
-```{r fig.width=7, fig.height=3.5, eval=TRUE}
+```{r fig.width=7, fig.height=3.5}
 afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task") 
 ```
 
 In the present case, a message informs us that the data is aggregated over both random-effects grouping factors. However, this leads to way too many data points in the background. Let us compare this plot with plots in which we use each of the two random-effects grouping factors in turn.
 
-```{r fig.width=7, fig.height=3.5, eval=TRUE}
+```{r fig.width=7, fig.height=3.5}
 plot_grid( 
   afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "id"), 
@@ -396,7 +396,7 @@ The by-id plot looks usable. However, the by-item plot has still way too many da
 
 We compare violin plots or box plots for the by-item data in the next plot. For the box plot, we increase the width of the error bars and use a consistent line type to distinguish them more easily from the graphical elements of the box plot. We could probably further improve these plots by, for example, adding colors or using some of the other customizations discussed above for the ANOVA example.
 
-```{r fig.width=7, fig.height=3.5, eval=TRUE}
+```{r fig.width=7, fig.height=3.5}
 plot_grid( 
   afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "item", dodge = 0.8,
@@ -425,7 +425,7 @@ cat(aout_2$output, sep = "\n")
 ```
 An alternative in the present situation would be using within-subjects error bars and aggregating the data by-id (i.e., `error = "within"`), as done in the left panel below. This is somewhat appropriate here as the factors within each panel are all within-subject factors. In contrast, using by-item within-subjects error bars, as done in the right panel below, seems not appropriate as the only within-item factor, `task`, is spread across panels. Unfortunately, it is not immediately clear if these error bars allow one to correctly detect which means do not differ from each other. 
 
-```{r fig.width=7, fig.height=3.5, eval=FALSE}
+```{r fig.width=7, fig.height=3.5}
 plot_grid( 
   afex_plot(m9s, x = "stimulus", trace = "frequency", panel = "task", 
             id = "id", error = "within"),

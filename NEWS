@@ -6,6 +6,7 @@ Bugfixes
  o functions findbars() and nobars() are now imported from package reformulas instead of lme4 [GH issue #132]
  o replaced ggplot2::aes_string() with ggplot2::aes() as the former is deprecated
  o prepared checks and vignettes for ggplot2 4.0.0 update (at the time of making these changes, ggpol::geom_boxjitter did not work with ggplot 4.0.0 and all correspondinmg examples and tests were deactivated)
+ o removed ggpol from suggests as it was archived on CRAN
  o disabled pbkrtest checks as pbkrtest did not currently work with glmer models
 
 Changes in afex Version 1.4-x (2024-xx-xx)

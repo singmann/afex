@@ -13,7 +13,7 @@ devtools::build(
 ) # R CMD build afex --compact-vignettes="gs+qpdf"
 document()
 check()
-check_built(path = "development/afex_1.5-0.tar.gz")
+check_built(path = "development/afex_1.5-1.tar.gz")
 
 ## works better on windows:
 devtools::test(filter = "plot", invert = TRUE)

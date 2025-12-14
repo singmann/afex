@@ -242,7 +242,7 @@ load(system.file("extdata/", "glmmadapt_example_fit.rda", package = "afex"))
 As before, to crate an `afex_plot()`, we need to pass both the original `data`, and pass the grouping factor (`site`) to the `id`-argument to ensure individual-level data points are aggregated appropriately.
 
 
-```{r fig.width=4, fig.height=3, eval = TRUE}
+```{r fig.width=4, fig.height=3}
 afex_plot(gm1, "spp", "mined", id = "site", 
           data = Salamanders, data_geom = ggplot2::geom_count)
 ```

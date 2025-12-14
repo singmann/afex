@@ -1,6 +1,7 @@
 Changes in afex Version 1.5-x (2025-08-24)
 Significant User Visible Changes and New Features
  o afex_plot() now also supports GLMMadaptive. A corresponding example was added to the supported mode's vignette.
+ o added some more examples to afex_plot introduction vignette and added ggthemes to suggests for this.
 
 Bugfixes
  o functions findbars() and nobars() are now imported from package reformulas instead of lme4 [GH issue #132]

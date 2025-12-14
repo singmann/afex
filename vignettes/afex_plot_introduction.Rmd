@@ -13,7 +13,7 @@ vignette: >
 ---
 ```{r echo=FALSE}
 req_suggested_packages <- c("emmeans", "ggplot2", "cowplot",
-                            "ggbeeswarm", "ggpol")
+                            "ggbeeswarm", "ggthemes")
 pcheck <- lapply(req_suggested_packages, requireNamespace, 
                  quietly = TRUE)
 if (any(!unlist(pcheck))) {
@@ -230,7 +230,7 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
 
 ## Adding Color to Plots
 
-So far, all plots were shown in black and white only. However, it is easy to include color. We do so for some of the plots from above. To achieve this, we have to change the value of the `mapping` argument. 
+So far, all plots were shown in black and white only. However, it is easy to include color. We do so for some of the plots from above. To achieve this, we have to change the value of the `mapping` argument. Note that we can either have only the foreground points in colour (by including `"colour"` into the mapping argument and passing `colour = "darkgrey"` to `data_arg`) or only the background points (by including `"colour"` into the mapping argument and passing `colour = "black"` to `point_arg`, `line_arg`, and `error_arg`).
 
 
 ```{r fig.width=8, fig.height=7, dpi = 100, out.width='100%'}
@@ -240,14 +240,28 @@ p2 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
                 data_arg = list(
                   dodge.width = 0.5,  ## needs to be same as dodge
                   cex = 0.8))
+p2b <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+                mapping = c("shape", "color"),
+                data_geom = ggbeeswarm::geom_beeswarm,
+                data_arg = list(
+                  colour = "darkgrey",
+                  dodge.width = 0.5,  ## needs to be same as dodge
+                  cex = 0.8)) +
+  ggthemes::scale_color_colorblind()
+p2c <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.5,
+                mapping = c("shape", "color"),
+                data_geom = ggbeeswarm::geom_beeswarm,
+                data_arg = list(
+                  dodge.width = 0.5,  ## needs to be same as dodge
+                  cex = 0.8),
+                point_arg = list(colour = "black"),
+                line_arg = list(colour = "black"), 
+                error_arg = list(colour = "black", width = 0)) +
+  ggthemes::scale_color_colorblind()
 p3 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
                 mapping = c("linetype", "shape", "fill"),
                 data_geom = ggplot2::geom_violin, 
                 data_arg = list(width = 0.5))
-p4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-                mapping = c("shape", "fill"),
-                data_geom = ggplot2::geom_boxplot, 
-                data_arg = list(width = 0.3))
 # p5 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
 #                 mapping = c("shape", "fill"),
 #                 data_geom = ggpol::geom_boxjitter, 
@@ -258,7 +272,7 @@ p4 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
 #                 point_arg = list(size = 2.5), 
 #                 line_arg = list(linetype = 0),
 #                 error_arg = list(linewidth = 1.5, width = 0))
-plot_grid(p2, p3, p4, ncol = 2) 
+plot_grid(p2, p2b, p2c, p3, ncol = 2) 
 ```
 
 ## Plotting Order and Error Bars
@@ -283,27 +297,17 @@ plot_grid(p1, p2, ncol = 2)
 
 ## One-way Plots Without Trace Factor
 
-If `afex_plot()` is called without a trace factor, a one-way plot is created. We can customize this plot in very much the same way. Per default a one-way plot contains a legend if `mapping` is not empty (i.e., `""`). We show this legend for the left plot, but suppress it for the right one via `theme(legend.position="none")`.
+If `afex_plot()` is called without a trace factor, a one-way plot is created. We can customize this plot in very much the same way. Per default a one-way plot contains a legend if `mapping` is not empty (i.e., `""`). We show this legend for the left plot, but suppress it for the right one via `theme(legend.position="none")`. For the right plot we also use a different geom than the default, `geom_count`.
 
 ```{r fig.width=7, fig.height=3.5, message=FALSE}
 po1 <- afex_plot(aw, x = "angle", mapping = "color", error = "within", 
                  point_arg = list(size = 2.5), 
                  error_arg = list(linewidth = 1.5, width = 0.05)) 
 po2 <- afex_plot(aw, x = "angle", mapping = "color", error = "within", 
+                 data_geom = geom_count,
                  point_arg = list(size = 2.5), 
                  error_arg = list(linewidth = 1.5, width = 0.05)) + 
   theme(legend.position="none")
-# po2 <- afex_plot(aw, x = "angle", error = "within", 
-#                  data_geom = ggpol::geom_boxjitter, 
-#                  mapping = "fill", data_alpha = 0.7, 
-#                  data_arg = list(
-#                    width = 0.6, 
-#                    jitter.params = list(width = 0.05, height = 10),
-#                    outlier.intersect = TRUE
-#                  ),
-#                  point_arg = list(size = 2.5), 
-#                  error_arg = list(linewidth = 1.5, width = 0.05)) +
-#   theme(legend.position="none")
 plot_grid(po1, po2) 
 ```
 
@@ -315,26 +319,38 @@ afex_plot(aw, x = "angle", panel = "noise", error = "within",
                  point_arg = list(size = 2.5), 
                  error_arg = list(linewidth = 1.5, width = 0.05)) + 
   theme(legend.position="none")
-# afex_plot(aw, x = "angle", panel = "noise", error = "within",
-#           data_geom = ggpol::geom_boxjitter,
-#           mapping = "fill", data_alpha = 0.7,
-#           data_arg = list(
-#             width = 0.6,
-#             jitter.params = list(width = 0.05, height = 10),
-#             outlier.intersect = TRUE
-#           ),
-#           point_arg = list(size = 2.5),
-#           error_arg = list(linewidth = 1.5, width = 0.05)) +
-#   theme(legend.position="none")
 ```
 
-Sometimes we still want to add a line connecting the estimated marginal means. As `afex_plot()` returns a `ggplot2` object, we can do this easily by adding a `geom_line` object to the call. As we want to add a line through all of the shown points in the foreground, we need to add the corresponding groups aesthetics to this call: `geom_line(aes(group = 1))`. We can add further arguments to this call, as shown in the left panel below.
+Sometimes we still want to add a line connecting the estimated marginal means. As `afex_plot()` returns a `ggplot2` object, we can do this easily by adding a `geom_line` object to the call. As we want to add a line through all of the shown points in the foreground, we need to add the corresponding groups aesthetics to this call: `geom_line(aes(group = 1))`. We can also add further arguments to this call, as shown in the left panel below. An alternative to adding the line connecting the main data points as the last element, we can also ass it as the first by using the `plot_first` argument. This is shown in the right panel.
 
 ```{r fig.width=7, fig.height=3.5, message=FALSE}
-plot_grid(
-  po1 + geom_line(aes(group = 1), color = "darkgrey", linewidth = 1.5), 
-  po2 + geom_line(aes(group = 1))
-) 
+pn1 <- po1 + geom_line(aes(group = 1), color = "darkgrey", linewidth = 1.5)
+pn2 <- afex_plot(
+  aw, x = "angle", mapping = "color", error = "within", 
+  point_arg = list(size = 2.5), 
+  error_arg = list(linewidth = 1.5, width = 0.05),
+  plot_first = geom_line(aes(group = 1), color = "darkgrey", linewidth = 1.5)) 
+plot_grid(pn1, pn2) 
+```
+
+For within-subject factors shown in a one-way plot, we can also create a Spaghetti plot in which the individual-level data points are connected across factor-levels using lines. For this, we need to pass multiple data geoms using a list, one of them needs to be `geom_line`. Note that for `geom_line` we also need to pass the additional argument `aes(group = id)` via `data_arg` (which in this case needs to be a list of lists). In the right panel we show that this can of course be combined with further arguments.
+
+```{r fig.width=7, fig.height=3.5, message=FALSE}
+ps1 <- afex_plot(aw, x = "angle", error = "within", 
+          data_geom = list(geom_count, geom_line),
+          data_arg = list(list(), list(aes(group = id)))) +
+  theme(legend.position="none")
+ps2 <- afex_plot(aw, x = "angle", error = "within", 
+                 mapping = c("shape", "colour"),
+          data_geom = list(geom_count, geom_line),
+          data_arg = list(list(colour = "darkgrey", shape = 19), 
+                          list(aes(group = id), colour = "darkgrey")),
+          point_arg = list(size = 2.5), 
+          error_arg = list(linewidth = 1.0, width = 0.05),
+          plot_first = geom_line(aes(group = 1), colour = "black")) +
+  theme(legend.position="none") +
+  ggthemes::scale_color_colorblind()
+plot_grid(ps1, ps2)
 ```
 
 

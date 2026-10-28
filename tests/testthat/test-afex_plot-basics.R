@@ -171,7 +171,7 @@ test_that("lme4::merMod plots are produced", {
 
 test_that("afex_plot works with various geoms (from examples)", {
   testthat::skip_if_not_installed("ggplot2")
-  testthat::skip_if_not_installed("ggpol")
+  #testthat::skip_if_not_installed("ggpol")
   testthat::skip_if_not_installed("ggbeeswarm")
   testthat::skip_if_not_installed("emmeans")
   testthat::skip_on_cran() ## uses only expect_doppelganger
@@ -271,39 +271,6 @@ test_that("afex_plot works with various geoms (from examples)", {
   )
   expect_doppelganger("geoms work: box plot", g7)
 
-  ## disabled due to boxjitter failing with ggplot 4.0.0 (August 2025)
-  # # combine points with boxplot: ggpol::geom_boxjitter
-  # g8 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
-  #           data_geom = ggpol::geom_boxjitter,
-  #           data_arg = list(width = 0.3))
-  # expect_doppelganger("geoms work: boxjitter 1", g8)
-  # ## hides error bars!
-
-  # nicer variant of ggpol::geom_boxjitter
-  # g9 <- afex_plot(aw, x = "noise", trace = "angle", error = "within",
-  #           mapping = c("shape", "fill"),
-  #           data_geom = ggpol::geom_boxjitter,
-  #           data_arg = list(
-  #             width = 0.3,
-  #             jitter.params = list(width = 0, height = 10),
-  #             outlier.intersect = TRUE),
-  #           point_arg = list(size = 2.5),
-  #           error_arg = list(linewidth = 1.5, width = 0))
-  # expect_doppelganger("geoms work: boxjitter 2", g9)
-
-  # nicer variant of ggpol::geom_boxjitter without lines
-  # g10 <- afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
-  #           mapping = c("shape", "fill"),
-  #           data_geom = ggpol::geom_boxjitter,
-  #           data_arg = list(
-  #             width = 0.5,
-  #             jitter.params = list(width = 0, height = 10),
-  #             outlier.intersect = TRUE),
-  #           point_arg = list(size = 2.5),
-  #           line_arg = list(linetype = 0),
-  #           error_arg = list(linewidth = 1.5, width = 0))
-  # expect_doppelganger("geoms work: boxjitter 3", g10)
-
   ### we can also use multiple geoms for the background by passing a list of geoms
   g11 <- afex_plot(
     aw,
@@ -341,6 +308,11 @@ test_that("afex_plot works with various geoms (from examples)", {
     )
   )
   expect_doppelganger("multiple geoms work 2", g12)
+  
+  # oneway plot with separate geoms and no extra arguments:
+  g13 <- afex_plot(aw, x = "angle", error = "within", 
+          data_geom = list(ggplot2::geom_violin, ggplot2::geom_boxplot))
+  expect_doppelganger("multiple geoms work 3", g13)
 })
 
 test_that("relabeling of factors and legend works", {

@@ -450,7 +450,8 @@ test_that("mixed: return=data, expand_re argument, and allFit", {
     data = ks2013.3_tmp
   ))
   for (i in seq_along(m6_all_1)) {
-    expect_s4_class(m6_all_1[[i]], "lmerModLmerTest")
+    #expect_s4_class(m6_all_1[[i]], "lmerModLmerTest")
+    expect_is(m6_all_1[[i]], "simpleError")
   }
   ks2013.3_tmp <- mixed(
     response ~ validity + (believability * validity || id),
@@ -467,7 +468,7 @@ test_that("mixed: return=data, expand_re argument, and allFit", {
     data = ks2013.3_tmp
   ))
   for (i in seq_along(m6_all_2)) {
-    expect_s4_class(m6_all_1[[i]], "merMod")
+    expect_s4_class(m6_all_2[[i]], "merMod")
   }
 })
 

@@ -82,36 +82,6 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within",
           data_geom = ggplot2::geom_boxplot, 
           data_arg = list(width = 0.3))
 
-# geom_boxjitter needs updating for ggplot 4.0.0
-# combine points with boxplot: ggpol::geom_boxjitter
-# afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-#           data_geom = ggpol::geom_boxjitter, 
-#           data_arg = list(width = 0.3))
-## hides error bars!
-
-# nicer variant of ggpol::geom_boxjitter
-# afex_plot(aw, x = "noise", trace = "angle", error = "within", 
-#           mapping = c("shape", "fill"),
-#           data_geom = ggpol::geom_boxjitter, 
-#           data_arg = list(
-#             width = 0.3, 
-#             jitter.params = list(width = 0, height = 10),
-#             outlier.intersect = TRUE),
-#           point_arg = list(size = 2.5), 
-#           error_arg = list(linewidth = 1.5, width = 0))
-
-# nicer variant of ggpol::geom_boxjitter without lines
-# afex_plot(aw, x = "noise", trace = "angle", error = "within", dodge = 0.7,
-#           mapping = c("shape", "fill"),
-#           data_geom = ggpol::geom_boxjitter, 
-#           data_arg = list(
-#             width = 0.5, 
-#             jitter.params = list(width = 0, height = 10),
-#             outlier.intersect = TRUE),
-#           point_arg = list(size = 2.5), 
-#           line_arg = list(linetype = 0),
-#           error_arg = list(linewidth = 1.5, width = 0))
-
 ### we can also use multiple geoms for the background by passing a list of geoms
 afex_plot(aw, x = "noise", trace = "angle", error = "within", 
           data_geom = list(
@@ -135,6 +105,19 @@ afex_plot(aw, x = "noise", trace = "angle", error = "within",
                      dodge.width = 0.5  ## needs to be same as dodge
                    )))
           )
+
+## two geoms from ggdist, requires extra arguments for appealing look
+afex_plot(aw, x = "noise", trace = "angle", error = "within", 
+          data_geom = list(
+            ggdist::geom_dots, 
+            ggdist::stat_slab
+          ),
+          data_arg = list(
+            list(width = 0.3, layout = "swarm"),
+            list(side = "left", width = 0.25)
+          ))
+
+
 }
 
 
@@ -150,25 +133,36 @@ afex_plot(aw, x = "angle", mapping = "color", error = "within",
           point_arg = list(size = 2.5), 
           error_arg = list(linewidth = 1.5, width = 0.05)) 
 
-# afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter)
-
-## nicer
-# afex_plot(aw, x = "angle", error = "within", data_geom = ggpol::geom_boxjitter, 
-#           mapping = "fill", data_alpha = 0.7, 
-#           data_arg = list(
-#             width = 0.6, 
-#             jitter.params = list(width = 0.07, height = 10),
-#             outlier.intersect = TRUE
-#           ),
-#           point_arg = list(size = 2.5), 
-#           error_arg = list(linewidth = 1.5, width = 0.05))
+## change geom to ggbeeswarm::geom_quasirandom
+afex_plot(aw, x = "angle", mapping = "color", error = "within",
+          data_geom = ggbeeswarm::geom_quasirandom,
+          point_arg = list(size = 2.5), 
+          error_arg = list(linewidth = 1.5, width = 0.05)) 
 
 ## we can use multiple geoms with separate argument lists:
 afex_plot(aw, x = "angle", error = "within", 
-          data_geom = 
-            list(ggplot2::geom_violin, ggplot2::geom_boxplot), 
+          data_geom = list(ggplot2::geom_violin, ggplot2::geom_boxplot))
+
+## we can use separate argument lists to make this plot nicer:
+afex_plot(aw, x = "angle", error = "within", 
+          data_geom = list(
+            ggplot2::geom_violin, 
+            ggplot2::geom_boxplot
+          ), 
           data_arg = 
-            list(list(width = 0.7), list(width = 0.1)))
+            list(list(width = 0.7), 
+                 list(width = 0.1)
+            ))
+
+## two geoms from ggdist look very nice with correct arguments:
+afex_plot(aw, x = "angle", error = "within", 
+          data_geom = list(
+            ggdist::geom_dots, 
+            ggdist::stat_slab), 
+          data_arg = list(
+            list(width = 0.3, layout = "swarm"),
+            list(side = "left", width = 0.25)
+          ))
 
 ## we can add a line connecting the means using geom_point(aes(group = 1)):
 afex_plot(aw, x = "angle", error = "within") +

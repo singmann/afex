@@ -1,3 +1,10 @@
+Changes in afex Version 1.6-x (2026-xx-xx)
+Significant User Visible Changes and New Features
+ o 
+
+Bugfixes
+ o fixed afex_plot()'s oneway_plot, if used with multiple geoms but no specified data_arg.
+
 Changes in afex Version 1.5-x (2025-08-24)
 Significant User Visible Changes and New Features
  o afex_plot() now also supports GLMMadaptive. A corresponding example was added to the supported mode's vignette.

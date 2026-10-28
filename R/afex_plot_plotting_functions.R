@@ -340,16 +340,12 @@ oneway_plot <- function(
           )
         )
     } else if (is.list(data_geom)) {
-      ## https://stackoverflow.com/a/13433689/289572
-      depth <- function(this) {
-        ifelse(
-          is.list(this),
-          1L +
-            as.numeric(all(as.logical(sapply(this, depth)))),
-          0L
-        )
+      list_depth <- function(x) {
+        if (!is.list(x)) return(0L)
+        
+        1L + max(c(0L, vapply(x, list_depth, integer(1))))
       }
-      if (depth(data_arg) == 1) {
+      if (list_depth(data_arg) == 1) {
         if (!is.null(data_alpha)) {
           data_arg$alpha <- data_alpha
         }

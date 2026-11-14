@@ -1,0 +1,23 @@
+if(is.null(meta$Date)) {
+  date <- Sys.Date()
+} else {
+  date <- meta$Date
+}
+
+year <- sub("-.*", "", date)
+url  <- "https://cran.r-project.org/package=afex"
+
+authors_r <-read.dcf(system.file("DESCRIPTION", package = "afex"), fields = "Authors@R")
+authors <- eval(parse(text = authors_r))
+authors <- Filter(function(p) any(p$role %in% c("aut", "cre")), authors)
+
+
+bibentry(
+  bibtype = "Manual"
+  , title = paste0("{afex}: ", meta$Title)
+  , author = authors
+  , year = year
+  , note = paste("R package version", meta$Version)
+  , url = url
+  , doi = "10.32614/CRAN.package.afex"
+)

@@ -180,15 +180,28 @@ get_emms <- function(
 
   all_vars <- c(x, trace, panel)
   emmeans_arg$options$level <- level
-  emms <- as.data.frame(do.call(
+  if (!inherits(object, "afex_aov") || !"type" %in% names(emmeans_arg)) {
+    emmeans_arg <- c(list(type = "response"), emmeans_arg)
+  }
+  grid <- do.call(
     emmeans::emmeans,
     args = c(
       object = list(object),
       specs = list(all_vars),
-      type = list("response"),
       emmeans_arg
     )
-  ))
+  )
+  emms <- as.data.frame(grid)
+  if (inherits(object, "afex_aov") && !is.null(attr(object, "transf"))) {
+    regrid <- if (is.null(emmeans_arg$regrid)) {
+      emmeans_arg$transform
+    } else {
+      emmeans_arg$regrid
+    }
+    attr(emms, "response_transformation") <- plot_response_transformation(
+      object, grid, emms, regrid
+    )
+  }
   emms <- rename_factor_levels(
     data = emms,
     factor_levels = factor_levels,
@@ -212,6 +225,73 @@ get_emms <- function(
   emms$all_vars <- interaction(emms[all_vars], sep = ".")
 
   return(emms)
+}
+
+plot_response_transformation <- function(object, grid, emms, regrid) {
+  if (!inherits(grid, "emmGrid")) return(NULL)
+  misc <- grid@misc
+  response <- isTRUE(attr(emms, "type") %in% c("response", "mu", "unlink"))
+  original <- attr(object, "transf")
+  requested_regrid <- isTRUE(regrid) || is.list(regrid) ||
+    (is.character(regrid) && is.na(pmatch(regrid, c("none", "pass"))))
+  regridded <- requested_regrid && (isTRUE(misc$regrid.flag) || !identical(misc$tran, original))
+  dv <- attr(object, "dv")
+  response_dv <- substring(dv, nchar(original[[1]]) + 2L)
+
+  # Regridding can replace the grid's transformation. First invert the one
+  # used to fit the model, then apply the grid's link for fitted-scale summaries.
+  if (regridded) {
+    original_link <- afex_plot_link(original)
+    inverse <- if (is.null(original_link)) identity else original_link$linkinv
+    if (!is.null(original_link)) dv <- response_dv
+    link <- afex_plot_link(misc$tran)
+    if (!response && !is.null(link)) {
+      return(list(
+        apply = function(y) link$linkfun(inverse(y)),
+        dv = paste0(link$name, "(", dv, ")")
+      ))
+    }
+    return(list(apply = inverse, dv = dv))
+  }
+  if (!response) {
+    return(NULL)
+  }
+  link <- afex_plot_link(misc$tran)
+  if (is.null(link)) return(NULL)
+  multiplier <- if (is.null(misc$tran.mult)) 1 else misc$tran.mult
+  offset <- if (is.null(misc$tran.offset)) 0 else misc$tran.offset
+  list(
+    apply = function(y) link$linkinv(y / multiplier) - offset,
+    dv = response_dv
+  )
+}
+
+afex_plot_link <- function(transform) {
+  if (is.list(transform)) return(transform)
+  if (length(transform) != 1L) return(NULL)
+  # Parameterized links need the link object, not just the constructor name.
+  if (transform %in% c("genlog", "power", "boxcox", "sympower", "bcnPower", "scale")) {
+    return(NULL)
+  }
+  link <- tryCatch(emmeans::make.tran(transform), error = function(e) NULL)
+  if (is.null(link)) {
+    # Older emmeans releases leave standard links to stats::make.link().
+    link <- switch(
+      transform,
+      log2 = list(name = "log2", linkfun = log2, linkinv = function(y) 2^y),
+      log10 = list(name = "log10", linkfun = log10, linkinv = function(y) 10^y),
+      exp = list(name = "exp", linkfun = exp, linkinv = log),
+      "/" = ,
+      reciprocal = stats::make.link("inverse"),
+      asinh.sqrt = list(
+        name = "asinh(sqrt(mu))", linkfun = function(y) asinh(sqrt(y)),
+        linkinv = function(y) sinh(y)^2
+      ),
+      tryCatch(stats::make.link(transform), error = function(e) NULL)
+    )
+  }
+  if (isTRUE(link$unknown)) return(NULL)
+  link
 }
 
 prep_data <- function(data, x, trace, panel, factor_levels, dv_col, id) {

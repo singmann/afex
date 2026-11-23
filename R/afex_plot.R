@@ -89,7 +89,10 @@
 #'   \code{line_arg} is only used if \code{trace} is specified.
 #' @param emmeans_arg A \code{list} of further arguments passed to
 #'   \code{\link[emmeans]{emmeans}}. Of particular importance for ANOVAs is
-#'   \code{model}, see \code{\link{afex_aov-methods}}.
+#'   \code{model}, see \code{\link{afex_aov-methods}}. For a transformed
+#'   \code{afex_aov} response, observations use the same scale as the estimated
+#'   marginal means. The default is \code{type = "response"}. Use
+#'   \code{emmeans_arg = list(type = "link")} to plot on the fitted scale.
 #' @param dodge Numerical amount of dodging of factor-levels on x-axis. Default
 #'   is \code{0.5}.
 #' @param return A scalar \code{character} specifying what should be returned.
@@ -362,6 +365,12 @@ afex_plot.afex_aov <- function(
     dv_col = attr(object, "dv"),
     id = attr(object, "id")
   )
+  transformation <- attr(emms, "response_transformation")
+  if (!is.null(transformation)) {
+    data$y <- transformation$apply(data$y)
+    attr(emms, "dv") <- transformation$dv
+    attr(emms, "response_transformation") <- NULL
+  }
 
   ### prepare variables for SE/CI calculation
   within_vars <- all_vars[all_vars %in% names(attr(object, "within"))]

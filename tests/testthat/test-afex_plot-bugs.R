@@ -1,3 +1,55 @@
+test_that("transformed ANOVA observations use the scale of the marginal means", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("emmeans")
+  data <- transform(obk.long, value = value + 2)
+  fit <- suppressMessages(aov_ez(
+    "id", "value", data,
+    within = c("phase", "hour"), between = c("treatment", "gender"),
+    transformation = "log", include_aov = FALSE
+  ))
+  model_data <- fit$data$long
+  model_points <- aggregate(log.value ~ phase + id, data = model_data, FUN = mean)$log.value
+
+  response <- afex_plot(fit, "phase", error = "none", return = "data")
+  expect_equal(response$data$y, exp(model_points))
+  expected <- as.data.frame(emmeans::emmeans(fit, "phase", type = "response"))
+  expect_equal(response$means$y, expected$response)
+
+  link <- afex_plot(
+    fit, "phase", error = "none", return = "data",
+    emmeans_arg = list(type = "link")
+  )
+  expect_equal(link$data$y, model_points)
+  expect_equal(link$means$y, log(expected$response))
+
+  plot <- afex_plot(fit, "phase", error = "none", data_geom = ggplot2::geom_point)
+  expect_identical(plot$labels$y, "value")
+})
+
+test_that("regridding starts with observations on the original response scale", {
+  skip_if_not_installed("ggplot2")
+  skip_if_not_installed("emmeans")
+  skip_if_not("regrid" %in% names(formals(emmeans::ref_grid)))
+  data <- transform(obk.long, value = value + 2)
+  fit <- suppressMessages(aov_ez(
+    "id", "value", data,
+    within = c("phase", "hour"), between = c("treatment", "gender"),
+    transformation = "log", include_aov = FALSE
+  ))
+  response <- afex_plot(fit, "phase", error = "none", return = "data")
+  regridded <- afex_plot(
+    fit, "phase", error = "none", return = "data",
+    emmeans_arg = list(regrid = "mu")
+  )
+  expect_equal(regridded$data$y, response$data$y)
+
+  relinked <- afex_plot(
+    fit, "phase", error = "none", return = "data",
+    emmeans_arg = list(regrid = "sqrt", type = "link")
+  )
+  expect_equal(relinked$data$y, sqrt(response$data$y))
+})
+
 test_that("mixed models with Type = 2 work", {
   testthat::skip_if_not_installed("ggplot2")
   testthat::skip_if_not_installed("emmeans")

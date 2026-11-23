@@ -249,7 +249,10 @@ draw the points and lines in the foreground. Default is \code{list()}.
 
 \item{emmeans_arg}{A \code{list} of further arguments passed to
 \code{\link[emmeans]{emmeans}}. Of particular importance for ANOVAs is
-\code{model}, see \code{\link{afex_aov-methods}}.}
+\code{model}, see \code{\link{afex_aov-methods}}. For a transformed
+\code{afex_aov} response, observations use the same scale as the estimated
+marginal means. The default is \code{type = "response"}. Use
+\code{emmeans_arg = list(type = "link")} to plot on the fitted scale.}
 
 \item{dodge}{Numerical amount of dodging of factor-levels on x-axis. Default
 is \code{0.5}.}

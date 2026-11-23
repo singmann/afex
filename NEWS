@@ -3,6 +3,7 @@ Significant User Visible Changes and New Features
  o 
 
 Bugfixes
+ o afex_plot() displays observations and marginal means on the same scale for transformed ANOVAs (#85).
  o fixed afex_plot()'s oneway_plot, if used with multiple geoms but no specified data_arg.
 
 Changes in afex Version 1.5-x (2025-08-24)
